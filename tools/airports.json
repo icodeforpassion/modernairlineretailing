@@ -16947,7 +16947,7 @@
     "code": "AIW",
     "name": "Ai-Ais Airport",
     "city": "Ai-Ais",
-    "country": NaN,
+    "country": "",
     "lat": -27.995,
     "lon": 17.5966
   },
@@ -16955,7 +16955,7 @@
     "code": "ADI",
     "name": "Arandis Airport",
     "city": "Arandis",
-    "country": NaN,
+    "country": "",
     "lat": -22.461875,
     "lon": 14.979322
   },
@@ -16963,7 +16963,7 @@
     "code": "GOG",
     "name": "Gobabis Airport",
     "city": "Gobabis",
-    "country": NaN,
+    "country": "",
     "lat": -22.5044,
     "lon": 18.973101
   },
@@ -16971,7 +16971,7 @@
     "code": "GFY",
     "name": "Grootfontein Airport",
     "city": "Grootfontein",
-    "country": NaN,
+    "country": "",
     "lat": -19.6022,
     "lon": 18.1227
   },
@@ -16979,7 +16979,7 @@
     "code": "HAL",
     "name": "Halali Airport",
     "city": "Halali",
-    "country": NaN,
+    "country": "",
     "lat": -19.0285,
     "lon": 16.4585
   },
@@ -16987,7 +16987,7 @@
     "code": "KAS",
     "name": "Karasburg Airport",
     "city": "Karasburg",
-    "country": NaN,
+    "country": "",
     "lat": -28.0297,
     "lon": 18.7385
   },
@@ -16995,7 +16995,7 @@
     "code": "MPA",
     "name": "Katima Mulilo Airport",
     "city": "Mpacha",
-    "country": NaN,
+    "country": "",
     "lat": -17.634258,
     "lon": 24.176688
   },
@@ -17003,7 +17003,7 @@
     "code": "KMP",
     "name": "Keetmanshoop Airport",
     "city": "Keetmanshoop",
-    "country": NaN,
+    "country": "",
     "lat": -26.539801,
     "lon": 18.111401
   },
@@ -17011,7 +17011,7 @@
     "code": "LHU",
     "name": "Lianshulu Lodge Airstrip",
     "city": "Muneambuanas",
-    "country": NaN,
+    "country": "",
     "lat": -18.116495,
     "lon": 23.39346
   },
@@ -17019,7 +17019,7 @@
     "code": "LUD",
     "name": "Luderitz Airport",
     "city": "Luderitz",
-    "country": NaN,
+    "country": "",
     "lat": -26.687400817871094,
     "lon": 15.242899894714355
   },
@@ -17027,7 +17027,7 @@
     "code": "MJO",
     "name": "Mount Etjo Airport",
     "city": "Mount Etjo Safari Lodge",
-    "country": NaN,
+    "country": "",
     "lat": -21.0233001709,
     "lon": 16.4528007507
   },
@@ -17035,7 +17035,7 @@
     "code": "MQG",
     "name": "Midgard Airport",
     "city": "Midgard",
-    "country": NaN,
+    "country": "",
     "lat": -22.0106,
     "lon": 17.37
   },
@@ -17043,7 +17043,7 @@
     "code": "OKU",
     "name": "Mokuti Lodge Airport",
     "city": "Mokuti Lodge",
-    "country": NaN,
+    "country": "",
     "lat": -18.812799,
     "lon": 17.059401
   },
@@ -17051,7 +17051,7 @@
     "code": "NNI",
     "name": "Namutoni Airport",
     "city": "Namutoni",
-    "country": NaN,
+    "country": "",
     "lat": -18.8064,
     "lon": 16.9272
   },
@@ -17059,7 +17059,7 @@
     "code": "OGV",
     "name": "Ongava Lodge Airstrip",
     "city": "Ombika",
-    "country": NaN,
+    "country": "",
     "lat": -19.328533,
     "lon": 15.915003
   },
@@ -17067,7 +17067,7 @@
     "code": "OND",
     "name": "Ondangwa Airport",
     "city": "Ondangwa",
-    "country": NaN,
+    "country": "",
     "lat": -17.878201,
     "lon": 15.9526
   },
@@ -17075,7 +17075,7 @@
     "code": "OMG",
     "name": "Omega Airport",
     "city": "Omega",
-    "country": NaN,
+    "country": "",
     "lat": -18.0303,
     "lon": 22.189699
   },
@@ -17083,7 +17083,7 @@
     "code": "OMD",
     "name": "Oranjemund Airport",
     "city": "Oranjemund",
-    "country": NaN,
+    "country": "",
     "lat": -28.5847,
     "lon": 16.446699
   },
@@ -17091,7 +17091,7 @@
     "code": "OKF",
     "name": "Okaukuejo Airport",
     "city": "Okaukuejo",
-    "country": NaN,
+    "country": "",
     "lat": -19.1492,
     "lon": 15.9119
   },
@@ -17099,7 +17099,7 @@
     "code": "OPW",
     "name": "Opuwa Airport",
     "city": "Opuwa",
-    "country": NaN,
+    "country": "",
     "lat": -18.061424,
     "lon": 13.85047
   },
@@ -17107,7 +17107,7 @@
     "code": "OHI",
     "name": "Oshakati Airport",
     "city": "Oshakati",
-    "country": NaN,
+    "country": "",
     "lat": -17.797,
     "lon": 15.6993
   },
@@ -17115,7 +17115,7 @@
     "code": "OTJ",
     "name": "Otjiwarongo Airport",
     "city": "Otjiwarongo",
-    "country": NaN,
+    "country": "",
     "lat": -20.4347,
     "lon": 16.660801
   },
@@ -17123,7 +17123,7 @@
     "code": "NDU",
     "name": "Rundu Airport",
     "city": "Rundu",
-    "country": NaN,
+    "country": "",
     "lat": -17.956499099731,
     "lon": 19.719400405884
   },
@@ -17131,7 +17131,7 @@
     "code": "RHN",
     "name": "Skorpion Mine Airport",
     "city": "Rosh Pinah",
-    "country": NaN,
+    "country": "",
     "lat": -27.8764,
     "lon": 16.6478
   },
@@ -17139,7 +17139,7 @@
     "code": "SWP",
     "name": "Swakopmund Municipal Aerodrome",
     "city": "Swakopmund",
-    "country": NaN,
+    "country": "",
     "lat": -22.6619,
     "lon": 14.5681
   },
@@ -17147,7 +17147,7 @@
     "code": "SZM",
     "name": "Sesriem Airport",
     "city": "Sesriem",
-    "country": NaN,
+    "country": "",
     "lat": -24.5128,
     "lon": 15.7467
   },
@@ -17155,7 +17155,7 @@
     "code": "TCY",
     "name": "Terrace Bay Airport",
     "city": "Terrace Bay",
-    "country": NaN,
+    "country": "",
     "lat": -19.9713,
     "lon": 13.0249
   },
@@ -17163,7 +17163,7 @@
     "code": "TSB",
     "name": "Tsumeb Airport",
     "city": "Tsumeb",
-    "country": NaN,
+    "country": "",
     "lat": -19.26189994812,
     "lon": 17.732500076294
   },
@@ -17171,7 +17171,7 @@
     "code": "WVB",
     "name": "Walvis Bay Airport",
     "city": "Rooikop",
-    "country": NaN,
+    "country": "",
     "lat": -22.979332,
     "lon": 14.647102
   },
@@ -17179,7 +17179,7 @@
     "code": "ERS",
     "name": "Eros Airport",
     "city": "Windhoek",
-    "country": NaN,
+    "country": "",
     "lat": -22.612199783325195,
     "lon": 17.080400466918945
   },
@@ -17187,7 +17187,7 @@
     "code": "WDH",
     "name": "Hosea Kutako International Airport",
     "city": "Windhoek",
-    "country": NaN,
+    "country": "",
     "lat": -22.4799,
     "lon": 17.4709
   },
@@ -41027,7 +41027,7 @@
     "code": "BQI",
     "name": "Bagani Airport",
     "city": "Bagani",
-    "country": NaN,
+    "country": "",
     "lat": -18.11848,
     "lon": 21.623296
   },
