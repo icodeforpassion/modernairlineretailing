@@ -1,0 +1,34 @@
+{
+  "LHR": {
+    "code": "LHR",
+    "name": "Heathrow Airport",
+    "city": "London",
+    "country": "UK",
+    "lat": 51.4706,
+    "lon": -0.4619
+  },
+  "JFK": {
+    "code": "JFK",
+    "name": "John F. Kennedy International",
+    "city": "New York",
+    "country": "USA",
+    "lat": 40.6413,
+    "lon": -73.7781
+  },
+  "DXB": {
+    "code": "DXB",
+    "name": "Dubai International",
+    "city": "Dubai",
+    "country": "UAE",
+    "lat": 25.2532,
+    "lon": 55.3657
+  },
+  "CDG": {
+    "code": "CDG",
+    "name": "Charles de Gaulle Airport",
+    "city": "Paris",
+    "country": "France",
+    "lat": 49.0097,
+    "lon": 2.5479
+  }
+}

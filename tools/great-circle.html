@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Great Circle Distance Calculator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <script>
+    function toRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    async function calculateDistance() {
+      const origin = document.getElementById('origin').value.toUpperCase();
+      const dest = document.getElementById('destination').value.toUpperCase();
+      const response = await fetch('../tools/airports.json');
+      const airports = await response.json();
+
+      const o = airports[origin];
+      const d = airports[dest];
+
+      if (o && d) {
+        const distance = haversine(o.lat, o.lon, d.lat, d.lon);
+        document.getElementById('result').innerText =
+          `Distance from ${origin} to ${dest}: ${distance.toFixed(2)} km / ${(distance * 0.539957).toFixed(2)} NM`;
+      } else {
+        document.getElementById('result').innerText = 'Invalid IATA codes.';
+      }
+    }
+  </script>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Great Circle Distance Calculator</h1>
+      <div class="field">
+        <label class="label">Origin IATA Code</label>
+        <div class="control">
+          <input class="input" id="origin" placeholder="e.g., LHR">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Destination IATA Code</label>
+        <div class="control">
+          <input class="input" id="destination" placeholder="e.g., JFK">
+        </div>
+      </div>
+      <div class="control mt-2">
+        <button class="button is-link" onclick="calculateDistance()">Calculate</button>
+      </div>
+      <p class="mt-4" id="result"></p>
+    </div>
+  </section>
+</body>
+</html>
