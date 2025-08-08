@@ -8,23 +8,30 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
 <body>
-  <section class="hero is-primary is-bold is-fullheight">
+  <section class="hero is-primary is-fullheight">
+    <!-- Top Navigation -->
     <div class="hero-head">
-      <nav class="navbar">
+      <nav class="navbar is-dark">
         <div class="container">
           <div class="navbar-brand">
             <a class="navbar-item" href="/">✈️ Modern Airline Retailing</a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
           </div>
-          <div class="navbar-menu">
+
+          <div id="navbarMenu" class="navbar-menu">
             <div class="navbar-end">
+              <a class="navbar-item" href="/index.html">Home</a>
+              <a class="navbar-item" href="/blog/index.html">Blog</a>
+              <a class="navbar-item" href="/about.html">About Me</a>
               <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">Menu</a>
+                <a class="navbar-link">Tools</a>
                 <div class="navbar-dropdown">
-                  <a class="navbar-item" href="/index.html">Home</a>
-                  <a class="navbar-item" href="/blog/index.html">Blog</a>
-                  <a class="navbar-item" href="/about.html">About Me</a>
-                  <a class="navbar-item" href="/tools/great-circle.html">Tools → Great Circle</a>
-                  <a class="navbar-item" href="/tools/airport-lookup.html">Tools → Airport Lookup</a>
+                  <a class="navbar-item" href="/tools/great-circle.html">Great Circle Distance</a>
+                  <a class="navbar-item" href="/tools/airport-lookup.html">Airport Lookup</a>
                 </div>
               </div>
             </div>
@@ -33,6 +40,7 @@
       </nav>
     </div>
 
+    <!-- Hero Content -->
     <div class="hero-body">
       <div class="container has-text-centered">
         <h1 class="title is-1">Modern Airline Retailing</h1>
@@ -42,9 +50,21 @@
       </div>
     </div>
 
+    <!-- Footer with Visitor Badge -->
     <div class="hero-foot has-text-centered" style="padding-bottom: 1rem;">
       <img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitor Counter" />
     </div>
   </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const burger = document.querySelector('.navbar-burger');
+      const menu = document.querySelector(`#${burger.dataset.target}`);
+      burger.addEventListener('click', () => {
+        burger.classList.toggle('is-active');
+        menu.classList.toggle('is-active');
+      });
+    });
+  </script>
 </body>
 </html>
