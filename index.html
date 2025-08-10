@@ -1,114 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Structured data: Organization (use PNG/JPG logo, not .ico) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Modern Airline Retailing",
-    "url": "https://www.modernairlineretailing.com",
-    "logo": "https://www.modernairlineretailing.com/assets/logo.png",
-    "sameAs": ["https://github.com/icodeforpassion"]
-  }
-  </script>
-
-  <!-- Optional: WebSite schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Modern Airline Retailing",
-    "url": "https://www.modernairlineretailing.com"
-  }
-  </script>
-
-  <meta charset="UTF-8" />
+  <!-- Basic -->
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <!-- Critical for search snippet -->
-  <title>Modern Airline Retailing | Insights, Tools & Offer–Order</title>
-  <meta name="description" content="Practical insights, tools, and commentary on modern airline retailing, Offer & Order, distribution, and revenue management." />
+  <title>Modern Airline Retailing | Tools, Insights & Stories</title>
+  <meta name="description" content="Practical tools and long-form insights on airline retailing. Offer & Order, inventory to stock, messaging, and real-world engineering practices."/>
 
   <!-- Canonical -->
-  <link rel="canonical" href="https://www.modernairlineretailing.com/" />
+  <link rel="canonical" href="https://www.modernairlineretailing.com/"/>
 
-  <!-- Social previews (OG/Twitter) -->
-  <meta property="og:title" content="Modern Airline Retailing" />
-  <meta property="og:description" content="Insights, tools, and guidance on airline retailing and Offer & Order." />
-  <meta property="og:url" content="https://www.modernairlineretailing.com" />
-  <meta property="og:image" content="https://www.modernairlineretailing.com/assets/logo.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Modern Airline Retailing" />
-  <meta name="twitter:description" content="Insights, tools, and guidance on airline retailing and Offer & Order." />
-  <meta name="twitter:image" content="https://www.modernairlineretailing.com/assets/logo.png" />
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Modern Airline Retailing"/>
+  <meta property="og:description" content="Tools and long-form insights on airline retailing, Offer & Order, and the tech that powers it."/>
+  <meta property="og:url" content="https://www.modernairlineretailing.com/"/>
+  <meta property="og:image" content="https://www.modernairlineretailing.com/assets/og-banner.jpg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Modern Airline Retailing"/>
+  <meta name="twitter:description" content="Tools and long-form insights on airline retailing, Offer & Order, and the tech that powers it."/>
+  <meta name="twitter:image" content="https://www.modernairlineretailing.com/assets/og-banner.jpg"/>
+  <meta name="theme-color" content="#0d1b2a"/>
 
-  <!-- UI polish -->
-  <meta name="theme-color" content="#1d3557" />
+  <!-- Org structured data (use PNG/JPG logo, not .ico) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "name":"Modern Airline Retailing",
+    "url":"https://www.modernairlineretailing.com",
+    "logo":"https://www.modernairlineretailing.com/assets/logo.png",
+    "sameAs":["https://github.com/icodeforpassion"]
+  }
+  </script>
 
-  <!-- Styles & favicon -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+  <style>
+    /* Sticky navbar */
+    .navbar.is-fixed-top { position: sticky; top: 0; z-index: 50; }
+
+    /* Hero */
+    .hero.is-landing {
+      min-height: 500px;
+      background:
+        linear-gradient(180deg, rgba(13,27,42,0.75), rgba(13,27,42,0.6)),
+        url('/assets/og-banner.jpg') center/cover no-repeat;
+      color: #fff;
+    }
+    .hero .title { font-weight: 800; letter-spacing: .5px; }
+    .hero .subtitle { opacity: .95; }
+
+    /* Featured cards */
+    .card { transition: transform .15s ease, box-shadow .15s ease; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,.12); }
+    .blog-thumb {
+      width: 100%; height: 160px; object-fit: cover; background: #e8eef3;
+    }
+
+    /* Section separators */
+    .section { padding-top: 3rem; padding-bottom: 3rem; }
+    .section.is-alt { background: #f6f8fb; }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+  </style>
 </head>
-
 <body>
-  <section class="hero is-primary is-fullheight">
-    <!-- Top Navigation -->
-    <div class="hero-head">
-      <nav class="navbar is-dark">
-        <div class="container">
-          <div class="navbar-brand">
-            <a class="navbar-item" href="/">✈️ Modern Airline Retailing</a>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-            </a>
-          </div>
 
-          <div id="navbarMenu" class="navbar-menu">
-            <div class="navbar-end">
-              <a class="navbar-item" href="/index.html">Home</a>
-              <a class="navbar-item" href="/blog/index.html">Blog</a>
-              <a class="navbar-item" href="/about.html">About Me</a>
-              <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">Tools</a>
-                <div class="navbar-dropdown">
-                  <a class="navbar-item" href="/tools/great-circle.html">Great Circle Distance</a>
-                  <a class="navbar-item" href="/tools/airport-lookup.html">Airport Lookup</a>
-                </div>
-              </div>
+  <!-- Sticky Top Bar -->
+  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">Modern Airline Retailing</a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/index.html">Home</a>
+          <a class="navbar-item" href="/blog/index.html">Blog</a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">Tools</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/tools/great-circle.html">Great Circle Distance</a>
+              <a class="navbar-item" href="/tools/airport-lookup.html">Airport / City Lookup</a>
             </div>
           </div>
+          <a class="navbar-item" href="/about.html">About Me</a>
+          <a class="navbar-item" href="/offer-order.html">Offer &amp; Order</a>
         </div>
-      </nav>
+      </div>
     </div>
+  </nav>
 
-    <!-- Hero Content -->
+  <!-- Hero -->
+  <section class="hero is-landing">
     <div class="hero-body">
       <div class="container has-text-centered">
         <h1 class="title is-1">Modern Airline Retailing</h1>
-        <p class="subtitle is-4">
-          Tools, blogs, and insights on the future of airline commerce.
-        </p>
+        <p class="subtitle is-4">Tools, insights and real-world stories from the airline tech stack.</p>
+        <a class="button is-light is-medium" href="#featured">Read Latest Blogs</a>
       </div>
-    </div>
-
-    <!-- Footer with Visitor Badge -->
-    <div class="hero-foot has-text-centered" style="padding-bottom: 1rem;">
-      <img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitor Counter" />
     </div>
   </section>
 
+  <!-- Featured Blogs (auto-updates) -->
+  <section id="featured" class="section is-alt">
+    <div class="container">
+      <div class="level">
+        <div class="level-left"><h2 class="title is-3">Latest from the Blog</h2></div>
+        <div class="level-right"><a class="button is-link is-light" href="/blog/">View All Blogs</a></div>
+      </div>
+
+      <div id="featured-cards" class="columns is-multiline">
+        <!-- Cards injected by script -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer with visitor badge -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>© <span id="year"></span> Modern Airline Retailing</p>
+      <p><img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitors"></p>
+    </div>
+  </footer>
+
   <script>
+    // Burger menu
     document.addEventListener('DOMContentLoaded', () => {
       const burger = document.querySelector('.navbar-burger');
-      const menu = document.querySelector(`#${burger.dataset.target}`);
+      const menu = document.getElementById(burger.dataset.target || 'navMenu');
       burger.addEventListener('click', () => {
         burger.classList.toggle('is-active');
         menu.classList.toggle('is-active');
       });
+      document.getElementById('year').textContent = new Date().getFullYear();
     });
+
+    // Helper: fetch and parse /blog/index.html to auto-list latest posts
+    async function loadFeatured() {
+      try {
+        const res = await fetch('/blog/index.html', { cache: 'no-store' });
+        if (!res.ok) return;
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const links = Array.from(doc.querySelectorAll('a[href$=".html"]'))
+          .map(a => ({ href: a.getAttribute('href'), text: a.textContent.trim() }))
+          .filter(x => x.href && x.text);
+
+        // Sort by date found in filename YYYY-MM-DD-*.html (desc)
+        const dated = links.map(l => {
+          const m = l.href.match(/(\d{4}-\d{2}-\d{2})/);
+          return { ...l, date: m ? new Date(m[1]) : new Date(0) };
+        }).sort((a,b) => b.date - a.date);
+
+        const top3 = dated.slice(0,3);
+        const container = document.getElementById('featured-cards');
+        container.innerHTML = '';
+
+        top3.forEach(item => {
+          // Build absolute href
+          const href = item.href.startsWith('http') ? item.href : `/blog/${item.href}`;
+          // Excerpt: fetch the post and take first paragraph
+          container.insertAdjacentHTML('beforeend', `
+            <div class="column is-4">
+              <a class="card" href="${href}">
+                <div class="card-image">
+                  <figure class="image is-3by2">
+                    <img class="blog-thumb" src="/assets/og-banner.jpg" alt="Blog thumbnail">
+                  </figure>
+                </div>
+                <div class="card-content">
+                  <p class="title is-5">${item.text}</p>
+                  <p class="subtitle is-6">${item.date.toISOString().slice(0,10)}</p>
+                  <p class="content" data-excerpt-for="${href}">Loading summary…</p>
+                </div>
+              </a>
+            </div>
+          `);
+          // Fetch excerpt asynchronously
+          fetch(href, { cache: 'no-store' })
+            .then(r => r.text())
+            .then(t => {
+              const d = new DOMParser().parseFromString(t, 'text/html');
+              const firstP = d.querySelector('.content p, p');
+              const excerpt = firstP ? firstP.textContent.trim().slice(0, 180) + '…' : '';
+              const p = container.querySelector(`p[data-excerpt-for="${href.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}"]`);
+              if (p) p.textContent = excerpt;
+            }).catch(()=>{});
+        });
+      } catch(e) {
+        console.warn('Featured blog load failed', e);
+      }
+    }
+    loadFeatured();
   </script>
 </body>
 </html>
