@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payments and Clearing: From BSP/ARC to Modern Rails</title>
+  <meta name="description" content="Payments and Clearing: From BSP/ARC to Modern Rails — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:title" content="Payments and Clearing: From BSP/ARC to Modern Rails"/>
+  <meta property="og:description" content="Payments and Clearing: From BSP/ARC to Modern Rails — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="/blog/images/blog-17.jpg"/>
+  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-12-31-payments-and-clearing:-from-bsp-arc-to-modern-rails.html"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <style>
+    .hero-banner { background: url('/blog/images/blog-17.jpg') center/cover no-repeat; }
+    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
+    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
+    .content p { line-height: 1.75; }
+  </style>
+</head>
+<body>
+  <section class="hero is-medium hero-banner">
+    <div class="hero-body overlay">
+      <div class="container">
+        <a class="button is-light home-btn" href="/index.html">Home</a>
+        <h1 class="title has-text-white">Payments and Clearing: From BSP/ARC to Modern Rails</h1>
+        <p class="subtitle has-text-white">December 31, 2024</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container content">
+      <p>I learned this on a Tuesday morning when a simple search returned two different answers. Payments and Clearing: From BSP/ARC to Modern Rails sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
+<h2>What problem are we solving?</h2>
+<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
+<h2>Mechanics, not magic</h2>
+<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
+<h2>A concrete example</h2>
+<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
+<h2>Where teams stumble</h2>
+<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
+<h2>Design moves that help</h2>
+<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
+<h2>Short checklist</h2>
+<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
+      <hr/>
+      <nav class="level">
+        <div class="level-left">
+          <a class="button is-link is-light" href="/blog/2024-12-09-interline-in-an-order-world:-offers,-orders,-settlement.html">← Previous</a>
+        </div>
+        <div class="level-right">
+          <a class="button is-link" href="/blog/2025-01-22-telemetry-and-data-quality:-measuring-the-offer-funnel.html">Next →</a>
+        </div>
+      </nav>
+      <p><a href="/blog/index.html">Back to all blogs</a></p>
+    </div>
+  </section>
+</body>
+</html>
