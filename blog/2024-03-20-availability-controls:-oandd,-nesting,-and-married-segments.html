@@ -3,50 +3,372 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Availability Controls: O&D, Nesting, and Married Segments</title>
-  <meta name="description" content="Availability Controls: O&D, Nesting, and Married Segments — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:title" content="Availability Controls: O&D, Nesting, and Married Segments"/>
-  <meta property="og:description" content="Availability Controls: O&D, Nesting, and Married Segments — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <title>Availability Controls: O&amp;D, Nesting, and Married Segments</title>
+  <meta name="description" content="Deep, implementation-focused guide to airline availability controls: O&D control, nesting strategies, bid prices, married segments logic, dilution risks, integrity checks, observability, and modernization toward offers & orders."/>
+  <meta property="og:title" content="Availability Controls: O&amp;D, Nesting, and Married Segments"/>
+  <meta property="og:description" content="Engineering walkthrough of airline availability logic: O&D control, nesting, bid prices, married segments, common failure modes and modernization."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-4.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments.html"/>
   <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments.html"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
     .hero-banner { background: url('/blog/images/blog-4.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
+    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.78), rgba(13,27,42,.55)); }
+    .home-btn { position: sticky; top: 0; display:inline-block; margin:.5rem 0 1rem; }
+    .content p { line-height:1.75; }
+    .content pre { background:#0f2435; color:#e8f0f7; padding:1rem; overflow:auto; font-size:.85rem; border-radius:6px; }
+    .content code { background:#132f45; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
+    blockquote { border-left:4px solid #3298dc; background:#102c43; padding:1rem 1.2rem; border-radius:6px; }
+    .toc-box { background:#102435; border:1px solid rgba(255,255,255,.08); padding:1rem 1.25rem; border-radius:10px; font-size:.9rem; }
+    .tag-badge { display:inline-block; background:#173146; color:#9fb3c5; padding:.25rem .55rem; margin:.15rem .25rem .15rem 0; border-radius:6px; font-size:.65rem; letter-spacing:.55px; text-transform:uppercase; }
+    table { font-size:.9rem; }
+    table thead { background:#132d44; }
+    table th, table td { border:1px solid #28415a; vertical-align:top; }
+    .callout { border:1px solid #2f4a63; background:#102c43; padding:1rem 1.25rem; border-radius:10px; margin:1.5rem 0; }
+    .callout.warning { border-color:#d89614; background:#3a2d01; }
+    .mini-caption { font-size:.7rem; text-transform:uppercase; letter-spacing:.55px; opacity:.7; margin-top:.3rem; }
+    .section-nav { margin-top:3rem; }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Availability Controls: O&D, Nesting, and Married Segments",
+    "datePublished":"2024-03-20",
+    "dateModified":"2024-03-20",
+    "author":{"@type":"Person","name":"Modern Airline Retailing"},
+    "image":"https://www.modernairlineretailing.com/blog/images/blog-4.jpg",
+    "keywords":"airline availability,O&D control,nesting,married segments,bid price,yield management,inventory control,airline retailing",
+    "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+  }
+  </script>
 </head>
 <body>
   <section class="hero is-medium hero-banner">
     <div class="hero-body overlay">
       <div class="container">
         <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Availability Controls: O&D, Nesting, and Married Segments</h1>
-        <p class="subtitle has-text-white">March 20, 2024</p>
+        <h1 class="title has-text-white">Availability Controls: O&amp;D, Nesting, and Married Segments</h1>
+        <p class="subtitle has-text-white">March 20, 2024 • ~20 min read</p>
+        <div>
+          <span class="tag-badge">Inventory</span>
+            <span class="tag-badge">Revenue Mgmt</span>
+            <span class="tag-badge">Optimization</span>
+            <span class="tag-badge">Implementation</span>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container content">
-      <p>A real shopper does not care about our acronyms; they just want the right option quickly. Availability Controls: O&D, Nesting, and Married Segments sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
+      <div class="toc-box">
+        <strong>Contents</strong>
+        <ol style="margin-top:.6rem;">
+          <li><a href="#intro">Introduction & Problem Framing</a></li>
+          <li><a href="#mental-model">Core Mental Model</a></li>
+          <li><a href="#od-control">O&amp;D Control Fundamentals</a></li>
+          <li><a href="#nesting">Nesting Strategies (Classical & Modern)</a></li>
+          <li><a href="#bid-prices">Bid Prices & Displacement Logic</a></li>
+          <li><a href="#married-segments">Married Segments Logic</a></li>
+          <li><a href="#calculation-pipeline">Availability Calculation Pipeline</a></li>
+          <li><a href="#data-model">Internal Data Model & Keys</a></li>
+          <li><a href="#examples">Worked Micro Examples</a></li>
+          <li><a href="#dilution">Dilution & Protection Failures</a></li>
+          <li><a href="#integration-pricing">Interaction with Pricing & Shopping</a></li>
+          <li><a href="#caching">Caching & Distribution Considerations</a></li>
+          <li><a href="#failure-modes">Common Failure Modes & Diagnostics</a></li>
+          <li><a href="#observability">Observability & KPIs</a></li>
+          <li><a href="#engineering-patterns">Engineering Patterns & Algorithms</a></li>
+          <li><a href="#testing">Test Strategy & Synthetic Scenarios</a></li>
+          <li><a href="#modernization">Modernization Toward Offers & Orders</a></li>
+          <li><a href="#checklist">Implementation Checklist</a></li>
+          <li><a href="#glossary">Mini Glossary</a></li>
+          <li><a href="#sources">Sources & Further Reading</a></li>
+          <li><a href="#disclaimer">Disclaimer</a></li>
+        </ol>
+      </div>
+
+      <h2 id="intro">1. Introduction & Problem Framing</h2>
+      <p>Availability control decides whether a request for seats in a given fare product can be accepted right now. Poor control leaks revenue (selling cheap seats on high value itineraries) or destroys conversion (over‑protecting inventory). For engineers, the challenge is translating revenue management (RM) output (forecasts, bid prices, protection levels) into deterministic APIs used by search and booking flows, while handling multi‑segment journeys where value is itinerary dependent.</p>
+      <blockquote><strong>Key tension:</strong> The seat is physical per leg, but value is per Origin & Destination (O&amp;D) itinerary. O&amp;D control resolves this by optimizing over displacement value of alternatives.</blockquote>
+
+      <h2 id="mental-model">2. Core Mental Model</h2>
+      <p>Three layers supply the answer “how many seats are open in booking class X for itinerary Y?”</p>
+      <ol>
+        <li><strong>Physical Inventory:</strong> Remaining seats by flight leg (A–B, B–C).</li>
+        <li><strong>Control Mechanism:</strong> Protection levels or bid prices derived from demand forecasting & optimization (e.g., EMSR, dynamic programming, network RM).</li>
+        <li><strong>Translation Layer:</strong> Business rules (married segments, nesting, blackout overrides) applied to produce booking class availability (0–9 / RBD counts) or structured Offer limits.</li>
+      </ol>
+
+      <h2 id="od-control">3. O&amp;D Control Fundamentals</h2>
+      <p><strong>Network vs Leg Control:</strong> Leg control opens classes solely based on leg forecast. O&amp;D (network) control considers displacement: selling a seat A–B now might block a higher yield A–C passenger connecting through B later.</p>
+      <ul>
+        <li><strong>Market (O&amp;D):</strong> Origin + Destination + (sometimes cabin, channel) with forecasted demand by fare product.</li>
+        <li><strong>Feasible Itineraries:</strong> Each O&amp;D demand bucket maps to one or more leg paths.</li>
+        <li><strong>Displacement Cost:</strong> Opportunity cost of consuming seat capacity now vs alternative future sale on overlapping legs.</li>
+      </ul>
+      <p>Two mainstream implementations:</p>
+      <ul>
+        <li><strong>Protection Level Methods:</strong> Compute protection (e.g., keep 12 seats for high yield O&amp;D) then convert to open seats per lower buckets using nesting logic.</li>
+        <li><strong>Bid Price Control:</strong> Assign a shadow price per leg; an itinerary accepted if its offered fare ≥ sum(bid prices of legs). Network yield management often computes bid prices via linear programming approximations.</li>
+      </ul>
+
+      <h2 id="nesting">4. Nesting Strategies (Classical & Modern)</h2>
+      <p><strong>Nesting</strong> defines hierarchical access of fare classes to shared seat inventory.</p>
+      <table class="table is-fullwidth is-striped">
+        <thead><tr><th>Type</th><th>Description</th><th>Pros</th><th>Cons / Risks</th></tr></thead>
+        <tbody>
+          <tr><td>Traditional Classical Nesting</td><td>Ordered fare classes (Y highest → deep discount). Lower class opens only if all protected higher-demand seats satisfied.</td><td>Simplicity, easy to communicate</td><td>Over-protection if forecast variance high</td></tr>
+          <tr><td>Virtual Nesting (Buckets)</td><td>Map fare products into aggregated value bands (virtual classes) rather than one-to-one with RBD.</td><td>Fewer control variables, dampens noise</td><td>Loss of granularity for micro-yield segments</td></tr>
+          <tr><td>Hybrid / Dynamic Nesting</td><td>Periodically reassign fare products to nests based on updated bid values.</td><td>Adapts to demand shifts</td><td>Complex; requires atomic updates to avoid flicker</td></tr>
+          <tr><td>Open Pricing / Continuous</td><td>Rather than discrete nests, dynamic price presented with availability gating still referencing minimum acceptance thresholds.</td><td>Revenue uplift via finer granularity</td><td>Harder explainability & auditing; bridging legacy systems</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Implementation Note:</strong> Maintain an immutable snapshot: fareProduct → nestID → protectionLevelVersion. Pricing and availability queries must reference the same version (or detect mismatch).</p>
+
+      <h2 id="bid-prices">5. Bid Prices & Displacement Logic</h2>
+      <p><strong>Bid price:</strong> Shadow (opportunity) cost of selling one more seat on that leg at that time. Acceptance rule (for itinerary with price P across legs L):</p>
+      <pre><code>Accept if:   P >= Σ (bidPrice[leg])
+Else reject / close lower classes</code></pre>
+      <p>Network control computes bid prices so that if you accept an itinerary, you expect non-negative incremental contribution vs keeping the seat for potential future higher-value demand.</p>
+      <p><strong>Edge Cases:</strong> Bid price monotonicity across time-bands and cabins may need smoothing (avoid oscillating open/close states). Implement post-processing smoothing (e.g., moving average or convexity constraint) after raw optimization output.</p>
+
+      <h2 id="married-segments">6. Married Segments Logic</h2>
+      <p>Married segments enforce joint availability of multiple legs used together to prevent re-pricing or rebooking passengers at unintended values.</p>
+      <ul>
+        <li><strong>Purpose:</strong> Stop “gaming” where a customer books A–B–C (open) then drops B–C to hold a scarce A–B seat that was closed standalone.</li>
+        <li><strong>Mechanism:</strong> Host stores binding between segments; cancellation or change triggers revalidation; partial cancellation disallowed or forces reprice.</li>
+        <li><strong>Data Structure:</strong> A marriage group ID pointing to list of segment keys. Status states: ACTIVE, BROKEN (requires reprice), RELEASED (after flown/void).</li>
+        <li><strong>Offer Layer:</strong> When constructing offers, annotate itinerary segments with marriageGroup tokens so downstream servicing logic can enforce constraints.</li>
+      </ul>
+      <p><strong>Implementation Tip:</strong> Expose an idempotent API to validate married segment integrity prior to ticketing and again during changes. Caching stale marriages is a common failure source.</p>
+
+      <h2 id="calculation-pipeline">7. Availability Calculation Pipeline</h2>
+      <pre><code>Input: O&D request (A->C), travel date(s), cabin, constraints (max connects)
+
+1. Enumerate feasible itineraries (A-B-C, A-C nonstop if exists).
+2. Fetch leg inventory snapshots (A-B flight X, B-C flight Y).
+3. Load control artifacts:
+   - Nest definitions & protection levels (or)
+   - Bid prices per leg time-slice
+4. For each itinerary:
+   a. Compute controlling value threshold (sum bid prices).
+   b. Determine candidate fare products / RBD mapping.
+   c. Evaluate open condition:
+        (FareAmount >= threshold) AND (remainingPhysicalSeats > 0)
+   d. Apply married segment constraints (if multi-leg).
+   e. Apply blackout / channel overrides.
+5. Produce availability vector:
+   - Per RBD: integer 0..maxDisplay (often capped at 9)
+   - Or priced offer list (for dynamic).
+6. Attach provenance:
+   - InventorySnapshotVersion
+   - ControlVersion (bid price or protection timestamp)
+   - EvaluationTimestamp
+7. Optionally pre-reserve (soft block) if hold logic required.</code></pre>
+      <p><strong>Fast Path Optimization:</strong> For large shopping queries, compress evaluation by grouping itineraries with identical leg sets and control thresholds to reuse computed open/close states.</p>
+
+      <h2 id="data-model">8. Internal Data Model & Keys</h2>
+      <pre><code>LegKey = flightNumber + departureDate + boardPoint + offPoint
+InventorySnapshot {
+  legKey -> { cabin: { RBD: { seatsRemaining, lastUpdate } } }
+}
+
+ControlVersion { id, generatedAt, method: 'BID_PRICE' | 'PROTECTION', smoothingParams }
+
+BidPriceTable {
+  controlVersionId,
+  legKey -> { bidPriceCurrency, bidPriceValue }
+}
+
+ProtectionLevels {
+  controlVersionId,
+  legKey -> [ { nestId, protectSeats } ordered high->low ]
+}
+
+FareProduct {
+  id, fareBasis, cabin, bookingClass, anchorPrice, market O&D, brandId, channelPolicy
+  mapping: { bookingClass -> nestId }
+}
+
+MarriageGroup {
+  groupId, segmentLegKeys[], status, createdAt, version
+}
+
+AvailabilityResult {
+  requestId, od, itineraries:[
+     { segmentLegKeys[], marriageGroupCandidate?, rbdAvailability:{ RBD: count },
+       provenance:{ inventoryVersion, controlVersionId, evalAt } }
+  ]
+}</code></pre>
+
+      <h2 id="examples">9. Worked Micro Examples</h2>
+      <h3>9.1 Protection Level Nesting Example</h3>
+      <pre><code>Physical seats on Leg A-B: 20
+Protection (high->low):
+  Nest H (Full Y): protect 5
+  Nest M: protect 8 (cumulative 13)
+  Nest L: protect 16 (cumulative 16)
+Open seats logic for discount nest D:
+  Remaining seats = 20
+  Cumulative protection above D = 16
+  Open seats for D = max(0, 20 - 16) = 4
+Display cap (9) -> show '4' (or '4' truncated if >9)</code></pre>
+
+      <h3>9.2 Bid Price Acceptance</h3>
+      <pre><code>Leg A-B bidPrice = 70
+Leg B-C bidPrice = 60
+Itinerary A-B-C proposed fare: 115
+Threshold = 70 + 60 = 130
+115 < 130 => Reject / close low RBDs
+If dynamic engine can adjust: raise fare to >=130 or suppress itinerary.</code></pre>
+
+      <h3>9.3 Married Segment Enforcement</h3>
+      <pre><code>Booking: A-B-C (group G123). Later passenger attempts change:
+  Remove B-C only.
+System:
+  Validate group G123: segment removal breaks marriage.
+  Reprice A-B alone -> A-B single-leg fare may be higher or closed.
+  If accepted: create new booking for A-B, retire group G123, charge difference.</code></pre>
+
+      <h2 id="dilution">10. Dilution & Protection Failures</h2>
+      <p><strong>Dilution:</strong> Selling a seat at a lower net contribution than an alternative expected demand would have provided. Drivers:</p>
+      <ul>
+        <li>Lag in applying tightened bid prices after demand spike.</li>
+        <li>Incorrect mapping of fare product to nest (misconfigured brand upgrade paths).</li>
+        <li>Married segment bypass via partial cancellations not revalidated.</li>
+      </ul>
+      <p><strong>Detection Metric:</strong> Post-hoc compare realized average yield per leg vs forecast conditional yield distribution; deviation beyond tolerance triggers recalibration or anomaly alert.</p>
+
+      <h2 id="integration-pricing">11. Interaction with Pricing & Shopping</h2>
+      <ul>
+        <li><strong>Availability First vs Joint Offer:</strong> Legacy flows price only itineraries with open RBDs. Modern offer engines evaluate willingness-to-pay + adjust price; availability becomes a gating constraint, not a discrete step.</li>
+        <li><strong>Synchronization:</strong> Pricing must treat availability snapshot as ephemeral: revalidate at commit to avoid oversell especially near departure (tight load factor).</li>
+        <li><strong>Class of Service vs Brand:</strong> Brand bundles may map multiple fare products to same RBD; open RBD but restrict brand if brand-level inventory logic (rare) or channel policy forbids.</li>
+      </ul>
+
+      <h2 id="caching">12. Caching & Distribution Considerations</h2>
+      <p><strong>Volatility:</strong> Availability changes frequently (bookings, cancellations, RM updates). Cache invalidation must be sub-minute for critical O&amp;Ds in peak booking horizon.</p>
+      <ul>
+        <li><strong>Key Design:</strong> Cache by (LegKey, ControlVersion) with TTL plus invalidation events (booking commit, cancellation, RM update).</li>
+        <li><strong>Negative Caching:</strong> Avoid heavy negative caching (closed classes) beyond very short TTL to prevent stale closures.</li>
+        <li><strong>Partial Warm:</strong> Pre-warm high traffic O&amp;Ds for next 24h departure windows; lazy load long-tail after first request.</li>
+      </ul>
+      <p><strong>Edge Strategy:</strong> For global distribution, replicate control artifacts (bid prices) to edge POPs; keep write path (booking commit) routed to central authority to perform atomic seat decrement and push diff events outward.</p>
+
+      <h2 id="failure-modes">13. Common Failure Modes & Diagnostics</h2>
+      <table class="table is-fullwidth">
+        <thead><tr><th>Failure</th><th>Symptom</th><th>Likely Root Cause</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>Phantom Availability</td><td>Itinerary appears bookable; fails at commit</td><td>Stale cache; marriage revalidation failure; race between hold and decrement</td><td>Short-lived availability tokens; commit-time host recheck</td></tr>
+          <tr><td>Dilution Spike</td><td>Yield per seat drops vs forecast band</td><td>Missed bid price update; mis-nesting after RM file ingest error</td><td>Automated control version completeness check & fallback</td></tr>
+          <tr><td>Oscillating Open/Close</td><td>Repeated class flicker within minutes</td><td>Un-smoothed bid price noise or demand forecast jitter</td><td>Smoothing algorithm; minimum hold window for state transitions</td></tr>
+          <tr><td>Married Segment Abuse</td><td>High-yield seats vanish w/ unusual cancellations</td><td>Missing integrity check on partial cancel</td><td>Trigger reprice workflow; audit logs & anomaly detection</td></tr>
+          <tr><td>Oversell (Above Target)</td><td>Leg load factor > planned oversell tolerance</td><td>Parallel booking race; control artifact lag > threshold</td><td>Atomic decrement service; sequence number gating</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="observability">14. Observability & KPIs</h2>
+      <ul>
+        <li><strong>Control Latency:</strong> Time from RM output generation → availability service adoption (p50/p95).</li>
+        <li><strong>Cache Staleness:</strong> Age distribution of inventory snapshots served.</li>
+        <li><strong>Flicker Rate:</strong> Count of open/close toggles per class per hour (threshold alert).</li>
+        <li><strong>Dilution Index:</strong> Realized yield / expected yield (weighted) by departure bucket (e.g., 0–7 days, 8–21 days).</li>
+        <li><strong>Commit Mismatch Rate:</strong> Proportion of search responses failing commit due to availability change.</li>
+        <li><strong>Married Integrity Violations:</strong> Attempted partial cancellation requiring reprice vs total bookings.</li>
+      </ul>
+
+      <h2 id="engineering-patterns">15. Engineering Patterns & Algorithms</h2>
+      <h3>15.1 Atomic Inventory Service</h3>
+      <pre><code>POST /reserve
+Body: { itineraryId, legSegments:[{legKey, rbd, seats:1}], requestId }
+Process:
+  1. Validate seatsRemaining >= requested for each leg+rbd
+  2. Decrement atomically (optimistic CAS with version)
+  3. Emit event INVENTORY_RESERVED {requestId, versionAfter}
+  4. TTL hold; confirm (ticket) or release</code></pre>
+      <h3>15.2 Bid Price Evaluation</h3>
+      <pre><code>function isOpen(itinerary, fareAmount, controlVersion):
+   threshold = sum(bidPrice[legKey])
+   return fareAmount >= threshold</code></pre>
+      <h3>15.3 Nest Resolution</h3>
+      <pre><code>function seatsOpenForClass(leg, class):
+  pl = cumulativeProtectionAbove(class)
+  return max(0, physicalSeats - pl)</code></pre>
+      <h3>15.4 Version Fencing</h3>
+      <p>Attach <code>controlVersionId</code> to availability result; booking commit must either accept if currentVersion == responseVersion OR re-evaluate if changed.</p>
+      <h3>15.5 State Smoothing</h3>
+      <pre><code>// Keep open state at least MIN_WINDOW unless severe threshold violation
+if (proposedState != currentState && timeSinceChange < MIN_WINDOW)
+   retain currentState
+else
+   apply proposedState</code></pre>
+
+      <h2 id="testing">16. Test Strategy & Synthetic Scenarios</h2>
+      <ul>
+        <li><strong>Determinism Suite:</strong> Same inputs (inventory snapshot + control version) must produce identical availability vector hash.</li>
+        <li><strong>Race Simulation:</strong> Concurrent holds over final seats ensure exactly one success; others fail gracefully.</li>
+        <li><strong>Bid Price Boundary:</strong> Fare exactly equal to threshold accepted; just below rejected (off-by-one guard).</li>
+        <li><strong>Married Segment Break:</strong> Remove subset segment; verify reprice call mandatory.</li>
+        <li><strong>Forecast Shock:</strong> Inject demand spike; ensure control adoption time within SLA.</li>
+        <li><strong>Nesting Remap:</strong> Change fare→nest mapping mid-day; confirm snapshot isolation (old searches not misinterpreted).</li>
+      </ul>
+
+      <h2 id="modernization">17. Modernization Toward Offers & Orders</h2>
+      <p>As the industry migrates to offers & orders, availability logic moves closer to dynamic offer construction:</p>
+      <ul>
+        <li><strong>Offer Eligibility Service:</strong> Instead of publishing raw RBD counts, provide an API that evaluates itinerary + desired product attributes → decision (ACCEPT with price range / REJECT).</li>
+        <li><strong>Continuous Pricing Integration:</strong> After availability gating, algorithm produces a context-adjusted price anchored by displacement cost; record <code>anchorThreshold</code> (sum bid prices) and <code>marginAdd</code>.</li>
+        <li><strong>Servicing Continuity:</strong> Orders store both accepted threshold and inventory version so changes can be evaluated against historical context.</li>
+        <li><strong>Interline / Alliance:</strong> Transitional phase requires exposing classical RBD indicators for partners still on legacy messaging while internally using higher-resolution controls.</li>
+      </ul>
+
+      <h2 id="checklist">18. Implementation Checklist</h2>
+      <ul>
+        <li>Define canonical LegKey and InventorySnapshot versioning.</li>
+        <li>Implement both protection-level and bid price evaluation paths (feature flag) for incremental rollout.</li>
+        <li>Store immutable mapping of fareProduct → nestId per controlVersion.</li>
+        <li>Ensure atomic decrement API with idempotency key (requestId).</li>
+        <li>Attach controlVersionId & inventoryVersion to every availability response.</li>
+        <li>Provide trace object: itinerary, decision path, thresholds, timing.</li>
+        <li>Smoothing layer to reduce oscillation; telemetry of flicker rate.</li>
+        <li>Married segment integrity endpoint for pre-ticket, reissue, cancel flows.</li>
+        <li>Alerting on dilution index deviation and commit mismatch rate.</li>
+        <li>Chaos test: delayed RM feed ingestion → verify fallback to last stable version.</li>
+        <li>Security: rate limit reservation/hold operations to prevent seat denial attacks.</li>
+      </ul>
+
+      <h2 id="glossary">19. Mini Glossary</h2>
+      <ul>
+        <li><strong>O&amp;D Control:</strong> Managing availability using network displacement value rather than independent leg controls.</li>
+        <li><strong>Nesting:</strong> Hierarchical allocation of seats to fare classes via protection levels.</li>
+        <li><strong>Bid Price:</strong> Shadow value threshold used to accept or reject an itinerary sale.</li>
+        <li><strong>Displacement Cost:</strong> Lost expected future revenue from selling a seat now.</li>
+        <li><strong>Married Segments:</strong> Binding of multiple flight segments requiring joint handling.</li>
+        <li><strong>Dilution:</strong> Revenue loss from selling below displacement-optimal level.</li>
+        <li><strong>Protection Level:</strong> Quantity of seats reserved for higher-value demand segments.</li>
+      </ul>
+
+      <h2 id="sources">20. Sources & Further Reading</h2>
+      <p>Conceptual, non-proprietary references used for framing (specific proprietary algorithms and data feeds intentionally not reproduced):</p>
+      <ul>
+        <li>Academic literature on airline network revenue management (bid price control, EMSR variants).</li>
+        <li>Public conference presentations (AGIFORS, PODS) discussing O&amp;D control adoption challenges.</li>
+        <li>Industry articles on married segment logic & inventory integrity.</li>
+        <li>Open explanations of seat inventory nesting and demand forecasting principles.</li>
+      </ul>
+      <p class="mini-caption">Consult licensed RM vendor / airline internal documentation for proprietary parameterization and optimization formulations.</p>
+
+      <h2 id="disclaimer">21. Disclaimer</h2>
+      <div class="callout warning">
+        This article outlines widely understood industry concepts for engineering enablement. It deliberately omits proprietary RM vendor algorithms, optimization coefficients, and confidential data schemas. Validate all implementation details against your airline’s contractual RM system documentation, regulatory obligations (consumer disclosure, competition law), and internal revenue accounting policies.
+      </div>
+
       <hr/>
-      <nav class="level">
+      <nav class="level section-nav">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-02-27-atpco-fare-filing:-fares,-rules-and-footnotes-in-practice.html">← Previous</a>
         </div>
