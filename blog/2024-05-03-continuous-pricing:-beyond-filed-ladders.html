@@ -1,61 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Continuous Pricing: Beyond Filed Ladders</title>
-  <meta name="description" content="Continuous Pricing: Beyond Filed Ladders — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:title" content="Continuous Pricing: Beyond Filed Ladders"/>
-  <meta property="og:description" content="Continuous Pricing: Beyond Filed Ladders — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:type" content="article"/>
-  <meta property="og:image" content="/blog/images/blog-6.jpg"/>
-  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-  <style>
-    .hero-banner { background: url('/blog/images/blog-6.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Continuous Pricing: Beyond Filed Ladders</title>
+<meta name="description" content="Practical guide to legacy filed fares vs dynamic vs continuous pricing, ATPCO context, transition roadmap to Offer/Order, RBD‑less future, revenue accounting, settlement, interline, and implementation checklist."/>
+<meta property="og:title" content="Continuous Pricing: Beyond Filed Ladders"/>
+<meta property="og:description" content="From fare ladders to continuous pricing: definitions, ATPCO constructs, hybrid phase design, RBD-less future, revenue accounting, settlement and interline considerations."/>
+<meta property="og:type" content="article"/>
+<meta property="og:image" content="/blog/images/blog-6.jpg"/>
+<meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+<style>
+:root {
+  --c-bg:#0d1b2a;
+  --c-overlay-top:rgba(13,27,42,.82);
+  --c-overlay-bottom:rgba(13,27,42,.55);
+  --c-accent:#3298dc;
+  --c-border:#2d445a;
+  --c-soft:#153149;
+  --c-soft2:#1d405c;
+}
+.hero-banner { background:url('/blog/images/blog-6.jpg') center/cover no-repeat; }
+.overlay { background:linear-gradient(180deg,var(--c-overlay-top),var(--c-overlay-bottom)); }
+.home-btn { position:sticky; top:0; display:inline-block; margin:.5rem 0 1rem; }
+.content p { line-height:1.75; }
+.toc-box { background:#102435; border:1px solid var(--c-border); padding:1rem 1.25rem; border-radius:10px; font-size:.9rem; }
+pre { background:#0f2435; color:#e8f0f7; padding:1rem; border-radius:6px; overflow:auto; font-size:.8rem; }
+code { background:#132f45; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
+blockquote { border-left:4px solid var(--c-accent); background:#102c43; padding:1rem 1.2rem; border-radius:6px; }
+.tag-badge { display:inline-block; background:#173146; color:#9fb3c5; padding:.25rem .55rem; margin:.15rem .25rem .15rem 0; border-radius:6px; font-size:.65rem; letter-spacing:.55px; text-transform:uppercase; }
+.callout { border:1px solid var(--c-border); background:#102c43; padding:1rem 1.25rem; border-radius:10px; margin:1.5rem 0; }
+.callout.warning { border-color:#d89614; background:#3a2d01; }
+.callout.success { border-color:#2f9e44; background:#0f2d1f; }
+.inline-table { border-collapse:collapse; width:100%; font-size:.85rem; margin:1rem 0; }
+.inline-table th, .inline-table td { border:1px solid #28415a; padding:.55rem .6rem; vertical-align:top; }
+.inline-table thead { background:#132d44; }
+.diagram { background:#0f2435; border:1px solid #1e3950; padding:1rem; border-radius:8px; font-size:.72rem; line-height:1.3; overflow:auto; }
+.mini { font-size:.7rem; letter-spacing:.5px; text-transform:uppercase; opacity:.7; }
+.section-nav { margin-top:3rem; }
+.highlight { color:#ffd166; }
+.kpi-badge { background:#24405a; padding:.25rem .5rem; border-radius:4px; font-size:.65rem; letter-spacing:.5px; }
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Article",
+  "headline":"Continuous Pricing: Beyond Filed Ladders",
+  "datePublished":"2024-05-03",
+  "dateModified":"2024-05-03",
+  "author":{"@type":"Person","name":"Modern Airline Retailing"},
+  "image":"https://www.modernairlineretailing.com/blog/images/blog-6.jpg",
+  "keywords":"continuous pricing,dynamic pricing,legacy fare ladders,ATPCO,airline retailing,RBD-less,Offer and Order,ONE Order,transition roadmap",
+  "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+}
+</script>
 </head>
 <body>
-  <section class="hero is-medium hero-banner">
-    <div class="hero-body overlay">
-      <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Continuous Pricing: Beyond Filed Ladders</h1>
-        <p class="subtitle has-text-white">May 03, 2024</p>
+<section class="hero is-medium hero-banner">
+  <div class="hero-body overlay">
+    <div class="container">
+      <a class="button is-light home-btn" href="/index.html">Home</a>
+      <h1 class="title has-text-white">Continuous Pricing: Beyond Filed Ladders</h1>
+      <p class="subtitle has-text-white">May 03, 2024 • ~28 min read</p>
+      <div>
+        <span class="tag-badge">Pricing</span>
+        <span class="tag-badge">Retailing</span>
+        <span class="tag-badge">ATPCO</span>
+        <span class="tag-badge">Offer &amp; Order</span>
+        <span class="tag-badge">Strategy</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container content">
-      <p>If you ever wondered why a single letter in an availability display can move revenue, this one is for you. Continuous Pricing: Beyond Filed Ladders sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
-      <nav class="level">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          <a class="button is-link" href="/blog/2024-05-25-offer-construction:-pricers,-bundlers-and-context.html">Next →</a>
-        </div>
-      </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
+<section class="section">
+  <div class="container content">
+
+    <div class="toc-box">
+      <strong>Contents</strong>
+      <ol style="margin-top:.6rem;">
+        <li><a href="#executive">Executive Summary & Plain Definitions</a></li>
+        <li><a href="#comparison">Legacy vs Dynamic vs Continuous: Comparison Table</a></li>
+        <li><a href="#why">Why Move Beyond Filed Ladders</a></li>
+        <li><a href="#atpco">ATPCO Context & Constructs</a></li>
+        <li><a href="#architecture">Reference Architecture Layers</a></li>
+        <li><a href="#diagrams">Conceptual Diagrams</a></li>
+        <li><a href="#maturity">Maturity Ladder & Transition Phases</a></li>
+        <li><a href="#roadmap">Transition Roadmap (12–36 Months)</a></li>
+        <li><a href="#hybrid">Operating in the Hybrid (Interim) World</a></li>
+        <li><a href="#rbdless">Path to an RBD‑less / Attribute World</a></li>
+        <li><a href="#revacct">Revenue Accounting & Settlement Evolution</a></li>
+        <li><a href="#interline">Interline & Alliance Implications</a></li>
+        <li><a href="#systems">Example System Capability Categories</a></li>
+        <li><a href="#data">Data, Governance & Controls</a></li>
+        <li><a href="#kpi">Key KPIs & Observability</a></li>
+        <li><a href="#risks">Risks & Mitigations</a></li>
+        <li><a href="#glossary">Plain-Language Glossary</a></li>
+        <li><a href="#checklist">Implementation Checklist</a></li>
+        <li><a href="#references">References & Disclaimers</a></li>
+      </ol>
     </div>
-  </section>
+
+    <h2 id="executive">1. Executive Summary & Plain Definitions</h2>
+    <p>This article demystifies three pricing regimes as airlines modernize toward Offer &amp; Order (IATA NDC + ONE Order) while integrating ATPCO fare filing infrastructure and emerging continuous pricing capabilities.</p>
+    <h3>Plain Definitions (Simplified)</h3>
+    <ul>
+      <li><strong>Legacy Filed Fare Ladder:</strong> Discrete price points (e.g. Y, B, M, H, Q, K, L, T) each with a published base fare, rules, and booking code (RBD). Systems choose the lowest open booking class whose rules fit.</li>
+      <li><strong>Dynamic Pricing (Discrete Adjustments):</strong> Injecting controlled adjustments (discounts / mark-ups / virtual classes) around existing filed fares. Still anchored to the nearest filed base; produces a “denser” but finite ladder.</li>
+      <li><strong>Continuous Pricing:</strong> Generating (or selecting) any price within an allowed continuum inside revenue guardrails, not limited to the original ladder steps. Return of price is contextual (channel, customer attributes, demand state) and tokenized as an Offer.</li>
+      <li><strong>RBD-less (Attribute-Based) Retailing:</strong> Seat and product availability expressed through attributes & capacity tokens rather than the single-letter booking class driving price.</li>
+    </ul>
+    <blockquote><strong>Core Shift:</strong> From selling pre-published “buckets” to calculating / composing contextual offers while preserving auditability for accounting, settlement, tax, and interline.</blockquote>
+
+    <h2 id="comparison">2. Legacy vs Dynamic vs Continuous: Comparison Table</h2>
+    <table class="inline-table">
+      <thead><tr><th>Dimension</th><th>Legacy Filed Ladder</th><th>Dynamic (Discrete)</th><th>Continuous</th></tr></thead>
+      <tbody>
+        <tr><td>Price Points</td><td>Dozens per O&D/date</td><td>Hundreds (filed + virtual/adjusted)</td><td>Theoretically many (bounded continuum)</td></tr>
+        <tr><td>Anchor</td><td>Filed base fare in ATPCO</td><td>Filed fare + rule-based adjustment</td><td>Model output (bid price / willingness curve)</td></tr>
+        <tr><td>Mechanism</td><td>Class availability + pricing engine</td><td>Dynamic class creation or discount codes</td><td>Offer generation service with guardrails</td></tr>
+        <tr><td>Control Levers</td><td>RBD protection levels</td><td>RBD + adjustment rules</td><td>Bid price / elasticity / product feature bundling</td></tr>
+        <tr><td>Interline Friendliness</td><td>High (common constructs)</td><td>Moderate (needs mapping)</td><td>Low–Moderate (requires token translation)</td></tr>
+        <tr><td>Channel Consistency Risk</td><td>Low</td><td>Medium</td><td>Higher (needs strict governance)</td></tr>
+        <tr><td>Revenue Optimization Potential</td><td>Baseline</td><td>Incremental uplift</td><td>Highest (granularity + personalization)</td></tr>
+        <tr><td>Complexity & Cost</td><td>Legacy sunk cost</td><td>Moderate</td><td>High (tech + process + governance)</td></tr>
+        <tr><td>Audit & Settlement Ease</td><td>Established</td><td>Needs augmentation</td><td>Requires Offer → Accounting mapping layer</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="why">3. Why Move Beyond Filed Ladders</h2>
+    <ul>
+      <li>Reduce <em>distance between optimal bid price and nearest filed fare</em> (less revenue left “between rungs”).</li>
+      <li>Enable customer-centric product & upsell packaging beyond single-letter classes.</li>
+      <li>Support personalized ancillaries (seat, bag, lounge) in one price expression.</li>
+      <li>Compete with LCC algorithmic repricing and OTA merchandising experimentation.</li>
+      <li>Prepare for attribute-based distribution (Offer & Order) where RBD is not the primary retail concept.</li>
+    </ul>
+
+    <h2 id="atpco">4. ATPCO Context & Constructs (Publicly Known Functions)</h2>
+    <p><strong>ATPCO</strong> provides the industry infrastructure for fare filing (base fares, rules categories, footnotes, routing, surcharges, taxes, branded fares, optional services, rich content). Dynamic and continuous pricing must respect or translate:</p>
+    <ul>
+      <li><strong>Base Fares & Rule Categories:</strong> Still define legal combinability, advance purchase, change/refund penalties.</li>
+      <li><strong>Branded Fares (Product Catalog):</strong> Offer structure (Brand Y, Brand Flex, etc.). Dynamic pricing may adjust within brand value boundaries.</li>
+      <li><strong>Optional Services / SSR/EMD Mapping:</strong> For ancillaries, continuous pricing can incorporate or discount bundles; still needs correct EMD and tax application.</li>
+      <li><strong>Data Distribution (Fares, RBD Mappings):</strong> Downstream pricing engines ingest ATPCO feeds; continuous layer must track versions to retain audit trails.</li>
+      <li><strong>Governance:</strong> Even in continuous pricing, compliance (e.g., display parity rules, tax calculation) relies on consistent reference to filed constructs.</li>
+    </ul>
+    <div class="callout">
+      Validation Step: Engage ATPCO solution / product experts to confirm permissible adjustment ranges and ensure no misuse of constructs (placeholder: “Confirm with ATPCO”).
+    </div>
+
+    <h2 id="architecture">5. Reference Architecture Layers</h2>
+    <ol>
+      <li><strong>Demand Intelligence:</strong> Forecasts, elasticity curves, bid prices.</li>
+      <li><strong>Control Layer:</strong> Legacy RM (nesting, O&amp;D optimization) + dynamic price optimizer.</li>
+      <li><strong>Offer Construction:</strong> Combines seat/brand/ancillary attributes; chooses or computes price.</li>
+      <li><strong>Regulatory & Policy Guardrails:</strong> Taxes, surcharges, minimum / maximum price, parity constraints.</li>
+      <li><strong>Offer Cache / Distribution:</strong> NDC API, direct channels, (optionally) controlled caching.</li>
+      <li><strong>Order Management:</strong> Pure order record or hybrid ticket+order mapping.</li>
+      <li><strong>Settlement & Accounting Adapter:</strong> Maps Offer Items to legacy coupon / EMD or order-based clearing.</li>
+      <li><strong>Analytics & Governance:</strong> Price realization vs model; leakage & audit logs.</li>
+    </ol>
+
+    <h2 id="diagrams">6. Conceptual Diagrams</h2>
+    <div class="diagram" aria-label="Price granularity diagram">
+Price Granularity Evolution
+-------------------------------------------------
+Legacy Ladder:      |Y|  |B|   |M|    |H|    |Q|
+Price Axis ($) -----^----^-----^------^-----^---
+Lost Revenue Zones = gaps between filed points
+
+Dynamic (Discrete): |Y| |Y1| |B| |B1| |M| |M1|
+Smaller gaps, still step function
+
+Continuous:  Smooth curve aligned to demand model
+             ^ chosen contextual price (tokenized)
+    </div>
+
+    <div class="diagram" aria-label="Hybrid architecture">
+Hybrid Pricing Architecture (Simplified Flow)
+-----------------------------------------------------------------
+Search Request
+   -> Offer Engine
+       -> Demand Model (real-time bid price)
+       -> Policy Guardrails (min/max, parity)
+       -> ATPCO Reference (rules, brand attributes)
+       -> Dynamic Adjuster (±% around anchor)
+       -> Price Continuum Resolver (select final)
+   <- Offer (price + components + provenance token)
+Commit
+   -> Validate token (versions, guardrails)
+   -> Create Order (or Order + Ticket mapping)
+   -> Revenue Accounting Adapter (coupon or virtual)
+    </div>
+
+    <div class="diagram" aria-label="Transition maturity ladder">
+Maturity Ladder
+-----------------------------------------------------------------
+Level 0: Static filed ladder only
+Level 1: Virtual buckets (pre-filed micro-fares)
+Level 2: Rule-based discounts/mark-ups (dynamic discrete)
+Level 3: Demand-model guided selection inside pre-defined band
+Level 4: Continuous price generation + real-time bundling
+Level 5: Attribute/RBD-less offers + order-native settlement
+    </div>
+
+    <h2 id="maturity">7. Maturity Ladder & Transition Phases</h2>
+    <p>Each maturity level adds controlled complexity. Avoid skipping levels unless you have high data quality & governance capacity.</p>
+    <ul>
+      <li><strong>L0 → L1:</strong> Add sub-ladders (virtual buckets) to reduce price gaps without altering core accounting.</li>
+      <li><strong>L1 → L2:</strong> Introduce real-time conditional adjustments (load factor, booking window) with strict audit logs.</li>
+      <li><strong>L2 → L3:</strong> Incorporate bid price / elasticity signals to choose best available discrete point inside an allowed range.</li>
+      <li><strong>L3 → L4:</strong> Enable interpolation/extrapolation to generate intermediate prices; introduce Offer tokenization referencing guardrail set.</li>
+      <li><strong>L4 → L5:</strong> De-couple price from RBD; product attributes drive bundles; settlement moves to Order-centric with virtual coupon layer.</li>
+    </ul>
+
+    <h2 id="roadmap">8. Transition Roadmap (Indicative 12–36 Months)</h2>
+    <ol>
+      <li><strong>Months 0–3 Discovery:</strong> Inventory current fare constructs, identify average fare gap to bid price, data quality assessment (no-op changes for baseline).</li>
+      <li><strong>Months 4–6 Foundation:</strong> Implement provenance tagging (controlVersion, pricingStrategyId). Add virtual buckets for top 20 O&amp;Ds.</li>
+      <li><strong>Months 7–12 Dynamic Discrete Rollout:</strong> Launch rule-governed adjustments (±X%) with monitoring of realized uplift vs control groups.</li>
+      <li><strong>Months 13–18 Model Integration:</strong> Integrate bid price service; enforce guardrail corridor (min filed, max willingness). Introduce Offer tokens in NDC responses.</li>
+      <li><strong>Months 19–24 Continuous Engine Pilot:</strong> Interpolate intermediate price; restrict distribution to selected channels (web, mobile). AB test churn effects.</li>
+      <li><strong>Months 25–30 Attribute Expansion:</strong> Begin RBD decoupling: product features enumerated; create mapping service (RBD ↔ attribute set).</li>
+      <li><strong>Months 31–36 Order-Native Settlement Pilot:</strong> Generate virtual coupons for accounting; partial RBD suppression in direct channel; refine interline fallback strategy.</li>
+    </ol>
+    <div class="callout success">
+      Tip: Maintain a rollback lever at each phase (feature flag toggling dynamic layer off while preserving baseline filed fare availability).
+    </div>
+
+    <h2 id="hybrid">9. Operating in the Hybrid (Interim) World</h2>
+    <p>During transition you will run dual logic:</p>
+    <ul>
+      <li><strong>Dual Price Expressions:</strong> Offer includes (a) computed price, (b) nearest filed anchor + variance.</li>
+      <li><strong>Fallback Path:</strong> If commit validation fails (stale model), system reverts to nearest permitted discrete price or re-quotes with user transparency.</li>
+      <li><strong>Channel Segmentation:</strong> Start continuous pricing only on direct + NDC partners able to consume tokens; keep EDIFACT/GDS on improved discrete ladder.</li>
+      <li><strong>Monitoring:</strong> Divergence windows between model recommended and realized sale tracked as lost optimization metric.</li>
+    </ul>
+
+    <h2 id="rbdless">10. Path to an RBD‑less / Attribute World</h2>
+    <ol>
+      <li><strong>Attribute Catalog Build:</strong> Define features (refundability, change flexibility, seat pitch, bag allowance, priority services).</li>
+      <li><strong>Mapping Layer:</strong> RBD → AttributeSetId for legacy compatibility. Persist version.</li>
+      <li><strong>Offer Construction API:</strong> Accept requested attributes; compute price independent of discrete class letter.</li>
+      <li><strong>Capacity Tokens:</strong> Replace RBD open/close with attribute capacity pool (e.g., Flex Seats remaining).</li>
+      <li><strong>Progressive De-emphasis:</strong> Hide RBD from consumer UX; maintain internally until interline fully supports attribute semantics.</li>
+      <li><strong>Decommission RBD for Direct:</strong> Once auditing & settlement operate on attributes + Order Items reliably, remove RBD gating for direct channels first.</li>
+    </ol>
+
+    <h2 id="revacct">11. Revenue Accounting & Settlement Evolution</h2>
+    <p><strong>Today:</strong> Ticket coupons + EMDs feed revenue accounting and proration (interline). <strong>Challenge:</strong> Continuous prices may not map 1:1 to pre-filed base+adjust taxes if expressed as net + markup.</p>
+    <h3>Interim Approach</h3>
+    <ul>
+      <li>Generate a <code>Virtual Fare Basis</code> referencing anchor filed fare + adjustment code.</li>
+      <li>Store <code>Price Decomposition</code>: base anchor, adjustment amount, ancillary components, tax tables version.</li>
+      <li>Issue standard e-ticket / EMD with auxiliary fields referencing OfferId for traceability.</li>
+    </ul>
+    <h3>Order-Native (Target)</h3>
+    <ul>
+      <li>Order Item lines itemize each priced component (seat bundle, ancillary, dynamic adjustment).</li>
+      <li>Revenue recognition uses Order ledger (no coupon) with standardized attribute taxonomy.</li>
+      <li>Settlement (BSP/ARC) still requires bridging: produce a clearing record mapping Order Items → pseudo coupon until industry clearing house accepts pure orders.</li>
+    </ul>
+    <p><strong>Accounting Controls:</strong> Reconstruct “what would filed fare have been” for auditing tax and surcharge compliance. Differences logged for audit team.</p>
+
+    <h2 id="interline">12. Interline & Alliance Implications</h2>
+    <p><strong>Problem:</strong> Partner still expects RBD + filed fare. Your continuous price must interoperate.</p>
+    <ul>
+      <li><strong>Near Term:</strong> Use anchor filed fare for prorate, allocate adjustment proportionally across sectors (distance or revenue share weighting).</li>
+      <li><strong>Token Passing:</strong> Include <code>OfferContextToken</code> in interline request; if partner cannot consume it, revert to discrete anchor.</li>
+      <li><strong>Proration:</strong> Maintain legacy proration engine; feed it synthetic coupon values consistent with sum of sector splits.</li>
+      <li><strong>Future:</strong> Order-based interline settlement service (industry initiative) accepts full component price lines; no need to compress into RBD-based fare basis codes.</li>
+    </ul>
+    <div class="callout">
+      Mitigation: Flag risk of value leakage if partner forces rounding up/down to ladder steps—monitor proration variance vs intended continuous distribution.
+    </div>
+
+    <h2 id="systems">13. Example System Capability Categories (Illustrative)</h2>
+    <p>(Vendor names are examples of publicly known categories; validate fit & roadmap directly with providers.)</p>
+    <ul>
+      <li><strong>Fare Filing & Reference:</strong> ATPCO platforms (fare, rules, branded fares, optional services, rich content).</li>
+      <li><strong>Revenue Management / Optimization Engines:</strong> Network O&amp;D optimizers (e.g., PROS RM, Accelya, Amadeus, Sabre RM suites) producing bid prices / protection levels.</li>
+      <li><strong>Dynamic / Continuous Price Engines:</strong> Modules layered on RM (e.g., PROS Dynamic Pricing, Accelya FLX, Amadeus Altéa Dynamic Pricing, Sabre solutions) or in-house microservices.</li>
+      <li><strong>Offer Construction / NDC APIs:</strong> Airline-built or platform (Offer/Order management layer from PSS or specialized vendor).</li>
+      <li><strong>Order Management & Accounting Adapters:</strong> ONE Order pilots, middleware mapping offers to ticket/EMD or direct order ledger.</li>
+      <li><strong>Analytics & Experimentation:</strong> A/B frameworks, price realization dashboards, anomaly detection for guardrail breaches.</li>
+    </ul>
+    <div class="callout warning">
+      Disclaimer: Capability names are generic; confirm current feature support (continuous interpolation, tokenization, attribute mapping) with each vendor—roadmaps evolve.
+    </div>
+
+    <h2 id="data">14. Data, Governance & Controls</h2>
+    <ul>
+      <li><strong>Provenance Envelope:</strong> Each Offer includes: pricingMethod (FILED|DYNAMIC|CONTINUOUS), anchorFareId, adjustmentType, modelVersion, guardrailId, taxTableVersion.</li>
+      <li><strong>Guardrail Service:</strong> Central rules: minMargin, maxDiscount%, price parity (channel A vs B), tax compliance.</li>
+      <li><strong>Explainability:</strong> Log feature influences (e.g., loadFactor=78→+4%, advancePurchase=21d→baseline).</li>
+      <li><strong>Fairness / Compliance:</strong> Explicit exclusion lists to prevent unintended discrimination (avoid using protected attributes / proxies).</li>
+      <li><strong>Model Lifecycle Mgmt:</strong> Version, canary release, rollback, drift detection (monitor realized vs predicted conversion uplift).</li>
+    </ul>
+
+    <h2 id="kpi">15. Key KPIs & Observability</h2>
+    <ul>
+      <li><span class="kpi-badge">Price Gap Reduction</span> (avg absolute difference between optimal bid price and sold price).</li>
+      <li><span class="kpi-badge">Uplift vs Control</span> (revenue per seat vs legacy ladder cohort).</li>
+      <li><span class="kpi-badge">Guardrail Breach Rate</span> (# offers rejected at commit / total).</li>
+      <li><span class="kpi-badge">Offer->Order Reprice Rate</span> (should trend downward with stability).</li>
+      <li><span class="kpi-badge">Interline Rounding Loss</span> (difference between sold continuous price and interline accepted sum).</li>
+      <li><span class="kpi-badge">Model Drift</span> (prediction error of conversion uplift vs actual).</li>
+      <li><span class="kpi-badge">Attribute Coverage</span> (% of direct offers constructed without RBD dependency).</li>
+    </ul>
+
+    <h2 id="risks">16. Risks & Mitigations</h2>
+    <table class="inline-table">
+      <thead><tr><th>Risk</th><th>Description</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Channel Disparity</td><td>Consumer confusion / regulatory scrutiny</td><td>Parity guardrails + reason codes</td></tr>
+        <tr><td>Model Overfitting</td><td>Unstable prices harming trust</td><td>Out-of-sample tests, dampening factor</td></tr>
+        <tr><td>Accounting Complexity</td><td>Delayed close & audit issues</td><td>Virtual fare basis mapping + reconciliation job</td></tr>
+        <tr><td>Interline Rejections</td><td>Continuous price not accepted</td><td>Fallback anchor price handshake</td></tr>
+        <tr><td>Tax Miscalculation</td><td>Edge discount breaks tax rules</td><td>Central tax engine mandatory invocation</td></tr>
+        <tr><td>Latency Inflation</td><td>More compute per request</td><td>Async pre-compute bands + cache safe corridor</td></tr>
+        <tr><td>Governance Drift</td><td>Multiple unaligned pricing algorithms</td><td>Single pricing policy registry</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="glossary">17. Plain-Language Glossary</h2>
+    <ul>
+      <li><strong>Filed Fare:</strong> Official price with rules published to industry (via ATPCO).</li>
+      <li><strong>Fare Ladder:</strong> Ordered list of discrete filed prices for the same journey.</li>
+      <li><strong>RBD (Reservation Booking Designator):</strong> One-letter code controlling seat inventory and pricing bucket.</li>
+      <li><strong>Dynamic Pricing (Discrete):</strong> Adjusting to more granular steps still tied to filed anchors.</li>
+      <li><strong>Continuous Pricing:</strong> Selecting any price in a model-authorized range, not just a pre-filed step.</li>
+      <li><strong>Bid Price:</strong> Minimum acceptable revenue for a seat given network demand forecasts.</li>
+      <li><strong>Guardrail:</strong> Rule preventing a price from falling outside safe or compliant bounds.</li>
+      <li><strong>Offer:</strong> A time-bound proposal with price + product attributes (before commitment).</li>
+      <li><strong>Order:</strong> Record of customer entitlement replacing ticket + PNR concept.</li>
+      <li><strong>RBD-less:</strong> Retail model not relying on booking class letters for price determination.</li>
+      <li><strong>Virtual Coupon:</strong> Transitional artifact linking order items to legacy accounting.</li>
+      <li><strong>Proration:</strong> Splitting revenue of a multi-carrier journey among participants.</li>
+    </ul>
+
+    <h2 id="checklist">18. Implementation Checklist</h2>
+    <ul>
+      <li>Baseline price gap analysis vs bid price.</li>
+      <li>Define guardrail corridor (min/max vs anchor fare).</li>
+      <li>Implement Offer provenance (pricingMethod, modelVersion).</li>
+      <li>Virtual fare basis mapping service (anchor + adjustment).</li>
+      <li>Token validation at commit (reprice if expired).</li>
+      <li>Monitoring dashboard: guardrail breaches, uplift, reprice rate.</li>
+      <li>Interline fallback logic (continuous → anchor negotiation).</li>
+      <li>Attribute catalog & RBD mapping version control.</li>
+      <li>Model experimentation harness & rollback switch.</li>
+      <li>Accounting reconstruction service (audit: filed vs sold).</li>
+      <li>Tax engine integration validated for discount scenarios.</li>
+      <li>Risk log with owner & mitigation status reviewed monthly.</li>
+    </ul>
+
+    <h2 id="references">19. References & Disclaimers</h2>
+    <ul>
+      <li>ATPCO public materials on fare filing, branded fares, optional services (consult official ATPCO documentation for authoritative definitions).</li>
+      <li>IATA NDC & ONE Order high-level industry publications.</li>
+      <li>Public conference presentations (AGIFORS, T2RL, PODS) discussing dynamic / continuous pricing concepts.</li>
+      <li>Vendor whitepapers (PROS, Accelya, Amadeus, Sabre) describing dynamic pricing approaches (verify current state directly).</li>
+      <li>Industry articles on attribute-based retailing and RBD de-emphasis.</li>
+    </ul>
+    <div class="callout warning">
+      Disclaimer: This article synthesizes publicly known concepts and general engineering patterns. It does not include proprietary algorithms, confidential ATPCO data, or vendor-specific implementation secrets. “Dynamic” and “Continuous” definitions vary; confirm alignment with ATPCO and internal legal/compliance before execution. Placeholder steps marked “confirm with ATPCO” require direct validation.
+    </div>
+    <p class="mini">Trademarks belong to their respective owners. No endorsement implied.</p>
+
+    <hr/>
+    <nav class="level section-nav">
+      <div class="level-left">
+        <a class="button is-link is-light" href="/blog/2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability.html">← Previous</a>
+      </div>
+      <div class="level-right">
+        <a class="button is-link" href="/blog/2024-05-25-offer-construction:-pricers,-bundlers-and-context.html">Next →</a>
+      </div>
+    </nav>
+    <p><a href="/blog/index.html">Back to all blogs</a></p>
+
+  </div>
+</section>
+
 </body>
 </html>
