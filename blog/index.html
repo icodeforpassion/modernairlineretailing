@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -192,6 +191,21 @@
       border:1px solid rgba(255,255,255,.18);
       backdrop-filter: blur(6px);
     }
+    .img-badge{
+      position:absolute;
+      top:.7rem;
+      right:.7rem;
+      background:rgba(13,27,42,.72);
+      color:#fff;
+      font-size:.6rem;
+      padding:.35rem .55rem;
+      border-radius:.55rem;
+      border:1px solid rgba(255,255,255,.18);
+      letter-spacing:.5px;
+      font-weight:600;
+      text-transform:uppercase;
+      backdrop-filter:blur(6px);
+    }
     .card-body {
       padding:1.05rem 1.15rem 1.15rem;
       display:flex;
@@ -288,7 +302,6 @@
       <p class="hero-sub">
         Deep dives and practical guides across airline retailing: pricing, offers & orders, merchandising, disruption, identity, telemetry, payments, and more. Explore the evolution from legacy control to modern, data‑driven retail platforms.
       </p>
-      <!-- Hero image placeholder (swap the URL above OR show a separate decorative figure) -->
       <figure class="hero-figure" aria-hidden="true">
         <img src="https://images.unsplash.com/photo-1514454529242-9e4677563e7a?auto=format&fit=crop&w=800&q=60" alt="">
       </figure>
@@ -313,6 +326,17 @@
             </select>
           </div>
         </div>
+        <!-- Optional image mode selector -->
+        <div class="toolbar-group">
+          <label for="imgMode">Images</label>
+          <div class="select">
+            <select id="imgMode" aria-label="Random image mode">
+              <option value="sticky">Sticky</option>
+              <option value="always">Re-roll</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+        </div>
         <div class="toolbar-group">
           <label>&nbsp;</label>
           <button id="clearFilters" class="clear-btn" type="button">Reset Filters</button>
@@ -332,7 +356,9 @@
   </footer>
 
   <script>
-    // Data (static). If you later generate this, you can output JSON directly.
+    // ----------------------------------------------
+    // POSTS (static list; replace with fetch if needed)
+    // ----------------------------------------------
     const posts = [
       { date:'2025-06-25', title:'The 2025 Roadmap: Capabilities to Prioritize Now', slug:'2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now' },
       { date:'2025-06-03', title:'Retail KPIs: Measuring What Matters', slug:'2025-06-03-retail-kpis:-measuring-what-matters' },
@@ -361,37 +387,106 @@
       { date:'2024-01-15', title:'Early RBD Revenue Management: How Booking Classes Shaped Control', slug:'2024-01-15-early-rbd-revenue-management:-how-booking-classes-shaped-control' }
     ].map(p => ({ ...p, url: p.slug + '.html' }));
 
-    // Simple excerpt heuristic
+    // ----------------------------------------------
+    // RANDOM IMAGE SYSTEM
+    // ----------------------------------------------
+    // Modes: 'sticky' (deterministic per slug), 'always' (re-roll each render), 'off' (no random; fallback placeholder)
+    let CURRENT_IMAGE_MODE = 'sticky';
+
+    // Curated Unsplash pool (can swap to local images later)
+    const IMAGE_POOL = [
+      { url:'https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=900&q=60', alt:'Aircraft banking in clear sky' },
+      { url:'https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&w=900&q=60', alt:'Storm clouds from airplane window' },
+      { url:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=60', alt:'Abstract roadmap lines' },
+      { url:'https://images.unsplash.com/photo-1517142089942-ba376ce32a0b?auto=format&fit=crop&w=900&q=60', alt:'Analytics dashboard screen' },
+      { url:'https://images.unsplash.com/photo-1488229297570-58520851e868?auto=format&fit=crop&w=900&q=60', alt:'Network of data nodes' },
+      { url:'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=900&q=60', alt:'Digital padlock security concept' },
+      { url:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=60', alt:'Code lines on monitor' },
+      { url:'https://images.unsplash.com/photo-1561414927-6d86591d0c4f?auto=format&fit=crop&w=900&q=60', alt:'Digital finance network' },
+      { url:'https://images.unsplash.com/photo-1504386106331-3e4e71712b38?auto=format&fit=crop&w=900&q=60', alt:'Interconnected glowing nodes' },
+      { url:'https://images.unsplash.com/photo-1581091870627-3a7696b2730f?auto=format&fit=crop&w=900&q=60', alt:'Fiber optic cables glowing' },
+      { url:'https://images.unsplash.com/photo-1556761175-129418cb2dfe?auto=format&fit=crop&w=900&q=60', alt:'Handshake with digital overlay' },
+      { url:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=60', alt:'Curved lines on dark graph' },
+      { url:'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=900&q=60', alt:'Multiple database icons' },
+      { url:'https://images.unsplash.com/photo-1508615070457-7baeba4003a0?auto=format&fit=crop&w=900&q=60', alt:'Seat map abstract grid' },
+      { url:'https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=900&q=60', alt:'Vintage split-flap board' }
+    ];
+
+    // Cache to avoid image jumping when filtering in 'sticky'
+    const chosenImageCache = {};
+
+    function hashSlug(str){
+      let h = 2166136261 >>> 0;
+      for(let i=0;i<str.length;i++){
+        h ^= str.charCodeAt(i);
+        h = (h * 16777619) >>> 0;
+      }
+      return h;
+    }
+
+    function pickImage(post){
+      if (CURRENT_IMAGE_MODE === 'off') {
+        // Provide a placeholder SVG (will show text if not overridden)
+        return {
+          url: 'data:image/svg+xml;utf8,' + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240"><rect width="400" height="240" fill="#1f3145"/><text x="50" y="125" font-size="22" fill="#9fb3c5" font-family="Arial,sans-serif">No Image</text></svg>'
+          ),
+          alt: 'Placeholder graphic'
+        };
+      }
+      if (CURRENT_IMAGE_MODE === 'always') {
+        return IMAGE_POOL[Math.floor(Math.random()*IMAGE_POOL.length)];
+      }
+      // sticky
+      if (!chosenImageCache[post.slug]) {
+        const idx = hashSlug(post.slug) % IMAGE_POOL.length;
+        chosenImageCache[post.slug] = IMAGE_POOL[idx];
+      }
+      return chosenImageCache[post.slug];
+    }
+
+    function imageBadge(){
+      if (CURRENT_IMAGE_MODE === 'off') return '';
+      if (CURRENT_IMAGE_MODE === 'always') return '<span class="img-badge" title="Random on each load">RND</span>';
+      return '<span class="img-badge" title="Deterministic random">IMG</span>';
+    }
+
+    // ----------------------------------------------
+    // EXCERPT + UTILITIES
+    // ----------------------------------------------
     function buildExcerpt(t) {
       const base = 'A closer look at ' + t.replace(/[:–—-]/g,' ').toLowerCase();
       if (base.length < 84) return base + ' in modern airline retailing.';
       return t.length > 110 ? t.slice(0, 100).replace(/\s+\S*$/, '') + '…' : t;
     }
-
     function formatHuman(dateStr){
       const d = new Date(dateStr + 'T00:00:00Z');
       return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     }
-
     function escapeHTML(str){
       return str.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
+    // ----------------------------------------------
+    // RENDER
+    // ----------------------------------------------
     function render(postsList){
       const grid = document.getElementById('postsGrid');
       grid.innerHTML = '';
       postsList.forEach(p=>{
         const human = formatHuman(p.date);
         const excerpt = buildExcerpt(p.title);
-        // Derive an optional image path; you can customize naming later
-        const safeSlug = p.slug.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-        const imgPath = '/blog/images/' + safeSlug + '.jpg';
+        const imgObj = pickImage(p);
+        const alt = escapeHTML(imgObj.alt || ('Illustrative image for ' + p.title));
+        const imgURL = imgObj.url;
         grid.insertAdjacentHTML('beforeend', `
           <article class="post-card" data-date="${p.date}" data-year="${p.date.slice(0,4)}">
             <a class="post-link" href="${p.url}" aria-label="${escapeHTML(p.title)}">
               <div class="card-media">
-                <img src="${imgPath}" alt="Image for ${escapeHTML(p.title)}" loading="lazy" onerror="this.onerror=null;this.style.opacity=.35;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22240%22><rect width=%22400%22 height=%22240%22 fill=%22%231f3145%22/><text x=%2250%22 y=%22125%22 font-size=%2222%22 fill=%22%239fb3c5%22 font-family=%22Arial,sans-serif%22>Image Placeholder</text></svg>';">
+                <img src="${imgURL}" alt="${alt}" loading="lazy"
+                     onerror="this.onerror=null;this.style.opacity=.35;">
                 <span class="date-badge">${human}</span>
+                ${imageBadge()}
               </div>
               <div class="card-body">
                 <h2 class="post-title">${escapeHTML(p.title)}</h2>
@@ -421,7 +516,9 @@
       cards.forEach(c=>obs.observe(c));
     }
 
-    // Filtering
+    // ----------------------------------------------
+    // FILTERING
+    // ----------------------------------------------
     function applyFilters(){
       const q = document.getElementById('searchPosts').value.trim().toLowerCase();
       const y = document.getElementById('yearFilter').value;
@@ -435,6 +532,9 @@
       document.getElementById('noResults').style.display = filtered.length ? 'none':'block';
     }
 
+    // ----------------------------------------------
+    // INIT
+    // ----------------------------------------------
     document.addEventListener('DOMContentLoaded', ()=>{
       document.getElementById('year').textContent = new Date().getFullYear();
       render(posts);
@@ -446,9 +546,24 @@
         applyFilters();
         document.getElementById('searchPosts').focus();
       });
+
+      const imgModeSel = document.getElementById('imgMode');
+      if (imgModeSel){
+        imgModeSel.value = CURRENT_IMAGE_MODE;
+        imgModeSel.addEventListener('change', ()=>{
+          CURRENT_IMAGE_MODE = imgModeSel.value;
+          if (CURRENT_IMAGE_MODE !== 'sticky') {
+            // Clear cache so switching back to sticky recomputes if desired
+            for (const k in chosenImageCache) delete chosenImageCache[k];
+          }
+          applyFilters();
+        });
+      }
     });
 
+    // ----------------------------------------------
     // JSON-LD Structured Data
+    // ----------------------------------------------
     (function addStructuredData(){
       const siteUrl = 'https://yourdomain.example'; // replace with your real domain
       const list = posts.map(p=>({
