@@ -1,75 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Basic -->
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Modern Airline Retailing | Tools, Insights & Stories</title>
   <meta name="description" content="Practical tools and long-form insights on airline retailing. Offer & Order, inventory to stock, messaging, and real-world engineering practices."/>
-
-  <!-- Canonical -->
-  <link rel="canonical" href="https://www.modernairlineretailing.com/"/>
-
-  <!-- Open Graph / Twitter -->
-  <meta property="og:title" content="Modern Airline Retailing"/>
-  <meta property="og:description" content="Tools and long-form insights on airline retailing, Offer & Order, and the tech that powers it."/>
-  <meta property="og:url" content="https://www.modernairlineretailing.com/"/>
-  <meta property="og:image" content="https://www.modernairlineretailing.com/assets/og-banner.jpg"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="Modern Airline Retailing"/>
-  <meta name="twitter:description" content="Tools and long-form insights on airline retailing, Offer & Order, and the tech that powers it."/>
-  <meta name="twitter:image" content="https://www.modernairlineretailing.com/assets/og-banner.jpg"/>
-  <meta name="theme-color" content="#0d1b2a"/>
-
-  <!-- Org structured data (use PNG/JPG logo, not .ico) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Organization",
-    "name":"Modern Airline Retailing",
-    "url":"https://www.modernairlineretailing.com",
-    "logo":"https://www.modernairlineretailing.com/assets/logo.png",
-    "sameAs":["https://github.com/icodeforpassion"]
-  }
-  </script>
-
-  <!-- Styles -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <style>
-    /* Sticky navbar */
     .navbar.is-fixed-top { position: sticky; top: 0; z-index: 50; }
-
-    /* Hero */
-    .hero.is-landing {
-      min-height: 500px;
-      background:
-        linear-gradient(180deg, rgba(13,27,42,0.75), rgba(13,27,42,0.6)),
-        url('/assets/og-banner.jpg') center/cover no-repeat;
-      color: #fff;
-    }
-    .hero .title { font-weight: 800; letter-spacing: .5px; }
-    .hero .subtitle { opacity: .95; }
-
-    /* Featured cards */
+    .hero.is-landing { min-height: 460px; background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.6)), url('/assets/og-banner.jpg') center/cover no-repeat; color: #fff; }
     .card { transition: transform .15s ease, box-shadow .15s ease; }
     .card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,.12); }
-    .blog-thumb {
-      width: 100%; height: 160px; object-fit: cover; background: #e8eef3;
-    }
-
-    /* Section separators */
-    .section { padding-top: 3rem; padding-bottom: 3rem; }
-    .section.is-alt { background: #f6f8fb; }
-
-    /* Smooth scroll */
+    .blog-thumb { width: 100%; height: 160px; object-fit: cover; background: #e8eef3; }
     html { scroll-behavior: smooth; }
   </style>
 </head>
 <body>
-
-  <!-- Sticky Top Bar -->
-  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-dark is-fixed-top">
     <div class="container">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">Modern Airline Retailing</a>
@@ -89,13 +37,11 @@
             </div>
           </div>
           <a class="navbar-item" href="/about.html">About Me</a>
-          <a class="navbar-item" href="/offer-order.html">Offer &amp; Order</a>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero -->
   <section class="hero is-landing">
     <div class="hero-body">
       <div class="container has-text-centered">
@@ -106,21 +52,16 @@
     </div>
   </section>
 
-  <!-- Featured Blogs (auto-updates) -->
-  <section id="featured" class="section is-alt">
+  <section id="featured" class="section">
     <div class="container">
       <div class="level">
         <div class="level-left"><h2 class="title is-3">Latest from the Blog</h2></div>
         <div class="level-right"><a class="button is-link is-light" href="/blog/">View All Blogs</a></div>
       </div>
-
-      <div id="featured-cards" class="columns is-multiline">
-        <!-- Cards injected by script -->
-      </div>
+      <div id="featured-cards" class="columns is-multiline"></div>
     </div>
   </section>
 
-  <!-- Footer with visitor badge -->
   <footer class="footer">
     <div class="content has-text-centered">
       <p>© <span id="year"></span> Modern Airline Retailing</p>
@@ -129,72 +70,36 @@
   </footer>
 
   <script>
-    // Burger menu
     document.addEventListener('DOMContentLoaded', () => {
       const burger = document.querySelector('.navbar-burger');
-      const menu = document.getElementById(burger.dataset.target || 'navMenu');
-      burger.addEventListener('click', () => {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
-      });
+      const menu = document.getElementById('navMenu');
+      burger.addEventListener('click', () => { burger.classList.toggle('is-active'); menu.classList.toggle('is-active'); });
       document.getElementById('year').textContent = new Date().getFullYear();
     });
 
-    // Helper: fetch and parse /blog/index.html to auto-list latest posts
     async function loadFeatured() {
       try {
         const res = await fetch('/blog/index.html', { cache: 'no-store' });
         if (!res.ok) return;
         const html = await res.text();
         const doc = new DOMParser().parseFromString(html, 'text/html');
-        const links = Array.from(doc.querySelectorAll('a[href$=".html"]'))
-          .map(a => ({ href: a.getAttribute('href'), text: a.textContent.trim() }))
-          .filter(x => x.href && x.text);
-
-        // Sort by date found in filename YYYY-MM-DD-*.html (desc)
-        const dated = links.map(l => {
-          const m = l.href.match(/(\d{4}-\d{2}-\d{2})/);
-          return { ...l, date: m ? new Date(m[1]) : new Date(0) };
-        }).sort((a,b) => b.date - a.date);
-
-        const top3 = dated.slice(0,3);
-        const container = document.getElementById('featured-cards');
-        container.innerHTML = '';
-
-        top3.forEach(item => {
-          // Build absolute href
-          const href = item.href.startsWith('http') ? item.href : `/blog/${item.href}`;
-          // Excerpt: fetch the post and take first paragraph
-          container.insertAdjacentHTML('beforeend', `
+        const links = Array.from(doc.querySelectorAll('a[href$=".html"]')).map(a => ({ href: a.getAttribute('href'), text: a.textContent.trim() }));
+        const dated = links.map(l => ({ ...l, date: (l.href.match(/(\d{{4}}-\d{{2}}-\d{{2}})/)||[])[1] || '1970-01-01' }))
+                           .sort((a,b) => b.date.localeCompare(a.date)).slice(0,3);
+        const cont = document.getElementById('featured-cards');
+        cont.innerHTML = '';
+        dated.forEach((it, idx) => {
+          const href = it.href.startsWith('http') ? it.href : `/blog/${it.href}`;
+          const img = `/blog/images/blog-${idx+1}.jpg`; // fallback; individual pages have their own OG images
+          cont.insertAdjacentHTML('beforeend', `
             <div class="column is-4">
               <a class="card" href="${href}">
-                <div class="card-image">
-                  <figure class="image is-3by2">
-                    <img class="blog-thumb" src="/assets/og-banner.jpg" alt="Blog thumbnail">
-                  </figure>
-                </div>
-                <div class="card-content">
-                  <p class="title is-5">${item.text}</p>
-                  <p class="subtitle is-6">${item.date.toISOString().slice(0,10)}</p>
-                  <p class="content" data-excerpt-for="${href}">Loading summary…</p>
-                </div>
+                <div class="card-image"><figure class="image is-3by2"><img class="blog-thumb" src="${img}" alt="thumbnail"></figure></div>
+                <div class="card-content"><p class="title is-5">${it.text}</p><p class="subtitle is-6">${it.date}</p></div>
               </a>
-            </div>
-          `);
-          // Fetch excerpt asynchronously
-          fetch(href, { cache: 'no-store' })
-            .then(r => r.text())
-            .then(t => {
-              const d = new DOMParser().parseFromString(t, 'text/html');
-              const firstP = d.querySelector('.content p, p');
-              const excerpt = firstP ? firstP.textContent.trim().slice(0, 180) + '…' : '';
-              const p = container.querySelector(`p[data-excerpt-for="${href.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}"]`);
-              if (p) p.textContent = excerpt;
-            }).catch(()=>{});
+            </div>`);
         });
-      } catch(e) {
-        console.warn('Featured blog load failed', e);
-      }
+      } catch (e) {}
     }
     loadFeatured();
   </script>
