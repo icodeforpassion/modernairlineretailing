@@ -1,61 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Why Caches Disagree: GDS vs Airline Host Availability</title>
-  <meta name="description" content="Why Caches Disagree: GDS vs Airline Host Availability — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta name="description" content="Engineering deep‑dive into why GDS and airline host availability differ: latency windows, O&D control updates, married segments, cache architectures, detection, reconciliation, observability, and modernization patterns."/>
   <meta property="og:title" content="Why Caches Disagree: GDS vs Airline Host Availability"/>
-  <meta property="og:description" content="Why Caches Disagree: GDS vs Airline Host Availability — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:description" content="Technical walkthrough of divergence causes between GDS cache and airline host availability plus mitigation patterns and runbooks."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-5.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability.html"/>
   <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability.html"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
-    .hero-banner { background: url('/blog/images/blog-5.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
+    :root {
+      --c-bg:#0d1b2a;
+      --c-overlay-top:rgba(13,27,42,.82);
+      --c-overlay-bottom:rgba(13,27,42,.55);
+      --c-accent:#3298dc;
+      --c-border:#2d445a;
+    }
+    .hero-banner { background:url('/blog/images/blog-5.jpg') center/cover no-repeat; }
+    .overlay { background:linear-gradient(180deg,var(--c-overlay-top),var(--c-overlay-bottom)); }
+    .home-btn { position:sticky; top:0; display:inline-block; margin:.5rem 0 1rem; }
+    .content p { line-height:1.75; }
+    .toc-box { background:#102435; border:1px solid var(--c-border); padding:1rem 1.25rem; border-radius:10px; font-size:.9rem; }
+    pre { background:#0f2435; color:#e8f0f7; padding:1rem; border-radius:6px; overflow:auto; font-size:.82rem; }
+    code { background:#132f45; padding:.15rem .4rem; border-radius:4px; font-size:.83em; }
+    blockquote { border-left:4px solid var(--c-accent); background:#102c43; padding:1rem 1.2rem; border-radius:6px; }
+    .tag-badge { display:inline-block; background:#173146; color:#9fb3c5; padding:.25rem .55rem; margin:.15rem .25rem .15rem 0; border-radius:6px; font-size:.65rem; letter-spacing:.55px; text-transform:uppercase; }
+    table { font-size:.85rem; }
+    table thead { background:#132d44; }
+    table th, table td { border:1px solid #28415a; vertical-align:top; padding:.55rem .6rem; }
+    .callout { border:1px solid var(--c-border); background:#102c43; padding:1rem 1.25rem; border-radius:10px; margin:1.5rem 0; }
+    .callout.warning { border-color:#d89614; background:#3a2d01; }
+    .mini-caption { font-size:.7rem; text-transform:uppercase; letter-spacing:.55px; opacity:.7; margin-top:.3rem; }
+    .section-nav { margin-top:3rem; }
+    .diff-badge { font-size:.55rem; background:#24405a; padding:.2rem .45rem; border-radius:4px; letter-spacing:.5px; }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Why Caches Disagree: GDS vs Airline Host Availability",
+    "datePublished":"2024-04-11",
+    "dateModified":"2024-04-11",
+    "author":{"@type":"Person","name":"Modern Airline Retailing"},
+    "image":"https://www.modernairlineretailing.com/blog/images/blog-5.jpg",
+    "keywords":"airline availability,GDS cache divergence,host availability,inventory consistency,O&D control,married segments,retailing engineering",
+    "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+  }
+  </script>
 </head>
 <body>
-  <section class="hero is-medium hero-banner">
-    <div class="hero-body overlay">
-      <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Why Caches Disagree: GDS vs Airline Host Availability</h1>
-        <p class="subtitle has-text-white">April 11, 2024</p>
+<section class="hero is-medium hero-banner">
+  <div class="hero-body overlay">
+    <div class="container">
+      <a class="button is-light home-btn" href="/index.html">Home</a>
+      <h1 class="title has-text-white">Why Caches Disagree: GDS vs Airline Host Availability</h1>
+      <p class="subtitle has-text-white">April 11, 2024 • ~22 min read</p>
+      <div>
+        <span class="tag-badge">Inventory</span>
+        <span class="tag-badge">Distribution</span>
+        <span class="tag-badge">Reliability</span>
+        <span class="tag-badge">Debugging</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container content">
-      <p>I learned this on a Tuesday morning when a simple search returned two different answers. Why Caches Disagree: GDS vs Airline Host Availability sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
-      <nav class="level">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          <a class="button is-link" href="/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html">Next →</a>
-        </div>
-      </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
+<section class="section">
+  <div class="container content">
+
+    <div class="toc-box">
+      <strong>Contents</strong>
+      <ol style="margin-top:.6rem;">
+        <li><a href="#intro">Introduction & Problem Frame</a></li>
+        <li><a href="#mental-model">Mental Model of Divergence</a></li>
+        <li><a href="#actors">Key Actors & Data Artifacts</a></li>
+        <li><a href="#taxonomy">Taxonomy of Disagreements</a></li>
+        <li><a href="#timeline">Lifecycle Timeline Example</a></li>
+        <li><a href="#root-causes">Root Causes (Detailed)</a></li>
+        <li><a href="#married">Married Segments & O&amp;D Interplay</a></li>
+        <li><a href="#pricing">Price vs Availability Mismatch</a></li>
+        <li><a href="#detection">Detection & Instrumentation</a></li>
+        <li><a href="#reconciliation">Reconciliation Strategies</a></li>
+        <li><a href="#patterns">Engineering Patterns</a></li>
+        <li><a href="#observability">Observability & KPIs</a></li>
+        <li><a href="#runbook">Triage Runbook</a></li>
+        <li><a href="#preventive">Preventive Design Moves</a></li>
+        <li><a href="#modernization">Modernization (NDC & Offers)</a></li>
+        <li><a href="#checklist">Implementation Checklist</a></li>
+        <li><a href="#glossary">Mini Glossary</a></li>
+        <li><a href="#references">References & Reading</a></li>
+        <li><a href="#disclaimer">Disclaimer</a></li>
+      </ol>
     </div>
-  </section>
+
+    <h2 id="intro">1. Introduction & Problem Frame</h2>
+    <p>You search a trip in a GDS and see 4 seats in R class; the airline host (or NDC offer API) returns 0. Sales complains. Revenue Management says they closed it hours ago. Distribution says “cache delay.” Everyone is technically right—just in different temporal slices. Understanding <em>why</em> these windows appear lets you reduce friction, false promises, and lost revenue.</p>
+    <blockquote><strong>Goal:</strong> Minimize harmful divergence windows between widely distributed caches (GDS / meta / OTA / edge nodes) and authoritative inventory decisions, while preserving performance and cost efficiency.</blockquote>
+
+    <h2 id="mental-model">2. Mental Model of Divergence</h2>
+    <p>Think of each availability answer as (Inventory State Version, Control State Version, Transformation Layer). Disagreement occurs when one or more of these diverge across systems beyond acceptable SLA.</p>
+    <ul>
+      <li><strong>Inventory State:</strong> Physical seats minus committed minus protected.</li>
+      <li><strong>Control State:</strong> Network RM decisions (bid prices, protection levels, O&amp;D closures, married segment logic).</li>
+      <li><strong>Transformation:</strong> Channel-specific filters (brand mapping, corporate policy, point-of-sale restrictions, married segment enforcement, schedule/timeband conversions, RBD merges).</li>
+    </ul>
+    <p>If any component lags or transforms differently, you get a mismatch.</p>
+
+    <h2 id="actors">3. Key Actors & Data Artifacts</h2>
+    <table class="table is-fullwidth is-striped">
+      <thead><tr><th>Actor</th><th>Role</th><th>Primary Latency Source</th><th>Artifact Versioning</th></tr></thead>
+      <tbody>
+        <tr><td>Airline Host CRS / Inventory</td><td>Authoritative decrement & married segment enforcement</td><td>Processing queue + replication</td><td>Sequence number / log offset</td></tr>
+        <tr><td>RM Engine</td><td>Produces control decisions (bid prices/protections)</td><td>Batch optimization cycles</td><td>ControlVersionId timestamped</td></tr>
+        <tr><td>GDS Cache Layer</td><td>High-FAN search responses</td><td>Feed ingestion interval & invalidation SLA</td><td>Derived snapshot time</td></tr>
+        <tr><td>Offer / NDC API</td><td>Real-time composition & pricing</td><td>Round-trip latency to inventory microservices</td><td>RequestId, InventoryVersion, ControlVersion</td></tr>
+        <tr><td>OTA / Metasearch Edge</td><td>Further caching / dedupe</td><td>Client TTL & stale-if-error policies</td><td>Etag / hashed payload</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="taxonomy">4. Taxonomy of Disagreements</h2>
+    <table class="table is-fullwidth">
+      <thead><tr><th>Type</th><th>Description</th><th>Impact</th><th>Typical Root</th></tr></thead>
+      <tbody>
+        <tr><td>False Open</td><td>Cache shows seat open; host closed</td><td>Cart failure / customer frustration</td><td>Stale closure update</td></tr>
+        <tr><td>False Closed</td><td>Cache shows closed; host open</td><td>Lost sale / dilution prevention lost</td><td>Missed open propagation</td></tr>
+        <tr><td>Class Count Drift</td><td>Numeric difference in seat count (e.g. 4 vs 2)</td><td>Agent confusion / distrust</td><td>Partial decrement feed loss</td></tr>
+        <tr><td>Married Segment Break</td><td>Cache sells connection; host rejects partial</td><td>Repricing friction</td><td>Incomplete marriage context</td></tr>
+        <tr><td>Brand/Product Mismatch</td><td>Base RBD open; branded fare not offered</td><td>Revenue leakage / upsell loss</td><td>Product filter divergence</td></tr>
+        <tr><td>Price Inconsistency</td><td>Availability open but priced fare different</td><td>Requote / churn</td><td>Filed fare vs dynamic adjustment timing</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="timeline">5. Lifecycle Timeline Example</h2>
+    <pre><code>T+00:00  RM closes R class on AB123 10JUL (ControlVersion 4512)
+T+00:05  Host updates availability → R=0 (InventoryVersion 982344)
+T+00:07  Push message to GDS channel queue (seq 188877) still in transit
+T+00:11  GDS still serves cached snapshot (R=4) to agencies
+T+00:12  Booking attempt from GDS: host rejects at commit (diff)
+T+00:13  Invalidation arrives; GDS marks R closed
+Divergence window length: ~8 minutes (beyond SLA of 5) → incident triggered</code></pre>
+
+    <h2 id="root-causes">6. Root Causes (Detailed)</h2>
+    <ol>
+      <li><strong>Propagation Latency:</strong> Delay between host update and cache invalidation. Causes: network queuing, batching, rate limiting. Mitigation: priority channels for closures, adaptive push (close events higher QoS than opens).</li>
+      <li><strong>Lossy Event Streams:</strong> Missed message in feed leading to stale state until periodic full refresh. Mitigation: sequence numbers + gap detector; fallback snapshot request when gap.</li>
+      <li><strong>Non-Atomic Multi-Leg Updates:</strong> For O&amp;D control, multiple legs updated sequentially. A cache sees partial state. Mitigation: version fencing (apply only when full bundle present) or two-phase marker.</li>
+      <li><strong>Married Segment Reconstruction Errors:</strong> Some caches approximate marriage by pattern rules; host uses authoritative marriage groups. Mitigation: distribute explicit marriage group tokens.</li>
+      <li><strong>Time-Zone / DOW Misalignment:</strong> Schedule change at boundary (UTC vs local). Cache indexes wrong flight instance. Mitigation: canonical UTC + local offset pair key; validation job.</li>
+      <li><strong>Fare Class Remapping / Code Shares:</strong> Marketing vs operating RBD differences not normalized. Mitigation: deterministic mapping table with version id; embed mappingVersion in payloads.</li>
+      <li><strong>Dynamic (Continuous) Pricing Layer:** Host reopened with guard price; cache still anchored to filed ladder. Mitigation: treat price and availability as coupled artifacts with joint version.</li>
+      <li><strong>Optimistic Oversell Windows:</strong> Host increments oversell allowances; cache not yet aware. Mitigation: proactive open event before UI exposure or delayed open until propagation confirmed.</li>
+      <li><strong>Edge CDN Stale-if-Error:</strong> Transient upstream failure leads edge to serve stale open data. Mitigation: differentiate harmful stale (open states) vs harmless (closed) in caching policy.</li>
+      <li><strong>Partial Rollback After Error:</strong> Host attempted update, some legs succeeded, RM rolled back logically; cache kept transient state. Mitigation: idempotent update bundles with rollback marker.</li>
+      <li><strong>Compression / Serialization Truncation:** Large update batch truncated, silently losing trailing classes. Mitigation: checksum per batch & ack handshake.</li>
+      <li><strong>Clock Skew:</strong> SLA windows miscalculated because of unsynchronized clocks. Mitigation: NTP enforced; embed origin timestamp & monotonic receipt delta.</li>
+    </ol>
+
+    <h2 id="married">7. Married Segments & O&amp;D Interplay</h2>
+    <p>Availability for a connecting itinerary (A–B–C) might be open only as a bundle. A cache lacking the marriage token may incorrectly infer each leg open individually. When a traveler later tries to drop B–C, host denies or reprices. Provide explicit <code>marriageGroupId</code> plus <code>scope=JOINT</code> attribute to caches. Include integrity hash of constituent leg keys so tampering or partial ingestion is detectable.</p>
+    <pre><code>marriageGroup {
+  id: "MG-AB123-BC456-20240710-01",
+  legs:["AB123|2024-07-10|A-B","BC456|2024-07-10|B-C"],
+  scope:"JOINT",
+  version:7,
+  createdAt:"2024-07-01T11:05:12Z"
+}</code></pre>
+
+    <h2 id="pricing">8. Price vs Availability Mismatch</h2>
+    <p>Even when seat count matches, pricing divergence fuels perception of availability mismatch.</p>
+    <ul>
+      <li><strong>Filed vs Dynamic:</strong> Cache priced on filed fare ladder; host offered dynamic anchor.</li>
+      <li><strong>Tax/Fee Drift:</strong> Changed tax table version not yet applied in cache’s aggregated total.</li>
+      <li><strong>Brand Bundle Decomposition:</strong> Cache shows base class; host only sells brand with ancillaries included.</li>
+    </ul>
+    <p>Mitigation: Pair each availability answer with <code>pricingContextVersion</code>; at commit, require equivalence or initiate repricing handshake (pre-confirm pop to user or agent).</p>
+
+    <h2 id="detection">9. Detection & Instrumentation</h2>
+    <p>Log every search and commit with immutable provenance.</p>
+    <pre><code>AvailabilityProvenance {
+  requestId,
+  inventoryVersion,
+  controlVersion,
+  mappingVersion,
+  marriageVersion,
+  pricedAt,
+  servedFrom: HOST | GDS_CACHE | EDGE
+}</code></pre>
+    <p>Create aggregated mismatch events:</p>
+    <pre><code>MismatchEvent {
+  discrepancyType: "FALSE_OPEN",
+  flightLegKey,
+  class:"R",
+  cacheVersion:"inv=982300 ctl=4510",
+  hostVersion:"inv=982344 ctl=4512",
+  latencySec: 420
+}</code></pre>
+    <p>Trigger anomaly if rate of mismatches > baseline (e.g. False Open > 0.5% of queries per hour for a leg bucket).</p>
+
+    <h2 id="reconciliation">10. Reconciliation Strategies</h2>
+    <table class="table is-fullwidth">
+      <thead><tr><th>Strategy</th><th>Mechanism</th><th>Pros</th><th>Trade-offs</th></tr></thead>
+      <tbody>
+        <tr><td>Push + Ack</td><td>Host pushes diff; cache acks sequence</td><td>Low staleness</td><td>Back-pressure if ack slow</td></tr>
+        <tr><td>Pull on Gap</td><td>Cache detects sequence gap, pulls snapshot</td><td>Resilient to loss</td><td>Extra host load on bursts</td></tr>
+        <tr><td>Time-Sliced Snapshots</td><td>Periodic full baseline plus deltas</td><td>Recovery simplicity</td><td>Latency between snapshots</td></tr>
+        <tr><td>Hybrid Token Validation</td><td>Search returns token; commit validates</td><td>Prevents stale commit</td><td>User friction if reprice</td></tr>
+        <tr><td>Selective Real-Time</td><td>High-risk flights bypass cache</td><td>Accuracy where needed</td><td>Inconsistent latency profile</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="patterns">11. Engineering Patterns</h2>
+    <h3>11.1 Version Fencing</h3>
+    <pre><code>if (response.controlVersion != host.currentControlVersion) {
+   re-evaluate availability before commit
+}</code></pre>
+    <h3>11.2 Sequence Gap Detector</h3>
+    <pre><code>expectedSeq = lastSeq + 1
+if (incomingSeq > expectedSeq) {
+   emit GAP event
+   pull snapshot
+}</code></pre>
+    <h3>11.3 Conflict Classifier</h3>
+    <pre><code>function classify(host, cache):
+  if cache.open && host.closed -> FALSE_OPEN
+  else if cache.closed && host.open -> FALSE_CLOSED
+  else if cache.count != host.count -> COUNT_DRIFT
+  else return CONSISTENT</code></pre>
+    <h3>11.4 Read Repair</h3>
+    <pre><code>On commit failure due to stale availability:
+  1. Fetch authoritative state
+  2. Update local cache segment
+  3. Return corrected offer (with new token)</code></pre>
+    <h3>11.5 Event Prioritization</h3>
+    <pre><code>PriorityQueue:
+  1: Closures & decreases
+  2: Marriage changes
+  3: Opens
+  4: Price-only updates</code></pre>
+    <h3>11.6 Staleness Budgeting</h3>
+    <pre><code>classPolicy['R'] = maxStalenessSec 120
+classPolicy['Y'] = 300
+if (now - invTimestamp > classPolicy[class]) -> force refresh</code></pre>
+
+    <h2 id="observability">12. Observability & KPIs</h2>
+    <ul>
+      <li><strong>Divergence Window p95:</strong> Time from host update to cache adoption.</li>
+      <li><strong>False Open Rate:</strong> (False Open responses) / (Total availability responses).</li>
+      <li><strong>Commit Failure Attribution:</strong> % failures caused by stale availability vs payment vs price change.</li>
+      <li><strong>Gap Frequency:</strong> Gaps per 10k event sequences.</li>
+      <li><strong>Propagation Latency Histogram:</strong> For closures vs opens (separate—closures require tighter SLA).</li>
+      <li><strong>Edge Stale Serve Count:</strong> Edge served objects beyond staleness budget.</li>
+      <li><strong>Marriage Integrity Error Rate:</strong> Broken marriage validations per 1k multi-leg bookings.</li>
+    </ul>
+
+    <h2 id="runbook">13. Triage Runbook</h2>
+    <ol>
+      <li><strong>Identify Flight Scope:</strong> Gather leg key, RBD, time window from incident sample.</li>
+      <li><strong>Pull Provenance Logs:</strong> Compare host vs cache controlVersion & inventoryVersion.</li>
+      <li><strong>Sequence Audit:</strong> Check gap detector dashboard for missing sequence IDs.</li>
+      <li><strong>Diff Control Artifacts:</strong> Did controlVersion increment without associated push? If yes, feed failure.</li>
+      <li><strong>Check Prioritization Queue Lag:</strong> Queue depth metrics > threshold?</li>
+      <li><strong>Edge TTL Audit:</strong> Stale-if-error triggered? Inspect error logs around timestamp.</li>
+      <li><strong>Apply Quick Mitigation:</strong> Force refresh bundle; temporarily route flight to real-time path.</li>
+      <li><strong>Root Cause Classification:</strong> Tag incident record with one of taxonomy categories.</li>
+      <li><strong>Post-Incident Improvement:</strong> Adjust SLA guardrails / add missing alert if gap unalerted.</li>
+    </ol>
+
+    <h2 id="preventive">14. Preventive Design Moves</h2>
+    <ul>
+      <li>Carry <code>provenance</code> object in every availability response; make it visible (hidden param) to ops consoles.</li>
+      <li>Separate channels for closures vs low-impact updates; closures bypass batch aggregator.</li>
+      <li>Bidirectional health checks: caches periodically assert latest sequence they hold; host flags lagging nodes.</li>
+      <li>Dual-publish period when changing mappingVersion; reject mixed mapping combos at commit.</li>
+      <li>SLA tiering: high-demand departure buckets (< 7 days) force sub-60s closure propagation; long-haul far-future relaxed.</li>
+      <li>Rolling canary for feed parser updates with shadow validation before live adoption.</li>
+      <li>Edge hint header: <code>X-Inv-Stale-After: 120</code> guiding CDN to treat data as expired, not extended.</li>
+    </ul>
+
+    <h2 id="modernization">15. Modernization (NDC & Offers)</h2>
+    <p>As distribution shifts to Offer & Order based models:</p>
+    <ul>
+      <li><strong>Tokenized Offers:</strong> Each offer includes <code>availabilityToken</code> encoding inventoryVersion & controlVersion hash; commit validates token.</li>
+      <li><strong>Granular Feature Availability:</strong> Instead of RBD counts, decision service returns product feature eligibility; caches must store feature-level TTLs.</li>
+      <li><strong>Unified Diff Channels:</strong> Single event bus carries both inventory and ancillary capacity changes to keep offer caches coherent.</li>
+      <li><strong>Interline Coordination:</strong> Downstream partner still EDIFACT? Wrap authoritative segments with digital signature to deter manipulation across formats.</li>
+    </ul>
+
+    <h2 id="checklist">16. Implementation Checklist</h2>
+    <ul>
+      <li>Define canonical LegKey + O&amp;D key; document.</li>
+      <li>Attach inventoryVersion & controlVersion to all outward availability responses.</li>
+      <li>Implement sequence gap detection + automatic snapshot pull.</li>
+      <li>Prioritize closure events; monitor closure propagation p95.</li>
+      <li>Married segment explicit distribution (groupId, version, hash).</li>
+      <li>MappingVersion for marketing ↔ operating RBD conversions.</li>
+      <li>Availability token validation at commit (reject stale).</li>
+      <li>Observability dashboards: divergence window, false open/closed rates.</li>
+      <li>Runbook in repo with taxonomy and decision tree.</li>
+      <li>Chaos test: drop 1% of event messages → expect gap recovery, zero silent drift.</li>
+      <li>Edge caching policy differentiates harmful vs benign staleness.</li>
+    </ul>
+
+    <h2 id="glossary">17. Mini Glossary</h2>
+    <ul>
+      <li><strong>False Open:</strong> Cache shows class open while authoritative host is closed.</li>
+      <li><strong>ControlVersion:</strong> Identifier of current RM control set (bid prices / protections).</li>
+      <li><strong>InventoryVersion:</strong> Monotonic sequence of leg seat state changes.</li>
+      <li><strong>Marriage Group:</strong> Binding list of segments required to be handled jointly.</li>
+      <li><strong>Sequence Gap:</strong> Missing event number indicating potential state loss.</li>
+      <li><strong>Divergence Window:</strong> Time span between authoritative update and global cache convergence.</li>
+      <li><strong>Read Repair:</strong> On demand correction of stale cache during client interaction.</li>
+    </ul>
+
+    <h2 id="references">18. References & Reading</h2>
+    <ul>
+      <li>Public airline RM conference talks (AGIFORS, PODS) on network control propagation.</li>
+      <li>Open industry papers describing O&amp;D vs leg control implications for distribution.</li>
+      <li>Architectural blogs on cache invalidation, eventual consistency, and sequence-based replication.</li>
+      <li>NDC implementation guides on offer/availability tokenization.</li>
+    </ul>
+    <p class="mini-caption">Proprietary internal feed formats and vendor-specific algorithms intentionally excluded.</p>
+
+    <h2 id="disclaimer">19. Disclaimer</h2>
+    <div class="callout warning">
+      This article summarizes generally known engineering and distribution concepts. It omits proprietary RM vendor math, confidential feed specifications, and commercial strategies. Validate implementation decisions against contractual obligations, regulatory constraints, and internal governance policies before deployment.
+    </div>
+
+    <hr/>
+    <nav class="level section-nav">
+      <div class="level-left">
+        <a class="button is-link is-light" href="/blog/2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments.html">← Previous</a>
+      </div>
+      <div class="level-right">
+        <a class="button is-link" href="/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html">Next →</a>
+      </div>
+    </nav>
+    <p><a href="/blog/index.html">Back to all blogs</a></p>
+
+  </div>
+</section>
 </body>
 </html>
