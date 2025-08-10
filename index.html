@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,7 @@
   <title>Modern Airline Retailing | Tools, Insights & Stories</title>
   <meta name="description" content="Practical tools and long-form insights on airline retailing. Offer & Order, inventory to stock, messaging, and real-world engineering practices."/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
     :root {
@@ -166,6 +166,7 @@
       position:relative;
       height: 180px;
       overflow:hidden;
+      background:linear-gradient(135deg,#1e354b,#244b66);
     }
     .post-media img {
       width:100%;
@@ -195,6 +196,21 @@
       text-transform:uppercase;
       backdrop-filter: blur(6px);
       border:1px solid rgba(255,255,255,.15);
+    }
+    .img-badge{
+      position:absolute;
+      top:.75rem;
+      right:.75rem;
+      background:rgba(13,27,42,.7);
+      color:#fff;
+      font-size:.6rem;
+      font-weight:600;
+      letter-spacing:.5px;
+      padding:.35rem .55rem;
+      border-radius:.55rem;
+      border:1px solid rgba(255,255,255,.18);
+      text-transform:uppercase;
+      backdrop-filter:blur(6px);
     }
 
     .post-body {
@@ -274,10 +290,33 @@
     footer a { color: var(--clr-accent-alt); }
     footer a:hover { color:#fff; }
 
-    /* Focus Styles */
     a:focus-visible, button:focus-visible {
       outline:none;
       box-shadow: var(--focus-ring);
+    }
+
+    /* Controls row (optional) */
+    .image-mode-wrapper {
+      display:flex;
+      gap:.5rem;
+      align-items:center;
+      font-size:.65rem;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      color:var(--clr-text-dim);
+    }
+    .image-mode-wrapper select {
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.15);
+      color:var(--clr-text);
+      border-radius:10px;
+      padding:.4rem .6rem;
+      font-size:.7rem;
+    }
+    .image-mode-wrapper select:focus {
+      border-color:var(--clr-accent-alt);
+      box-shadow:var(--focus-ring);
+      outline:none;
     }
 
     /* Responsive Tweaks */
@@ -305,7 +344,7 @@
       <div id="navMenu" class="navbar-menu">
         <div class="navbar-start">
           <a class="navbar-item is-active" href="/index.html">Home</a>
-          <a class="navbar-item" href="/blog/index.html">Blog</a>
+            <a class="navbar-item" href="/blog/index.html">Blog</a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link" href="/tools/">Tools</a>
             <div class="navbar-dropdown">
@@ -338,7 +377,15 @@
         <div class="level-left">
           <h2 id="latest-heading" class="title is-3">Latest from the Blog</h2>
         </div>
-        <div class="level-right">
+        <div class="level-right" style="display:flex;align-items:center;gap:1rem;">
+          <div class="image-mode-wrapper">
+            <label for="featImgMode" style="margin:0;">Images</label>
+            <select id="featImgMode" aria-label="Featured image mode">
+              <option value="sticky">Sticky</option>
+              <option value="always">Re-roll</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
           <a class="button is-link is-light" href="/blog/">View All Blogs</a>
         </div>
       </div>
@@ -355,6 +402,93 @@
   </footer>
 
   <script>
+    // ---------------------------------------------------------
+    // CONFIG FOR FEATURED RANDOM IMAGES
+    // ---------------------------------------------------------
+    // Modes: 'sticky' (hash-based deterministic), 'always' (new every render), 'off' (neutral placeholder SVG)
+    let FEATURE_IMAGE_MODE = 'sticky';
+
+    const FEATURE_IMAGE_POOL = [
+      { url:'https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=900&q=60', alt:'Aircraft banking in clear sky' },
+      { url:'https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&w=900&q=60', alt:'Storm clouds viewed from window' },
+      { url:'https://images.unsplash.com/photo-1517142089942-ba376ce32a0b?auto=format&fit=crop&w=900&q=60', alt:'Analytics dashboard screen' },
+      { url:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=60', alt:'Abstract roadmap lines' },
+      { url:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=60', alt:'Code on monitor' },
+      { url:'https://images.unsplash.com/photo-1508615070457-7baeba4003a0?auto=format&fit=crop&w=900&q=60', alt:'Seat map abstract grid' },
+      { url:'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=900&q=60', alt:'Database icons concept' },
+      { url:'https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=900&q=60', alt:'Vintage split-flap board' },
+      { url:'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=900&q=60', alt:'Security padlock digital' }
+    ];
+
+    const featureImageCache = {};
+
+    function hashStr(str){
+      let h = 2166136261 >>> 0;
+      for(let i=0;i<str.length;i++){
+        h ^= str.charCodeAt(i);
+        h = (h * 16777619) >>> 0;
+      }
+      return h;
+    }
+    function pickFeaturedImage(key){
+      if (FEATURE_IMAGE_MODE === 'off') {
+        return {
+          url: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300"><rect width="480" height="300" fill="#1f3145"/><text x="40" y="160" font-size="26" fill="#9fb3c5" font-family="Arial,sans-serif">No Image</text></svg>'),
+          alt: 'Placeholder graphic'
+        };
+      }
+      if (FEATURE_IMAGE_MODE === 'always') {
+        return FEATURE_IMAGE_POOL[Math.floor(Math.random()*FEATURE_IMAGE_POOL.length)];
+      }
+      if (!featureImageCache[key]) {
+        const idx = hashStr(key) % FEATURE_IMAGE_POOL.length;
+        featureImageCache[key] = FEATURE_IMAGE_POOL[idx];
+      }
+      return featureImageCache[key];
+    }
+    function imageBadgeHTML(){
+      if (FEATURE_IMAGE_MODE === 'off') return '';
+      if (FEATURE_IMAGE_MODE === 'always') return '<span class="img-badge" title="Random each load">RND</span>';
+      return '<span class="img-badge" title="Deterministic random">IMG</span>';
+    }
+
+    // ---------------------------------------------------------
+    // DATA SOURCE
+    // NOTE: The blog index now renders posts client-side; direct HTML fetch
+    // no longer yields anchor list. To keep Home resilient we embed the
+    // posts list here (sync with /blog/index.html).
+    // ---------------------------------------------------------
+    const BLOG_POSTS = [
+      { date:'2025-06-25', title:'The 2025 Roadmap: Capabilities to Prioritize Now', slug:'2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now' },
+      { date:'2025-06-03', title:'Retail KPIs: Measuring What Matters', slug:'2025-06-03-retail-kpis:-measuring-what-matters' },
+      { date:'2025-05-12', title:'Migration Paths: Coexisting with Legacy Inventory', slug:'2025-05-12-migration-paths:-coexisting-with-legacy-inventory' },
+      { date:'2025-04-20', title:'Security and Trust: Signing Offers and Protecting APIs', slug:'2025-04-20-security-and-trust:-signing-offers-and-protecting-apis' },
+      { date:'2025-03-29', title:'Irregular Ops: Disruption Handling with Orders', slug:'2025-03-29-irregular-ops:-disruption-handling-with-orders' },
+      { date:'2025-03-07', title:'Reshop and Changes: Designing for Flexibility', slug:'2025-03-07-reshop-and-changes:-designing-for-flexibility' },
+      { date:'2025-02-13', title:'Search Architecture: Ranking, Pruning and Repricing', slug:'2025-02-13-search-architecture:-ranking,-pruning-and-repricing' },
+      { date:'2025-01-22', title:'Telemetry and Data Quality: Measuring the Offer Funnel', slug:'2025-01-22-telemetry-and-data-quality:-measuring-the-offer-funnel' },
+      { date:'2024-12-31', title:'Payments and Clearing: From BSP/ARC to Modern Rails', slug:'2024-12-31-payments-and-clearing:-from-bsp-arc-to-modern-rails' },
+      { date:'2024-12-09', title:'Interline in an Order World: Offers, Orders, Settlement', slug:'2024-12-09-interline-in-an-order-world:-offers,-orders,-settlement' },
+      { date:'2024-11-17', title:'Merchandising: Attributes, Bundles and Post‑Purchase', slug:'2024-11-17-merchandising:-attributes,-bundles-and-post-purchase' },
+      { date:'2024-10-26', title:'Identity and Personalization in Offers', slug:'2024-10-26-identity-and-personalization-in-offers' },
+      { date:'2024-10-04', title:'Designing Airline APIs: Idempotency and Versioning', slug:'2024-10-04-designing-airline-apis:-idempotency-and-versioning' },
+      { date:'2024-09-12', title:'Event-Driven Retailing: From Batch to Streaming', slug:'2024-09-12-event-driven-retailing:-from-batch-to-streaming' },
+      { date:'2024-08-21', title:'Stock Keeper: Managing Seats and Products as Stock', slug:'2024-08-21-stock-keeper:-managing-seats-and-products-as-stock' },
+      { date:'2024-07-30', title:'Order Management: Life After PNR, Tickets and EMDs', slug:'2024-07-30-order-management:-life-after-pnr,-tickets-and-emds' },
+      { date:'2024-07-08', title:'Direct Connect vs Aggregators: Latency and Control', slug:'2024-07-08-direct-connect-vs-aggregators:-latency-and-control' },
+      { date:'2024-06-16', title:'NDC in the Real World: Seller and Airline Responsibilities', slug:'2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities' },
+      { date:'2024-05-25', title:'Offer Construction: Pricers, Bundlers and Context', slug:'2024-05-25-offer-construction:-pricers,-bundlers-and-context' },
+      { date:'2024-05-03', title:'Continuous Pricing: Beyond Filed Ladders', slug:'2024-05-03-continuous-pricing:-beyond-filed-ladders' },
+      { date:'2024-04-11', title:'Why Caches Disagree: GDS vs Airline Host Availability', slug:'2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability' },
+      { date:'2024-03-20', title:'Availability Controls: O&D, Nesting, and Married Segments', slug:'2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments' },
+      { date:'2024-02-27', title:'ATPCO Fare Filing: Fares, Rules and Footnotes in Practice', slug:'2024-02-27-atpco-fare-filing:-fares,-rules-and-footnotes-in-practice' },
+      { date:'2024-02-05', title:'From TTY to EDIFACT: Structuring Airline Messages', slug:'2024-02-05-from-tty-to-edifact:-structuring-airline-messages' },
+      { date:'2024-01-15', title:'Early RBD Revenue Management: How Booking Classes Shaped Control', slug:'2024-01-15-early-rbd-revenue-management:-how-booking-classes-shaped-control' }
+    ].map(p=>({...p, url:'/blog/' + p.slug + '.html'}));
+
+    // ---------------------------------------------------------
+    // BASIC UTILITIES
+    // ---------------------------------------------------------
     const START_DATE = new Date('2024-01-01T00:00:00Z');
     const TODAY = new Date();
     function clampToRange(d) {
@@ -362,37 +496,67 @@
       if (d > TODAY) return TODAY;
       return d;
     }
-    function formatISO(d) {
-      return d.toISOString().slice(0,10);
-    }
+    function formatISO(d) { return d.toISOString().slice(0,10); }
     function formatHuman(d) {
       return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
     }
+    function escapeHTML(str){
+      return str.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function deriveExcerptFromTitle(t){
+      if (t.length < 60) return 'A closer look at ' + t.toLowerCase() + ' in modern airline retailing.';
+      return t.slice(0,92).replace(/\s+\S*$/,'') + '…';
+    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const burger = document.querySelector('.navbar-burger');
-      const menu = document.getElementById('navMenu');
-      burger.addEventListener('click', () => {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
-        burger.setAttribute('aria-expanded', burger.classList.contains('is-active'));
-      });
-      document.getElementById('year').textContent = new Date().getFullYear();
+    // ---------------------------------------------------------
+    // RENDER FEATURED (Top 3 by date)
+    // ---------------------------------------------------------
+    function getLatest(n=3){
+      const enriched = BLOG_POSTS.map(p=>{
+        const d = clampToRange(new Date(p.date+'T00:00:00Z'));
+        return {...p, dateObj:d, iso:formatISO(d), displayDate:formatHuman(d)};
+      }).sort((a,b)=>b.dateObj - a.dateObj);
+      return enriched.slice(0,n);
+    }
 
-      // Scroll button (avoid hash focus side-effects)
-      document.getElementById('scrollLatest').addEventListener('click', () => {
-        document.getElementById('featured').scrollIntoView({ behavior:'smooth', block:'start' });
-      });
-
-      injectSkeletons(3);
-      loadFeatured();
-    });
-
-    function injectSkeletons(count) {
+    function renderFeatured(){
       const cont = document.getElementById('featured-cards');
+      const posts = getLatest(3);
       cont.innerHTML = '';
-      for (let i=0;i<count;i++) {
+      posts.forEach(p=>{
+        const imgObj = pickFeaturedImage(p.slug);
+        const alt = escapeHTML(imgObj.alt || ('Illustration for ' + p.title));
         cont.insertAdjacentHTML('beforeend', `
+          <article class="post-card" data-date="${p.iso}">
+            <a href="${p.url}" aria-label="${escapeHTML(p.title)}">
+              <div class="post-media">
+                <img src="${imgObj.url}" alt="${alt}" loading="lazy" onerror="this.onerror=null;this.style.opacity=.35;">
+                <span class="badge-date">${p.displayDate}</span>
+                ${imageBadgeHTML()}
+              </div>
+              <div class="post-body">
+                <h3 class="post-title">${escapeHTML(p.title)}</h3>
+                <p class="post-excerpt">${escapeHTML(deriveExcerptFromTitle(p.title))}</p>
+                <div class="post-meta">
+                  <span>${p.iso}</span>
+                  <span><span class="btn-inline">Read →</span></span>
+                </div>
+              </div>
+            </a>
+          </article>
+        `);
+      });
+      observeCards();
+    }
+
+    // ---------------------------------------------------------
+    // SKELETONS (initial)
+    // ---------------------------------------------------------
+    function injectSkeletons(count){
+      const cont = document.getElementById('featured-cards');
+      cont.innerHTML='';
+      for(let i=0;i<count;i++){
+        cont.insertAdjacentHTML('beforeend',`
           <div class="post-card reveal" aria-hidden="true">
             <div class="skeleton skeleton-thumb"></div>
             <div class="post-body">
@@ -405,114 +569,52 @@
       }
     }
 
-    async function loadFeatured() {
-      const statusEl = document.getElementById('feed-status');
-      try {
-        const res = await fetch('/blog/index.html', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Fetch failed');
-        const html = await res.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-
-        // Collect candidate blog links
-        const anchors = Array.from(doc.querySelectorAll('a[href$=".html"]'))
-          .filter(a => /\/?\d{4}-\d{2}-\d{2}-/.test(a.getAttribute('href'))); // only dated posts
-
-        const posts = anchors.map(a => {
-          const href = a.getAttribute('href').replace(/^\//,'');
-            // Try date from filename pattern
-          const m = href.match(/(\d{4}-\d{2}-\d{2})/);
-          let iso = m ? m[1] : null;
-          return {
-            href: href.startsWith('blog/') ? '/' + href : '/blog/' + href,
-            rawDate: iso,
-            title: a.textContent.trim()
-          };
-        });
-
-        // Assign fallback dates for any missing
-        const missing = posts.filter(p => !p.rawDate);
-        if (missing.length) {
-          const spanMs = TODAY - START_DATE;
-            // Even spacing
-          missing.forEach((p, idx) => {
-            const d = new Date(START_DATE.getTime() + (spanMs * (idx+1)/(missing.length+1)));
-            p.rawDate = formatISO(clampToRange(d));
-          });
-        }
-
-        // Ensure clamp & convert to Date
-        posts.forEach(p => {
-          const d = clampToRange(new Date(p.rawDate + 'T00:00:00Z'));
-          p.dateObj = d;
-          p.iso = formatISO(d);
-          p.displayDate = formatHuman(d);
-        });
-
-        // Sort newest first
-        posts.sort((a,b) => b.dateObj - a.dateObj);
-        const top = posts.slice(0,3);
-
-        renderPosts(top);
-        observeCards();
-      } catch (e) {
-        statusEl.style.display='block';
-        statusEl.textContent = 'Could not load latest posts right now.';
-        // Keep skeletons visible as fallback
-      }
-    }
-
-    function renderPosts(list) {
-      const cont = document.getElementById('featured-cards');
-      cont.innerHTML = '';
-      list.forEach((p, idx) => {
-        const imageNum = (idx % 6) + 1;
-        const img = `/blog/images/blog-${imageNum}.jpg`;
-        const excerpt = deriveExcerptFromTitle(p.title);
-        cont.insertAdjacentHTML('beforeend', `
-          <article class="post-card" data-date="${p.iso}">
-            <a href="${p.href}" aria-label="${p.title}">
-              <div class="post-media">
-                <img src="${img}" alt="Blog thumbnail for: ${escapeHTML(p.title)}" loading="lazy">
-                <span class="badge-date">${p.displayDate}</span>
-              </div>
-              <div class="post-body">
-                <h3 class="post-title">${escapeHTML(p.title)}</h3>
-                <p class="post-excerpt">${escapeHTML(excerpt)}</p>
-                <div class="post-meta">
-                  <span>${p.iso}</span>
-                  <span><span class="btn-inline">Read →</span></span>
-                </div>
-              </div>
-            </a>
-          </article>
-        `);
-      });
-    }
-
-    function deriveExcerptFromTitle(t) {
-      // Simple heuristic – you can replace with real metadata later
-      if (t.length < 60) return 'A closer look at ' + t.toLowerCase() + ' in modern airline retailing.';
-      return t.slice(0, 92).replace(/\s+\S*$/, '') + '…';
-    }
-
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
-      }[c]));
-    }
-
-    function observeCards() {
+    // ---------------------------------------------------------
+    // ANIMATION OBSERVER
+    // ---------------------------------------------------------
+    function observeCards(){
       const cards = document.querySelectorAll('.post-card');
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(en => {
-          if (en.isIntersecting) {
+      const obs = new IntersectionObserver(entries=>{
+        entries.forEach(en=>{
+          if(en.isIntersecting){
             en.target.classList.add('reveal');
             obs.unobserve(en.target);
           }
         });
-      }, { threshold:.25 });
-      cards.forEach(c => obs.observe(c));
+      },{threshold:.25});
+      cards.forEach(c=>obs.observe(c));
     }
+
+    // ---------------------------------------------------------
+    // INIT
+    // ---------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const burger = document.querySelector('.navbar-burger');
+      const menu = document.getElementById('navMenu');
+      burger.addEventListener('click', () => {
+        burger.classList.toggle('is-active');
+        menu.classList.toggle('is-active');
+        burger.setAttribute('aria-expanded', burger.classList.contains('is-active'));
+      });
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.getElementById('scrollLatest').addEventListener('click', ()=>{
+        document.getElementById('featured').scrollIntoView({behavior:'smooth', block:'start'});
+      });
+
+      const modeSel = document.getElementById('featImgMode');
+      modeSel.value = FEATURE_IMAGE_MODE;
+      modeSel.addEventListener('change', ()=>{
+        FEATURE_IMAGE_MODE = modeSel.value;
+        if (FEATURE_IMAGE_MODE !== 'sticky'){
+          for(const k in featureImageCache) delete featureImageCache[k];
+        }
+        renderFeatured();
+      });
+
+      injectSkeletons(3);
+      // Simulate small delay for perception; remove setTimeout in production
+      setTimeout(()=>renderFeatured(), 120);
+    });
   </script>
 </body>
 </html>
