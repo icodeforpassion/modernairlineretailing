@@ -1,5 +1,3 @@
-Below is a self‑contained, copy‑paste ready HTML file. I have appended new, exhaustive sections after your existing content covering: what “TTY” really was, Type A vs Type B, anatomy of a teletype message, illustrative (didactic) examples of PAOREQ/PAORES, ITAREQ/ITARES, HWPREQ/HWPRES in both a legacy TTY‑style representation and a notional EDIFACT style, plus mapping to more modern XML/JSON (NDC‑like) structures. I’ve kept an Indian (Kerala / Trivandrum) conversational tone—friendly, plain, and pragmatic—without compromising precision. IMPORTANT: Some message codes you asked for (PAOREQ/PAORES, ITAREQ/ITARES, HWPREQ/HWPRES) are used here in an illustrative / pedagogical way; implementations vary by host/GDS/vendor. Always reconcile with your airline’s official interface control documents (ICDs) and IATA PADIS specifications before using in production.
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,9 +84,9 @@ Below is a self‑contained, copy‑paste ready HTML file. I have appended new, 
       </ul>
       <hr/>
 
-      <!-- NEW EXTENDED LEGACY + EDIFACT CONTENT -->
-      <h2 id="legacy-messaging">Deep Dive: TTY, Type A, Type B & Modern Equivalents (Kerala style explanation)</h2>
-      <p>Okay, let us sit down calmly (like a relaxed evening in Trivandrum with a cup of <em>kattan chaya</em>) and peel this onion layer by layer. No rush, no mystique.</p>
+      <!-- EXTENDED LEGACY + EDIFACT CONTENT -->
+      <h2 id="legacy-messaging">Deep Dive: TTY, Type A, Type B & Modern Equivalents</h2>
+      <p>Let us walk through the evolution calmly and systematically, removing any mystery – just clear building blocks you can implement and test.</p>
 
       <div class="box-note">
         <strong>Quick Definitions (Plain Talk)</strong>
@@ -109,7 +107,7 @@ Below is a self‑contained, copy‑paste ready HTML file. I have appended new, 
         <tbody>
           <tr><td>Primary Use (classic)</td><td>Interactive host queries, confirmations</td><td>Operational notices, passenger lists, schedule messages</td><td>Shopping, offer management, order servicing</td></tr>
           <tr><td>Transport</td><td>Real-time session / switched network</td><td>Store-and-forward network (queued)</td><td>HTTP(S), MQ, event streams</td></tr>
-            <tr><td>Structure</td><td>Field oriented</td><td>Free-form lines + coded blocks</td><td>Schema (XSD/JSON Schema)</td></tr>
+          <tr><td>Structure</td><td>Field oriented</td><td>Free-form lines + coded blocks</td><td>Schema (XSD/JSON Schema)</td></tr>
           <tr><td>Latency Expectation</td><td>Seconds (interactive)</td><td>Minutes (acceptable historically)</td><td>Sub-second to seconds</td></tr>
           <tr><td>Error Handling</td><td>Immediate code/ack</td><td>Non-delivery notices / manual follow-up</td><td>HTTP codes + structured errors</td></tr>
           <tr><td>Extensibility</td><td>Limited</td><td>Ad hoc free text risky</td><td>High (versioned fields)</td></tr>
@@ -155,12 +153,8 @@ Below is a self‑contained, copy‑paste ready HTML file. I have appended new, 
       </div>
 
       <h3 id="requested-codes">About PAOREQ / ITAREQ / HWPREQ (Important Disclaimer)</h3>
-      <p>These label styles (REQUEST/RESPONSE pairs like <code>PAOREQ</code>/<code>PAORES</code>, <code>ITAREQ</code>/<code>ITARES</code>, <code>HWPREQ</code>/<code>HWPRES</code>) appear in several internal airline ICDs or vendor-specific EDIFACT/PADIS profiles. They are <strong>not universal AirIMP codes</strong>. So, what I provide below is a didactic template to understand the structural pattern. Please validate naming and exact segment usage with:</p>
-      <ul>
-        <li>Your host provider (e.g., Amadeus, Sabre, Navitaire, etc.) ICD.</li>
-        <li>IATA PADIS documentation for the specific version you implement.</li>
-      </ul>
-      <p>Right, now let's look at illustrative examples, keeping our Kerala-style clarity: first show the “old postcard” (TTY-like), then the structured EDIFACT, then a modern JSON analogy for easy mental mapping.</p>
+      <p>These label styles (REQUEST/RESPONSE pairs like <code>PAOREQ</code>/<code>PAORES</code>, <code>ITAREQ</code>/<code>ITARES</code>, <code>HWPREQ</code>/<code>HWPRES</code>) appear in several internal airline ICDs or vendor-specific EDIFACT/PADIS profiles. They are <strong>not universal AirIMP codes</strong>. What follows is an illustrative template to understand structural patterns. Validate naming and exact segment usage with your host provider and the specific PADIS version you implement.</p>
+      <p>First we show a simplified “TTY-like” representation, then an EDIFACT version, then a modern JSON analogy for mapping clarity.</p>
 
       <h2 id="paoreq">1. PAOREQ / PAORES (Illustrative “Pricing & Availability Offer”)</h2>
       <h3>Legacy TTY-Style (Conceptual)</h3>
@@ -199,9 +193,9 @@ UNZ+1+000012345'
       <p><strong>Segment Notes (Simplified):</strong></p>
       <ul>
         <li><code>UNH</code> identifies message and version.</li>
-        <li><code>ORG/DST</code> here are stand-ins (real implementations may use LOC segments).</li>
+        <li><code>ORG/DST</code> used here as stand-ins (real implementations may use LOC segments).</li>
         <li><code>DTM</code> sets travel date.</li>
-        <li><code>RBD</code> is illustrative; actual RBD filtering can appear in FLI/FTI or similar segments depending on spec.</li>
+        <li><code>RBD</code> may appear differently depending on spec (sometimes within FLI/FTI context).</li>
       </ul>
 
       <h3>EDIFACT-Like PAORES (Response)</h3>
@@ -223,7 +217,7 @@ UNT+15+0002'
 UNZ+1+000012346'
 </pre>
 
-      <p><strong>Key idea:</strong> We express availability (AVL) with RBD counts (Y9 means 9 or more). Fares (FAR) tie price to class. Real specs may use different segment names (e.g., FLI, PRI, TAX lines) or composite qualifiers.</p>
+      <p><strong>Key idea:</strong> Availability (AVL) lists RBD counts (Y9 means 9 or more). Fares (FAR) tie price to booking class. Actual specs may prefer different segments or qualifiers.</p>
 
       <h3>Modern JSON Analogy</h3>
       <pre class="block">
@@ -262,7 +256,7 @@ UNZ+1+000012346'
 </pre>
 
       <h2 id="itareq">2. ITAREQ / ITARES (Itinerary Request/Response – Illustrative)</h2>
-      <p>Imagine we already shortlisted flight numbers and want enriched itinerary detail (equipment, terminals, married segment validation). In Kerala style: step-by-step, not jumping.</p>
+      <p>Assume we already shortlisted flight numbers and now request enriched itinerary details (equipment, terminals, married segment validation) step by step.</p>
 
       <h3>TTY-Like ITAREQ</h3>
       <pre class="block">
@@ -302,7 +296,7 @@ UNT+9+1002'
 UNZ+1+000045672'
 </pre>
 
-      <p><strong>Notes:</strong> <code>EQP</code> shows equipment (e.g., 32N for A321neo). <code>TRM</code> gives terminal info. <code>OPS</code> segment is illustrative (operational times). Real implementations reuse IATA-approved segment sets (e.g., use DTM with qualifiers for actual times).</p>
+      <p><strong>Notes:</strong> <code>EQP</code> shows equipment (e.g., 32N for A321neo). <code>TRM</code> gives terminal info. <code>OPS</code> illustrative. Real specs often use DTM with qualifiers for operational times.</p>
 
       <h3>JSON Analogy</h3>
       <pre class="block">
@@ -324,7 +318,7 @@ UNZ+1+000045672'
 </pre>
 
       <h2 id="hwpreq">3. HWPREQ / HWPRES (Hold With Payment – Illustrative)</h2>
-      <p>This pair (naming varies widely) models: “Please hold itinerary and price; I will confirm (perhaps after payment auth).” In some setups, a passive PNR or a booking shell is created with time limit (TL). Let us demystify.</p>
+      <p>This models: “Hold itinerary and price; confirmation (payment or ticketing) will follow.” A booking shell or provisional PNR with a time limit is often created.</p>
 
       <h3>TTY-Like HWPREQ</h3>
       <pre class="block">
@@ -393,7 +387,7 @@ UNZ+1+000078901'
 </pre>
 
       <h2 id="error-handling">4. Error / Rejection Patterns</h2>
-      <p>Legacy TTY often returned cryptic lines. EDIFACT enables structured errors, and modern JSON can give clear codes. One small example.</p>
+      <p>Legacy TTY often returned short text rejections. EDIFACT enables structured error codes; modern JSON can add detail and remediation hints.</p>
 
       <h3>TTY Error Example</h3>
       <pre class="block">
@@ -444,40 +438,37 @@ UNT+5+0003'
         </table>
       </div>
 
-      <h2 id="practical-tips">6. Practical Implementation Tips (Kerala Pragmatism)</h2>
+      <h2 id="practical-tips">6. Practical Implementation Tips</h2>
       <ul>
-        <li><strong>Explicit Parsing:</strong> Do not rely on brittle substring offsets in TTY; use robust regex plus dictionary of recognized line prefixes.</li>
-        <li><strong>Normalise Early:</strong> Convert TTY to an internal canonical object model first; then adapt to EDIFACT / JSON. Less rework later.</li>
-        <li><strong>Round-Trip Tests:</strong> Serialize canonical → EDIFACT → parse back → compare. Helps catch field loss.</li>
-        <li><strong>Latency Budget:</strong> Log each leg: inbound parse, validation, pricing call, response compose. Baseline before optimisation.</li>
-        <li><strong>Content Validation:</strong> Build a schema for your canonical model (JSON Schema) even if original source is TTY free text.</li>
-        <li><strong>Semantic Versioning:</strong> For new fields, bump a version header (e.g., custom <code>X-VERSION</code>) so old clients degrade gracefully.</li>
-        <li><strong>Error Transparency:</strong> Map internal error codes to a stable set; avoid leaking host cryptic codes directly to API consumers.</li>
-        <li><strong>Message Archive:</strong> Retain raw originals (legal/audit) + parsed JSON (analytics) with correlation IDs.</li>
+        <li><strong>Explicit Parsing:</strong> Avoid brittle substring offsets for TTY; use regex plus a dictionary of recognized prefixes.</li>
+        <li><strong>Normalise Early:</strong> Convert TTY to an internal canonical object model first; then render EDIFACT / JSON.</li>
+        <li><strong>Round-Trip Tests:</strong> Canonical → EDIFACT → parse back → compare objects to catch field loss.</li>
+        <li><strong>Latency Budget:</strong> Log each stage (parse, validate, price, compose) with timing.</li>
+        <li><strong>Content Validation:</strong> Enforce a schema (JSON Schema) on the canonical model even if source is free text.</li>
+        <li><strong>Semantic Versioning:</strong> Add version headers; allow backward-compatible additions.</li>
+        <li><strong>Error Transparency:</strong> Map internal errors to stable external codes; keep a translation table.</li>
+        <li><strong>Message Archive:</strong> Store raw original + parsed canonical with correlation IDs for audit.</li>
       </ul>
 
       <h2 id="qa">7. Validation Checklist (Quick Pass)</h2>
       <ul>
-        <li><strong>Address Validity:</strong> For each outgoing Type B, are SITA addresses correct & active?</li>
-        <li><strong>Segment Conformance:</strong> EDIFACT messages validated against current PADIS dictionary? (Automate.)</li>
-        <li><strong>State Synchronisation:</strong> Hold (HWPRES) always tied to a PNR locator before time-limit countdown starts?</li>
-        <li><strong>RBD Consistency:</strong> All returned RBDs exist in inventory mapping table for the travel date.</li>
-        <li><strong>Currency Source:</strong> Price currency = contracting currency or fallback to neutral currency rule documented?</li>
-        <li><strong>Clock Discipline:</strong> Use UTC internally; present local only at edges (avoid TL confusion like IST vs +05:30 misalignment).</li>
+        <li><strong>Address Validity:</strong> Outgoing Type B addresses active and correct?</li>
+        <li><strong>Segment Conformance:</strong> EDIFACT validated against current PADIS dictionary automatically?</li>
+        <li><strong>State Synchronisation:</strong> Hold responses always include locator before time limit countdown?</li>
+        <li><strong>RBD Consistency:</strong> Returned RBDs exist in inventory mapping for travel date.</li>
+        <li><strong>Currency Source:</strong> Currency selection rule documented and deterministic?</li>
+        <li><strong>Clock Discipline:</strong> Internal UTC; local times only at presentation edges.</li>
       </ul>
 
-      <h2 id="cultural-note">8. A Small Cultural Note</h2>
-      <p>In Trivandrum we like to say: “First make it correct, then make it fast.” Legacy airline messaging teaches humility—if you rush modern layers without respecting old constraints, you get silent mismatches. Slow down at the start; you save plenty later.</p>
-
-      <h2 id="summary">9. Summary</h2>
+      <h2 id="summary">8. Summary</h2>
       <div class="callout">
-        <strong>Core Idea:</strong> TTY (Type B) was a low-friction human + machine compromise. EDIFACT brought structural rigor. Modern JSON/NDC brings flexibility. Your job is to anchor everything in a canonical model, maintain traceability (requestId / correlation IDs), and keep economic + operational integrity intact across translations.
+        <strong>Core Idea:</strong> TTY (Type B) was a low-friction compromise between human readability and machine processing. EDIFACT added structure and standardization. Modern JSON/NDC adds flexibility and speed. Anchor everything in a canonical model, maintain traceability (requestId / correlation IDs), validate consistency across translations, and you reduce hidden integration risk.
       </div>
 
-      <h2 id="disclaimer">10. Disclaimer & Sources</h2>
-      <p><strong>Disclaimer:</strong> The PAOREQ/PAORES, ITAREQ/ITARES, HWPREQ/HWPRES examples here are illustrative composites for learning. Real-world segment names, qualifiers, and mandatory elements differ by PADIS version, host, and bilateral agreements. Always consult:</p>
+      <h2 id="disclaimer">9. Disclaimer & Sources</h2>
+      <p><strong>Disclaimer:</strong> The PAOREQ/PAORES, ITAREQ/ITARES, HWPREQ/HWPRES examples are illustrative composites for learning. Real-world segment names, qualifiers, and mandatory elements differ by PADIS version, host, and bilateral agreements. Always consult:</p>
       <ul>
-        <li>IATA PADIS Implementation Guides (current version in force for your program).</li>
+        <li>IATA PADIS Implementation Guides (current version for your program).</li>
         <li>AirIMP documentation for legacy TTY code semantics.</li>
         <li>Vendor (GDS/host) Interface Control Documents (ICDs).</li>
       </ul>
