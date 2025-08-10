@@ -1,36 +1,313 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Modern Airline Retailing | Tools, Insights & Stories</title>
   <meta name="description" content="Practical tools and long-form insights on airline retailing. Offer & Order, inventory to stock, messaging, and real-world engineering practices."/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
-    .navbar.is-fixed-top { position: sticky; top: 0; z-index: 50; }
-    .hero.is-landing { min-height: 460px; background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.6)), url('/assets/og-banner.jpg') center/cover no-repeat; color: #fff; }
-    .card { transition: transform .15s ease, box-shadow .15s ease; }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,.12); }
-    .blog-thumb { width: 100%; height: 160px; object-fit: cover; background: #e8eef3; }
-    html { scroll-behavior: smooth; }
+    :root {
+      --clr-bg: #0d1b2a;
+      --clr-bg-alt:#132235;
+      --clr-surface:#1f3145;
+      --clr-surface-glass: rgba(31,49,69,0.55);
+      --clr-border:#2f4a63;
+      --clr-accent:#3298dc;
+      --clr-accent-alt:#4fb1f5;
+      --clr-text:#e8f0f7;
+      --clr-text-dim:#9fb3c5;
+      --radius: 14px;
+      --transition: .28s cubic-bezier(.4,.2,.2,1);
+      --shadow-1: 0 2px 6px -1px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.02) inset;
+      --shadow-2: 0 8px 26px -6px rgba(0,0,0,.55);
+      --gradient-hero: linear-gradient(160deg, rgba(13,27,42,.9), rgba(13,27,42,.55) 55%, rgba(30,55,80,.65));
+      --focus-ring: 0 0 0 3px rgba(50,152,220,.5);
+    }
+
+    html { scroll-behavior: smooth; background: var(--clr-bg); }
+    body { background: var(--clr-bg); color: var(--clr-text); font-feature-settings: "liga" 1, "kern" 1; }
+
+    .navbar.is-dark {
+      background: linear-gradient(to right, #0d1b2a, #142a40);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .navbar a.navbar-item, .navbar a.navbar-link { color: var(--clr-text-dim); }
+    .navbar a.navbar-item:hover, .navbar a.navbar-link:hover { color: var(--clr-text); background: transparent; }
+
+    .hero.is-landing {
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      background:
+        var(--gradient-hero),
+        url('/assets/og-banner.jpg') center/cover no-repeat;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 72% 30%, rgba(79,177,245,.15), transparent 60%),
+        radial-gradient(circle at 20% 70%, rgba(50,152,220,.18), transparent 65%);
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+
+    .hero .container {
+      max-width: 960px;
+    }
+
+    .title.is-1 {
+      background: linear-gradient(92deg, #fff, #b9dcf5 45%, #4fb1f5 80%);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .hero-cta {
+      margin-top: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      padding: .9rem 1.35rem;
+      font-size: 1.05rem;
+      border-radius: 999px;
+      box-shadow: 0 6px 18px -4px rgba(50,152,220,.55), 0 2px 3px -1px rgba(0,0,0,.5);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      isolation: isolate;
+    }
+    .hero-cta::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,0));
+      opacity:.6;
+      pointer-events:none;
+    }
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px -6px rgba(50,152,220,.6), 0 3px 5px -2px rgba(0,0,0,.55);
+    }
+    .hero-cta:active { transform: translateY(-1px); }
+    .hero-cta:focus-visible { outline:none; box-shadow: var(--focus-ring); }
+
+    .section {
+      background: linear-gradient(to bottom, var(--clr-bg), var(--clr-bg-alt));
+      padding-top: 4rem;
+      padding-bottom: 4.5rem;
+    }
+
+    h2.title {
+      background: linear-gradient(90deg, #fff, #c6d9e8 40%, #82bfe7);
+      -webkit-background-clip:text;
+      color:transparent;
+      font-weight:600;
+      letter-spacing:.3px;
+    }
+
+    /* Card Grid */
+    #featured-cards {
+      display:flex;
+      flex-wrap:wrap;
+      gap:2rem 1.5rem;
+    }
+    .post-card {
+      flex:1 1 300px;
+      max-width: 340px;
+      background: linear-gradient(165deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 410px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity:0;
+      transform: translateY(24px) scale(.97);
+      transition: var(--transition);
+    }
+    .post-card.reveal {
+      opacity:1;
+      transform: translateY(0) scale(1);
+    }
+    .post-card:hover {
+      box-shadow: var(--shadow-2);
+      transform: translateY(-6px) scale(1.015);
+      border-color: var(--clr-accent-alt);
+    }
+    .post-card a {
+      color: inherit;
+      text-decoration:none;
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+
+    .post-media {
+      position:relative;
+      height: 180px;
+      overflow:hidden;
+    }
+    .post-media img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter: saturate(105%) contrast(104%);
+      transition: transform 1.4s ease, filter .6s ease;
+    }
+    .post-card:hover img { transform: scale(1.08); filter: saturate(118%) contrast(110%); }
+    .post-media::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(to top, rgba(13,27,42,.8), rgba(13,27,42,.05));
+    }
+    .badge-date {
+      position:absolute;
+      top: .75rem;
+      left: .75rem;
+      background: rgba(13,27,42,.75);
+      color:#fff;
+      padding:.35rem .6rem;
+      border-radius: .5rem;
+      font-size:.7rem;
+      font-weight:600;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.15);
+    }
+
+    .post-body {
+      padding: 1.15rem 1.2rem 1.25rem;
+      display:flex;
+      flex-direction:column;
+      gap:.75rem;
+    }
+    .post-title {
+      font-size: 1.05rem;
+      line-height:1.25;
+      font-weight:600;
+      color:#fff;
+      margin:0;
+    }
+    .post-excerpt {
+      font-size:.83rem;
+      line-height:1.35;
+      color: var(--clr-text-dim);
+      flex-grow:1;
+    }
+    .post-meta {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:.65rem;
+      letter-spacing:.7px;
+      text-transform:uppercase;
+      color: var(--clr-text-dim);
+      margin-top:.2rem;
+    }
+    .btn-inline {
+      font-size:.7rem;
+      font-weight:600;
+      letter-spacing:.5px;
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.45rem .8rem;
+      border-radius: .55rem;
+      background: rgba(79,177,245,.13);
+      color:#cfeafe;
+      border:1px solid rgba(79,177,245,.3);
+      transition: var(--transition);
+    }
+    .btn-inline:hover {
+      background: var(--clr-accent-alt);
+      color:#082032;
+      border-color: var(--clr-accent-alt);
+      box-shadow:0 4px 14px -4px rgba(79,177,245,.6);
+    }
+    .btn-inline:focus-visible { outline:none; box-shadow: var(--focus-ring); }
+
+    /* Skeletons */
+    .skeleton {
+      position:relative;
+      overflow:hidden;
+      background: linear-gradient(90deg, #1e3044 0%, #263d55 45%, #1e3044 90%);
+      background-size:200% 100%;
+      animation: shimmer 2.4s linear infinite;
+      border-radius: .4rem;
+    }
+    @keyframes shimmer {
+      0% { background-position:200% 0; }
+      100% { background-position:-200% 0; }
+    }
+    .skeleton-thumb { height:180px; border-bottom:1px solid rgba(255,255,255,.05); }
+    .skeleton-line { height:12px; margin:12px 16px; width: calc(90% - 32px); }
+    .skeleton-line.short { width:50%; }
+
+    footer.footer {
+      background: #0d1b2a;
+      border-top:1px solid var(--clr-border);
+      padding: 3rem 1.5rem 4rem;
+      color: var(--clr-text-dim);
+    }
+    footer a { color: var(--clr-accent-alt); }
+    footer a:hover { color:#fff; }
+
+    /* Focus Styles */
+    a:focus-visible, button:focus-visible {
+      outline:none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Responsive Tweaks */
+    @media (max-width: 840px) {
+      #featured-cards { justify-content:center; }
+      .hero.is-landing { min-height: 480px; }
+      .post-card { flex:1 1 calc(50% - 1.5rem); }
+    }
+    @media (max-width: 560px) {
+      .post-card { flex:1 1 100%; max-width: 520px; }
+      .hero .title { font-size:2.35rem; }
+      .hero .subtitle { font-size:1.05rem; }
+    }
   </style>
 </head>
 <body>
-  <nav class="navbar is-dark is-fixed-top">
+  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">Modern Airline Retailing</a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+        <button class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
           <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </a>
+        </button>
       </div>
       <div id="navMenu" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="/index.html">Home</a>
+          <a class="navbar-item is-active" href="/index.html">Home</a>
           <a class="navbar-item" href="/blog/index.html">Blog</a>
           <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">Tools</a>
+            <a class="navbar-link" href="/tools/">Tools</a>
             <div class="navbar-dropdown">
               <a class="navbar-item" href="/tools/great-circle.html">Great Circle Distance</a>
               <a class="navbar-item" href="/tools/airport-lookup.html">Airport / City Lookup</a>
@@ -47,61 +324,195 @@
       <div class="container has-text-centered">
         <h1 class="title is-1">Modern Airline Retailing</h1>
         <p class="subtitle is-4">Tools, insights and real-world stories from the airline tech stack.</p>
-        <a class="button is-light is-medium" href="#featured">Read Latest Blogs</a>
+        <button class="hero-cta" id="scrollLatest" type="button" aria-label="Scroll to latest blog posts">
+          Read Latest Blogs
+          <span style="font-size:1.1em;">↘</span>
+        </button>
       </div>
     </div>
   </section>
 
-  <section id="featured" class="section">
+  <section id="featured" class="section" aria-labelledby="latest-heading">
     <div class="container">
       <div class="level">
-        <div class="level-left"><h2 class="title is-3">Latest from the Blog</h2></div>
-        <div class="level-right"><a class="button is-link is-light" href="/blog/">View All Blogs</a></div>
+        <div class="level-left">
+          <h2 id="latest-heading" class="title is-3">Latest from the Blog</h2>
+        </div>
+        <div class="level-right">
+          <a class="button is-link is-light" href="/blog/">View All Blogs</a>
+        </div>
       </div>
-      <div id="featured-cards" class="columns is-multiline"></div>
+      <div id="featured-cards"></div>
+      <div id="feed-status" style="margin-top:2rem;font-size:.85rem;color:var(--clr-text-dim);display:none;"></div>
     </div>
   </section>
 
   <footer class="footer">
     <div class="content has-text-centered">
       <p>© <span id="year"></span> Modern Airline Retailing</p>
-      <p><img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitors"></p>
+      <p><img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitor counter badge"></p>
     </div>
   </footer>
 
   <script>
+    const START_DATE = new Date('2024-01-01T00:00:00Z');
+    const TODAY = new Date();
+    function clampToRange(d) {
+      if (d < START_DATE) return START_DATE;
+      if (d > TODAY) return TODAY;
+      return d;
+    }
+    function formatISO(d) {
+      return d.toISOString().slice(0,10);
+    }
+    function formatHuman(d) {
+      return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const burger = document.querySelector('.navbar-burger');
       const menu = document.getElementById('navMenu');
-      burger.addEventListener('click', () => { burger.classList.toggle('is-active'); menu.classList.toggle('is-active'); });
+      burger.addEventListener('click', () => {
+        burger.classList.toggle('is-active');
+        menu.classList.toggle('is-active');
+        burger.setAttribute('aria-expanded', burger.classList.contains('is-active'));
+      });
       document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Scroll button (avoid hash focus side-effects)
+      document.getElementById('scrollLatest').addEventListener('click', () => {
+        document.getElementById('featured').scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+
+      injectSkeletons(3);
+      loadFeatured();
     });
 
+    function injectSkeletons(count) {
+      const cont = document.getElementById('featured-cards');
+      cont.innerHTML = '';
+      for (let i=0;i<count;i++) {
+        cont.insertAdjacentHTML('beforeend', `
+          <div class="post-card reveal" aria-hidden="true">
+            <div class="skeleton skeleton-thumb"></div>
+            <div class="post-body">
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+            </div>
+          </div>
+        `);
+      }
+    }
+
     async function loadFeatured() {
+      const statusEl = document.getElementById('feed-status');
       try {
         const res = await fetch('/blog/index.html', { cache: 'no-store' });
-        if (!res.ok) return;
+        if (!res.ok) throw new Error('Fetch failed');
         const html = await res.text();
         const doc = new DOMParser().parseFromString(html, 'text/html');
-        const links = Array.from(doc.querySelectorAll('a[href$=".html"]')).map(a => ({ href: a.getAttribute('href'), text: a.textContent.trim() }));
-        const dated = links.map(l => ({ ...l, date: (l.href.match(/(\d{{4}}-\d{{2}}-\d{{2}})/)||[])[1] || '1970-01-01' }))
-                           .sort((a,b) => b.date.localeCompare(a.date)).slice(0,3);
-        const cont = document.getElementById('featured-cards');
-        cont.innerHTML = '';
-        dated.forEach((it, idx) => {
-          const href = it.href.startsWith('http') ? it.href : `/blog/${it.href}`;
-          const img = `/blog/images/blog-${idx+1}.jpg`; // fallback; individual pages have their own OG images
-          cont.insertAdjacentHTML('beforeend', `
-            <div class="column is-4">
-              <a class="card" href="${href}">
-                <div class="card-image"><figure class="image is-3by2"><img class="blog-thumb" src="${img}" alt="thumbnail"></figure></div>
-                <div class="card-content"><p class="title is-5">${it.text}</p><p class="subtitle is-6">${it.date}</p></div>
-              </a>
-            </div>`);
+
+        // Collect candidate blog links
+        const anchors = Array.from(doc.querySelectorAll('a[href$=".html"]'))
+          .filter(a => /\/?\d{4}-\d{2}-\d{2}-/.test(a.getAttribute('href'))); // only dated posts
+
+        const posts = anchors.map(a => {
+          const href = a.getAttribute('href').replace(/^\//,'');
+            // Try date from filename pattern
+          const m = href.match(/(\d{4}-\d{2}-\d{2})/);
+          let iso = m ? m[1] : null;
+          return {
+            href: href.startsWith('blog/') ? '/' + href : '/blog/' + href,
+            rawDate: iso,
+            title: a.textContent.trim()
+          };
         });
-      } catch (e) {}
+
+        // Assign fallback dates for any missing
+        const missing = posts.filter(p => !p.rawDate);
+        if (missing.length) {
+          const spanMs = TODAY - START_DATE;
+            // Even spacing
+          missing.forEach((p, idx) => {
+            const d = new Date(START_DATE.getTime() + (spanMs * (idx+1)/(missing.length+1)));
+            p.rawDate = formatISO(clampToRange(d));
+          });
+        }
+
+        // Ensure clamp & convert to Date
+        posts.forEach(p => {
+          const d = clampToRange(new Date(p.rawDate + 'T00:00:00Z'));
+          p.dateObj = d;
+          p.iso = formatISO(d);
+          p.displayDate = formatHuman(d);
+        });
+
+        // Sort newest first
+        posts.sort((a,b) => b.dateObj - a.dateObj);
+        const top = posts.slice(0,3);
+
+        renderPosts(top);
+        observeCards();
+      } catch (e) {
+        statusEl.style.display='block';
+        statusEl.textContent = 'Could not load latest posts right now.';
+        // Keep skeletons visible as fallback
+      }
     }
-    loadFeatured();
+
+    function renderPosts(list) {
+      const cont = document.getElementById('featured-cards');
+      cont.innerHTML = '';
+      list.forEach((p, idx) => {
+        const imageNum = (idx % 6) + 1;
+        const img = `/blog/images/blog-${imageNum}.jpg`;
+        const excerpt = deriveExcerptFromTitle(p.title);
+        cont.insertAdjacentHTML('beforeend', `
+          <article class="post-card" data-date="${p.iso}">
+            <a href="${p.href}" aria-label="${p.title}">
+              <div class="post-media">
+                <img src="${img}" alt="Blog thumbnail for: ${escapeHTML(p.title)}" loading="lazy">
+                <span class="badge-date">${p.displayDate}</span>
+              </div>
+              <div class="post-body">
+                <h3 class="post-title">${escapeHTML(p.title)}</h3>
+                <p class="post-excerpt">${escapeHTML(excerpt)}</p>
+                <div class="post-meta">
+                  <span>${p.iso}</span>
+                  <span><span class="btn-inline">Read →</span></span>
+                </div>
+              </div>
+            </a>
+          </article>
+        `);
+      });
+    }
+
+    function deriveExcerptFromTitle(t) {
+      // Simple heuristic – you can replace with real metadata later
+      if (t.length < 60) return 'A closer look at ' + t.toLowerCase() + ' in modern airline retailing.';
+      return t.slice(0, 92).replace(/\s+\S*$/, '') + '…';
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
+      }[c]));
+    }
+
+    function observeCards() {
+      const cards = document.querySelectorAll('.post-card');
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            en.target.classList.add('reveal');
+            obs.unobserve(en.target);
+          }
+        });
+      }, { threshold:.25 });
+      cards.forEach(c => obs.observe(c));
+    }
   </script>
 </body>
 </html>
