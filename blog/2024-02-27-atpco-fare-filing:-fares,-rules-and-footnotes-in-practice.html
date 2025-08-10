@@ -4,20 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ATPCO Fare Filing: Fares, Rules and Footnotes in Practice</title>
-  <meta name="description" content="ATPCO Fare Filing: Fares, Rules and Footnotes in Practice — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta name="description" content="Deep dive into ATPCO fare filing: lifecycle, fare/rule data structures, rule categories, footnotes, routing, taxes, surcharges, pricing logic, engineering implementation patterns, and modernization toward offers & orders."/>
   <meta property="og:title" content="ATPCO Fare Filing: Fares, Rules and Footnotes in Practice"/>
-  <meta property="og:description" content="ATPCO Fare Filing: Fares, Rules and Footnotes in Practice — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:description" content="Implementation-focused walkthrough of ATPCO fare filing: fares, rules, footnotes, routing, pricing integrity, and modernization."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-3.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing:-fares,-rules-and-footnotes-in-practice.html"/>
   <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing:-fares,-rules-and-footnotes-in-practice.html"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
     .hero-banner { background: url('/blog/images/blog-3.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
+    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.78), rgba(13,27,42,.55)); }
     .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
     .content p { line-height: 1.75; }
+    .content pre { background:#0f2435; color:#e8f0f7; padding:1rem; overflow:auto; font-size:.85rem; border-radius:6px; }
+    .content code { background:#122c40; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
+    .toc-box { background:#102435; border:1px solid rgba(255,255,255,.08); padding:1rem 1.25rem; border-radius:10px; font-size:.9rem; }
+    .tag-badge { display:inline-block; background:#173146; color:#9fb3c5; padding:.25rem .55rem; margin:.15rem .25rem .15rem 0; border-radius:6px; font-size:.65rem; letter-spacing:.5px; text-transform:uppercase; }
+    table { font-size:.9rem; }
+    table thead { background:#132d44; }
+    table th, table td { border:1px solid #28415a; }
+    blockquote { border-left:4px solid #3298dc; background:#102b3f; padding:1rem 1.25rem; border-radius:6px; }
+    .callout { border:1px solid #2f4a63; background:#102c43; padding:1rem 1.25rem; border-radius:10px; margin:1.5rem 0; }
+    .callout.warning { border-color:#d89614; background:#3a2d01; }
+    .mini-caption { font-size:.7rem; text-transform:uppercase; letter-spacing:.6px; opacity:.7; margin-top:.3rem; }
+    .section-nav { margin-top:3rem; }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"ATPCO Fare Filing: Fares, Rules and Footnotes in Practice",
+    "datePublished":"2024-02-27",
+    "dateModified":"2024-02-27",
+    "author":{"@type":"Person","name":"Modern Airline Retailing"},
+    "image":"https://www.modernairlineretailing.com/blog/images/blog-3.jpg",
+    "keywords":"ATPCO, fare filing, fare rules, airline pricing, footnotes, routing, surcharges, airline retailing",
+    "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+  }
+  </script>
 </head>
 <body>
   <section class="hero is-medium hero-banner">
@@ -25,28 +51,302 @@
       <div class="container">
         <a class="button is-light home-btn" href="/index.html">Home</a>
         <h1 class="title has-text-white">ATPCO Fare Filing: Fares, Rules and Footnotes in Practice</h1>
-        <p class="subtitle has-text-white">February 27, 2024</p>
+        <p class="subtitle has-text-white">February 27, 2024 • ~18 min read</p>
+        <div>
+          <span class="tag-badge">Pricing</span>
+          <span class="tag-badge">ATPCO</span>
+          <span class="tag-badge">Fare Rules</span>
+          <span class="tag-badge">Implementation</span>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container content">
-      <p>Teams argue about this in chat at 2 a.m., and the answer is usually: it depends. ATPCO Fare Filing: Fares, Rules and Footnotes in Practice sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
+      <div class="toc-box">
+        <strong>Contents</strong>
+        <ol style="margin-top:.6rem;">
+          <li><a href="#why-it-matters">Why It Matters</a></li>
+          <li><a href="#lifecycle">Fare Filing Lifecycle</a></li>
+          <li><a href="#data-building-blocks">Core Data Building Blocks</a></li>
+          <li><a href="#rule-categories">Rule Categories Overview</a></li>
+          <li><a href="#footnotes">Footnotes & Footnote Tables</a></li>
+          <li><a href="#routing">Routing, MPM & Construction</a></li>
+          <li><a href="#surcharges-taxes">Surcharges (YQ/YR) & Taxes</a></li>
+          <li><a href="#pricing-workflow">Pricing Engine Workflow (High Level)</a></li>
+          <li><a href="#integrity-checks">Integrity & Validation Checks</a></li>
+          <li><a href="#caching-distribution">Caching & Distribution Considerations</a></li>
+          <li><a href="#common-failures">Common Failure Modes</a></li>
+          <li><a href="#engineering-patterns">Engineering Patterns & Data Structures</a></li>
+          <li><a href="#modernization">Modernization Toward Offers & Orders</a></li>
+          <li><a href="#continuous-pricing">Continuous & Dynamic Pricing Interaction</a></li>
+          <li><a href="#monitoring">Observability & Monitoring</a></li>
+          <li><a href="#checklist">Implementation Checklist</a></li>
+          <li><a href="#glossary">Mini Glossary</a></li>
+          <li><a href="#sources">Sources & Further Reading</a></li>
+          <li><a href="#disclaimer">Disclaimer</a></li>
+        </ol>
+      </div>
+
+      <p>Teams new to airline retail often collide with fare filing complexity and treat it as “legacy noise.” That usually backfires. ATPCO fare filing encodes commercial policy, regulatory compliance and competitive positioning in a structured system that feeds virtually every traditional pricing channel. Even as the industry pivots to offers and orders, you cannot responsibly modernize without understanding the substrate.</p>
+
+      <h2 id="why-it-matters">1. Why It Matters</h2>
+      <p>Fare filing does three fundamental jobs:</p>
+      <ul>
+        <li><strong>Declarative Commercial Policy:</strong> Carriers express conditions (advance purchase, seasonality, combinability, penalties) in standardized rule categories instead of ad‑hoc code or per-channel hardwires.</li>
+        <li><strong>Interline & Ecosystem Interoperability:</strong> GDSs, pricers and settlement tools consume a harmonized model, enabling multi-carrier journeys to be priced and ticketed using shared semantics.</li>
+        <li><strong>Regulatory & Tax Compliance:</strong> Country-specific requirements (e.g., minimum stays, surcharges disclosure, tax jurisdiction) are applied consistently across distribution.</li>
+      </ul>
+      <blockquote><em>Modernization strategy mistake:</em> “We will jump straight to dynamic offers and ignore filed fares.” Without a bridging architecture, you risk broken parity, settlement disputes, and manual agency debit memos (ADMs).</blockquote>
+
+      <h2 id="lifecycle">2. Fare Filing Lifecycle</h2>
+      <p>Think of a four-stage lifecycle. Each stage changes the authoritative “source of truth” for a given piece of data:</p>
+      <ol>
+        <li><strong>Authoring / Construction:</strong> Revenue management, pricing analysts (and tools) specify base fares, markets, rule attachments, footnotes, and optional services; batches prepared for ATPCO submission.</li>
+        <li><strong>Submission & Processing (ATPCO):</strong> Data validated, normalized, distributed to subscribed channels (GDS, pricing engines, downstream data warehouses). Time-of-distribution mismatch is a known latency risk.</li>
+        <li><strong>Pricing / Shopping:</strong> Systems combine itinerary + inventory (RBD availability) + filed fare/rule data to produce candidate prices (fare components + taxes + surcharges) with applied rule restrictions.</li>
+        <li><strong>Ticketing / Settlement:</strong> Fare basis codes, fare amounts, endorsements and rule references captured on the ticket/EMD. Later used for reissue, refund, proration, clearing.</li>
+      </ol>
+      <p><strong>Latency Windows:</strong> RM changes (“close booking class”, “add fare”) propagate: Authoring → ATPCO → GDS Cache → Seller → Customer. Each hop adds potential mismatch with the airline host’s current inventory state.</p>
+
+      <h2 id="data-building-blocks">3. Core Data Building Blocks</h2>
+      <ul>
+        <li><strong>Fare Record (Base Fare):</strong> Contains <em>fare class (booking code or primary RBD reference), fare basis code, market (origin–destination), directionality (OW/RT), currency, tariff, rule number, footnote code(s), fare type flags (e.g. excursion, bulk), effective/expiration dates, travel period dates, day-of-week/seasonal restrictions, private/public indicator.</em></li>
+        <li><strong>Fare Basis Code:</strong> Encodes product characteristics (e.g., <code>Y26NR</code>): first letter often cabin (Y = Economy), trailing tokens indicating advance purchase (26), nonrefundable (NR), etc. Convention varies by airline; semantics clarified via rules.</li>
+        <li><strong>Rule Number:</strong> Points to a <em>rule record</em> grouping multiple categories (e.g. Cat 5 Advance Purchase, Cat 16 Penalties). Multiple fares can reuse a rule number.</li>
+        <li><strong>Footnotes:</strong> Two-character (sometimes numeric/alphanumeric) codes used to conditionally attach additional category data (particularly categories 2, 3, 4, 5, 6, 7, 8, 9, 10, 12). Footnotes reduce duplication when a subset of markets share restrictions.</li>
+        <li><strong>Tariff:</strong> Organizational grouping (public, private, constructed) often aligning with distribution permissions or bilateral agreements.</li>
+        <li><strong>RBD (Reservation Booking Designator) / Inventory Bucket:</strong> Mapping between the fare and the inventory class (e.g. Fare Y26NR requires Y-class inventory). For many corporate/private fares there can be IATA class plus sub-class mapping logic.</li>
+        <li><strong>Optional Services / Ancillaries (ATPCO Optional Services – OC / Branded Fares):</strong> Submitted separately but can be referenced for brand attributes or ancillaries inclusion logic.</li>
+        <li><strong>CAT 25 (Fare By Rule) & CAT 35 (Negotiated):</strong> Mechanisms to construct net or private fares from a base, applying markups/markdowns or conditions without duplicating all data.</li>
+        <li><strong>Constructed Fares:</strong> Half-round-trip combinations (e.g. add-ons attached to domestic segments) built from components plus mileage or zone logic.</li>
+      </ul>
+
+      <h2 id="rule-categories">4. Rule Categories Overview</h2>
+      <p>Categories partition business logic. A (non-exhaustive) summary of commonly encountered categories and focus points for engineering consumption:</p>
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr><th>Cat #</th><th>Name (Simplified)</th><th>Implementation Notes (Selected)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Eligibility</td><td>Passenger type (ADT/CHD/INF), residency, corporate ID. Used early to filter inadmissible fares.</td></tr>
+          <tr><td>2</td><td>Day/Time</td><td>Departure time windows; often needs local time zone handling. Index by departure local date/time.</td></tr>
+          <tr><td>3</td><td>Seasonality</td><td>Travel start date ranges—store normalized intervals to accelerate filtering.</td></tr>
+          <tr><td>4</td><td>Flight Application</td><td>Specific flight numbers/equipment restrictions; match against schedule provider feed.</td></tr>
+          <tr><td>5</td><td>Advance Purchase</td><td>Book X days before departure / ticketing limits. Evaluate at pricing & reticket events.</td></tr>
+          <tr><td>6</td><td>Minimum Stay</td><td>Often “Saturday night” (7th day) or numeric days from departure.</td></tr>
+          <tr><td>7</td><td>Maximum Stay</td><td>Return must occur within limit; influences validity for open returns.</td></tr>
+          <tr><td>8</td><td>Stopovers</td><td>Count, charge, allowed points; interplay with Cat 12 (Surcharges sometimes) & Cat 19 (Discounts).</td></tr>
+          <tr><td>9</td><td>Transfers</td><td>Connections count restrictions; used to prune itineraries with excessive legs.</td></tr>
+          <tr><td>10</td><td>Combinability</td><td>Half-round-trip combination rules; base for constructing multi-fare itineraries.</td></tr>
+          <tr><td>12</td><td>Surcharges</td><td>Different from carrier-imposed international surcharges (YQ/YR); applied scenario-driven fees.</td></tr>
+          <tr><td>14</td><td>Travel Restrictions</td><td>Blackout dates, directional travel sequencing constraints.</td></tr>
+          <tr><td>15</td><td>Sales Restrictions</td><td>Point of sale / point of ticketing; e-commerce channel gating (country IP vs validating carrier).</td></tr>
+          <tr><td>16</td><td>Penalties</td><td>Change/refund logic: before/after departure, no-show, waiver triggers; essential for post-ticket servicing.</td></tr>
+          <tr><td>17</td><td>HIP/Mileage Exceptions</td><td>Higher Intermediate Point checks override; careful ordering with fare construction.</td></tr>
+          <tr><td>18</td><td>Ticket Endorsements</td><td>Text printed on ticket; store verbatim (non-price semantic).</td></tr>
+          <tr><td>19</td><td>Discounts</td><td>CHD/INF/PAX types; percent or fixed; interplay with Cat 1 eligibility.</td></tr>
+          <tr><td>23</td><td>Misc Provisions</td><td>Catch-all; treat conservatively if uncertain.</td></tr>
+          <tr><td>25</td><td>Fare By Rule</td><td>Algorithmic transformations (e.g., “apply 15% discount to base”); require deterministic reproducibility.</td></tr>
+          <tr><td>31</td><td>Voluntary Changes</td><td>Structured change conditions (post-ATPCO modernization). Sometimes overlaps Cat 16 content.</td></tr>
+          <tr><td>33</td><td>Voluntary Refunds</td><td>Structured refund conditions; factors into automated refund engines.</td></tr>
+          <tr><td>35</td><td>Negotiated Fares</td><td>Private/net; mask amounts publicly; ensure confidentiality access control.</td></tr>
+        </tbody>
+      </table>
+      <p><em>Note:</em> Category numbering includes more than listed; emphasis here is on frequently impactful categories in typical pricing engines.</p>
+
+      <h2 id="footnotes">5. Footnotes & Footnote Tables</h2>
+      <p><strong>Footnotes</strong> decouple shared conditional logic (e.g., same seasonal pattern applied across multiple fares) to avoid duplication. Mechanism:</p>
+      <ol>
+        <li>Fare record references footnote code (e.g. <code>FN=AB</code>).</li>
+        <li>Footnote table maps (Footnote Code + Tariff + Rule Number) → subset of categories’ data rows.</li>
+        <li>During evaluation, base rule categories merge with footnote-scoped overrides or additional rows (order matters: usually footnote rows filtered first, then combinability logic).</li>
+      </ol>
+      <p><strong>Implementation Tip:</strong> Precompute a <code>CompositeRuleKey = hash(ruleNumber + footnoteSet)</code> to enable caching compiled rule graphs.</p>
+
+      <h2 id="routing">6. Routing, MPM & Construction</h2>
+      <p>Two principal paradigms to validate journey path vs fare applicability:</p>
+      <ul>
+        <li><strong>Routing Number + Text / Map:</strong> Fare references routing number; routing table enumerates permitted sequences (city codes, carriers) and “via” conditions. Complex patterns behave like mini grammars.</li>
+        <li><strong>Maximum Permitted Mileage (MPM):</strong> Mileage-based construction; route valid if total great-circle distance (plus tolerance) ≤ MPM published for market. Surface sectors & constructed add-ons adjust calculation.</li>
+      </ul>
+      <p><strong>Constructed Fares:</strong> Combine two half fares (e.g., domestic add-on + international half-round-trip). Need HIP (Higher Intermediate Point) and circle trip checks to ensure not undercutting intermediate pricing. Order of checks typically: base market pricing → HIP adjustments → circle trip / end-on-end combinability → currency rounding & surcharges → tax computation.</p>
+
+      <h2 id="surcharges-taxes">7. Surcharges (YQ/YR) & Taxes</h2>
+      <p>Distinguish:</p>
+      <ul>
+        <li><strong>Carrier-Imposed Surcharges (YQ/YR):</strong> Not part of base fare amount but commonly displayed as part of “fare + surcharges” subtotal. Filed separately (misc fee tables) with applicability conditions (market, fare type, cabin, segments).</li>
+        <li><strong>ATPCO Category 12 Surcharges:</strong> Rule-level conditional charges (e.g. fuel supplement on specific day-of-week fares) integrated into pricing logic before taxes.</li>
+        <li><strong>Taxes (IATA / government):</strong> Determined by journey’s tax points (origins, stopovers, arrivals). Usually applied after fare + surcharges aggregation. Accuracy critical for settlement; implement official tax engine or integrate with vendor data (e.g. ATPCO Tax feed).</li>
+      </ul>
+      <p><strong>Rounding:</strong> Apply currencies’ rounding logic (often “nearest 0.01” but some markets have specific increments, e.g. 0.10). Keep raw (unrounded) intermediate value for audit.</p>
+
+      <h2 id="pricing-workflow">8. Pricing Engine Workflow (High Level)</h2>
+      <pre><code>Input: Origin, Destination, Dates, Pax Types, Cabin, Corporate Codes, Requested Itinerary Structure
+
+1. Gather Inventory:
+   - Availability (RBD by flight/segment).
+2. Candidate Itinerary Generation:
+   - O&D graph search with time, connection, alliance constraints.
+3. Fare Candidate Retrieval:
+   - Filter by market (local, constructed), cabin, effective dates, POS.
+4. Rule Compilation:
+   - Merge base rule + footnotes; compile restricted category set.
+5. Feasibility Filtering (Fast Path):
+   - Drop fares failing simple predicates: date windows, advance purchase.
+6. Itinerary-Fare Pairing:
+   - Validate routing or MPM; map each segment to fare component(s).
+7. Pricing Construction:
+   - Build fare components (outbound, inbound, additional sectors).
+8. Rule Deep Evaluation:
+   - Min/max stay, stopovers, transfers, combinability, HIP checks.
+9. Surcharges & Discounts:
+   - Apply Cat 12, YQ/YR, passenger discounts, corporate adjustments.
+10. Tax Calculation:
+   - Invoke tax engine with priced itinerary.
+11. Currency Normalization:
+   - Convert components to display currency; apply rounding.
+12. Output Bundling:
+   - Provide structured priced itinerary with audit trail (component-level).
+</code></pre>
+      <p><strong>Audit Trail:</strong> Keep a machine-readable trace: which categories passed/failed, transformation steps (e.g. Cat 25 “apply -15%”), check timestamps, and source dataset version IDs.</p>
+
+      <h2 id="integrity-checks">9. Integrity & Validation Checks</h2>
+      <ul>
+        <li><strong>Rule Determinism Check:</strong> Same input itinerary & dataset version should yield identical price (excluding dynamic adjustments). Hash of (fareIDs + rules snapshot + itinerary signature) can assert deterministic output.</li>
+        <li><strong>Availability/Fare Synchronization:</strong> Detect scenarios where priced fare requires RBD not currently open (phantom availability). Use periodic reconciliation sample runs vs host or offer service.</li>
+        <li><strong>HIP Under-Collection Detection:</strong> Automate detection where constructed price & intermediate point fare mismatch implies missing HIP uplift.</li>
+        <li><strong>Tax Drift:</strong> Compare tax engine result vs settlement clearing samples; flag divergence > tolerance.</li>
+      </ul>
+
+      <h2 id="caching-distribution">10. Caching & Distribution Considerations</h2>
+      <p><strong>Granularity:</strong> Avoid caching fully priced itineraries too aggressively; prefer caching intermediate compiled rule objects keyed by <code>(ruleNumber, footnoteSet, version)</code>.</p>
+      <p><strong>Invalidation:</strong> Trigger recompile on ATPCO incremental loads (often multiple daily). Provide a “staleness horizon” metric per priced response.</p>
+      <p><strong>Versioning:</strong> Tag responses with dataset timestamp + change sequence number. Downstream order creation can assert versions to minimize mismatches.</p>
+      <p><strong>Delta Feeds:</strong> Many modern ingestion patterns use a streaming approach (Kafka, Kinesis) to publish “fare upsert” events internally after nightly full loads, enabling near-real-time internal caches.</p>
+
+      <h2 id="common-failures">11. Common Failure Modes</h2>
+      <table class="table is-fullwidth">
+        <thead><tr><th>Failure</th><th>Cause</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>Price at shopping cannot be ticketed</td><td>Rule category (e.g. Cat 5) evaluated stale or omitted; availability class closed between quote & ticket</td><td>Short validity windows, reprice-on-commit, dataset version check</td></tr>
+          <tr><td>Inconsistent change/refund penalties</td><td>Cat 16 free-text misparsed; partial adoption of structured Voluntary Changes (Cat 31)</td><td>Prefer structured data; fall back gracefully, display disclaimers</td></tr>
+          <tr><td>Under-collected fare on circle trip</td><td>HIP / Circle Trip logic skipped for routing subset</td><td>Explicit test permutations for constructed multi-direction paths</td></tr>
+          <tr><td>Incorrect taxes in edge markets</td><td>Outdated tax table or misapplied stopover determination</td><td>Automated daily diff vs authoritative tax service; stopover logic unit tests</td></tr>
+          <tr><td>Latency spikes on batch load</td><td>Full rule recompile synchronous</td><td>Background pre-warm; incremental invalidation queue</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="engineering-patterns">12. Engineering Patterns & Data Structures</h2>
+      <h3>12.1 Normalized Internal Model</h3>
+      <pre><code>Fare {
+  id, marketOrigin, marketDestination, directionality,
+  fareBasis, fareClassPrimaryRBD, tariff, ruleNumber,
+  effectiveDate, expirationDate, travelStartDateRange[], travelEndDateRange[],
+  isPrivate, currency, baseAmount, passengerTypeCodes[], footnotes[]
+}
+
+CompiledRule {
+  compositeKey, ruleNumber, footnoteSet[],
+  categories: { "5": AdvancePurchaseSpec, "6": MinStaySpec, ... },
+  provenance: { ruleVersion, footnoteVersions[] }
+}
+
+AvailabilitySnapshot {
+  segmentKey -> { RBD: seatsRemaining, lastUpdated }
+}
+
+PricingTrace {
+  itinerarySignature, fareComponents[], appliedCategories[], surcharges[], taxes[],
+  datasetVersion, processingTimeMs
+}</code></pre>
+
+      <h3>12.2 Compilation Cache</h3>
+      <p>On load of new fare/rule deltas, just-in-time compile on first request; store LRU. Evict least-used composites after threshold. Keep metrics: compile time, cache hit ratio, memory footprint.</p>
+
+      <h3>12.3 Category Evaluation Strategy</h3>
+      <ul>
+        <li><strong>Early Filters:</strong> Cat 2/3/5/15 (cheap predicates) to shrink candidate set quickly.</li>
+        <li><strong>Graph Constraints:</strong> Routing or MPM after itinerary shape known.</li>
+        <li><strong>Stateful / Cross-Slice:</strong> Combinability (Cat 10), HIP, circle trip after building multi-fare context.</li>
+        <li><strong>Penalty/Servicing:</strong> Evaluate on original ticketing and again on reissue context (keep both baseline and current interpretation if categories changed since ticketing).</li>
+      </ul>
+
+      <h3>12.4 Deterministic Hashing</h3>
+      <p>Create stable JSON canonicalization (ordered keys) for rule fragments before hashing to detect drift; store hash in pricing response for reproducibility.</p>
+
+      <h2 id="modernization">13. Modernization Toward Offers & Orders</h2>
+      <p>As airlines transition to “Offer & Order” model (eliminating PNR/Ticket/EMD triad), filed fares coexist with dynamic offer construction:</p>
+      <ul>
+        <li><strong>Bridging Layer:</strong> A service that can produce an Offer referencing either (a) filed fare basis or (b) dynamically priced bundle, normalizing to a unified order schema.</li>
+        <li><strong>Data Lineage:</strong> For filed fare based offers, include <code>fareBasis</code>, <code>ruleRefs</code>, dataset version. For dynamic, include algorithm ID & inputs used.</li>
+        <li><strong>Servicing Compatibility:</strong> Legacy interline often still expects filed fare attributes; maintain dual representation internally until all partners ready.</li>
+        <li><strong>Continuous Pricing Alignment:</strong> Ensure adjustments (e.g., continuous discount off filed ladder) remain explainable—store base filed anchor and delta transformation.</li>
+      </ul>
+
+      <h2 id="continuous-pricing">14. Continuous & Dynamic Pricing Interaction</h2>
+      <p><strong>Filed Ladder vs Continuous:</strong> Filed fares provide discrete “rungs.” Continuous pricing algorithms fill price gaps dynamically (e.g. yield management output → smoothing). Implementation must not violate published fare restrictions:</p>
+      <ul>
+        <li>Use filed fare as anchor; apply permitted differential producing an “adjusted offer price.”</li>
+        <li>Preserve tax computation method (taxes often recomputed on new total but must respect jurisdiction rules).</li>
+        <li>Auditable mapping: <code>adjustedPrice = baseFiled + algorithmicDelta</code> (store both).</li>
+        <li>Guardrails: max/min deviation thresholds per market; fallback to filed price when uncertain.</li>
+      </ul>
+
+      <h2 id="monitoring">15. Observability & Monitoring</h2>
+      <ul>
+        <li><strong>Data Freshness Dashboard:</strong> Last ATPCO load time, delta lag, rule compile backlog.</li>
+        <li><strong>Discrepancy Sampling:</strong> Compare 1% of priced itineraries against host price check (spot phantom mismatches).</li>
+        <li><strong>Rule Evaluation Metrics:</strong> Category pass/fail counts; spikes highlight data regressions (e.g. new advance purchase rule unexpectedly filters majority of fares for a market).</li>
+        <li><strong>Latency Budget:</strong> Breakdown of pricing pipeline stages; watch compile cache miss penalties.</li>
+        <li><strong>Servicing Outcomes:</strong> Change/refund automation success vs manual exceptions; correlate with Cat 31/33 parsing issues.</li>
+      </ul>
+
+      <h2 id="checklist">16. Implementation Checklist</h2>
+      <ul>
+        <li>Map data lineage: fare record → rule(s) → footnote(s) → compiled categories.</li>
+        <li>Define canonical itinerary signature (sequence of departure airport + flight number + departure date + cabin).</li>
+        <li>Implement deterministic rule compilation hashing & store version with pricing result.</li>
+        <li>Separate earlier cheap predicate filters from expensive routing/HIP logic.</li>
+        <li>Provide pricing trace (machine + human readable) for each returned offer.</li>
+        <li>Automate HIP & circle trip regression tests with curated multi-city scenarios.</li>
+        <li>Instrument availability drift detection (inventory vs priced RBD consumption).</li>
+        <li>Design safe rollback: ability to revert to previous dataset version quickly.</li>
+        <li>Establish max allowed delta between dynamic adjusted price and nearest filed anchor.</li>
+        <li>Integrate tax engine updates with automated comparison harness (baseline vs new).</li>
+        <li>Expose API error taxonomy (RULE_FAIL_ADV_PURCHASE, ROUTING_FAIL, AVAIL_MISMATCH, TAX_ENGINE_ERROR).</li>
+        <li>Prepare bridging schema for Offer & Order with legacy fare attributes included.</li>
+      </ul>
+
+      <h2 id="glossary">17. Mini Glossary</h2>
+      <ul>
+        <li><strong>ATPCO:</strong> Airline Tariff Publishing Company – central clearinghouse for fare/rule distribution.</li>
+        <li><strong>Fare Basis Code:</strong> Identifier combining fare class and conditions tokens.</li>
+        <li><strong>RBD:</strong> Booking class seat inventory designation (e.g. Y, M, J).</li>
+        <li><strong>HIP:</strong> Higher Intermediate Point – ensures fare not less than pricing through an intermediate point with a higher applicable fare.</li>
+        <li><strong>MPM:</strong> Maximum Permitted Mileage – mileage cap before surcharges / invalidation.</li>
+        <li><strong>YQ/YR:</strong> Carrier-imposed surcharges (not government taxes).</li>
+        <li><strong>Cat 25 / Cat 35:</strong> Mechanisms for fare transformation (Fare By Rule) and negotiated/private fares.</li>
+      </ul>
+
+      <h2 id="sources">18. Sources & Further Reading</h2>
+      <p>Openly accessible conceptual references (explicit proprietary manuals intentionally not reproduced):</p>
+      <ul>
+        <li>Public ATPCO overview materials and industry conference presentations (conceptual architecture and category taxonomy).</li>
+        <li>IATA Passenger Standards Conference materials (general references to fare construction, taxes, proration concepts).</li>
+        <li>U.S. DOT and EU consumer disclosure regulations (influence on surcharge & tax transparency).</li>
+        <li>Airline pricing and revenue management academic papers (for HIP, combinability heuristics, dynamic pricing overlays).</li>
+      </ul>
+      <p class="mini-caption">For detailed operational category rule text and proprietary table formats, consult official licensed ATPCO documentation.</p>
+
+      <h2 id="disclaimer">19. Disclaimer</h2>
+      <div class="callout warning">
+        This article summarizes industry-practiced concepts for engineering and product orientation. It intentionally avoids reproducing proprietary ATPCO paid specifications or restricted datasets. Always validate implementation details against your airline’s licensed ATPCO technical documentation, IATA resolutions, regulatory obligations, and internal revenue accounting policies.
+      </div>
+
       <hr/>
-      <nav class="level">
+      <nav class="level section-nav">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-02-05-from-tty-to-edifact:-structuring-airline-messages.html">← Previous</a>
         </div>
