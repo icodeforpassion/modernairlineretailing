@@ -49,7 +49,6 @@
         url('/assets/og-banner.jpg') center/cover no-repeat;
       overflow: hidden;
     }
-
     .hero::after {
       content:"";
       position:absolute;
@@ -60,11 +59,7 @@
       pointer-events:none;
       mix-blend-mode: screen;
     }
-
-    .hero .container {
-      max-width: 960px;
-    }
-
+    .hero .container { max-width: 960px; }
     .title.is-1 {
       background: linear-gradient(92deg, #fff, #b9dcf5 45%, #4fb1f5 80%);
       -webkit-background-clip: text;
@@ -79,7 +74,7 @@
       align-items: center;
       gap: .65rem;
       background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
-      color: #fff;
+      color: #fff !important;
       font-weight: 600;
       border: none;
       padding: .9rem 1.35rem;
@@ -90,6 +85,7 @@
       transition: var(--transition);
       position: relative;
       isolation: isolate;
+      text-decoration:none;
     }
     .hero-cta::before {
       content:"";
@@ -113,6 +109,9 @@
       padding-bottom: 4.5rem;
     }
 
+    /* Ensure scroll target isn't hidden below fixed navbar */
+    #featured { scroll-margin-top: 90px; }
+
     h2.title {
       background: linear-gradient(90deg, #fff, #c6d9e8 40%, #82bfe7);
       -webkit-background-clip:text;
@@ -121,7 +120,6 @@
       letter-spacing:.3px;
     }
 
-    /* Card Grid */
     #featured-cards {
       display:flex;
       flex-wrap:wrap;
@@ -145,10 +143,7 @@
       transform: translateY(24px) scale(.97);
       transition: var(--transition);
     }
-    .post-card.reveal {
-      opacity:1;
-      transform: translateY(0) scale(1);
-    }
+    .post-card.reveal { opacity:1; transform: translateY(0) scale(1); }
     .post-card:hover {
       box-shadow: var(--shadow-2);
       transform: translateY(-6px) scale(1.015);
@@ -161,7 +156,6 @@
       flex-direction:column;
       height:100%;
     }
-
     .post-media {
       position:relative;
       height: 180px;
@@ -169,9 +163,7 @@
       background:linear-gradient(135deg,#1e354b,#244b66);
     }
     .post-media img {
-      width:100%;
-      height:100%;
-      object-fit:cover;
+      width:100%; height:100%; object-fit:cover;
       filter: saturate(105%) contrast(104%);
       transition: transform 1.4s ease, filter .6s ease;
     }
@@ -184,17 +176,17 @@
     }
     .badge-date {
       position:absolute;
-      top: .75rem;
-      left: .75rem;
-      background: rgba(13,27,42,.75);
+      top:.75rem;
+      left:.75rem;
+      background:rgba(13,27,42,.75);
       color:#fff;
       padding:.35rem .6rem;
-      border-radius: .5rem;
+      border-radius:.5rem;
       font-size:.7rem;
       font-weight:600;
       letter-spacing:.5px;
       text-transform:uppercase;
-      backdrop-filter: blur(6px);
+      backdrop-filter:blur(6px);
       border:1px solid rgba(255,255,255,.15);
     }
     .img-badge{
@@ -212,66 +204,36 @@
       text-transform:uppercase;
       backdrop-filter:blur(6px);
     }
-
     .post-body {
       padding: 1.15rem 1.2rem 1.25rem;
       display:flex;
       flex-direction:column;
       gap:.75rem;
     }
-    .post-title {
-      font-size: 1.05rem;
-      line-height:1.25;
-      font-weight:600;
-      color:#fff;
-      margin:0;
-    }
-    .post-excerpt {
-      font-size:.83rem;
-      line-height:1.35;
-      color: var(--clr-text-dim);
-      flex-grow:1;
-    }
+    .post-title { font-size:1.05rem; line-height:1.25; font-weight:600; color:#fff; margin:0; }
+    .post-excerpt { font-size:.83rem; line-height:1.35; color:var(--clr-text-dim); flex-grow:1; }
     .post-meta {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:.65rem;
-      letter-spacing:.7px;
-      text-transform:uppercase;
-      color: var(--clr-text-dim);
-      margin-top:.2rem;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:.65rem; letter-spacing:.7px; text-transform:uppercase; color:var(--clr-text-dim); margin-top:.2rem;
     }
     .btn-inline {
-      font-size:.7rem;
-      font-weight:600;
-      letter-spacing:.5px;
-      display:inline-flex;
-      align-items:center;
-      gap:.4rem;
-      padding:.45rem .8rem;
-      border-radius: .55rem;
-      background: rgba(79,177,245,.13);
-      color:#cfeafe;
-      border:1px solid rgba(79,177,245,.3);
-      transition: var(--transition);
+      font-size:.7rem; font-weight:600; letter-spacing:.5px;
+      display:inline-flex; align-items:center; gap:.4rem;
+      padding:.45rem .8rem; border-radius:.55rem;
+      background:rgba(79,177,245,.13); color:#cfeafe;
+      border:1px solid rgba(79,177,245,.3); transition:var(--transition);
     }
     .btn-inline:hover {
-      background: var(--clr-accent-alt);
-      color:#082032;
-      border-color: var(--clr-accent-alt);
-      box-shadow:0 4px 14px -4px rgba(79,177,245,.6);
+      background:var(--clr-accent-alt); color:#082032;
+      border-color:var(--clr-accent-alt); box-shadow:0 4px 14px -4px rgba(79,177,245,.6);
     }
-    .btn-inline:focus-visible { outline:none; box-shadow: var(--focus-ring); }
+    .btn-inline:focus-visible { outline:none; box-shadow:var(--focus-ring); }
 
-    /* Skeletons */
     .skeleton {
-      position:relative;
-      overflow:hidden;
+      position:relative; overflow:hidden;
       background: linear-gradient(90deg, #1e3044 0%, #263d55 45%, #1e3044 90%);
-      background-size:200% 100%;
-      animation: shimmer 2.4s linear infinite;
-      border-radius: .4rem;
+      background-size:200% 100%; animation: shimmer 2.4s linear infinite;
+      border-radius:.4rem;
     }
     @keyframes shimmer {
       0% { background-position:200% 0; }
@@ -282,27 +244,17 @@
     .skeleton-line.short { width:50%; }
 
     footer.footer {
-      background: #0d1b2a;
-      border-top:1px solid var(--clr-border);
-      padding: 3rem 1.5rem 4rem;
-      color: var(--clr-text-dim);
+      background:#0d1b2a; border-top:1px solid var(--clr-border);
+      padding:3rem 1.5rem 4rem; color:var(--clr-text-dim);
     }
-    footer a { color: var(--clr-accent-alt); }
+    footer a { color:var(--clr-accent-alt); }
     footer a:hover { color:#fff; }
 
-    a:focus-visible, button:focus-visible {
-      outline:none;
-      box-shadow: var(--focus-ring);
-    }
+    a:focus-visible, button:focus-visible { outline:none; box-shadow:var(--focus-ring); }
 
-    /* Controls row (optional) */
     .image-mode-wrapper {
-      display:flex;
-      gap:.5rem;
-      align-items:center;
-      font-size:.65rem;
-      text-transform:uppercase;
-      letter-spacing:.5px;
+      display:flex; gap:.5rem; align-items:center;
+      font-size:.65rem; text-transform:uppercase; letter-spacing:.5px;
       color:var(--clr-text-dim);
     }
     .image-mode-wrapper select {
@@ -314,19 +266,16 @@
       font-size:.7rem;
     }
     .image-mode-wrapper select:focus {
-      border-color:var(--clr-accent-alt);
-      box-shadow:var(--focus-ring);
-      outline:none;
+      border-color:var(--clr-accent-alt); box-shadow:var(--focus-ring); outline:none;
     }
 
-    /* Responsive Tweaks */
     @media (max-width: 840px) {
       #featured-cards { justify-content:center; }
-      .hero.is-landing { min-height: 480px; }
+      .hero.is-landing { min-height:480px; }
       .post-card { flex:1 1 calc(50% - 1.5rem); }
     }
     @media (max-width: 560px) {
-      .post-card { flex:1 1 100%; max-width: 520px; }
+      .post-card { flex:1 1 100%; max-width:520px; }
       .hero .title { font-size:2.35rem; }
       .hero .subtitle { font-size:1.05rem; }
     }
@@ -344,7 +293,7 @@
       <div id="navMenu" class="navbar-menu">
         <div class="navbar-start">
           <a class="navbar-item is-active" href="/index.html">Home</a>
-            <a class="navbar-item" href="/blog/index.html">Blog</a>
+          <a class="navbar-item" href="/blog/index.html">Blog</a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link" href="/tools/">Tools</a>
             <div class="navbar-dropdown">
@@ -363,10 +312,10 @@
       <div class="container has-text-centered">
         <h1 class="title is-1">Modern Airline Retailing</h1>
         <p class="subtitle is-4">Tools, insights and real-world stories from the airline tech stack.</p>
-        <button class="hero-cta" id="scrollLatest" type="button" aria-label="Scroll to latest blog posts">
-          Read Latest Blogs
-          <span style="font-size:1.1em;">↘</span>
-        </button>
+        <!-- Changed from <button> to <a href="#featured"> for graceful fallback -->
+        <a href="#featured" class="hero-cta" id="scrollLatest">
+          Read Latest Blogs <span style="font-size:1.1em;">↘</span>
+        </a>
       </div>
     </div>
   </section>
@@ -389,7 +338,34 @@
           <a class="button is-link is-light" href="/blog/">View All Blogs</a>
         </div>
       </div>
-      <div id="featured-cards"></div>
+
+      <!-- Static fallback (will be replaced by JS) -->
+      <div id="featured-cards">
+        <article class="post-card reveal" aria-hidden="true">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="post-body">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </article>
+        <article class="post-card reveal" aria-hidden="true">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="post-body">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </article>
+        <article class="post-card reveal" aria-hidden="true">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="post-body">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </article>
+      </div>
       <div id="feed-status" style="margin-top:2rem;font-size:.85rem;color:var(--clr-text-dim);display:none;"></div>
     </div>
   </section>
@@ -402,12 +378,8 @@
   </footer>
 
   <script>
-    // ---------------------------------------------------------
-    // CONFIG FOR FEATURED RANDOM IMAGES
-    // ---------------------------------------------------------
-    // Modes: 'sticky' (hash-based deterministic), 'always' (new every render), 'off' (neutral placeholder SVG)
+    // ---- IMAGE MODE CONFIG ----
     let FEATURE_IMAGE_MODE = 'sticky';
-
     const FEATURE_IMAGE_POOL = [
       { url:'https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=900&q=60', alt:'Aircraft banking in clear sky' },
       { url:'https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&w=900&q=60', alt:'Storm clouds viewed from window' },
@@ -419,9 +391,7 @@
       { url:'https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=900&q=60', alt:'Vintage split-flap board' },
       { url:'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=900&q=60', alt:'Security padlock digital' }
     ];
-
     const featureImageCache = {};
-
     function hashStr(str){
       let h = 2166136261 >>> 0;
       for(let i=0;i<str.length;i++){
@@ -433,8 +403,8 @@
     function pickFeaturedImage(key){
       if (FEATURE_IMAGE_MODE === 'off') {
         return {
-          url: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300"><rect width="480" height="300" fill="#1f3145"/><text x="40" y="160" font-size="26" fill="#9fb3c5" font-family="Arial,sans-serif">No Image</text></svg>'),
-          alt: 'Placeholder graphic'
+          url:'data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300"><rect width="480" height="300" fill="#1f3145"/><text x="40" y="160" font-size="26" fill="#9fb3c5" font-family="Arial,sans-serif">No Image</text></svg>'),
+          alt:'Placeholder graphic'
         };
       }
       if (FEATURE_IMAGE_MODE === 'always') {
@@ -452,12 +422,7 @@
       return '<span class="img-badge" title="Deterministic random">IMG</span>';
     }
 
-    // ---------------------------------------------------------
-    // DATA SOURCE
-    // NOTE: The blog index now renders posts client-side; direct HTML fetch
-    // no longer yields anchor list. To keep Home resilient we embed the
-    // posts list here (sync with /blog/index.html).
-    // ---------------------------------------------------------
+    // ---- POSTS DATA (sync with /blog/index.html) ----
     const BLOG_POSTS = [
       { date:'2025-06-25', title:'The 2025 Roadmap: Capabilities to Prioritize Now', slug:'2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now' },
       { date:'2025-06-03', title:'Retail KPIs: Measuring What Matters', slug:'2025-06-03-retail-kpis:-measuring-what-matters' },
@@ -484,96 +449,70 @@
       { date:'2024-02-27', title:'ATPCO Fare Filing: Fares, Rules and Footnotes in Practice', slug:'2024-02-27-atpco-fare-filing:-fares,-rules-and-footnotes-in-practice' },
       { date:'2024-02-05', title:'From TTY to EDIFACT: Structuring Airline Messages', slug:'2024-02-05-from-tty-to-edifact:-structuring-airline-messages' },
       { date:'2024-01-15', title:'Early RBD Revenue Management: How Booking Classes Shaped Control', slug:'2024-01-15-early-rbd-revenue-management:-how-booking-classes-shaped-control' }
-    ].map(p=>({...p, url:'/blog/' + p.slug + '.html'}));
+    ].map(p=>({...p,url:'/blog/'+p.slug+'.html'}));
 
-    // ---------------------------------------------------------
-    // BASIC UTILITIES
-    // ---------------------------------------------------------
+    // ---- UTILITIES ----
     const START_DATE = new Date('2024-01-01T00:00:00Z');
     const TODAY = new Date();
-    function clampToRange(d) {
-      if (d < START_DATE) return START_DATE;
-      if (d > TODAY) return TODAY;
-      return d;
-    }
-    function formatISO(d) { return d.toISOString().slice(0,10); }
-    function formatHuman(d) {
-      return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-    }
-    function escapeHTML(str){
-      return str.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
-    function deriveExcerptFromTitle(t){
-      if (t.length < 60) return 'A closer look at ' + t.toLowerCase() + ' in modern airline retailing.';
-      return t.slice(0,92).replace(/\s+\S*$/,'') + '…';
-    }
+    function clampToRange(d){ if(d<START_DATE) return START_DATE; if(d>TODAY) return TODAY; return d; }
+    function formatISO(d){ return d.toISOString().slice(0,10); }
+    function formatHuman(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+    function escapeHTML(str){ return str.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function deriveExcerptFromTitle(t){ return (t.length<60)?('A closer look at '+t.toLowerCase()+' in modern airline retailing.'): t.slice(0,92).replace(/\s+\S*$/,'')+'…'; }
 
-    // ---------------------------------------------------------
-    // RENDER FEATURED (Top 3 by date)
-    // ---------------------------------------------------------
+    // ---- FEATURED ----
     function getLatest(n=3){
-      const enriched = BLOG_POSTS.map(p=>{
+      return BLOG_POSTS.map(p=>{
         const d = clampToRange(new Date(p.date+'T00:00:00Z'));
-        return {...p, dateObj:d, iso:formatISO(d), displayDate:formatHuman(d)};
-      }).sort((a,b)=>b.dateObj - a.dateObj);
-      return enriched.slice(0,n);
+        return {...p,dateObj:d,iso:formatISO(d),displayDate:formatHuman(d)};
+      }).sort((a,b)=>b.dateObj-a.dateObj).slice(0,n);
     }
 
     function renderFeatured(){
-      const cont = document.getElementById('featured-cards');
-      const posts = getLatest(3);
-      cont.innerHTML = '';
-      posts.forEach(p=>{
-        const imgObj = pickFeaturedImage(p.slug);
-        const alt = escapeHTML(imgObj.alt || ('Illustration for ' + p.title));
-        cont.insertAdjacentHTML('beforeend', `
-          <article class="post-card" data-date="${p.iso}">
-            <a href="${p.url}" aria-label="${escapeHTML(p.title)}">
-              <div class="post-media">
-                <img src="${imgObj.url}" alt="${alt}" loading="lazy" onerror="this.onerror=null;this.style.opacity=.35;">
-                <span class="badge-date">${p.displayDate}</span>
-                ${imageBadgeHTML()}
-              </div>
-              <div class="post-body">
-                <h3 class="post-title">${escapeHTML(p.title)}</h3>
-                <p class="post-excerpt">${escapeHTML(deriveExcerptFromTitle(p.title))}</p>
-                <div class="post-meta">
-                  <span>${p.iso}</span>
-                  <span><span class="btn-inline">Read →</span></span>
+      try {
+        const cont = document.getElementById('featured-cards');
+        if(!cont) return;
+        const posts = getLatest(3);
+        cont.innerHTML = '';
+        posts.forEach(p=>{
+          const img = pickFeaturedImage(p.slug);
+          cont.insertAdjacentHTML('beforeend', `
+            <article class="post-card" data-date="${p.iso}">
+              <a href="${p.url}" aria-label="${escapeHTML(p.title)}">
+                <div class="post-media">
+                  <img src="${img.url}" alt="${escapeHTML(img.alt || ('Illustration for '+p.title))}" loading="lazy" onerror="this.onerror=null;this.style.opacity=.35;">
+                  <span class="badge-date">${p.displayDate}</span>
+                  ${imageBadgeHTML()}
                 </div>
-              </div>
-            </a>
-          </article>
-        `);
-      });
-      observeCards();
-    }
-
-    // ---------------------------------------------------------
-    // SKELETONS (initial)
-    // ---------------------------------------------------------
-    function injectSkeletons(count){
-      const cont = document.getElementById('featured-cards');
-      cont.innerHTML='';
-      for(let i=0;i<count;i++){
-        cont.insertAdjacentHTML('beforeend',`
-          <div class="post-card reveal" aria-hidden="true">
-            <div class="skeleton skeleton-thumb"></div>
-            <div class="post-body">
-              <div class="skeleton skeleton-line"></div>
-              <div class="skeleton skeleton-line"></div>
-              <div class="skeleton skeleton-line short"></div>
-            </div>
-          </div>
-        `);
+                <div class="post-body">
+                  <h3 class="post-title">${escapeHTML(p.title)}</h3>
+                  <p class="post-excerpt">${escapeHTML(deriveExcerptFromTitle(p.title))}</p>
+                  <div class="post-meta">
+                    <span>${p.iso}</span>
+                    <span><span class="btn-inline">Read →</span></span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          `);
+        });
+        observeCards();
+      } catch(e){
+        console.error('Render error', e);
+        const status = document.getElementById('feed-status');
+        if(status){
+          status.style.display='block';
+          status.textContent = 'Could not render latest posts.';
+        }
       }
     }
 
-    // ---------------------------------------------------------
-    // ANIMATION OBSERVER
-    // ---------------------------------------------------------
+    // ---- ANIMATION ----
     function observeCards(){
-      const cards = document.querySelectorAll('.post-card');
+      if(!('IntersectionObserver' in window)){
+        document.querySelectorAll('.post-card').forEach(c=>c.classList.add('reveal'));
+        return;
+      }
       const obs = new IntersectionObserver(entries=>{
         entries.forEach(en=>{
           if(en.isIntersecting){
@@ -582,38 +521,56 @@
           }
         });
       },{threshold:.25});
-      cards.forEach(c=>obs.observe(c));
+      document.querySelectorAll('.post-card').forEach(c=>obs.observe(c));
     }
 
-    // ---------------------------------------------------------
-    // INIT
-    // ---------------------------------------------------------
+    // ---- SCROLL (with offset fallback) ----
+    function scrollToFeatured(){
+      const target = document.getElementById('featured');
+      if(!target) return;
+      if('scrollIntoView' in target){
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+        return;
+      }
+      const y = target.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({top:y, behavior:'smooth'});
+    }
+
+    // ---- INIT ----
     document.addEventListener('DOMContentLoaded', ()=>{
-      const burger = document.querySelector('.navbar-burger');
-      const menu = document.getElementById('navMenu');
-      burger.addEventListener('click', () => {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
-        burger.setAttribute('aria-expanded', burger.classList.contains('is-active'));
-      });
-      document.getElementById('year').textContent = new Date().getFullYear();
-      document.getElementById('scrollLatest').addEventListener('click', ()=>{
-        document.getElementById('featured').scrollIntoView({behavior:'smooth', block:'start'});
-      });
+      try{
+        const burger = document.querySelector('.navbar-burger');
+        const menu = document.getElementById('navMenu');
+        burger.addEventListener('click', ()=>{
+          burger.classList.toggle('is-active');
+          menu.classList.toggle('is-active');
+          burger.setAttribute('aria-expanded', burger.classList.contains('is-active'));
+        });
 
-      const modeSel = document.getElementById('featImgMode');
-      modeSel.value = FEATURE_IMAGE_MODE;
-      modeSel.addEventListener('change', ()=>{
-        FEATURE_IMAGE_MODE = modeSel.value;
-        if (FEATURE_IMAGE_MODE !== 'sticky'){
-          for(const k in featureImageCache) delete featureImageCache[k];
-        }
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Enhance scroll trigger (prevent default anchor jump if we want smooth)
+        const scrollBtn = document.getElementById('scrollLatest');
+        scrollBtn.addEventListener('click', (e)=>{
+          e.preventDefault();
+          scrollToFeatured();
+        });
+
+        const modeSel = document.getElementById('featImgMode');
+        modeSel.value = FEATURE_IMAGE_MODE;
+        modeSel.addEventListener('change', ()=>{
+          FEATURE_IMAGE_MODE = modeSel.value;
+          if (FEATURE_IMAGE_MODE !== 'sticky'){
+            for(const k in featureImageCache) delete featureImageCache[k];
+          }
+          renderFeatured();
+        });
+
+        // Directly render (remove artificial delay)
         renderFeatured();
-      });
-
-      injectSkeletons(3);
-      // Simulate small delay for perception; remove setTimeout in production
-      setTimeout(()=>renderFeatured(), 120);
+      }catch(err){
+        console.error('Init error', err);
+      }
     });
   </script>
 </body>
