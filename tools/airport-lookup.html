@@ -1,53 +1,248 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Airport/City Lookup</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <script>
-    async function lookupAirport() {
-      const input = document.getElementById('lookup').value.toUpperCase();
-      const response = await fetch('../tools/airports.json');
-      const airports = await response.json();
+<meta charset="UTF-8">
+<title>Airport / City Lookup</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+<style>
+  .match-list { margin-top:1rem; }
+  .match-item { padding:0.5rem 0.75rem; border:1px solid #ddd; border-radius:4px; margin-bottom:0.5rem; cursor:pointer; background:#fff; }
+  .match-item:hover { background:#f5f5f5; }
+  .is-loading-inline::after {
+    content:"";
+    margin-left:0.5rem;
+    border:2px solid #ccc;
+    border-top-color:#3273dc;
+    border-radius:50%;
+    width:14px; height:14px;
+    display:inline-block;
+    animation:spin 0.6s linear infinite;
+    vertical-align:middle;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  mark { background: #ffe08a; padding:0 2px; }
+</style>
+<script>
+let airportsData = null;
+let mapBaseURL = 'https://www.openstreetmap.org/export/embed.html';
+const RESULTS_LIMIT = 10;
 
-      let found = null;
-      for (const [code, data] of Object.entries(airports)) {
-        if (code === input || data.city.toUpperCase().includes(input) || data.name.toUpperCase().includes(input)) {
-          found = data;
-          break;
-        }
-      }
+function norm(str) {
+  return (str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toUpperCase()
+    .trim();
+}
 
-      if (found) {
-        document.getElementById('info').innerText = 
-          `Airport: ${found.name}, City: ${found.city}, Country: ${found.country}, Code: ${found.code}`;
-        const map = document.getElementById('map');
-        map.src = `https://www.openstreetmap.org/export/embed.html?bbox=${found.lon-0.1}%2C${found.lat-0.1}%2C${found.lon+0.1}%2C${found.lat+0.1}&layer=mapnik&marker=${found.lat}%2C${found.lon}`;
-      } else {
-        document.getElementById('info').innerText = 'No match found.';
-        document.getElementById('map').src = '';
-      }
+// Simple Levenshtein distance (fast enough for short strings)
+function levenshtein(a,b){
+  if(a===b) return 0;
+  const al = a.length, bl = b.length;
+  if(!al) return bl;
+  if(!bl) return al;
+  const v0 = new Array(bl+1);
+  const v1 = new Array(bl+1);
+  for(let i=0;i<=bl;i++) v0[i]=i;
+  for(let i=0;i<al;i++){
+    v1[0]=i+1;
+    for(let j=0;j<bl;j++){
+      const cost = a[i]===b[j] ? 0 : 1;
+      v1[j+1] = Math.min(v1[j]+1, v0[j+1]+1, v0[j]+cost);
     }
-  </script>
+    for(let j=0;j<=bl;j++) v0[j]=v1[j];
+  }
+  return v1[bl];
+}
+
+function scoreEntry(entryN, queryN){
+  if(!queryN) return 0;
+  let best = 0;
+  if(entryN.code === queryN) best = Math.max(best, 130);
+  if(entryN.city === queryN || entryN.name === queryN) best = Math.max(best, 120);
+  if(entryN.code.startsWith(queryN)) best = Math.max(best, 110);
+  if(entryN.city.startsWith(queryN) || entryN.name.startsWith(queryN)) best = Math.max(best, 105);
+  if(entryN.city.includes(queryN) || entryN.name.includes(queryN)) best = Math.max(best, 90);
+
+  const dCode = levenshtein(entryN.code, queryN);
+  if(dCode > 0 && dCode <= 2) best = Math.max(best, 85 - dCode*8);
+
+  if(queryN.length >= 3 && queryN.length <= 12){
+    const sliceCity = entryN.city.slice(0, queryN.length+3);
+    const sliceName = entryN.name.slice(0, queryN.length+5);
+    const dCity = levenshtein(sliceCity, queryN);
+    if(dCity <= 2) best = Math.max(best, 70 - dCity*6);
+    const dName = levenshtein(sliceName, queryN);
+    if(dName <= 2) best = Math.max(best, 68 - dName*6);
+  }
+  return best;
+}
+
+async function ensureData() {
+  if (airportsData) return;
+  toggleLoading(true);
+  try {
+    const res = await fetch('../tools/airports.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('Failed to load airports.json');
+    const raw = await res.json();
+    airportsData = Object.entries(raw).map(([code, data]) => {
+      const merged = {...data};
+      if(!merged.code) merged.code = code;
+      return {
+        original: merged,
+        code: norm(merged.code),
+        city: norm(merged.city),
+        name: norm(merged.name)
+      };
+    });
+  } catch(e){
+    showStatus('Error loading data: ' + e.message, true);
+  } finally {
+    toggleLoading(false);
+  }
+}
+
+function toggleLoading(state){
+  const btn = document.getElementById('lookupBtn');
+  if(state){
+    btn.classList.add('is-loading-inline');
+    btn.disabled = true;
+  } else {
+    btn.classList.remove('is-loading-inline');
+    btn.disabled = false;
+  }
+}
+
+function showStatus(msg, isError=false){
+  const info = document.getElementById('status');
+  info.textContent = msg;
+  info.className = (isError ? 'has-text-danger' : '');
+}
+
+function highlightMatch(text, query){
+  if(!query) return text;
+  const q = query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const re = new RegExp('(' + q + ')','ig');
+  return text.replace(re,'<mark>$1</mark>');
+}
+
+function renderMatches(matches, rawQuery){
+  const list = document.getElementById('matches');
+  list.innerHTML = '';
+  if(!matches.length){
+    list.innerHTML = '<p>No matches. Check spelling or try a broader term.</p>';
+    document.getElementById('map').src = '';
+    return;
+  }
+  const queryLower = rawQuery.toLowerCase();
+  matches.forEach(m => {
+    const {original: o} = m;
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    // Highlight
+    const codeHTML = highlightMatch(o.code, rawQuery);
+    const nameHTML = highlightMatch(o.name, rawQuery);
+    const cityHTML = highlightMatch(o.city, rawQuery);
+    div.innerHTML = `
+      <strong>${codeHTML}</strong> - ${nameHTML}
+      <br><small>${cityHTML}, ${o.country || ''}</small>
+      <span class="has-text-grey is-size-7" style="float:right;">${m.score}</span>
+    `;
+    div.addEventListener('click', () => focusAirport(o));
+    list.appendChild(div);
+  });
+}
+
+function focusAirport(airport){
+  showStatus(`Selected: ${airport.name} (${airport.code})`);
+  const lat = airport.lat;
+  const lon = airport.lon;
+  if(typeof lat !== 'number' || typeof lon !== 'number'){
+    document.getElementById('map').src = '';
+    return;
+  }
+  const delta = 0.1;
+  const bbox = `${lon - delta}%2C${lat - delta}%2C${lon + delta}%2C${lat + delta}`;
+  const marker = `${lat}%2C${lon}`;
+  const url = `${mapBaseURL}?bbox=${bbox}&layer=mapnik&marker=${marker}`;
+  const map = document.getElementById('map');
+  map.title = `Map showing ${airport.name}`;
+  map.src = url;
+  map.focus({preventScroll:true});
+}
+
+async function lookup(){
+  const inputEl = document.getElementById('lookup');
+  const query = inputEl.value.trim();
+  showStatus('');
+  await ensureData();
+  if(!airportsData) return;
+
+  const qN = norm(query);
+  if(!qN){
+    renderMatches([], query);
+    showStatus('Type something to search.');
+    return;
+  }
+
+  // Score all entries, filter by threshold
+  const scored = [];
+  for(const entry of airportsData){
+    const score = scoreEntry(entry, qN);
+    if(score > 0) scored.push({...entry, score});
+  }
+  scored.sort((a,b)=> b.score - a.score);
+
+  const limited = scored.slice(0, RESULTS_LIMIT);
+  renderMatches(limited, query);
+
+  if(!scored.length){
+    showStatus('No matches found.');
+  } else {
+    showStatus(`Found ${scored.length} matches (showing top ${limited.length})`);
+  }
+}
+
+function setup(){
+  const input = document.getElementById('lookup');
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){
+      lookup();
+    } else if(e.key === 'Escape'){
+      input.select();
+    }
+  });
+
+  // Optional: live search on typing (debounced)
+  let timer;
+  input.addEventListener('input', ()=>{
+    clearTimeout(timer);
+    timer = setTimeout(()=> lookup(), 250);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', setup);
+</script>
 </head>
 <body>
-  <section class="section">
-    <div class="container">
-      <h1 class="title">Airport / City Lookup</h1>
-      <div class="field">
-        <label class="label">Enter airport code, city name, or airport name</label>
-        <div class="control">
-          <input class="input" id="lookup" placeholder="e.g., London, JFK, Dubai">
-        </div>
+<section class="section">
+  <div class="container">
+    <h1 class="title">Airport / City Lookup</h1>
+    <p class="subtitle is-size-6">Search by IATA code, city, or airport name (fuzzy supported)</p>
+    <div class="field">
+      <label class="label" for="lookup">Enter airport code, city name, or airport name</label>
+      <div class="control">
+        <input class="input" id="lookup" placeholder="e.g., London, JFK, Dubai" autocomplete="off" aria-describedby="status">
       </div>
-      <div class="control mt-2">
-        <button class="button is-link" onclick="lookupAirport()">Lookup</button>
-      </div>
-      <p class="mt-4" id="info"></p>
-      <iframe id="map" style="width:100%; height:400px; border:1px solid #ccc;" allowfullscreen></iframe>
     </div>
-  </section>
+    <div class="control mt-2">
+      <button id="lookupBtn" class="button is-link" type="button" onclick="lookup()" aria-label="Lookup airports">Lookup</button>
+    </div>
+    <p id="status" class="mt-4" role="status" aria-live="polite"></p>
+    <div id="matches" class="match-list" aria-label="Search results"></div>
+    <iframe id="map" style="width:100%; height:400px; border:1px solid #ccc;" title="Map" allowfullscreen loading="lazy"></iframe>
+  </div>
+</section>
 </body>
 </html>
