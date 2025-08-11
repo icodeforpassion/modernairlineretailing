@@ -1,61 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The 2025 Roadmap: Capabilities to Prioritize Now</title>
-  <meta name="description" content="The 2025 Roadmap: Capabilities to Prioritize Now — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:title" content="The 2025 Roadmap: Capabilities to Prioritize Now"/>
-  <meta property="og:description" content="The 2025 Roadmap: Capabilities to Prioritize Now — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:type" content="article"/>
-  <meta property="og:image" content="/blog/images/blog-25.jpg"/>
-  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now.html"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-  <style>
-    .hero-banner { background: url('/blog/images/blog-25.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>The 2025 Roadmap: Capabilities to Prioritize Now</title>
+<meta name="description" content="Simple, detailed 2025 airline retail roadmap: what to build, why it matters, concrete actions, real airline examples, metrics, risks, references."/>
+<meta property="og:title" content="The 2025 Roadmap: Capabilities to Prioritize Now"/>
+<meta property="og:description" content="Simple, detailed 2025 airline retail roadmap with real airline examples and practical steps."/>
+<meta property="og:type" content="article"/>
+<meta property="og:image" content="/blog/images/blog-25.jpg"/>
+<meta property="og:url" content="https://www.modernairlineretailing.com/blog/2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now.html"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+<style>
+:root {
+  --c-bg:#f8fafc;
+  --c-text:#1e2931;
+  --c-sub:#425466;
+  --c-accent:#0d63b8;
+  --c-soft:#e2e8f0;
+  --c-soft2:#f1f5f9;
+  --c-warn:#b45309;
+  --c-good:#0f7b42;
+  --c-danger:#b42318;
+}
+html,body { background:var(--c-bg); color:var(--c-text); }
+.hero-banner { background:url('/blog/images/blog-25.jpg') center/cover no-repeat; }
+.overlay { background:linear-gradient(180deg,rgba(15,23,42,.55),rgba(15,23,42,.25)); backdrop-filter:saturate(140%); }
+h1,h2,h3,h4 { font-weight:600; line-height:1.25; }
+p { line-height:1.7; }
+a { color:var(--c-accent); }
+a:hover { text-decoration:underline; }
+.home-btn { position:sticky; top:0; margin:.5rem 0 1rem; }
+.tag-badge { display:inline-block; background:#dbeafe; color:#0c4a6e; padding:.3rem .6rem; margin:.15rem .3rem .15rem 0; border-radius:20px; font-size:.65rem; letter-spacing:.5px; text-transform:uppercase; }
+.toc-box { background:var(--c-soft2); border:1px solid var(--c-soft); padding:1rem 1.25rem; border-radius:10px; font-size:.9rem; }
+.inline-table { border-collapse:collapse; width:100%; font-size:.85rem; margin:1.25rem 0; background:white; }
+.inline-table th, .inline-table td { border:1px solid #cbd5e1; padding:.55rem .6rem; vertical-align:top; }
+.inline-table thead { background:#eef2f7; }
+blockquote { border-left:4px solid var(--c-accent); background:#eef6ff; padding:1rem 1.1rem; border-radius:6px; }
+.callout { border:1px solid var(--c-soft); background:#ffffff; padding:1rem 1.25rem; border-radius:10px; margin:1.3rem 0; }
+.callout.success { border-color:var(--c-good); background:#ecfdf5; }
+.callout.warning { border-color:var(--c-warn); background:#fff7ed; }
+.callout.danger { border-color:var(--c-danger); background:#fef2f2; }
+pre { background:#1e293b; color:#f1f5f9; padding:1rem; border-radius:8px; overflow:auto; font-size:.8rem; line-height:1.4; }
+code { background:#e2e8f0; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
+.diagram { background:#1e293b; color:#e2e8f0; font-size:.72rem; padding:1rem 1rem; border-radius:8px; line-height:1.25; }
+hr { background:var(--c-soft); height:1px; border:none; margin:2.5rem 0 2rem; }
+.kpi-badge { background:#e2e8f0; padding:.25rem .55rem; border-radius:4px; font-size:.65rem; letter-spacing:.5px; }
+.section-nav { margin-top:3rem; }
+.ref-list li { font-size:.8rem; line-height:1.4; }
+small { color:var(--c-sub); }
+@media (prefers-color-scheme: dark) {
+  html,body { background:#0f172a; color:#e2e8f0; }
+  .toc-box, .callout, .inline-table thead { background:#1e293b; }
+  .inline-table { background:#0f172a; }
+  .inline-table th, .inline-table td { border-color:#334155; }
+  blockquote { background:#1e3a5f; color:#e2f2ff; }
+  code { background:#334155; }
+  .kpi-badge { background:#334155; }
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Article",
+  "headline":"The 2025 Roadmap: Capabilities to Prioritize Now",
+  "datePublished":"2025-06-25",
+  "dateModified":"2025-06-25",
+  "author":{"@type":"Person","name":"Modern Airline Retailing"},
+  "image":"https://www.modernairlineretailing.com/blog/images/blog-25.jpg",
+  "keywords":"airline retail roadmap 2025,offer and order,continuous pricing,inventory modernization,aviation distribution",
+  "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+}
+</script>
 </head>
 <body>
-  <section class="hero is-medium hero-banner">
-    <div class="hero-body overlay">
-      <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">The 2025 Roadmap: Capabilities to Prioritize Now</h1>
-        <p class="subtitle has-text-white">June 25, 2025</p>
+<section class="hero is-medium hero-banner">
+  <div class="hero-body overlay">
+    <div class="container">
+      <a class="button is-light home-btn" href="/index.html">Home</a>
+      <h1 class="title has-text-white">The 2025 Roadmap: Capabilities to Prioritize Now</h1>
+      <p class="subtitle has-text-white">June 25, 2025 • Simple & Detailed Guide</p>
+      <div>
+        <span class="tag-badge">Roadmap</span>
+        <span class="tag-badge">Retailing</span>
+        <span class="tag-badge">Offer &amp; Order</span>
+        <span class="tag-badge">Inventory</span>
+        <span class="tag-badge">Pricing</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container content">
-      <p>I learned this on a Tuesday morning when a simple search returned two different answers. The 2025 Roadmap: Capabilities to Prioritize Now sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
-      <nav class="level">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2025-06-03-retail-kpis:-measuring-what-matters.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          
-        </div>
-      </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
+<section class="section">
+  <div class="container content">
+
+    <div class="toc-box">
+      <strong>Contents</strong>
+      <ol style="margin-top:.6rem;">
+        <li><a href="#why">1. Why This Roadmap Matters in 2025</a></li>
+        <li><a href="#core-problem">2. Core Problem in Plain Words</a></li>
+        <li><a href="#principles">3. Guiding Principles (Keep You Out of Trouble)</a></li>
+        <li><a href="#capabilities">4. Top 12 Capabilities to Prioritize</a></li>
+        <li><a href="#detail-capabilities">5. Detailed Capability Playbook (Actions, Examples, Metrics)</a></li>
+        <li><a href="#flow">6. Example End-to-End Flow (Search → Commit)</a></li>
+        <li><a href="#examples">7. Real Airline Public Examples (With References)</a></li>
+        <li><a href="#90day">8. First 90 Days Action Plan</a></li>
+        <li><a href="#metrics">9. KPIs & Simple Formulas</a></li>
+        <li><a href="#risks">10. Key Risks & Lightweight Mitigations</a></li>
+        <li><a href="#checklist">11. Quick Checklist (Print & Stick)</a></li>
+        <li><a href="#glossary">12. Plain Glossary</a></li>
+        <li><a href="#references">13. References & Notes</a></li>
+      </ol>
     </div>
-  </section>
+
+    <h2 id="why">1. Why This Roadmap Matters in 2025</h2>
+    <p>In 2025 many airlines are in the middle of moving from old “file fares + booking class” processes toward “Offer & Order” thinking. Customers expect clearer products, faster answers, and consistent prices. Internal teams want less friction. Regulators and partners want audit trails. You cannot modernize everything at once. This guide helps you decide what to build next with limited time and budget.</p>
+
+    <h2 id="core-problem">2. Core Problem in Plain Words</h2>
+    <p>You need to show a trip, give a fair price, and confirm it without surprises. The trouble: different systems (cache, host / PSS, dynamic pricer, tax engine, payment, revenue accounting) each hold a different “truth” for a few milliseconds to a few minutes. If they drift you get “phantom seats”, price mismatches, angry customers, and manual fixes that burn staff hours.</p>
+
+    <h2 id="principles">3. Guiding Principles (Keep You Out of Trouble)</h2>
+    <ul>
+      <li><strong>Single Source of Truth per Object:</strong> Know which system is master for seat counts, prices, tax rules, order state.</li>
+      <li><strong>Everything Stamped:</strong> Every offer carries version numbers (inventoryVersion, pricingModelVersion, taxTableVersion).</li>
+      <li><strong>Fail Closed, Not Random:</strong> If validation fails, clearly reprice or explain; do not auto-silent-adjust.</li>
+      <li><strong>Measure Before Replace:</strong> Shadow new logic before turning off the old logic.</li>
+      <li><strong>Short Feedback Loop:</strong> Daily dashboard that shows “off” signals fast (divergence, reprice rate, fallbacks).</li>
+    </ul>
+
+    <h2 id="capabilities">4. Top 12 Capabilities to Prioritize</h2>
+    <table class="inline-table">
+      <thead><tr><th>#</th><th>Capability</th><th>Goal</th><th>Why 2025</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Consistent Search & Availability</td><td>Same seat story across channels</td><td>Reduces cart failure</td></tr>
+        <tr><td>2</td><td>Offer Token & Provenance</td><td>Trace how price was built</td><td>Audit & trust</td></tr>
+        <tr><td>3</td><td>Dynamic / Continuous Price Band</td><td>Close gap to willingness</td><td>Margin pressure</td></tr>
+        <tr><td>4</td><td>Product / Attribute Catalog</td><td>Clear bundles & upsell</td><td>Needed for RBD-light path</td></tr>
+        <tr><td>5</td><td>Event Stream (Inventory & Orders)</td><td>Fresh downstream data</td><td>Drives real-time ops</td></tr>
+        <tr><td>6</td><td>Observability & Correlation IDs</td><td>Faster debugging</td><td>Complex hybrid stack</td></tr>
+        <tr><td>7</td><td>Fallback & Degrade Modes</td><td>Resilience</td><td>Reduce outage impact</td></tr>
+        <tr><td>8</td><td>Servicing Automation (Change / Refund)</td><td>Cut manual work</td><td>Customer expectation</td></tr>
+        <tr><td>9</td><td>Security (Signed Offer / Anti-Replay)</td><td>Integrity</td><td>More API exposure</td></tr>
+        <tr><td>10</td><td>Interline / Partner Bridge</td><td>Continuous → filed mapping</td><td>Keep network value</td></tr>
+        <tr><td>11</td><td>Data Quality & Governance</td><td>Stop silent drift</td><td>Basis for scaling models</td></tr>
+        <tr><td>12</td><td>Experimentation / A/B Harness</td><td>Test value quickly</td><td>Avoid blind rollouts</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="detail-capabilities">5. Detailed Capability Playbook</h2>
+
+    <h3>5.1 Consistent Search & Availability</h3>
+    <p><strong>Problem:</strong> Cache says 4 seats left, host says 2. Customer gets error at payment.</p>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Add an <code>inventoryVersion</code> (increment on each seat decrement or release).</li>
+      <li>Search response includes: flightId, seatsRemaining (banded or exact per policy), inventoryVersion, freshnessTimestamp.</li>
+      <li>Commit call validates the version; if mismatch, re-fetch availability then reprice (explain to user).</li>
+      <li>Have a “stale threshold” (e.g. 60 seconds). If older, force refresh from host.</li>
+    </ul>
+    <p><strong>Metric:</strong> Availability divergence rate (mismatches / 1000 searches).</p>
+
+    <h3>5.2 Offer Token & Provenance</h3>
+    <p><strong>Goal:</strong> Each offer can be traced: how built, by which model, under what rules.</p>
+    <p><strong>Token Fields (example):</strong> offerId, anchorFareId (if any), pricingMethod=FILED|DYNAMIC|CONTINUOUS, modelVersion, inventoryVersion, expiryUTC, guardrailPolicyId, taxTableVersion, signature.</p>
+    <p><strong>Commit Flow:</strong> Submit token → verify signature + expiry → revalidate version numbers → accept or reprice.</p>
+
+    <h3>5.3 Dynamic / Continuous Price Band</h3>
+    <p><strong>Why:</strong> Close the gap between forecast “best” price and nearest filed fare. Lufthansa Group has publicly discussed “continuous pricing” to fill steps between classical booking classes [1].</p>
+    <p><strong>Steps:</strong></p>
+    <ol>
+      <li>Measure current price gap: average absolute (sold fare - model bid price).</li>
+      <li>Define safe band: min=anchor - X%, max=anchor + Y% (with regulatory & tax checks).</li>
+      <li>Introduce smoothing (do not change more than N times per day for same flight/brand to protect trust).</li>
+      <li>Log every computed price with anchor, adjustments, final.</li>
+    </ol>
+    <p><strong>Metric:</strong> Gap reduction (%). Guardrail breach rate.</p>
+
+    <h3>5.4 Product / Attribute Catalog</h3>
+    <p><strong>Why:</strong> Needed for clarity (baggage, changes, seat pitch, lounge) and to move away from only letter codes (RBDs). Qantas and other IATA participants have engaged in Offer & Order pilots that rely on attribute expression [2].</p>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>List current brands → break into atomic attributes.</li>
+      <li>Create table: attributeCode, description, capacityImpact(Y/N), pricingImpact(Y/N).</li>
+      <li>Map current RBD → attribute set (versioned mapping). Store mappingVersion on offers.</li>
+      <li>Expose a /catalog API for consistent use across web, NDC, mobile.</li>
+    </ul>
+    <p><strong>Metric:</strong> Attribute coverage (% of offers built using catalog vs static text).</p>
+
+    <h3>5.5 Event Stream (Inventory & Orders)</h3>
+    <p><strong>Why:</strong> Near-real-time updates reduce stale caches and manual reconciliation.</p>
+    <p><strong>Events:</strong> SeatDecrement, SeatRelease, OrderCreated, OrderModified, RefundIssued.</p>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Implement ordered (sequence) event IDs per flightLeg.</li>
+      <li>Gap detection (missing sequence) triggers snapshot pull.</li>
+      <li>Store lastAppliedSequence in projection; expose via status endpoint for monitoring.</li>
+    </ul>
+
+    <h3>5.6 Observability & Correlation IDs</h3>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Generate a root <code>x-correlation-id</code> at first request; pass through all services.</li>
+      <li>Attach correlation ID to log lines, metrics, traces.</li>
+      <li>Dashboards: p50/p95 latency; error causes by stage (pricing, tax, payment).</li>
+    </ul>
+    <p><strong>Metric:</strong> Mean Time To Identify (MTTI) incident root cause (minutes).</p>
+
+    <h3>5.7 Fallback & Degrade Modes</h3>
+    <p><strong>Example:</strong> If dynamic pricing API latency > 400 ms, fall back to cached discrete fare and flag “fallbackUsed=true” for analytics.</p>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Define performance budgets per component.</li>
+      <li>Configure circuit breaker thresholds (error %, consecutive timeouts).</li>
+      <li>Provide safe static price anchor list for emergency mode.</li>
+    </ul>
+
+    <h3>5.8 Servicing Automation (Change / Refund)</h3>
+    <p><strong>Why:</strong> Manual change and refund work loads call centers and delays revenue clarity. Airlines like American Airlines and United Airlines have publicly emphasized digital self-service expansion [3][4].</p>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Expose /order/{id}/price-delta endpoint to simulate change before commit.</li>
+      <li>Store penalty and residual value logic in a single rules service (not duplicated in UI).</li>
+      <li>Emit OrderModified events with before/after components for accounting.</li>
+    </ul>
+    <p><strong>Metric:</strong> % of changes fully self-service; average handling time saved.</p>
+
+    <h3>5.9 Security (Signed Offer / Anti-Replay)</h3>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Sign offer token payload (HMAC or asymmetric). Include expiry (e.g. 15 minutes).</li>
+      <li>On commit, check: signature valid, not expired, versions unchanged (or reprice).</li>
+      <li>Store minimal hash of token to detect replay attempts.</li>
+    </ul>
+    <p><strong>Metric:</strong> Rejected replay attempts (should be near zero).</p>
+
+    <h3>5.10 Interline / Partner Bridge</h3>
+    <p><strong>Why:</strong> Partners still expect filed fare + RBD. Air France-KLM, Lufthansa Group, and others continue to use hybrid models while adopting more dynamic elements [1][5].</p>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Offer includes: anchorFareCode + adjustmentAmount (positive or negative).</li>
+      <li>Sector proration: allocate adjustment proportionally by distance or revenue share rule; log method used.</li>
+      <li>If partner cannot consume token, send filed anchor fallback within allowed tolerance.</li>
+    </ul>
+    <p><strong>Metric:</strong> Interline rejection / dispute rate.</p>
+
+    <h3>5.11 Data Quality & Governance</h3>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Nightly job: rebuild “expected state” vs actual (inventory counts, order totals).</li>
+      <li>Publish “data quality score” (e.g. 99.7%) to leadership dashboard.</li>
+      <li>Define single owner per dataset (no shared orphan data).</li>
+    </ul>
+
+    <h3>5.12 Experimentation / A/B Harness</h3>
+    <p><strong>Actions:</strong></p>
+    <ul>
+      <li>Route a % of eligible searches to treatment (e.g. dynamic band). Control group remains legacy pricing.</li>
+      <li>Measure conversion, revenue per seat, refund rate difference.</li>
+      <li>Stop test early only if clear statistical signal (avoid false wins).</li>
+    </ul>
+    <p><strong>Metric:</strong> Experiments concluded per quarter; average time to decision.</p>
+
+    <h2 id="flow">6. Example End-to-End Flow (Search → Commit)</h2>
+    <div class="diagram" aria-label="Flow">
+Search Request
+  -> Edge Cache (check freshness window)
+      if stale -> Offer Engine
+          -> Availability Projection (inventoryVersion=7421)
+          -> Product Catalog (brand + attributes)
+          -> Dynamic Band (modelVersion=2025.06.1)
+          -> Tax Engine (taxTableVersion=2025-06-01)
+          -> Assemble Offer (offerId=O123, expiry=2025-06-25T10:05Z)
+          -> Sign Token
+  <- Offer Response (price, attributes, versions, signature)
+
+Customer Selects
+  -> Commit (offerId O123, token)
+      -> Validate signature + expiry
+      -> Revalidate inventoryVersion (expected 7421)
+          mismatch? -> refresh + reprice path
+      -> Lock Seat (host decrement)
+      -> Create Order (orderId ORD889)
+      -> (Optional) Issue Ticket / Virtual Coupon
+  <- Confirmation (orderId, payment status)
+</div>
+
+    <h2 id="examples">7. Real Airline Public Examples (With References)</h2>
+    <ul>
+      <li><strong>Lufthansa Group:</strong> Has publicly described using “continuous pricing” to reduce gaps between filed fare steps and to broaden offer granularity in NDC channels [1].</li>
+      <li><strong>Air France-KLM:</strong> Has discussed dynamic and continuous pricing experimentation in industry forums (e.g. ATPCO / conference sessions) [5].</li>
+      <li><strong>American Airlines:</strong> Publicly pushed increased NDC adoption and emphasized modern retail offer distribution changes in 2023–2024, shifting some content earlier to modern channels [3].</li>
+      <li><strong>United Airlines:</strong> Public communications on expanding digital self-service for changes / refunds (reducing call volume) support the “servicing automation” priority [4].</li>
+      <li><strong>Qantas & Other IATA Pilots:</strong> Engaged in IATA Offer & Order pilots (ONE Order / modernization), highlighting attribute-based retail direction [2].</li>
+    </ul>
+    <p><small>All examples reference public statements and conference or press materials. See References section for source domains. Verify any claim before internal reporting.</small></p>
+
+    <h2 id="90day">8. First 90 Days Action Plan</h2>
+    <table class="inline-table">
+      <thead><tr><th>Weeks</th><th>Focus</th><th>Deliverables</th></tr></thead>
+      <tbody>
+        <tr><td>1–2</td><td>Baseline & Ownership</td><td>Map masters (seat, price, tax); set KPIs (gap, divergence)</td></tr>
+        <tr><td>3–4</td><td>Provenance & IDs</td><td>Add correlation IDs + version fields to search output</td></tr>
+        <tr><td>5–6</td><td>Offer Token MVP</td><td>Signed token with offerId, inventoryVersion, expiry</td></tr>
+        <tr><td>7–8</td><td>Dynamic Band Pilot</td><td>Band logic on 5 markets (A/B enabled)</td></tr>
+        <tr><td>9–10</td><td>Event Stream</td><td>SeatDecrement + OrderCreated events (sequence, gap alerts)</td></tr>
+        <tr><td>11–12</td><td>Catalog v1</td><td>Attribute list + RBD mapping table; served via /catalog</td></tr>
+        <tr><td>13</td><td>Fallback Rules</td><td>Document thresholds + circuit breaker config</td></tr>
+        <tr><td>14–15</td><td>Servicing Delta API</td><td>/order/{id}/change-quote endpoint live</td></tr>
+        <tr><td>16–18</td><td>Governance & Dashboard</td><td>Daily KPI board; risk register; experiment backlog</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="metrics">9. KPIs & Simple Formulas</h2>
+    <ul>
+      <li><strong>Availability Divergence %</strong> = (mismatched cases / total availability checks) * 100.</li>
+      <li><strong>Price Gap</strong> = avg |soldPrice - modelBidPrice| (per seat).</li>
+      <li><strong>Reprice Rate</strong> = (commits requiring reprice / total commits) * 100.</li>
+      <li><strong>Fallback Rate</strong> = (requests hitting legacy fallback / total requests) * 100.</li>
+      <li><strong>Self-Service Change %</strong> = (self-service changes / all changes) * 100.</li>
+      <li><strong>Experiment Uplift</strong> = (treatment revenue per seat - control) / control * 100.</li>
+      <li><strong>Data Quality Score</strong> = 100 - ((drift incidents * penalty) / normalization factor).</li>
+    </ul>
+
+    <h2 id="risks">10. Key Risks & Lightweight Mitigations</h2>
+    <table class="inline-table">
+      <thead><tr><th>Risk</th><th>Impact</th><th>Mitigation</th><th>Early Signal</th></tr></thead>
+      <tbody>
+        <tr><td>Silent Seat Drift</td><td>Booking failures</td><td>Sequence gap detection + hourly diff</td><td>Divergence % upward trend</td></tr>
+        <tr><td>Model Overshoot</td><td>Under-pricing revenue loss</td><td>Guardrail band + monitor margin per seat</td><td>Negative yield variance</td></tr>
+        <tr><td>Token Replay</td><td>Fraud / unauthorized sale</td><td>Short TTL + nonce hash store</td><td>Replay alert count > 0</td></tr>
+        <tr><td>Partner Rejection</td><td>Lost interline sale</td><td>Anchor + adjustment mapping</td><td>Interline rejection ratio rise</td></tr>
+        <tr><td>Ops Overload</td><td>Slow incidents</td><td>Runbook + correlation ID everywhere</td><td>MTTI increase</td></tr>
+        <tr><td>Attribute Confusion</td><td>Brand promise mismatch</td><td>Single catalog API</td><td>Support tickets on brand rules</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="checklist">11. Quick Checklist (Print & Stick)</h2>
+    <ul>
+      <li>Master list: who owns capacity, price, taxes, order state.</li>
+      <li>Offer token includes versions + expiry + signature.</li>
+      <li>inventoryVersion validated at commit (no silent auto-adjust).</li>
+      <li>Dynamic band guardrails live + logged.</li>
+      <li>Attribute catalog + RBD mapping versioned.</li>
+      <li>SeatDecrement and OrderCreated events sequenced and monitored.</li>
+      <li>Fallback thresholds documented and tested (game day).</li>
+      <li>Change / refund delta quote API working.</li>
+      <li>Dashboard: divergence, gap, reprice, fallback, yield variance.</li>
+      <li>A/B harness capturing uplift with control holdout.</li>
+      <li>Signed token verification pipeline (reject replay).</li>
+      <li>Risk register reviewed monthly.</li>
+    </ul>
+
+    <h2 id="glossary">12. Plain Glossary</h2>
+    <ul>
+      <li><strong>Availability Divergence:</strong> When cached view and host view differ beyond tolerance.</li>
+      <li><strong>Attribute Catalog:</strong> Structured list of product features (bags, changes, seat pitch).</li>
+      <li><strong>Band (Pricing):</strong> Allowed range around an anchor fare where dynamic price can move.</li>
+      <li><strong>Guardrail:</strong> Rule preventing unsafe or non-compliant price output.</li>
+      <li><strong>Offer Token:</strong> Signed package describing how a price was built and its validity window.</li>
+      <li><strong>Provenance:</strong> Recorded details of “who/what/when” for data creation.</li>
+      <li><strong>Replay Attack:</strong> Attempt to reuse a past valid token after it should be invalid.</li>
+      <li><strong>Shadow Mode:</strong> Run new system silently to compare with live system.</li>
+    </ul>
+
+    <h2 id="references">13. References & Notes</h2>
+    <ul class="ref-list">
+      <li>[1] Lufthansa Group public conference and ATPCO / industry presentations referencing continuous pricing (e.g. ATPCO Elevate events, public panel discussions). Source domains: atpco.net, lufthansa-group.com.</li>
+      <li>[2] IATA Offer & Order / ONE Order pilot participant communications (IATA public program materials). Source domain: iata.org.</li>
+      <li>[3] American Airlines public newsroom / distribution updates discussing NDC adoption and channel strategy (2023–2024). Source domain: news.aa.com.</li>
+      <li>[4] United Airlines public digital self-service and customer experience improvements (press releases / investor communications). Source domain: united.com / ir.united.com.</li>
+      <li>[5] Air France-KLM mentions of dynamic / continuous pricing in public industry events (e.g., ATPCO, conference sessions). Domains: corporate.airfrance.com, klm.com, atpco.net.</li>
+      <li>[6] ATPCO public material on dynamic pricing concepts and fare filing constructs. Domain: atpco.net.</li>
+      <li>[7] IATA documentation on Offer & Order architecture (NDC, ONE Order). Domain: iata.org.</li>
+    </ul>
+    <div class="callout warning">
+      Factual Note: Examples above reference public, high-level statements. Exact internal implementations, algorithms, thresholds, or commercial figures are not public and are not included. Always verify with the airline’s official publications or direct contacts before citing internally. This guide does not provide legal or tax advice.
+    </div>
+
+    <hr/>
+    <nav class="level section-nav">
+      <div class="level-left">
+        <a class="button is-link is-light" href="/blog/2025-06-03-retail-kpis:-measuring-what-matters.html">← Previous</a>
+      </div>
+      <div class="level-right">
+        <span></span>
+      </div>
+    </nav>
+    <p><a href="/blog/index.html">Back to all blogs</a></p>
+
+  </div>
+</section>
 </body>
 </html>
