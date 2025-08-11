@@ -615,235 +615,98 @@
   </section>
 
   <!-- Dynamic Offers Maturity Model Section -->
- import React from 'react';
-
-// Matrix columns (phases)
-const columns = [
-  "Traditional Pricing",
-  "Price Adjustment",
-  "Pre‑defined Price + Dynamic Availability",
-  "Pre‑defined Price + Dynamic Adj.",
-  "Dynamic Price Determination",
-  "Static Bundles",
-  "Dynamic Determination of Pre‑defined Bundles",
-  "Dynamic Bundling"
-];
-
-// Matrix rows (product sophistication)
-const rows = [
-  {
-    label: "Static Flights",
-    cells: [
-      {
-        main: "Filed fares; limited buckets.",
-        explain: "ATPCO ladder drives price; capacity managed by nesting and O&D controls."
-      },
-      {
-        main: "Surcharges / manual markups.",
-        explain: "Occasional override or passenger-specific discount applied outside core engine."
-      },
-      {
-        main: "Dynamic availability only.",
-        explain: "Price points stay fixed; inventory steering shifts open/close decisions."
-      },
-      {
-        main: "Rule-based adjustments.",
-        explain: "Algorithmic discount/premium applied to next best static fare tier."
-      },
-      {
-        main: "Continuous or semi-continuous pricing.",
-        explain: "Offer price synthesized from demand curve or optimization model."
-      },
-      {
-        main: "Ancillaries separate.",
-        explain: "No bundling; flight-only proposition predominates."
-      },
-      {
-        main: "Context picks among pre-set bundles.",
-        explain: "Engine chooses which pre-authored bundle to present per request."
-      },
-      {
-        main: "Components composed on the fly.",
-        explain: "Flight + ancillaries + services assembled per traveler context."
-      }
-    ]
-  },
-  {
-    label: "Static Bundles",
-    cells: [
-      {
-        main: "Filed branded fares only.",
-        explain: "Limited brand hierarchy (e.g., Light/Classic/Flex)."
-      },
-      {
-        main: "Uniform upsell deltas.",
-        explain: "Fixed additive differences irrespective of demand context."
-      },
-      {
-        main: "Inventory gating by bundle.",
-        explain: "Availability varies (brand diff alloc) but prices fixed."
-      },
-      {
-        main: "Additive price adjustments.",
-        explain: "Bundle base + context markup/discount formula."
-      },
-      {
-        main: "Optimised bundle pricing.",
-        explain: "Each bundle’s price solved via optimization each request or time slice."
-      },
-      {
-        main: "Static ancillary sets.",
-        explain: "Predetermined combos (seat+bag etc.)."
-      },
-      {
-        main: "Ranked bundle selection.",
-        explain: "Model selects top-N relevant static bundles."
-      },
-      {
-        main: "Hybrid: static skeleton + dynamic add-ons.",
-        explain: "Flexible augmentation of base bundles."
-      }
-    ]
-  },
-  {
-    label: "Dynamic Bundles",
-    cells: [
-      {
-        main: "Not supported.",
-        explain: "Systems not architected for composability."
-      },
-      {
-        main: "Manual packaged promos.",
-        explain: "Ad hoc fare+ancillary promotions w/ static pricing."
-      },
-      {
-        main: "Availability-driven combos.",
-        explain: "Only show combos when all underlying items open."
-      },
-      {
-        main: "Rule composition engine.",
-        explain: "Context triggers which ancillaries join core flight."
-      },
-      {
-        main: "Real-time bundle optimization.",
-        explain: "Bundle content + price co-optimized in request cycle."
-      },
-      {
-        main: "Pre-authored set library.",
-        explain: "Library of potential bundles maintained offline."
-      },
-      {
-        main: "Model selects best library candidate.",
-        explain: "Filtered/ranked by customer & itinerary attributes."
-      },
-      {
-        main: "Fully generative composition.",
-        explain: "Products, merchandising slots, prices all generated."
-      }
-    ]
-  },
-  {
-    label: "Dynamic Offers",
-    cells: [
-      {
-        main: "Static fare filing era.",
-        explain: "Nightly loads; limited request-level nuance."
-      },
-      {
-        main: "Basic personalization tags.",
-        explain: "Frequent flyer tier discounts; corporate codes."
-      },
-      {
-        main: "Real-time seat & fare checks.",
-        explain: "Dynamic availability surfaces (caching + verify)."
-      },
-      {
-        main: "Parametric adjustments.",
-        explain: "Context signals feed pricing parameters."
-      },
-      {
-        main: "Contextual predictive pricing.",
-        explain: "Machine learning & willingness-to-pay models."
-      },
-      {
-        main: "Static ancillary catalogue in offer.",
-        explain: "Ancillary content appended post price."
-      },
-      {
-        main: "Context chooses among curated sets.",
-        explain: "Intelligent retrieval of prepared structures."
-      },
-      {
-        main: "Unified dynamic bundling + dynamic price.",
-        explain: "Co-optimization across content, constraints, revenue KPIs."
-      }
-    ]
-  }
-];
-
-const IataMaturityMatrix = () => (
-  <section id="dynamic-offers" className="section" aria-labelledby="dynamic-offers-heading">
-    <div className="container">
-      <h2 id="dynamic-offers-heading" className="title is-3">IATA Dynamic Offers Maturity Model</h2>
-      <p className="maturity-headline">
+  <section id="dynamic-offers" class="section" aria-labelledby="dynamic-offers-heading">
+    <div class="container">
+      <h2 id="dynamic-offers-heading" class="title is-3">IATA Dynamic Offers Maturity Model</h2>
+      <p class="maturity-headline">
         A synthesized view of how airlines evolve from static products and filed price ladders to fully contextual,
         dynamically constructed and dynamically priced offers. (Conceptual summary based on IATA’s Dynamic Offers
         capabilities matrix. Use internally as an orientation aid.)
       </p>
 
-      <div className="maturity-wrapper">
-        <div className="maturity-toolbar" aria-label="Matrix controls">
-          <div className="left">
+      <div class="maturity-wrapper">
+        <div class="maturity-toolbar" aria-label="Matrix controls">
+          <div class="left">
             <button type="button" id="toggleExplanations" aria-pressed="false">Show Explanations</button>
             <button type="button" id="toggleCompact" aria-pressed="false">Compact Mode</button>
           </div>
-          <div style={{fontSize:'.65rem', letterSpacing:'.4px', color:'var(--clr-text-dim)'}}>
+          <div style="font-size:.65rem; letter-spacing:.4px; color:var(--clr-text-dim);">
             Horizontal scroll on mobile ↔
           </div>
         </div>
 
-        <div className="maturity-matrix-scroll" tabIndex={0}>
-          <table className="maturity-matrix" id="maturityMatrix" aria-describedby="dynamic-offers-heading" role="table">
-            <thead>
-              <tr>
-                <th className="cell header row-head" role="rowheader"></th>
-                {columns.map((col, idx) => (
-                  <th key={idx} className={`cell header phase phase-${idx+1}`} role="columnheader" data-col={idx+1}>{col}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, rIdx) => (
-                <tr key={rIdx}>
-                  <th className="cell row-head" role="rowheader">{row.label}</th>
-                  {row.cells.map((cell, cIdx) => (
-                    <td key={cIdx} className="cell" data-col={cIdx+1}>
-                      {cell.main}
-                      <div className="explain">{cell.explain}</div>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div class="maturity-matrix-scroll" tabindex="0">
+          <div class="maturity-matrix" id="maturityMatrix" aria-describedby="dynamic-offers-heading" role="table">
+            <!-- Header Row -->
+            <div class="cell header row-head" role="rowheader"></div>
+            <div class="cell header phase phase-weak"        role="columnheader" data-col="1">Traditional Pricing</div>
+            <div class="cell header phase phase-static"      role="columnheader" data-col="2">Price Adjustment</div>
+            <div class="cell header phase phase-evolving"    role="columnheader" data-col="3">Pre‑defined Price + Dynamic Availability</div>
+            <div class="cell header phase phase-selective"   role="columnheader" data-col="4">Pre‑defined Price + Dynamic Adj.</div>
+            <div class="cell header phase phase-contextual"  role="columnheader" data-col="5">Dynamic Price Determination</div>
+            <div class="cell header phase phase-dynamic"     role="columnheader" data-col="6">Static Bundles</div>
+            <div class="cell header phase phase-advanced"    role="columnheader" data-col="7">Dynamic Determination of Pre‑defined Bundles</div>
+            <div class="cell header phase phase-leading"     role="columnheader" data-col="8">Dynamic Bundling</div>
+
+            <!-- Row 1 -->
+            <div class="cell row-head" role="rowheader">Static Flights</div>
+            <div class="cell" data-col="1">Filed fares; limited buckets.<div class="explain">ATPCO ladder drives price; capacity managed by nesting and O&amp;D controls.</div></div>
+            <div class="cell" data-col="2">Surcharges / manual markups.<div class="explain">Occasional override or passenger-specific discount applied outside core engine.</div></div>
+            <div class="cell" data-col="3">Dynamic availability only.<div class="explain">Price points stay fixed; inventory steering shifts open/close decisions.</div></div>
+            <div class="cell" data-col="4">Rule-based adjustments.<div class="explain">Algorithmic discount/premium applied to next best static fare tier.</div></div>
+            <div class="cell" data-col="5">Continuous or semi-continuous pricing.<div class="explain">Offer price synthesized from demand curve or optimization model.</div></div>
+            <div class="cell" data-col="6">Ancillaries separate.<div class="explain">No bundling; flight-only proposition predominates.</div></div>
+            <div class="cell" data-col="7">Context picks among pre-set bundles.<div class="explain">Engine chooses which pre-authored bundle to present per request.</div></div>
+            <div class="cell" data-col="8">Components composed on the fly.<div class="explain">Flight + ancillaries + services assembled per traveler context.</div></div>
+
+            <!-- Row 2 -->
+            <div class="cell row-head" role="rowheader">Static Bundles</div>
+            <div class="cell" data-col="1">Filed branded fares only.<div class="explain">Limited brand hierarchy (e.g., Light/Classic/Flex).</div></div>
+            <div class="cell" data-col="2">Uniform upsell deltas.<div class="explain">Fixed additive differences irrespective of demand context.</div></div>
+            <div class="cell" data-col="3">Inventory gating by bundle.<div class="explain">Availability varies (brand diff alloc) but prices fixed.</div></div>
+            <div class="cell" data-col="4">Additive price adjustments.<div class="explain">Bundle base + context markup/discount formula.</div></div>
+            <div class="cell" data-col="5">Optimised bundle pricing.<div class="explain">Each bundle’s price solved via optimization each request or time slice.</div></div>
+            <div class="cell" data-col="6">Static ancillary sets.<div class="explain">Predetermined combos (seat+bag etc.).</div></div>
+            <div class="cell" data-col="7">Ranked bundle selection.<div class="explain">Model selects top-N relevant static bundles.</div></div>
+            <div class="cell" data-col="8">Hybrid: static skeleton + dynamic add-ons.<div class="explain">Flexible augmentation of base bundles.</div></div>
+
+            <!-- Row 3 -->
+            <div class="cell row-head" role="rowheader">Dynamic Bundles</div>
+            <div class="cell" data-col="1">Not supported.<div class="explain">Systems not architected for composability.</div></div>
+            <div class="cell" data-col="2">Manual packaged promos.<div class="explain">Ad hoc fare+ancillary promotions w/ static pricing.</div></div>
+            <div class="cell" data-col="3">Availability-driven combos.<div class="explain">Only show combos when all underlying items open.</div></div>
+            <div class="cell" data-col="4">Rule composition engine.<div class="explain">Context triggers which ancillaries join core flight.</div></div>
+            <div class="cell" data-col="5">Real-time bundle optimization.<div class="explain">Bundle content + price co-optimized in request cycle.</div></div>
+            <div class="cell" data-col="6">Pre-authored set library.<div class="explain">Library of potential bundles maintained offline.</div></div>
+            <div class="cell" data-col="7">Model selects best library candidate.<div class="explain">Filtered/ranked by customer & itinerary attributes.</div></div>
+            <div class="cell" data-col="8">Fully generative composition.<div class="explain">Products, merchandising slots, prices all generated.</div></div>
+
+            <!-- Row 4 -->
+            <div class="cell row-head" role="rowheader">Dynamic Offers</div>
+            <div class="cell" data-col="1">Static fare filing era.<div class="explain">Nightly loads; limited request-level nuance.</div></div>
+            <div class="cell" data-col="2">Basic personalization tags.<div class="explain">Frequent flyer tier discounts; corporate codes.</div></div>
+            <div class="cell" data-col="3">Real-time seat & fare checks.<div class="explain">Dynamic availability surfaces (caching + verify).</div></div>
+            <div class="cell" data-col="4">Parametric adjustments.<div class="explain">Context signals feed pricing parameters.</div></div>
+            <div class="cell" data-col="5">Contextual predictive pricing.<div class="explain">Machine learning & willingness-to-pay models.</div></div>
+            <div class="cell" data-col="6">Static ancillary catalogue in offer.<div class="explain">Ancillary content appended post price.</div></div>
+            <div class="cell" data-col="7">Context chooses among curated sets.<div class="explain">Intelligent retrieval of prepared structures.</div></div>
+            <div class="cell" data-col="8">Unified dynamic bundling + dynamic price.<div class="explain">Co-optimization across content, constraints, revenue KPIs.</div></div>
+          </div>
         </div>
 
-        <div className="maturity-legend" aria-hidden="true">
-          <span><i style={{background:"linear-gradient(160deg,#24364a,#24364a)"}}></i> Traditional / Static</span>
-          <span><i style={{background:"linear-gradient(160deg,#31526f,#2d4c68)"}}></i> Evolving</span>
-          <span><i style={{background:"linear-gradient(160deg,#406a88,#3b6480)"}}></i> Dynamic Pricing</span>
-          <span><i style={{background:"linear-gradient(160deg,#568ab0,#5184a8)"}}></i> Dynamic Bundling</span>
+        <div class="maturity-legend" aria-hidden="true">
+          <span><i style="background:linear-gradient(160deg,#24364a,#24364a)"></i> Traditional / Static</span>
+          <span><i style="background:linear-gradient(160deg,#31526f,#2d4c68)"></i> Evolving</span>
+          <span><i style="background:linear-gradient(160deg,#406a88,#3b6480)"></i> Dynamic Pricing</span>
+          <span><i style="background:linear-gradient(160deg,#568ab0,#5184a8)"></i> Dynamic Bundling</span>
         </div>
 
-        <p className="maturity-attrib">
+        <p class="maturity-attrib">
           Source concept: IATA Dynamic Offers capabilities matrix. Visualization adapted for internal educational use.
         </p>
       </div>
     </div>
   </section>
-);
-
-export default IataMaturityMatrix;
 
   <footer class="footer">
     <div class="content has-text-centered">
