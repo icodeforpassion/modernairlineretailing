@@ -1,0 +1,128 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <title>Airline Revenue Management Tools | Modern Airline Retailing</title> <meta name="viewport" content="width=device-width,initial-scale=1"> <meta name="description" content="Curated, free, browser-based airline revenue management tools: distance, load factor break-even, RASM/CASM, EMSRb fare protection, elasticity, overbooking optimization and more."> <link rel="canonical" href="https://your-domain.example/tools/"> <meta property="og:title" content="Airline Revenue Management Tools"> <meta property="og:description" content="A suite of practical airline RM & network analytics tools."> <meta property="og:type" content="website"> <meta property="og:url" content="https://your-domain.example/tools/"> <meta property="og:image" content="https://your-domain.example/assets/og-tools.jpg"> <meta name="twitter:card" content="summary_large_image"> <meta name="theme-color" content="#0d1b2a"> <style> :root{ --bg:#0d1b2a; --bg-alt:#132235; --grad:linear-gradient(135deg,#0d1b2a 0%,#132d46 55%,#184b6e 100%); --glass:linear-gradient(165deg,rgba(255,255,255,.08),rgba(255,255,255,.02)); --glass-border:rgba(255,255,255,.12); --accent:#4fb1f5; --accent-alt:#7CC8FF; --text:#e6f2f9; --text-dim:#9fb5c6; --radius:22px; --transition:.55s cubic-bezier(.22,.9,.32,1); --focus-ring:0 0 0 3px rgba(79,177,245,.55); --shadow:0 8px 28px -6px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4); --mono: 'SFMono-Regular', ui-monospace, Menlo, Consolas, 'Liberation Mono', monospace; } *{box-sizing:border-box;} body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif; background:var(--grad) fixed; color:var(--text); -webkit-font-smoothing:antialiased; } h1,h2,h3{font-weight:700;letter-spacing:.5px;} a{color:var(--accent-alt);text-decoration:none;} a:hover{color:#fff;} /* Navbar (Bulma-like minimal) */ .navbar{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(13,27,42,.7);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);} .navbar .container{max-width:1320px;margin:0 auto;display:flex;align-items:center;padding:.6rem 1rem;} .navbar-item,.navbar-link{padding:.65rem .95rem;font-size:.85rem;font-weight:600;color:var(--text-dim);display:inline-flex;align-items:center;gap:.35rem;} .navbar-item:hover,.navbar-link:hover{color:#fff;} .navbar-item.is-active,.navbar-link.is-active{color:#fff;background:linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,0));border-radius:10px;} .navbar-brand{display:flex;align-items:center;flex:0 0 auto;} .navbar-brand .navbar-item.brand{font-size:1rem;font-weight:700;background:linear-gradient(90deg,#fff,#b4d8ef 50%,#4fb1f5);-webkit-background-clip:text;color:transparent;} .navbar-menu{display:flex;align-items:center;gap:.4rem;margin-left:1rem;flex-wrap:wrap;} .nav-spacer{flex:1;} @media(max-width:880px){ .navbar-menu{display:none;flex-direction:column;align-items:flex-start;width:100%;margin:0;padding:0 1rem 1rem;} .navbar-menu.is-active{display:flex;} .navbar-burger{display:flex;} } .navbar-burger{display:none;cursor:pointer;flex-direction:column;gap:4px;background:none;border:0;padding:.5rem;margin-left:auto;} .navbar-burger span{display:block;width:25px;height:2.5px;background:var(--text);transition:.4s;} .navbar-burger.is-active span:nth-child(1){transform:translateY(6.5px) rotate(45deg);} .navbar-burger.is-active span:nth-child(2){opacity:0;} .navbar-burger.is-active span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+/* Hero */
+.hero{padding:7.5rem 1.3rem 3.5rem;max-width:1320px;margin:0 auto;position:relative;}
+.hero h1{font-size:clamp(2.2rem,4.8vw,3.6rem);margin:0 0 1.1rem;background:linear-gradient(90deg,#fff,#c9e4f7 45%,#7cc8ff);-webkit-background-clip:text;color:transparent;}
+.hero p{max-width:900px;font-size:1.06rem;line-height:1.55;color:var(--text-dim);margin:0 0 1.7rem;}
+.badges{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+.badges span{font-size:.60rem;letter-spacing:.8px;font-weight:600;text-transform:uppercase;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.14);padding:.45rem .7rem;border-radius:999px;color:var(--text-dim);}
+
+/* Filter bar */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin-top:1.3rem;}
+.filter-bar input[type=text]{flex:1;min-width:230px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);color:var(--text);padding:.7rem .85rem;border-radius:14px;font-size:.9rem;backdrop-filter:blur(6px);}
+.filter-bar input[type=text]:focus{outline:none;box-shadow:var(--focus-ring);border-color:var(--accent-alt);}
+.tag-filter{display:flex;flex-wrap:wrap;gap:.45rem;}
+.tag-filter button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--text-dim);padding:.45rem .75rem;font-size:.65rem;letter-spacing:.5px;font-weight:600;border-radius:999px;cursor:pointer;transition:.35s;}
+.tag-filter button:hover{color:#fff;border-color:var(--accent-alt);}
+.tag-filter button.active{background:linear-gradient(135deg,var(--accent),var(--accent-alt));color:#fff;border-color:transparent;}
+
+/* Grid */
+.grid{--col:3;display:grid;gap:1.9rem;grid-template-columns:repeat(var(--col),1fr);margin:2.6rem 0 4.5rem;}
+@media(max-width:1180px){.grid{--col:2;}}
+@media(max-width:760px){.grid{--col:1;}}
+.card{
+position:relative;
+background:var(--glass);
+border:1px solid var(--glass-border);
+border-radius:var(--radius);
+overflow:hidden;
+display:flex;
+flex-direction:column;
+min-height:390px;
+box-shadow:var(--shadow);
+isolation:isolate;
+transition:transform .65s cubic-bezier(.22,.9,.32,1),border-color .4s, box-shadow .6s;
+}
+.card:focus-within,.card:hover{
+transform:translateY(-8px);
+border-color:rgba(255,255,255,.3);
+box-shadow:0 14px 38px -10px rgba(0,0,0,.7),0 4px 14px -3px rgba(0,0,0,.55);
+}
+.card figure{aspect-ratio:16/9;width:100%;background:#091622;position:relative;overflow:hidden;}
+.card figure img{
+width:100%;height:100%;object-fit:cover;
+filter:saturate(1.15) contrast(1.05) brightness(.93);
+transition:transform 1.8s cubic-bezier(.16,.84,.34,1),opacity 1.3s;
+}
+.card:hover figure img{transform:scale(1.12);}
+.card .body{padding:1.2rem 1.35rem 1.4rem;display:flex;flex-direction:column;flex:1;}
+.card h3{
+margin:.15rem 0 .65rem;
+font-size:1.08rem;
+line-height:1.25;
+background:linear-gradient(90deg,#fff,#c7e2f4 55%,#89d5ff);
+-webkit-background-clip:text;
+color:transparent;
+}
+.card p{margin:0 0 1.1rem;font-size:.85rem;line-height:1.45;color:var(--text-dim);}
+.meta{margin-top:auto;display:flex;flex-wrap:wrap;gap:.45rem;}
+.meta span{
+font-size:.55rem;
+letter-spacing:.7px;
+text-transform:uppercase;
+background:rgba(255,255,255,.12);
+padding:.4rem .55rem;
+border-radius:6px;
+font-weight:600;
+border:1px solid rgba(255,255,255,.16);
+color:var(--text-dim);
+}
+.card a.stretched{
+position:absolute;
+inset:0;
+z-index:5;
+outline:none;
+border-radius:inherit;
+}
+.card a.stretched:focus{
+box-shadow:var(--focus-ring);
+}
+.badge-new{
+position:absolute;
+top:10px;
+left:10px;
+background:linear-gradient(135deg,#ff7d47,#ffbe56);
+color:#fff;
+font-size:.6rem;
+letter-spacing:.8px;
+padding:.42rem .6rem;
+border-radius:999px;
+font-weight:700;
+z-index:3;
+text-transform:uppercase;
+box-shadow:0 4px 12px -2px rgba(0,0,0,.4);
+}
+.fade-in{
+opacity:0;
+transform:translateY(28px) scale(.96);
+animation:fadein .95s .15s forwards cubic-bezier(.22,.9,.32,1);
+}
+@keyframes fadein{
+to{opacity:1;transform:translateY(0) scale(1);}
+}
+
+/* Subtle star canvas */
+#bgCanvas{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;}
+
+.footer{
+max-width:1320px;
+margin:0 auto 3rem;
+padding:0 1.3rem;
+font-size:.7rem;
+line-height:1.4;
+color:var(--text-dim);
+display:flex;
+flex-direction:column;
+gap:.9rem;
+}
+.footer a{color:var(--accent-alt);}
+.footer a:hover{color:#fff;}
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:rgba(255,255,255,.05);}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:20px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.3);}
+</style>
+
+</head> <body> <!-- NAVBAR --> <nav class="navbar" role="navigation" aria-label="Main"> <div class="container"> <div class="navbar-brand"> <a class="navbar-item brand" href="/">Modern Airline Retailing</a> <button class="navbar-burger" aria-label="Menu" aria-expanded="false"> <span></span><span></span><span></span> </button> </div> <div class="navbar-menu" id="navMenu"> <a class="navbar-item" href="/index.html">Home</a> <a class="navbar-item" href="/blog/">Blog</a> <a class="navbar-item navbar-link is-active" aria-current="page" href="/tools/">Tools</a> <a class="navbar-item" href="/about.html">About Me</a> <div class="nav-spacer"></div> </div> </div> </nav>
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<header class="hero"> <h1>Airline Revenue Management Tools</h1> <p> A curated, evolving suite of lightweight analytics tools I believe are genuinely useful for core Revenue Management & Commercial Strategy professionals: quick diagnostics, scenario exploration, and decision support—right in your browser. No logins. No tracking clutter. Just focused utility. </p> <div class="badges"> <span>Free</span> <span>No Signup</span> <span>Shareable URLs</span> <span>Data Stays Local</span> <span>RM + Pricing</span> <span>Continuous Iteration</span> </div> <div class="filter-bar"> <input id="search" type="text" placeholder="Search tools (e.g. load factor, EMSRb, overbooking)..." aria-label="Search tools"> <div class="tag-filter" role="group" aria-label="Filter by tag"> <button type="button" data-tag="Pricing">Pricing</button> <button type="button" data-tag="Inventory">Inventory</button> <button type="button" data-tag="Network">Network</button> <button type="button" data-tag="Optimization">Optimization</button> <button type="button" data-tag="Forecasting">Forecasting</button> <button type="button" data-tag="Unit Metrics">Unit Metrics</button> <button type="button" data-tag="Distance">Distance</button> <button type="button" data-tag="Lookup">Lookup</button> <button type="button" data-tag="All" class="active">All</button> </div> </div> </header> <main style="max-width:1320px;margin:0 auto;padding:0 1.3rem;"> <section class="grid" id="toolGrid" aria-label="Tool cards"> <!-- Cards will be injected via JS for easier future extension (also progressive enhancement safe). --> <noscript> <p style="color:var(--text-dim);">Enable JavaScript to view enhanced tool cards.</p> </noscript> </section> </main> <footer class="footer"> <div> These tools are indicative helpers and depend on accuracy of your inputs; always validate outputs with internal data sources and commercial judgment. Suggestions or a request for a new module? <a href="/about.html#contact">Let me know</a>. </div> <div>© <span id="year"></span> Modern Airline Retailing – Built for practitioners.</div> </footer> <script id="toolsData" type="application/json"> [ { "slug":"great-circle", "title":"Great Circle Distance", "desc":"Compute geodesic distance between airports, view bearings & stage length for planning and quick ASM approximations.", "href":"/tools/great-circle.html", "img":"https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1200&q=60", "alt":"Curved global flight paths over a night-time earth", "tags":["Network","Distance"] }, { "slug":"airport-lookup", "title":"Airport / City Lookup", "desc":"Instant IATA and city lookup with country, coordinates and time zone context—great for schedule & market validation.", "href":"/tools/airport-lookup.html", "img":"https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=format&fit=crop&w=1200&q=60", "alt":"Airport signage board with destinations", "tags":["Lookup","Network"] }, { "slug":"break-even-load-factor", "title":"Break Even Load Factor Analyser", "desc":"Evaluate break-even load factor, RASM vs CASM gap and profit sensitivity from fares, ancillaries, CASM & stage length.", "href":"/tools/break-even-load-factor.html", "img":"https://images.unsplash.com/photo-1494412651409-8963ce7935a7?auto=format&fit=crop&w=1200&q=60", "alt":"Airliner wing over clouds at sunset", "tags":["Unit Metrics","Pricing"] }, { "slug":"rasm-casm-calculator", "title":"RASM / CASM / Yield Calculator", "desc":"Compute key unit metrics, operating margin and break-even load factor from traffic & financial inputs instantly.", "href":"/tools/rasm-casm-calculator.html", "img":"https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?auto=format&fit=crop&w=1200&q=60", "alt":"Minimal financial charts on a dark dashboard", "tags":["Unit Metrics","Pricing"] }, { "slug":"fare-bucket-allocation", "title":"Fare Bucket Protection (EMSRb)", "desc":"Derive seat protection levels for higher fares using EMSRb. Input demand means/variance per class—get limits fast.", "href":"/tools/fare-bucket-allocation.html", "img":"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=60", "alt":"Abstract probability density wave", "tags":["Inventory","Optimization","Forecasting"] }, { "slug":"demand-elasticity-planner", "title":"Demand Elasticity Planner", "desc":"Model revenue impact of price moves with elasticity; visualize curve & identify estimated revenue-max fare.", "href":"/tools/demand-elasticity-planner.html", "img":"https://images.unsplash.com/photo-1538970272646-f61ed80e32b8?auto=format&fit=crop&w=1200&q=60", "alt":"Graph line glowing against dark grid", "tags":["Pricing","Optimization"] }, { "slug":"overbooking-optimizer", "title":"Overbooking Optimizer", "desc":"Optimize booking limit balancing spoilage vs denied boarding cost via show-rate distribution & expected profit.", "href":"/tools/overbooking-optimizer.html", "img":"https://images.unsplash.com/photo-1518303672650-9670b7b1e219?auto=format&fit=crop&w=1200&q=60", "alt":"Passengers boarding aircraft at dusk", "tags":["Inventory","Optimization"] } ] </script> <script> (function(){ const burger=document.querySelector('.navbar-burger'); const menu=document.getElementById('navMenu'); if(burger){ burger.addEventListener('click',()=>{ burger.classList.toggle('is-active'); menu.classList.toggle('is-active'); burger.setAttribute('aria-expanded', burger.classList.contains('is-active')); }); } const dataEl=document.getElementById('toolsData'); let tools=[]; try{ tools=JSON.parse(dataEl.textContent.trim()); }catch(e){ console.error('Tool data parse error',e); } const grid=document.getElementById('toolGrid'); const search=document.getElementById('search'); const tagButtons=[...document.querySelectorAll('.tag-filter button')]; let activeTag='All'; let q=''; function cardHTML(t){ const tagSpans = t.tags.map(tag=>`<span>${tag}</span>`).join(''); return ` <article class="card fade-in" data-tags="${t.tags.join('|')}" data-title="${t.title.toLowerCase()} ${t.desc.toLowerCase()}"> <span class="badge-new" aria-hidden="true">Tool</span> <figure> <img src="${t.img}" alt="${escapeHtml(t.alt)}" loading="lazy" decoding="async"> </figure> <div class="body"> <h3>${t.title}</h3> <p>${t.desc}</p> <div class="meta">${tagSpans}</div> </div> <a class="stretched" href="${t.href}" aria-label="${t.title} tool"></a> </article>`; } function render(){ const frag = document.createDocumentFragment(); grid.innerHTML=''; const filterQ=q.trim().toLowerCase(); let count=0; tools.forEach(t=>{ const matchesTag = activeTag==='All' || t.tags.includes(activeTag); const searchable = (t.title+' '+t.desc+' '+t.tags.join(' ')).toLowerCase(); const matchesQ = !filterQ || searchable.includes(filterQ); if(matchesTag && matchesQ){ const wrapper=document.createElement('div'); wrapper.innerHTML=cardHTML(t); frag.appendChild(wrapper.firstElementChild); count++; } }); grid.appendChild(frag); if(count===0){ grid.innerHTML='<p style="color:var(--text-dim);font-size:.9rem;">No tools match your filters. Try another keyword or tag.</p>'; } } function escapeHtml(str){ return str.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); } search.addEventListener('input',()=>{ q=search.value; render(); }); tagButtons.forEach(btn=>{ btn.addEventListener('click',()=>{ tagButtons.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); activeTag=btn.dataset.tag; render(); }); }); render(); // Canvas subtle field of points const canvas=document.getElementById('bgCanvas'); const ctx=canvas.getContext('2d'); let w,h,points=[]; function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; points = Array.from({length: Math.min(130, Math.round(w*h/15000))},()=>({ x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.8+0.4, vx:(Math.random()-.5)*0.15, vy:(Math.random()-.5)*0.15 })); } window.addEventListener('resize',resize); resize(); function tick(){ ctx.clearRect(0,0,w,h); ctx.fillStyle='rgba(255,255,255,.7)'; points.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0) p.x=w; if(p.x>w) p.x=0; if(p.y<0) p.y=h; if(p.y>h) p.y=0; ctx.globalAlpha=0.2 + (p.r/2.4); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(tick); } tick(); document.getElementById('year').textContent=new Date().getFullYear(); })(); </script> <!-- Structured Data --> <script type="application/ld+json"> { "@context":"https://schema.org", "@type":"CollectionPage", "name":"Airline Revenue Management Tools", "description":"Suite of practical airline revenue management and pricing web tools.", "url":"https://your-domain.example/tools/", "hasPart":[ { "@type":"WebApplication", "name":"Great Circle Distance", "url":"https://your-domain.example/tools/great-circle.html", "applicationCategory":"TravelApplication", "operatingSystem":"Any", "description":"Compute great circle distance, bearings and stage length." }, { "@type":"WebApplication", "name":"Airport / City Lookup", "url":"https://your-domain.example/tools/airport-lookup.html", "applicationCategory":"TravelApplication", "operatingSystem":"Any", "description":"Lookup IATA airport and city metadata." }, { "@type":"WebApplication", "name":"Break Even Load Factor Analyser", "url":"https://your-domain.example/tools/break-even-load-factor.html", "applicationCategory":"BusinessApplication", "operatingSystem":"Any", "description":"Calculate break-even load factor, RASM, CASM and profit per flight." }, { "@type":"WebApplication", "name":"RASM / CASM / Yield Calculator", "url":"https://your-domain.example/tools/rasm-casm-calculator.html", "applicationCategory":"BusinessApplication", "operatingSystem":"Any", "description":"Compute airline unit metrics and operating margin." }, { "@type":"WebApplication", "name":"Fare Bucket Protection (EMSRb)", "url":"https://your-domain.example/tools/fare-bucket-allocation.html", "applicationCategory":"BusinessApplication", "operatingSystem":"Any", "description":"Derive EMSRb seat protection levels and booking limits." }, { "@type":"WebApplication", "name":"Demand Elasticity Planner", "url":"https://your-domain.example/tools/demand-elasticity-planner.html", "applicationCategory":"BusinessApplication", "operatingSystem":"Any", "description":"Model revenue impact of fare changes using elasticity." }, { "@type":"WebApplication", "name":"Overbooking Optimizer", "url":"https://your-domain.example/tools/overbooking-optimizer.html", "applicationCategory":"BusinessApplication", "operatingSystem":"Any", "description":"Optimize booking limit balancing spoilage and denied boarding cost." } ] } </script> </body> </html>
