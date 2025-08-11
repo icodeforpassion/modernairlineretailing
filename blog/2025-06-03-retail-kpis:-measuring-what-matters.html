@@ -1,61 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Retail KPIs: Measuring What Matters</title>
-  <meta name="description" content="Retail KPIs: Measuring What Matters — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Retail KPIs: Measuring What Matters (Airlines Chasing an Amazon Mindset)</title>
+  <meta name="description" content="Simple, detailed guide to airline retail KPIs for teams aiming to operate with an 'Amazon mindset': customer focus, speed, experimentation, profitable growth."/>
   <meta property="og:title" content="Retail KPIs: Measuring What Matters"/>
-  <meta property="og:description" content="Retail KPIs: Measuring What Matters — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:description" content="Airline retail KPI playbook: metrics, examples, dashboards, action plans for an Amazon-style operating model."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-24.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2025-06-03-retail-kpis:-measuring-what-matters.html"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
-    .hero-banner { background: url('/blog/images/blog-24.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
+    :root {
+      --c-bg:#f8fafc;
+      --c-panel:#ffffff;
+      --c-border:#d9e2ec;
+      --c-text:#1e2931;
+      --c-sub:#4b5d6e;
+      --c-accent:#0d63b8;
+      --c-soft:#eef2f6;
+      --c-warn:#b45309;
+      --c-good:#0f7b42;
+      --c-bad:#b42318;
+      --c-info:#035388;
+    }
+    html,body { background:var(--c-bg); color:var(--c-text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Helvetica, Arial, sans-serif; }
+    .hero-banner { background:url('/blog/images/blog-24.jpg') center/cover no-repeat; }
+    .overlay { background:linear-gradient(180deg,rgba(15,23,42,.65),rgba(15,23,42,.35)); }
+    h1,h2,h3,h4 { font-weight:600; line-height:1.22; }
+    p { line-height:1.7; }
+    a { color:var(--c-accent); }
+    a:hover { text-decoration:underline; }
+    .home-btn { position:sticky; top:0; margin:.5rem 0 1rem; }
+    .tag-badge { display:inline-block; background:#dbeafe; color:#0c4a6e; padding:.35rem .7rem; margin:.2rem .35rem .2rem 0; border-radius:18px; font-size:.6rem; letter-spacing:.6px; text-transform:uppercase; }
+    .toc-box { background:var(--c-panel); border:1px solid var(--c-border); padding:1.25rem 1.3rem; border-radius:12px; font-size:.9rem; }
+    .toc-box ol { margin:0; padding-left:1.2rem; }
+    blockquote { border-left:4px solid var(--c-accent); background:#eef6ff; padding:1rem 1.1rem; border-radius:6px; }
+    .callout { border:1px solid var(--c-border); background:var(--c-panel); padding:1rem 1.25rem; border-radius:12px; margin:1.5rem 0; }
+    .callout.good { border-color:var(--c-good); background:#ecfdf5; }
+    .callout.warn { border-color:var(--c-warn); background:#fff7ed; }
+    .callout.bad { border-color:var(--c-bad); background:#fef2f2; }
+    .callout.info { border-color:var(--c-info); background:#e6f4ff; }
+    .kpi-grid { display:grid; gap:.9rem; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); margin:1.2rem 0; }
+    .kpi-card { background:var(--c-panel); border:1px solid var(--c-border); padding:.85rem .9rem; border-radius:10px; }
+    .kpi-card h4 { margin:0 0 .4rem; font-size:.9rem; text-transform:uppercase; letter-spacing:.6px; }
+    .inline-table { border-collapse:collapse; width:100%; font-size:.85rem; margin:1.5rem 0; background:var(--c-panel); }
+    .inline-table th, .inline-table td { border:1px solid var(--c-border); padding:.55rem .6rem; vertical-align:top; }
+    .inline-table thead { background:var(--c-soft); }
+    figure { margin:2rem 0; background:var(--c-panel); border:1px solid var(--c-border); padding:.8rem .9rem .9rem; border-radius:10px; }
+    figure img { width:100%; border-radius:6px; }
+    figure figcaption { font-size:.75rem; color:var(--c-sub); margin-top:.5rem; line-height:1.4; }
+    code { background:#e2e8f0; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
+    pre { background:#1e293b; color:#f1f5f9; padding:1rem; border-radius:10px; font-size:.8rem; overflow:auto; }
+    .metric-badge { background:#e2e8f0; border-radius:4px; padding:.15rem .5rem; font-size:.65rem; letter-spacing:.5px; display:inline-block; margin:0 .35rem .35rem 0; }
+    hr { background:var(--c-border); height:1px; border:none; margin:2.8rem 0 2.2rem; }
+    .section-nav { margin-top:3rem; }
+    small { color:var(--c-sub); }
+    @media (prefers-color-scheme: dark) {
+      html,body { background:#0f172a; color:#e2e8f0; }
+      .toc-box, .callout, .kpi-card, .inline-table, figure { background:#1e293b; border-color:#334155; }
+      .inline-table thead { background:#24324a; }
+      blockquote { background:#1d3a55; }
+      code { background:#334155; }
+      .metric-badge { background:#334155; }
+    }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Retail KPIs: Measuring What Matters",
+    "datePublished":"2025-06-03",
+    "dateModified":"2025-06-03",
+    "author":{"@type":"Person","name":"Modern Airline Retailing"},
+    "image":"https://www.modernairlineretailing.com/blog/images/blog-24.jpg",
+    "keywords":"airline retail KPIs,offer and order,continuous pricing,ancillary attach rate,look to book,airline Amazon mindset",
+    "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+  }
+  </script>
 </head>
 <body>
-  <section class="hero is-medium hero-banner">
-    <div class="hero-body overlay">
-      <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Retail KPIs: Measuring What Matters</h1>
-        <p class="subtitle has-text-white">June 03, 2025</p>
+<section class="hero is-medium hero-banner">
+  <div class="hero-body overlay">
+    <div class="container">
+      <a class="button is-light home-btn" href="/index.html">Home</a>
+      <h1 class="title has-text-white">Retail KPIs: Measuring What Matters</h1>
+      <p class="subtitle has-text-white">June 03, 2025 • Airline Guide to an “Amazon Mindset”</p>
+      <div>
+        <span class="tag-badge">KPIs</span>
+        <span class="tag-badge">Retail</span>
+        <span class="tag-badge">Offer &amp; Order</span>
+        <span class="tag-badge">Analytics</span>
+        <span class="tag-badge">Execution</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container content">
-      <p>A real shopper does not care about our acronyms; they just want the right option quickly. Retail KPIs: Measuring What Matters sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
-      <nav class="level">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2025-05-12-migration-paths:-coexisting-with-legacy-inventory.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          <a class="button is-link" href="/blog/2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now.html">Next →</a>
-        </div>
-      </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
+<section class="section">
+  <div class="container content">
+
+    <div class="toc-box">
+      <strong>Contents</strong>
+      <ol style="margin-top:.6rem;">
+        <li><a href="#exec">1. Executive Snapshot</a></li>
+        <li><a href="#amazon">2. What “Amazon Mindset” Really Means for Airlines</a></li>
+        <li><a href="#northstar">3. North Star & KPI Pyramid</a></li>
+        <li><a href="#top25">4. Top 25 Retail KPIs (Plain Definitions)</a></li>
+        <li><a href="#mapping">5. Mapping KPIs to Customer Journey</a></li>
+        <li><a href="#instrumentation">6. Instrumentation Blueprint</a></li>
+        <li><a href="#flowexample">7. Example Data Flow (Search → Order → Post-Travel)</a></li>
+        <li><a href="#dashboards">8. Sample Dashboard & Alert Triggers</a></li>
+        <li><a href="#maturity">9. Maturity Ladder (Where Are You?)</a></li>
+        <li><a href="#90day">10. First 90-Day KPI Action Plan</a></li>
+        <li><a href="#scenarios">11. Scenario Walkthroughs (Using the KPIs)</a></li>
+        <li><a href="#pitfalls">12. Common Pitfalls & Fix Patterns</a></li>
+        <li><a href="#playcards">13. “Amazon Style” Play Cards for Airlines</a></li>
+        <li><a href="#team">14. Roles & KPI Ownership Model</a></li>
+        <li><a href="#glossary">15. Glossary (Simple Language)</a></li>
+        <li><a href="#examples">16. Industry Examples (Public References)</a></li>
+        <li><a href="#checklist">17. Quick Checklist</a></li>
+        <li><a href="#references">18. References & Notes</a></li>
+      </ol>
     </div>
-  </section>
+
+    <h2 id="exec">1. Executive Snapshot</h2>
+    <p>Airlines say they want to “be like Amazon.” In practice this means: show the right product fast, keep promises, learn from every click, and adapt daily. This article gives you a KPI toolkit to support that. Language is simple. No fluff. You can pick it up and use it in stand‑ups tomorrow.</p>
+    <blockquote><strong>Core Idea:</strong> Measure what customers feel (speed, clarity, success), what the business needs (profitable growth), and what the system must supply (data freshness, version integrity). Leave out vanity numbers.</blockquote>
+
+    <h2 id="amazon">2. What “Amazon Mindset” Really Means for Airlines</h2>
+    <ul>
+      <li><strong>Customer Lens First:</strong> Fewer steps to buy. Clear value: “Why this fare?” “What do I get?”</li>
+      <li><strong>Speed as a Feature:</strong> Low search latency lifts conversion just like fast page load lifts retail add‑to‑cart.</li>
+      <li><strong>Continuous Test & Learn:</strong> Not yearly fare family revamps. Weekly or even daily experiments.</li>
+      <li><strong>Personalization with Guardrails:</strong> Relevant extras (seat, bag, lounge) without creeping into unfair discrimination.</li>
+      <li><strong>Data Feedback Loop:</strong> Every offer and every decline becomes input to pricing and product decisions.</li>
+    </ul>
+
+    <figure>
+      <img src="/blog/images/blog-24-vision-loop.jpg" alt="Loop showing customer behavior feeding offers and improvements"/>
+      <figcaption>Figure 1: Simple learning loop. Customer behavior → Data → Insight → Offer adjustments → Back to customer.</figcaption>
+    </figure>
+
+    <h2 id="northstar">3. North Star & KPI Pyramid</h2>
+    <p><strong>North Star (example):</strong> “More customers complete journeys with clear, personalized value at healthy margin.”</p>
+    <p><strong>Pyramid Layers:</strong></p>
+    <ul>
+      <li><strong>Outcome Level:</strong> Retail contribution margin per flown seat.</li>
+      <li><strong>Customer Level:</strong> Offer click‑through, order completion, upsell attach.</li>
+      <li><strong>System Level:</strong> Search latency, availability divergence, price revalidation rate.</li>
+      <li><strong>Capability Level:</strong> Experiment velocity, personalization coverage, event freshness.</li>
+      <li><strong>Hygiene Level:</strong> Data errors, failed token validations, fraud loss %.</li>
+    </ul>
+
+    <h2 id="top25">4. Top 25 Retail KPIs (Plain Definitions)</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card"><h4>1. Look-to-Book</h4><p>Searches vs successful bookings. High ratio signals friction or spam.</p></div>
+      <div class="kpi-card"><h4>2. Offer Display Time</h4><p>Median time from request to first usable offer (ms).</p></div>
+      <div class="kpi-card"><h4>3. Availability Divergence %</h4><p>How often cached seats differ from host beyond tolerance.</p></div>
+      <div class="kpi-card"><h4>4. Price Revalidation Rate</h4><p>Share of commits needing a price change before final.</p></div>
+      <div class="kpi-card"><h4>5. Order Completion Success</h4><p>% of started checkouts that finish without manual fix.</p></div>
+      <div class="kpi-card"><h4>6. Ancillary Attach Rate</h4><p>% of bookings with at least one paid extra.</p></div>
+      <div class="kpi-card"><h4>7. Ancillary Revenue / Pax</h4><p>Average ancillary dollars per passenger.</p></div>
+      <div class="kpi-card"><h4>8. Personalization Lift</h4><p>Conversion delta personalized vs generic baseline.</p></div>
+      <div class="kpi-card"><h4>9. Dynamic Price Band Utilization</h4><p>Share of sales using dynamic within guardrails.</p></div>
+      <div class="kpi-card"><h4>10. Experiment Velocity</h4><p>Completed A/B tests per quarter.</p></div>
+      <div class="kpi-card"><h4>11. Experiment Win Rate</h4><p>% tests with statistically valid uplift (not just noise).</p></div>
+      <div class="kpi-card"><h4>12. Data Freshness (Inventory)</h4><p>Average seconds from host seat change to projection update.</p></div>
+      <div class="kpi-card"><h4>13. Search Latency p95</h4><p>95th percentile time for full offer response.</p></div>
+      <div class="kpi-card"><h4>14. Fallback Rate</h4><p>% requests forced back to legacy path.</p></div>
+      <div class="kpi-card"><h4>15. Refund Cycle Time</h4><p>Median hours from request to refund confirmation.</p></div>
+      <div class="kpi-card"><h4>16. Self-Service Change %</h4><p>Proportion of changes done without agent.</p></div>
+      <div class="kpi-card"><h4>17. Seat Spoilage %</h4><p>Seats unsold vs total available (adjusted for cancellations).</p></div>
+      <div class="kpi-card"><h4>18. Margin Variance vs Plan</h4><p>Actual retail margin vs forecast per market.</p></div>
+      <div class="kpi-card"><h4>19. Cross-Channel Parity</h4><p>% cases price/product match across direct / API / mobile.</p></div>
+      <div class="kpi-card"><h4>20. Token Validation Failure</h4><p>Invalid or expired offer tokens at commit (%).</p></div>
+      <div class="kpi-card"><h4>21. Fraud Loss % (Retail)</h4><p>Fraud chargebacks over total retail sales.</p></div>
+      <div class="kpi-card"><h4>22. Personalization Coverage</h4><p>% sessions receiving tailored bundle or price component.</p></div>
+      <div class="kpi-card"><h4>23. Data Quality Score</h4><p>Composite: (1 - (errors weighted / baseline)) * 100.</p></div>
+      <div class="kpi-card"><h4>24. Cost per Booking (Tech)</h4><p>Allocated platform + infra cost divided by bookings.</p></div>
+      <div class="kpi-card"><h4>25. Customer Effort Score</h4><p>Survey score: “It was easy to complete my booking.”</p></div>
+    </div>
+
+    <h2 id="mapping">5. Mapping KPIs to Customer Journey</h2>
+    <table class="inline-table">
+      <thead><tr><th>Stage</th><th>Customer Aim</th><th>Primary KPIs</th><th>Support KPIs</th></tr></thead>
+      <tbody>
+        <tr><td>Discovery</td><td>See options fast</td><td>Offer Display Time, Search Latency p95</td><td>Look-to-Book, Availability Divergence</td></tr>
+        <tr><td>Evaluation</td><td>Compare value clearly</td><td>Cross-Channel Parity, Personalization Lift</td><td>Dynamic Price Band Utilization</td></tr>
+        <tr><td>Commit</td><td>Book without friction</td><td>Order Completion Success, Price Revalidation Rate</td><td>Fallback Rate, Token Validation Failure</td></tr>
+        <tr><td>Attach</td><td>Add useful extras</td><td>Ancillary Attach Rate, Ancillary Rev/Pax</td><td>Personalization Coverage</td></tr>
+        <tr><td>Service</td><td>Change / refund easily</td><td>Self-Service Change %, Refund Cycle Time</td><td>Customer Effort Score</td></tr>
+        <tr><td>Optimize</td><td>Improve continuously</td><td>Experiment Velocity, Experiment Win Rate</td><td>Data Freshness, Data Quality Score</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="instrumentation">6. Instrumentation Blueprint</h2>
+    <p><strong>Goal:</strong> Every Offer, every Commit, every Servicing event produces structured events with correlation IDs and version stamps.</p>
+    <pre><code>{
+  "event":"OfferServed",
+  "ts":"2025-06-03T12:01:02Z",
+  "correlationId":"c-98f2",
+  "sessionId":"s-7ab3",
+  "offerId":"O1234",
+  "inventoryVersion":7421,
+  "pricingModelVersion":"dyn-2025.06.1",
+  "taxTable":"2025-06-01",
+  "latencyMs":173,
+  "channel":"WEB",
+  "personalized":true
+}
+{
+  "event":"OrderCommitted",
+  "orderId":"ORD556",
+  "offerId":"O1234",
+  "priceRevalidated":false,
+  "usingFallback":false,
+  "ancillaries":["BAG1","SEATPLUS"],
+  "paymentStatus":"AUTHORIZED"
+}</code></pre>
+
+    <h2 id="flowexample">7. Example Data Flow (Search → Order → Post-Travel)</h2>
+    <figure>
+      <img src="/blog/images/blog-24-flow.jpg" alt="Diagram showing search, offer, commit, servicing, and data loops"/>
+      <figcaption>Figure 2: Data from each step flows into a warehouse and real-time queue. KPIs pull from both sides (speed + correctness + value).</figcaption>
+    </figure>
+    <p>Key checkpoint events: <code>OfferServed</code>, <code>OfferExpired</code>, <code>OrderCommitted</code>, <code>OrderModified</code>, <code>RefundIssued</code>, <code>SeatInventoryAdjusted</code>.</p>
+
+    <h2 id="dashboards">8. Sample Dashboard & Alert Triggers</h2>
+    <table class="inline-table">
+      <thead><tr><th>Metric</th><th>Daily Target</th><th>Alert Threshold</th><th>Action When Breached</th></tr></thead>
+      <tbody>
+        <tr><td>Offer Display Time (p95)</td><td>&lt; 600 ms</td><td>&gt; 900 ms 15 min</td><td>Check pricing latency, enable cache boost</td></tr>
+        <tr><td>Availability Divergence</td><td>&lt; 0.3%</td><td>&gt; 0.6%</td><td>Trigger snapshot resync flight segments</td></tr>
+        <tr><td>Price Revalidation Rate</td><td>&lt; 2%</td><td>&gt; 5%</td><td>Review inventoryVersion gaps, token expiry</td></tr>
+        <tr><td>Fallback Rate</td><td>&lt; 1%</td><td>&gt; 3%</td><td>Check circuit breaker logs; investigate model latency</td></tr>
+        <tr><td>Self-Service Change %</td><td>&gt; 70%</td><td>&lt; 55%</td><td>Analyze top fail codes; update rules service</td></tr>
+        <tr><td>Experiment Velocity (weekly)</td><td>&gt; 2</td><td>0</td><td>Unblock test pipeline / approvals</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="maturity">9. Maturity Ladder (Find Your Level)</h2>
+    <ol>
+      <li><strong>Level 1 (Reactive):</strong> Manual spreadsheets; look-to-book only.</li>
+      <li><strong>Level 2 (Visible):</strong> Core KPIs auto-updated daily; poor traceability.</li>
+      <li><strong>Level 3 (Proactive):</strong> Alerts + correlation IDs; experiments limited.</li>
+      <li><strong>Level 4 (Adaptive):</strong> Automated tests, continuous pricing in band, weekly experiment cadence.</li>
+      <li><strong>Level 5 (Learning System):</strong> Closed loop personalization, self-tuning guardrails, near-real-time dashboards used in daily stand-up.</li>
+    </ol>
+
+    <h2 id="90day">10. First 90-Day KPI Action Plan</h2>
+    <table class="inline-table">
+      <thead><tr><th>Weeks</th><th>Focus</th><th>Deliverables</th></tr></thead>
+      <tbody>
+        <tr><td>1–2</td><td>Inventory of Metrics</td><td>List current metrics, owners, gaps</td></tr>
+        <tr><td>3–4</td><td>Event Schema</td><td>Standard OfferServed / OrderCommitted events</td></tr>
+        <tr><td>5–6</td><td>Dashboard v1</td><td>Top 10 KPIs live (auto refresh)</td></tr>
+        <tr><td>7–8</td><td>Alerting</td><td>Thresholds + pager routing</td></tr>
+        <tr><td>9–10</td><td>Experiment Harness</td><td>A/B framework & logging</td></tr>
+        <tr><td>11–12</td><td>Ancillary KPIs</td><td>Attach rate segmented (route, channel)</td></tr>
+        <tr><td>13–14</td><td>Latency Deep Dive</td><td>Trace-level breakdown p95</td></tr>
+        <tr><td>15–16</td><td>Data Quality Score</td><td>Composite metric & daily run</td></tr>
+        <tr><td>17–18</td><td>Executive Rollout</td><td>Briefing: decisions driven by 5 highlight KPIs</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="scenarios">11. Scenario Walkthroughs (Using the KPIs)</h2>
+    <h3>Scenario A: Sudden Reprice Spike</h3>
+    <p><strong>Signal:</strong> Price Revalidation Rate jumps from 1.5% to 6% in one hour. <strong>Trace:</strong> Divergence also up. <strong>Likely Cause:</strong> Event lag in seat decrements; stale inventoryVersion. <strong>Action:</strong> Rebuild projection for affected flights; add capacity to event consumer.</p>
+    <h3>Scenario B: Ancillary Attach Drops</h3>
+    <p><strong>Signal:</strong> Attach Rate down 4 points; personalization coverage also down. <strong>Likely Cause:</strong> Rules service deploy disabled attribute feed. <strong>Action:</strong> Rollback; add canary test verifying at least one seat + bag offer variant in pre-prod pipeline.</p>
+    <h3>Scenario C: High Fallback Rate at Peak</h3>
+    <p><strong>Signal:</strong> Fallback Rate passes 5%; latency p95 over budget. <strong>Cause:</strong> Dynamic pricing model cold start, missing warm cache. <strong>Action:</strong> Pre-warm top 500 O&D daily at 02:00 local; track warm coverage KPI.</p>
+
+    <h2 id="pitfalls">12. Common Pitfalls & Fix Patterns</h2>
+    <ul>
+      <li><strong>Vanity Metrics:</strong> “Total searches” without quality segmentation. Fix: Add usefulness filters (returned offers = true).</li>
+      <li><strong>Aggregate Only:</strong> Averages hide tail latency. Fix: Always show p95 and p99.</li>
+      <li><strong>Slow Root Cause:</strong> Logs missing correlation. Fix: Enforce header injection at gateway.</li>
+      <li><strong>Experiment Noise:</strong> Tiny sample decisions. Fix: Power calculator pre-test, minimum runtime rule.</li>
+      <li><strong>Stale Attribution:</strong> Late-arriving events mis-assign conversions. Fix: Watermark ingestion with lateness buffers.</li>
+    </ul>
+
+    <h2 id="playcards">13. “Amazon Style” Play Cards for Airlines</h2>
+    <div class="callout info">
+      <strong>Play Card: Speed First</strong><br/>
+      Goal: Sub‑500 ms p95 search. Actions: Trim payload fields, async tax enrichment, CDN edge caching “skeleton offers”, precompute top O&D combos overnight. KPI Link: Offer Display Time, Search Latency p95.
+    </div>
+    <div class="callout info">
+      <strong>Play Card: Personalization Without Complexity Drift</strong><br/>
+      Start with 3 segments (business, leisure early planner, late deal seeker). Track lift vs control. Do not jump to 30 segments before proving value. KPI Link: Personalization Lift, Coverage, Experiment Win Rate.
+    </div>
+    <div class="callout info">
+      <strong>Play Card: Safe Dynamic Pricing</strong><br/>
+      Introduce band around anchor fare. Log every dynamic adjustment with reason code. Monitor guardrail breaches. KPI Link: Dynamic Price Band Utilization, Margin Variance vs Plan.
+    </div>
+    <div class="callout info">
+      <strong>Play Card: Self-Service First Time Right</strong><br/>
+      Provide change quote preview. Show penalty breakdown. Store a rules version ID. KPI Link: Self-Service Change %, Refund Cycle Time.
+    </div>
+
+    <h2 id="team">14. Roles & KPI Ownership Model</h2>
+    <table class="inline-table">
+      <thead><tr><th>Role</th><th>Primary KPIs</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Retail Product Lead</td><td>Order Completion, Attach Rate</td><td>Owns journey quality</td></tr>
+        <tr><td>Pricing / RM Lead</td><td>Dynamic Band Utilization, Margin Variance</td><td>Revenue health</td></tr>
+        <tr><td>Engineering Lead</td><td>Search Latency, Fallback Rate</td><td>Technical performance</td></tr>
+        <tr><td>Data / Analytics</td><td>Data Quality Score, Experiment Velocity</td><td>Insight engine</td></tr>
+        <tr><td>Customer Care</td><td>Self-Service Change %, Refund Cycle Time</td><td>Effort reduction</td></tr>
+        <tr><td>Security / Risk</td><td>Token Validation Failure, Fraud Loss %</td><td>Integrity</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="glossary">15. Glossary (Simple Language)</h2>
+    <ul>
+      <li><strong>Attach Rate:</strong> How often customers buy something extra.</li>
+      <li><strong>Availability Divergence:</strong> Cache and host disagree on seats left.</li>
+      <li><strong>Band (Pricing):</strong> Safe upper and lower limit around a reference fare.</li>
+      <li><strong>Correlation ID:</strong> Shared ID across logs so you can trace one journey.</li>
+      <li><strong>Dynamic Pricing:</strong> Adjusting price inside defined guard rails per demand signal.</li>
+      <li><strong>Fallback:</strong> System uses older safe method when new service is slow or failing.</li>
+      <li><strong>Guardrail:</strong> Rule that blocks a dangerous or non‑compliant price or offer.</li>
+      <li><strong>Look-to-Book:</strong> Ratio of searches to bookings (lower is better once you filter bots).</li>
+      <li><strong>Personalization Lift:</strong> Improvement caused by tailored content versus generic.</li>
+      <li><strong>Self-Service Change %:</strong> Share of changes done by customers without agent help.</li>
+    </ul>
+
+    <h2 id="examples">16. Industry Examples (Public References)</h2>
+    <ul>
+      <li><strong>Lufthansa Group:</strong> Publicly discussed continuous pricing to fill gaps between fare steps (conference panels, ATPCO events).</li>
+      <li><strong>American Airlines:</strong> Public focus on expanding modern (NDC) distribution and content differentiation in 2023–2024 materials.</li>
+      <li><strong>Air France-KLM:</strong> Public references to dynamic pricing experimentation in industry forums.</li>
+      <li><strong>AirAsia:</strong> Public “Super App” strategy highlighting retail-style cross-sell (travel + non-travel).</li>
+      <li><strong>Delta Air Lines:</strong> Public investor and media comments on digital personalization investments.</li>
+      <li><strong>Qantas / IATA Pilots:</strong> Participation in Offer & Order pilots (ONE Order, attribute-based evolution).</li>
+      <li><strong>Ryanair:</strong> Public emphasis on direct digital engagement and ancillary merchandising.</li>
+      <li><strong>Singapore Airlines / KrisShop:</strong> Public integrated retail (onboard + digital) expansion references.</li>
+    </ul>
+    <p><small>These are broad public examples; internal KPIs and deep technical details are not public. Always verify before citing internally.</small></p>
+
+    <h2 id="checklist">17. Quick Checklist</h2>
+    <ul>
+      <li>Event schema stable (Offer, Order, Inventory) with version stamps.</li>
+      <li>Top 10 KPIs auto-refresh (no manual slides).</li>
+      <li>Latency p95 and p99 visible to all teams.</li>
+      <li>Availability divergence below target with alerting.</li>
+      <li>Experiment harness live; backlog prioritized.</li>
+      <li>Dynamic pricing band guardrails active and logged.</li>
+      <li>Self-service change quote API returning penalty breakdown.</li>
+      <li>Fallback reasons tagged (not just boolean).</li>
+      <li>Personalization coverage measured, not assumed.</li>
+      <li>Data Quality Score published daily.</li>
+      <li>Owner assigned per KPI; escalation path defined.</li>
+    </ul>
+
+    <h2 id="references">18. References & Notes</h2>
+    <ul>
+      <li>IATA public materials on Offer & Order / ONE Order (iata.org).</li>
+      <li>ATPCO public conference content on continuous pricing and fare modernization (atpco.net).</li>
+      <li>Airline corporate press releases / investor presentations (lufthansa-group.com, news.aa.com, corporate.airfrance.com, klm.com, ir.united.com, delta.com, airasia.com, qantas.com, ryanair.com, singaporeair.com).</li>
+      <li>Public digital commerce best practice discussions (general e-commerce performance benchmarks).</li>
+    </ul>
+    <div class="callout warn">
+      <strong>Disclaimer:</strong> This guide uses publicly known high-level concepts. It does not include confidential algorithms, contractual data, or unpublished financial figures. Validate regulatory and tax aspects locally. No claim of endorsement by cited airlines.
+    </div>
+
+    <hr/>
+    <nav class="level section-nav">
+      <div class="level-left">
+        <a class="button is-link is-light" href="/blog/2025-05-12-migration-paths:-coexisting-with-legacy-inventory.html">← Previous</a>
+      </div>
+      <div class="level-right">
+        <a class="button is-link" href="/blog/2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now.html">Next →</a>
+      </div>
+    </nav>
+    <p><a href="/blog/index.html">Back to all blogs</a></p>
+
+  </div>
+</section>
 </body>
 </html>
