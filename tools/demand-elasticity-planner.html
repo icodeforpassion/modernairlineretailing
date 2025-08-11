@@ -1,0 +1,126 @@
+
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <title>Demand Elasticity Scenario Planner | Pricing Tool</title> <meta name="viewport" content="width=device-width,initial-scale=1"> <meta name="description" content="Model revenue impact of fare changes using demand elasticity. Explore scenarios interactively and share deep links."> <link rel="canonical" href="https://your-domain.example/tools/demand-elasticity-planner.html"> <meta property="og:title" content="Demand Elasticity Scenario Planner"> <meta property="og:description" content="Simulate demand and revenue shifts as fares change based on elasticity."> <meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg"> <meta name="theme-color" content="#0d1b2a"> <style> :root{--clr-bg:#0d1b2a;--clr-bg-alt:#132235;--clr-accent:#3298dc;--clr-accent-alt:#4fb1f5;--clr-text:#e8f0f7;--clr-text-dim:#9fb3c5;--radius:14px;--transition:.28s cubic-bezier(.4,.2,.2,1);--focus-ring:0 0 0 3px rgba(50,152,220,.55);} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:linear-gradient(to bottom,var(--clr-bg),var(--clr-bg-alt));color:var(--clr-text);} main{max-width:1200px;margin:0 auto;padding:6rem 1.2rem 4rem;} h1{font-size:clamp(2.1rem,5vw,3rem);margin:0 0 .7rem;font-weight:700;background:linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);-webkit-background-clip:text;color:transparent;} .lede{max-width:860px;font-size:1.02rem;color:var(--clr-text-dim);line-height:1.5;margin:0 0 2rem;} .grid{display:grid;grid-template-columns:360px 1fr;gap:2.2rem;} @media(max-width:1000px){.grid{grid-template-columns:1fr;}} .card{background:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);border-radius:var(--radius);padding:1.5rem 1.4rem 2rem;} label{display:flex;justify-content:space-between;font-size:.66rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:.3rem;} input[type=number],input[type=range]{width:100%;} input[type=number]{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:.55rem .65rem;color:var(--clr-text);font-size:.85rem;} input[type=number]:focus{outline:none;box-shadow:var(--focus-ring);border-color:var(--clr-accent-alt);background:rgba(255,255,255,.12);} .field{margin-bottom:1rem;} .status{font-size:.7rem;letter-spacing:.55px;text-transform:uppercase;font-weight:600;color:var(--clr-text-dim);min-height:1rem;margin-top:.3rem;} .share-btn{background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));border:none;border-radius:999px;padding:.5rem .9rem;font-size:.65rem;letter-spacing:.5px;font-weight:600;color:#fff;cursor:pointer;margin-top:.4rem;} .share-btn.copied{background:linear-gradient(135deg,#3bb273,#66d69b);} .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:.4rem;} .metric{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);padding:.75rem .85rem .85rem;border-radius:12px;} .metric h3{margin:0 0 .4rem;font-size:.6rem;letter-spacing:.55px;text-transform:uppercase;color:var(--clr-text-dim);} .metric .val{font-size:1.0rem;font-weight:600;} .canvas-box{height:350px;position:relative;} svg{width:100%;height:100%;overflow:visible;} .line{fill:none;stroke:#4fb1f5;stroke-width:2;} .ref{stroke:#ffffff;stroke-width:1;stroke-dasharray:4 3;opacity:.5;} .axis text{font-size:10px;fill:var(--clr-text-dim);} .axis line,.axis path{stroke:rgba(255,255,255,.15);stroke-width:1;} small.note{display:block;font-size:.64rem;color:var(--clr-text-dim);margin-top:.5rem;line-height:1.3;} </style> </head> <body> <main> <h1>Demand Elasticity Scenario Planner</h1> <p class="lede">Model revenue outcomes across a range of price changes using a constant price elasticity. Adjust baseline fare, demand, and elasticity to visualize new demand curves and identify revenue‑maximizing price points.</p> <div class="grid"> <div class="card"> <div class="field"> <label for="baseFare">Baseline Fare (USD)</label> <input id="baseFare" type="number" value="300" min="1"> </div> <div class="field"> <label for="baseDemand">Baseline Demand (Pax)</label> <input id="baseDemand" type="number" value="1000" min="1"> </div> <div class="field"> <label for="elasticity">Elasticity (negative)</label> <input id="elasticity" type="number" step="0.1" value="-1.3"> </div> <div class="field"> <label for="range">Scenario Fare Change (%)</label> <input id="range" type="range" min="-40" max="40" value="0"> <input id="rangeNum" type="number" min="-40" max="40" value="0"> </div> <div class="status" id="status">Ready.</div> <button id="shareBtn" class="share-btn" type="button">Share</button> <small class="note">Elasticity e = (%ΔQ)/(%ΔP). Demand model: Q = Q0 * (1 + e * (%ΔP)). Large deviations may exceed linear region; treat as directional.</small> </div> <div class="card"> <div class="metrics"> <div class="metric"><h3>Scenario Fare</h3><div class="val" id="scFare">—</div></div> <div class="metric"><h3>Scenario Demand</h3><div class="val" id="scDemand">—</div></div> <div class="metric"><h3>Scenario Revenue</h3><div class="val" id="scRevenue">—</div></div> <div class="metric"><h3>Δ Revenue vs Base</h3><div class="val" id="deltaRev">—</div></div> <div class="metric"><h3>Rev-Max Fare</h3><div class="val" id="optFare">—</div></div> <div class="metric"><h3>Rev-Max Revenue</h3><div class="val" id="optRev">—</div></div> </div> <div class="canvas-box"> <svg id="chart" role="img" aria-label="Revenue vs Fare curve"></svg> </div> </div> </div> </main> <script> (function(){ const baseFare=document.getElementById('baseFare'); const baseDemand=document.getElementById('baseDemand'); const elasticity=document.getElementById('elasticity'); const range=document.getElementById('range'); const rangeNum=document.getElementById('rangeNum'); const scFare=document.getElementById('scFare'); const scDemand=document.getElementById('scDemand'); const scRevenue=document.getElementById('scRevenue'); const deltaRev=document.getElementById('deltaRev'); const optFare=document.getElementById('optFare'); const optRev=document.getElementById('optRev'); const statusEl=document.getElementById('status'); const chart=document.getElementById('chart'); const shareBtn=document.getElementById('shareBtn');
+function num(v){return parseFloat(v)||0;}
+function fmtUSD(x){return '$'+x.toFixed(0);}
+function compute(){
+const P0=num(baseFare.value);
+const Q0=num(baseDemand.value);
+const e=num(elasticity.value);
+const pct=num(range.value)/100;
+if(P0<=0||Q0<=0){statusEl.textContent='Enter baseline.';return;}
+const P=P0*(1+pct);
+const Q=Q0*(1+ e * pct);
+const Qc=Math.max(Q,0);
+const R=PQc;
+const baseR=P0Q0;
+scFare.textContent=fmtUSD(P);
+scDemand.textContent=Qc.toFixed(0);
+scRevenue.textContent=fmtUSD(R);
+deltaRev.textContent=((R-baseR)/baseR*100).toFixed(1)+'%';
+
+// Revenue-max under linear demand: derivative 0 => Q0*(1+e*(P/P0-1)) + P*Q0*(e/P0)=0
+// Simplify R=P*Q0*(1+e*(P/P0-1)) => set dR/dP=0 -> 1+ e*(2P/P0 -1)=0 => 2eP/P0 - e +1=0 => P= P0*(e-1)/(2e)
+let Popt = P0*(e-1)/(2*e);
+if(e>=0){Popt=P0;} // elasticity should be negative
+const pctOpt=(Popt/P0)-1;
+const Qopt=Q0*(1+e*pctOpt);
+const Ropt=Popt*Math.max(Qopt,0);
+optFare.textContent=fmtUSD(Popt);
+optRev.textContent=fmtUSD(Ropt);
+
+drawCurve(P0,Q0,e,Popt);
+statusEl.textContent='Updated.';
+updateURL();
+}
+
+function drawCurve(P0,Q0,e,Popt){
+const pts=[];
+for(let p=-40;p<=40;p+=2){
+const P=P0*(1+p/100);
+const Q=Q0*(1+e*(p/100));
+const R=Math.max(Q,0)P;
+pts.push({p, P, R});
+}
+const maxR=Math.max(...pts.map(d=>d.R));
+const minP=Math.min(...pts.map(d=>d.P)), maxP=Math.max(...pts.map(d=>d.P));
+chart.innerHTML='';
+const w=chart.clientWidth||600, h=chart.clientHeight||350;
+function xScale(P){return ( (P-minP)/(maxP-minP) )(w-60)+40;}
+function yScale(R){return h-30 - (R/maxR)(h-60);}
+// axes
+const axisGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
+axisGroup.setAttribute('class','axis');
+// X ticks
+for(let i=0;i<=5;i++){
+const P=minP + (i/5)(maxP-minP);
+const x=xScale(P);
+const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+line.setAttribute('x1',x);line.setAttribute('x2',x);line.setAttribute('y1',h-30);line.setAttribute('y2',30);
+line.setAttribute('stroke','rgba(255,255,255,.12)');
+axisGroup.appendChild(line);
+const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+txt.setAttribute('x',x);txt.setAttribute('y',h-12);txt.setAttribute('text-anchor','middle');
+txt.textContent='$'+(P).toFixed(0);
+axisGroup.appendChild(txt);
+}
+// Y ticks
+for(let i=0;i<=5;i++){
+const R=(i/5)*maxR;
+const y=yScale(R);
+const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+line.setAttribute('x1',40);line.setAttribute('x2',w-20);line.setAttribute('y1',y);line.setAttribute('y2',y);
+line.setAttribute('stroke','rgba(255,255,255,.12)');
+axisGroup.appendChild(line);
+const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+txt.setAttribute('x',38);txt.setAttribute('y',y+4);txt.setAttribute('text-anchor','end');
+txt.textContent=(R/1000).toFixed(0)+'k';
+axisGroup.appendChild(txt);
+}
+chart.appendChild(axisGroup);
+// line
+let d='M';
+pts.forEach((pt,i)=>{d+= (i?' L':'')+xScale(pt.P)+','+yScale(pt.R);});
+const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+path.setAttribute('d',d);
+path.setAttribute('class','line');
+chart.appendChild(path);
+// Revenue max marker
+const optPoint=pts.reduce((best,pt)=> Math.abs(pt.P-Popt)<Math.abs(best.P-Popt)?pt:best, pts[0]);
+const circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
+circ.setAttribute('cx',xScale(optPoint.P));circ.setAttribute('cy',yScale(optPoint.R));
+circ.setAttribute('r',5);circ.setAttribute('fill','#4fb1f5');circ.setAttribute('stroke','#fff');circ.setAttribute('stroke-width','1.5');
+chart.appendChild(circ);
+}
+
+function updateURL(){
+const url=new URL(location.href);
+url.searchParams.set('P0',baseFare.value);
+url.searchParams.set('Q0',baseDemand.value);
+url.searchParams.set('e',elasticity.value);
+url.searchParams.set('chg',range.value);
+history.replaceState({},'',url.toString());
+}
+function loadFromURL(){
+const p=new URLSearchParams(location.search);
+if(p.has('P0')) baseFare.value=p.get('P0');
+if(p.has('Q0')) baseDemand.value=p.get('Q0');
+if(p.has('e')) elasticity.value=p.get('e');
+if(p.has('chg')) {range.value=p.get('chg');rangeNum.value=p.get('chg');}
+}
+
+[baseFare,baseDemand,elasticity].forEach(inp=>inp.addEventListener('input',compute));
+range.addEventListener('input',()=>{rangeNum.value=range.value;compute();});
+rangeNum.addEventListener('input',()=>{range.value=rangeNum.value;compute();});
+shareBtn.addEventListener('click',()=>{
+navigator.clipboard.writeText(location.href).then(()=>{
+shareBtn.classList.add('copied');shareBtn.textContent='Copied!';
+setTimeout(()=>{shareBtn.classList.remove('copied');shareBtn.textContent='Share';},1400);
+});
+});
+
+loadFromURL();
+compute();
+})();
+</script>
+
+</body> </html>
