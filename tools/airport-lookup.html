@@ -1,248 +1,860 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Airport / City Lookup</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-<style>
-  .match-list { margin-top:1rem; }
-  .match-item { padding:0.5rem 0.75rem; border:1px solid #ddd; border-radius:4px; margin-bottom:0.5rem; cursor:pointer; background:#fff; }
-  .match-item:hover { background:#f5f5f5; }
-  .is-loading-inline::after {
-    content:"";
-    margin-left:0.5rem;
-    border:2px solid #ccc;
-    border-top-color:#3273dc;
-    border-radius:50%;
-    width:14px; height:14px;
-    display:inline-block;
-    animation:spin 0.6s linear infinite;
-    vertical-align:middle;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  mark { background: #ffe08a; padding:0 2px; }
-</style>
-<script>
-let airportsData = null;
-let mapBaseURL = 'https://www.openstreetmap.org/export/embed.html';
-const RESULTS_LIMIT = 10;
+  <meta charset="UTF-8">
+  <title>Airport / City Lookup | Modern Airline Retailing Tools</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Search airports by IATA code, city, or name with fuzzy matching and quick map view.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <!-- Bulma (already used on site) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <!-- (Optional) Preload if you have a shared font file -->
+  <style>
+    /* Uses existing site tokens. Only adding component styles. */
 
-function norm(str) {
-  return (str || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'')
-    .toUpperCase()
-    .trim();
-}
-
-// Simple Levenshtein distance (fast enough for short strings)
-function levenshtein(a,b){
-  if(a===b) return 0;
-  const al = a.length, bl = b.length;
-  if(!al) return bl;
-  if(!bl) return al;
-  const v0 = new Array(bl+1);
-  const v1 = new Array(bl+1);
-  for(let i=0;i<=bl;i++) v0[i]=i;
-  for(let i=0;i<al;i++){
-    v1[0]=i+1;
-    for(let j=0;j<bl;j++){
-      const cost = a[i]===b[j] ? 0 : 1;
-      v1[j+1] = Math.min(v1[j]+1, v0[j+1]+1, v0[j]+cost);
+    body {
+      background: var(--clr-bg);
+      color: var(--clr-text);
     }
-    for(let j=0;j<=bl;j++) v0[j]=v1[j];
-  }
-  return v1[bl];
-}
 
-function scoreEntry(entryN, queryN){
-  if(!queryN) return 0;
-  let best = 0;
-  if(entryN.code === queryN) best = Math.max(best, 130);
-  if(entryN.city === queryN || entryN.name === queryN) best = Math.max(best, 120);
-  if(entryN.code.startsWith(queryN)) best = Math.max(best, 110);
-  if(entryN.city.startsWith(queryN) || entryN.name.startsWith(queryN)) best = Math.max(best, 105);
-  if(entryN.city.includes(queryN) || entryN.name.includes(queryN)) best = Math.max(best, 90);
-
-  const dCode = levenshtein(entryN.code, queryN);
-  if(dCode > 0 && dCode <= 2) best = Math.max(best, 85 - dCode*8);
-
-  if(queryN.length >= 3 && queryN.length <= 12){
-    const sliceCity = entryN.city.slice(0, queryN.length+3);
-    const sliceName = entryN.name.slice(0, queryN.length+5);
-    const dCity = levenshtein(sliceCity, queryN);
-    if(dCity <= 2) best = Math.max(best, 70 - dCity*6);
-    const dName = levenshtein(sliceName, queryN);
-    if(dName <= 2) best = Math.max(best, 68 - dName*6);
-  }
-  return best;
-}
-
-async function ensureData() {
-  if (airportsData) return;
-  toggleLoading(true);
-  try {
-    const res = await fetch('../tools/airports.json', {cache:'no-store'});
-    if(!res.ok) throw new Error('Failed to load airports.json');
-    const raw = await res.json();
-    airportsData = Object.entries(raw).map(([code, data]) => {
-      const merged = {...data};
-      if(!merged.code) merged.code = code;
-      return {
-        original: merged,
-        code: norm(merged.code),
-        city: norm(merged.city),
-        name: norm(merged.name)
-      };
-    });
-  } catch(e){
-    showStatus('Error loading data: ' + e.message, true);
-  } finally {
-    toggleLoading(false);
-  }
-}
-
-function toggleLoading(state){
-  const btn = document.getElementById('lookupBtn');
-  if(state){
-    btn.classList.add('is-loading-inline');
-    btn.disabled = true;
-  } else {
-    btn.classList.remove('is-loading-inline');
-    btn.disabled = false;
-  }
-}
-
-function showStatus(msg, isError=false){
-  const info = document.getElementById('status');
-  info.textContent = msg;
-  info.className = (isError ? 'has-text-danger' : '');
-}
-
-function highlightMatch(text, query){
-  if(!query) return text;
-  const q = query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  const re = new RegExp('(' + q + ')','ig');
-  return text.replace(re,'<mark>$1</mark>');
-}
-
-function renderMatches(matches, rawQuery){
-  const list = document.getElementById('matches');
-  list.innerHTML = '';
-  if(!matches.length){
-    list.innerHTML = '<p>No matches. Check spelling or try a broader term.</p>';
-    document.getElementById('map').src = '';
-    return;
-  }
-  const queryLower = rawQuery.toLowerCase();
-  matches.forEach(m => {
-    const {original: o} = m;
-    const div = document.createElement('div');
-    div.className = 'match-item';
-    // Highlight
-    const codeHTML = highlightMatch(o.code, rawQuery);
-    const nameHTML = highlightMatch(o.name, rawQuery);
-    const cityHTML = highlightMatch(o.city, rawQuery);
-    div.innerHTML = `
-      <strong>${codeHTML}</strong> - ${nameHTML}
-      <br><small>${cityHTML}, ${o.country || ''}</small>
-      <span class="has-text-grey is-size-7" style="float:right;">${m.score}</span>
-    `;
-    div.addEventListener('click', () => focusAirport(o));
-    list.appendChild(div);
-  });
-}
-
-function focusAirport(airport){
-  showStatus(`Selected: ${airport.name} (${airport.code})`);
-  const lat = airport.lat;
-  const lon = airport.lon;
-  if(typeof lat !== 'number' || typeof lon !== 'number'){
-    document.getElementById('map').src = '';
-    return;
-  }
-  const delta = 0.1;
-  const bbox = `${lon - delta}%2C${lat - delta}%2C${lon + delta}%2C${lat + delta}`;
-  const marker = `${lat}%2C${lon}`;
-  const url = `${mapBaseURL}?bbox=${bbox}&layer=mapnik&marker=${marker}`;
-  const map = document.getElementById('map');
-  map.title = `Map showing ${airport.name}`;
-  map.src = url;
-  map.focus({preventScroll:true});
-}
-
-async function lookup(){
-  const inputEl = document.getElementById('lookup');
-  const query = inputEl.value.trim();
-  showStatus('');
-  await ensureData();
-  if(!airportsData) return;
-
-  const qN = norm(query);
-  if(!qN){
-    renderMatches([], query);
-    showStatus('Type something to search.');
-    return;
-  }
-
-  // Score all entries, filter by threshold
-  const scored = [];
-  for(const entry of airportsData){
-    const score = scoreEntry(entry, qN);
-    if(score > 0) scored.push({...entry, score});
-  }
-  scored.sort((a,b)=> b.score - a.score);
-
-  const limited = scored.slice(0, RESULTS_LIMIT);
-  renderMatches(limited, query);
-
-  if(!scored.length){
-    showStatus('No matches found.');
-  } else {
-    showStatus(`Found ${scored.length} matches (showing top ${limited.length})`);
-  }
-}
-
-function setup(){
-  const input = document.getElementById('lookup');
-  input.addEventListener('keydown', e => {
-    if(e.key === 'Enter'){
-      lookup();
-    } else if(e.key === 'Escape'){
-      input.select();
+    main.tools-wrapper {
+      padding-top: 6.5rem; /* account for fixed navbar */
+      padding-bottom: 4rem;
+      background: linear-gradient(to bottom, var(--clr-bg), var(--clr-bg-alt));
+      min-height: 100vh;
     }
-  });
 
-  // Optional: live search on typing (debounced)
-  let timer;
-  input.addEventListener('input', ()=>{
-    clearTimeout(timer);
-    timer = setTimeout(()=> lookup(), 250);
-  });
-}
+    .lookup-hero {
+      text-align:center;
+      margin-bottom: 2.5rem;
+      max-width: 880px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .lookup-hero h1 {
+      font-size: clamp(2.05rem, 5vw, 2.9rem);
+      font-weight: 700;
+      letter-spacing:.6px;
+      background: linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);
+      -webkit-background-clip:text;
+      color:transparent;
+      margin-bottom:.7rem;
+    }
+    .lookup-hero p {
+      color: var(--clr-text-dim);
+      font-size:1.05rem;
+      line-height:1.5;
+      max-width:680px;
+      margin:0 auto 1.2rem;
+    }
 
-document.addEventListener('DOMContentLoaded', setup);
-</script>
+    .lookup-panel {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: 1fr 420px;
+    }
+
+    @media (max-width: 980px){
+      .lookup-panel { grid-template-columns: 1fr; }
+    }
+
+    .surface-card {
+      background: linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .surface-card:hover {
+      border-color: var(--clr-accent-alt);
+      box-shadow: var(--shadow-2);
+    }
+
+    .lookup-card {
+      padding: 1.6rem 1.6rem 2.1rem;
+    }
+
+    .lookup-fieldwrap {
+      position: relative;
+      margin-bottom: 1.15rem;
+    }
+
+    .lookup-label {
+      font-size:.68rem;
+      letter-spacing:.55px;
+      font-weight:600;
+      text-transform:uppercase;
+      color: var(--clr-text-dim);
+      display:block;
+      margin-bottom:.45rem;
+    }
+
+    .lookup-input {
+      width:100%;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.15);
+      color: var(--clr-text);
+      font-size:.95rem;
+      line-height:1.25;
+      padding:.85rem 1.05rem .85rem 2.7rem;
+      border-radius: 999px;
+      transition: var(--transition);
+      backdrop-filter: blur(4px);
+    }
+    .lookup-input:focus {
+      outline:none;
+      border-color: var(--clr-accent-alt);
+      box-shadow: var(--focus-ring);
+      background: rgba(255,255,255,.10);
+    }
+
+    .lookup-icon {
+      position:absolute;
+      top:50%;
+      left:1rem;
+      transform:translateY(-50%);
+      font-size:1.15rem;
+      pointer-events:none;
+      color: var(--clr-text-dim);
+      transition: var(--transition);
+    }
+    .lookup-fieldwrap:focus-within .lookup-icon {
+      color: var(--clr-accent-alt);
+    }
+
+    .actions-row {
+      display:flex;
+      gap:.65rem;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:.4rem;
+    }
+
+    .btn-primary-gradient {
+      background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
+      color:#fff;
+      border:none;
+      font-weight:600;
+      letter-spacing:.3px;
+      padding:.75rem 1.25rem;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:.9rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      position:relative;
+      box-shadow:0 6px 18px -4px rgba(50,152,220,.55), 0 2px 3px -1px rgba(0,0,0,.55);
+      transition:var(--transition);
+    }
+    .btn-primary-gradient:hover {
+      transform:translateY(-3px);
+      box-shadow:0 10px 28px -6px rgba(50,152,220,.6), 0 3px 5px -2px rgba(0,0,0,.55);
+    }
+    .btn-primary-gradient:active { transform: translateY(-1px); }
+    .btn-primary-gradient:focus-visible { outline:none; box-shadow: var(--focus-ring); }
+    .btn-primary-gradient[disabled] {
+      opacity:.55;
+      cursor:progress;
+      transform:none;
+      box-shadow:0 2px 6px -2px rgba(0,0,0,.4);
+    }
+
+    .btn-soft {
+      background: rgba(79,177,245,.13);
+      color:#cfeafe;
+      border:1px solid rgba(79,177,245,.30);
+      padding:.62rem 1rem;
+      font-size:.75rem;
+      border-radius:.75rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      font-weight:600;
+      letter-spacing:.4px;
+      cursor:pointer;
+      transition:var(--transition);
+    }
+    .btn-soft:hover {
+      background: var(--clr-accent-alt);
+      color:#082032;
+      border-color: var(--clr-accent-alt);
+      box-shadow:0 4px 14px -4px rgba(79,177,245,.6);
+    }
+    .btn-soft:focus-visible { outline:none; box-shadow: var(--focus-ring); }
+
+    #status {
+      margin-top:.4rem;
+      font-size:.68rem;
+      letter-spacing:.5px;
+      font-weight:600;
+      text-transform:uppercase;
+      color:var(--clr-text-dim);
+      min-height:1.1em;
+    }
+    #status.error { color:#ff9393; }
+
+    .results-wrapper {
+      margin-top:1.4rem;
+      display:flex;
+      flex-direction:column;
+      gap:.95rem;
+      position:relative;
+    }
+
+    .result-item {
+      position:relative;
+      padding: .85rem 1rem .9rem 1rem;
+      background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.09);
+      border-radius: calc(var(--radius) - 6px);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      gap:.3rem;
+      transition: var(--transition);
+      outline:none;
+    }
+    .result-item:hover, .result-item[aria-selected="true"] {
+      border-color: var(--clr-accent-alt);
+      background: linear-gradient(160deg, rgba(79,177,245,.18), rgba(255,255,255,.05));
+      box-shadow:0 3px 10px -2px rgba(79,177,245,.4);
+      transform:translateY(-3px);
+    }
+    .result-item:active {
+      transform:translateY(-1px);
+    }
+    .result-item strong {
+      font-weight:600;
+      letter-spacing:.4px;
+      color:#fff;
+    }
+    .result-line {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem .9rem;
+      align-items:baseline;
+      font-size:.82rem;
+      line-height:1.2;
+      color:var(--clr-text-dim);
+    }
+    .result-meta {
+      font-size:.6rem;
+      letter-spacing:.55px;
+      text-transform:uppercase;
+      color: var(--clr-text-dim);
+      display:flex;
+      gap:.8rem;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .score-pill {
+      background:rgba(13,27,42,.75);
+      border:1px solid rgba(255,255,255,.15);
+      font-size:.6rem;
+      font-weight:600;
+      padding:.3rem .55rem;
+      border-radius:999px;
+      letter-spacing:.5px;
+      color:#cfeafe;
+      backdrop-filter:blur(6px);
+    }
+    .copy-indicator {
+      font-size:.55rem;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      color: var(--clr-accent-alt);
+      display:none;
+      font-weight:600;
+    }
+    .result-item.copied .copy-indicator { display:inline; }
+
+    mark {
+      background: rgba(79,177,245,.35);
+      color:#fff;
+      padding:0 3px;
+      border-radius:4px;
+    }
+
+    .empty-hint {
+      font-size:.8rem;
+      color: var(--clr-text-dim);
+      padding:.6rem .2rem;
+    }
+
+    /* Map panel */
+    .map-card {
+      padding: 1.15rem 1.15rem 1.3rem;
+      display:flex;
+      flex-direction:column;
+      gap:.85rem;
+    }
+    .map-card header {
+      font-size:.68rem;
+      font-weight:600;
+      letter-spacing:.55px;
+      text-transform:uppercase;
+      color:var(--clr-text-dim);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .map-frame {
+      width:100%;
+      height:420px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: calc(var(--radius) - 6px);
+      background:#0d1b2a;
+    }
+    @media (max-width: 600px){
+      .map-frame { height:320px; }
+    }
+
+    /* Spinner (inline inside button) */
+    .spinner {
+      width:16px; height:16px;
+      border:2px solid rgba(255,255,255,.55);
+      border-right-color:#fff;
+      border-radius:50%;
+      animation:spin .65s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Skeleton placeholder for result list area */
+    .skeleton-block {
+      background: linear-gradient(90deg, #1e3044 0%, #263d55 45%, #1e3044 90%);
+      background-size:200% 100%;
+      animation: shimmer 2.4s linear infinite;
+      border-radius: .6rem;
+      height:60px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .skeleton-grid {
+      display:grid;
+      gap:.85rem;
+    }
+    @keyframes shimmer {
+      0% { background-position:200% 0; }
+      100% { background-position:-200% 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .result-item,
+      .btn-primary-gradient,
+      .btn-soft,
+      .surface-card,
+      .lookup-input {
+        transition:none !important;
+        transform:none !important;
+      }
+      .skeleton-block { animation:none; }
+    }
+
+    /* Accessible skip link (if used standalone) */
+    .skip-link {
+      position:absolute; left:-999px; top:auto;
+      width:1px; height:1px; overflow:hidden;
+    }
+    .skip-link:focus {
+      position:fixed;
+      left:1rem; top:1rem;
+      width:auto; height:auto;
+      padding:.7rem 1rem;
+      background:var(--clr-accent);
+      color:#fff;
+      border-radius:.6rem;
+      z-index:1000;
+      box-shadow:var(--focus-ring);
+    }
+  </style>
 </head>
 <body>
-<section class="section">
-  <div class="container">
-    <h1 class="title">Airport / City Lookup</h1>
-    <p class="subtitle is-size-6">Search by IATA code, city, or airport name (fuzzy supported)</p>
-    <div class="field">
-      <label class="label" for="lookup">Enter airport code, city name, or airport name</label>
-      <div class="control">
-        <input class="input" id="lookup" placeholder="e.g., London, JFK, Dubai" autocomplete="off" aria-describedby="status">
+  <!-- Optional: include your existing navbar via server-side include or duplicate markup -->
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <main id="main" class="tools-wrapper">
+    <section class="lookup-hero">
+      <h1>Airport / City Lookup</h1>
+      <p>Type an IATA code (e.g. LHR), a city (e.g. Dubai), or part of an airport name. Fuzzy matching tolerates small typos. Select a result to view map location.</p>
+    </section>
+
+    <section class="lookup-panel">
+      <!-- Left: Search & Results -->
+      <div class="surface-card lookup-card" id="searchCard">
+        <form id="lookupForm" novalidate>
+          <label class="lookup-label" for="lookupInput">Search Query</label>
+            <div class="lookup-fieldwrap">
+              <span class="lookup-icon" aria-hidden="true">🔍</span>
+              <input
+                id="lookupInput"
+                class="lookup-input"
+                name="q"
+                type="text"
+                placeholder="Try: JFK, Singapore, Doha, San"
+                autocomplete="off"
+                aria-describedby="status"
+                aria-label="Airport search input"
+                role="combobox"
+                aria-expanded="false"
+                aria-owns="resultsList"
+                aria-autocomplete="list">
+            </div>
+          <div class="actions-row">
+            <button type="submit" id="searchBtn" class="btn-primary-gradient">
+              <span>Search</span>
+              <span class="btn-spinner-slot" aria-hidden="true"></span>
+            </button>
+            <button type="button" id="clearBtn" class="btn-soft" title="Clear input">
+              Clear
+            </button>
+            <button type="button" id="randomBtn" class="btn-soft" title="Random airport">
+              Random
+            </button>
+          </div>
+          <div id="status" role="status" aria-live="polite"></div>
+        </form>
+
+        <div id="resultsRegion" class="results-wrapper" aria-label="Search results">
+          <!-- JS will fill -->
+          <div id="skeletonContainer" class="skeleton-grid" style="display:none;">
+            <div class="skeleton-block"></div>
+            <div class="skeleton-block"></div>
+            <div class="skeleton-block"></div>
+          </div>
+          <div id="resultsList" role="listbox"></div>
+        </div>
+
+        <noscript>
+          <p class="empty-hint" style="margin-top:1rem;">Enable JavaScript to use the interactive lookup.</p>
+        </noscript>
       </div>
-    </div>
-    <div class="control mt-2">
-      <button id="lookupBtn" class="button is-link" type="button" onclick="lookup()" aria-label="Lookup airports">Lookup</button>
-    </div>
-    <p id="status" class="mt-4" role="status" aria-live="polite"></p>
-    <div id="matches" class="match-list" aria-label="Search results"></div>
-    <iframe id="map" style="width:100%; height:400px; border:1px solid #ccc;" title="Map" allowfullscreen loading="lazy"></iframe>
-  </div>
-</section>
+
+      <!-- Right: Map -->
+      <aside class="surface-card map-card" aria-label="Map panel">
+        <header>
+          <span>Map View</span>
+          <span id="mapInfo" style="font-size:.6rem; letter-spacing:.5px; color:var(--clr-text-dim);"></span>
+        </header>
+        <iframe id="mapFrame" class="map-frame" loading="lazy" title="Airport map"
+                src=""
+                aria-label="Selected airport map area"></iframe>
+        <p style="font-size:.7rem; color:var(--clr-text-dim); line-height:1.4;">
+          Selecting a result will focus this map around the airport. Data source: OpenStreetMap.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+  (function(){
+    'use strict';
+
+    /* ---------- Configuration ---------- */
+    const DATA_URL = 'airports.json'; // Adjust if stored elsewhere
+    const MAX_RESULTS = 15;
+    const MAP_DELTA = 0.18;
+    const ENTER_SELECTS_FIRST = true; // if user presses Enter with no active item
+
+    /* ---------- State ---------- */
+    let airports = null; // normalized
+    let rawAirports = null; // original
+    let loadingData = false;
+    let lastQuery = '';
+    let activeIndex = -1;
+    let currentSelection = null; // store last selected airport object
+    let debounceTimer = null;
+
+    /* ---------- DOM ---------- */
+    const input = document.getElementById('lookupInput');
+    const form = document.getElementById('lookupForm');
+    const statusEl = document.getElementById('status');
+    const resultsList = document.getElementById('resultsList');
+    const skeletonContainer = document.getElementById('skeletonContainer');
+    const searchBtn = document.getElementById('searchBtn');
+    const btnSpinnerSlot = searchBtn.querySelector('.btn-spinner-slot');
+    const clearBtn = document.getElementById('clearBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const mapFrame = document.getElementById('mapFrame');
+    const mapInfo = document.getElementById('mapInfo');
+
+    /* ---------- Utils ---------- */
+    function norm(str){
+      return (str||'')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .toUpperCase()
+        .trim();
+    }
+
+    function levenshtein(a,b){
+      if(a===b) return 0;
+      const al=a.length, bl=b.length;
+      if(!al) return bl;
+      if(!bl) return al;
+      const v0=new Array(bl+1), v1=new Array(bl+1);
+      for(let i=0;i<=bl;i++) v0[i]=i;
+      for(let i=0;i<al;i++){
+        v1[0]=i+1;
+        for(let j=0;j<bl;j++){
+          const cost = a[i]===b[j]?0:1;
+          v1[j+1]=Math.min(v1[j]+1, v0[j+1]+1, v0[j]+cost);
+        }
+        for(let j=0;j<=bl;j++) v0[j]=v1[j];
+      }
+      return v1[bl];
+    }
+
+    function scoreEntry(entryQ, queryN){
+      if(!queryN) return 0;
+      let s=0;
+      if(entryQ.code===queryN) s=140;
+      else {
+        if(entryQ.code.startsWith(queryN)) s=Math.max(s,120);
+        if(entryQ.city===queryN || entryQ.name===queryN) s=Math.max(s,115);
+        if(entryQ.city.startsWith(queryN) || entryQ.name.startsWith(queryN)) s=Math.max(s,110);
+        if(entryQ.city.includes(queryN) || entryQ.name.includes(queryN)) s=Math.max(s,95);
+
+        const dCode=levenshtein(entryQ.code,queryN);
+        if(dCode>0 && dCode<=2) s=Math.max(s,90 - dCode*8);
+
+        if(queryN.length>=3){
+          const dCity=levenshtein(entryQ.city.slice(0,queryN.length+3),queryN);
+          if(dCity<=2) s=Math.max(s,78 - dCity*6);
+          const dName=levenshtein(entryQ.name.slice(0,queryN.length+5),queryN);
+          if(dName<=2) s=Math.max(s,74 - dName*6);
+        }
+      }
+      return s;
+    }
+
+    function highlight(text, rawQuery){
+      if(!rawQuery) return escapeHTML(text);
+      const escQ = rawQuery.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      return escapeHTML(text).replace(new RegExp('('+escQ+')','ig'), '<mark>$1</mark>');
+    }
+
+    function escapeHTML(str){
+      return (str+'').replace(/[&<>'"]/g,c=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function setStatus(msg, isError=false){
+      statusEl.textContent = msg;
+      statusEl.className = isError ? 'error' : '';
+    }
+
+    function setLoading(isLoading){
+      if(isLoading){
+        searchBtn.disabled=true;
+        btnSpinnerSlot.innerHTML='<span class="spinner" aria-hidden="true"></span>';
+      } else {
+        searchBtn.disabled=false;
+        btnSpinnerSlot.innerHTML='';
+      }
+    }
+
+    function showSkeleton(show){
+      skeletonContainer.style.display = show ? 'grid':'none';
+    }
+
+    async function ensureData(){
+      if(airports || loadingData) return;
+      loadingData=true;
+      setLoading(true);
+      showSkeleton(true);
+      try{
+        const res = await fetch(DATA_URL, {cache:'no-store'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const json = await res.json();
+        // Assume json is object keyed by code OR array
+        let list;
+        if(Array.isArray(json)){
+          list=json;
+        } else {
+          list=Object.keys(json).map(k=>{
+            const v = json[k];
+            if(!v.code) v.code=k;
+            return v;
+          });
+        }
+        rawAirports = list;
+        airports = list.map(o=>{
+          return {
+            o,
+            code: norm(o.code),
+            city: norm(o.city),
+            name: norm(o.name)
+          };
+        });
+        setStatus('Data loaded. Type to search.');
+      } catch(e){
+        setStatus('Failed to load data: '+e.message, true);
+      } finally {
+        loadingData=false;
+        setLoading(false);
+        showSkeleton(false);
+      }
+    }
+
+    function renderResults(results, rawQuery){
+      resultsList.innerHTML='';
+      input.setAttribute('aria-expanded', 'true');
+      activeIndex=-1;
+
+      if(!results.length){
+        resultsList.innerHTML='<div class="empty-hint" role="note">No matches. Try a broader or different term.</div>';
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      results.forEach((r,i)=>{
+        const orig=r.o;
+        const div=document.createElement('div');
+        div.className='result-item';
+        div.setAttribute('role','option');
+        div.setAttribute('data-index', i);
+        div.tabIndex=-1;
+
+        const codeDisplay = highlight(orig.code, rawQuery);
+        const cityDisplay = orig.city ? highlight(orig.city, rawQuery) : '';
+        const nameDisplay = highlight(orig.name, rawQuery);
+
+        div.innerHTML=`
+          <div class="result-line">
+            <strong>${codeDisplay}</strong>
+            <span>${nameDisplay}</span>
+          </div>
+          <div class="result-meta">
+            <span>${cityDisplay}${orig.country ? ', '+escapeHTML(orig.country):''}</span>
+            <span class="score-pill" title="Match score">${r.score}</span>
+            <span class="copy-indicator">Copied</span>
+          </div>
+        `;
+        div.addEventListener('click', ()=> {
+          selectResult(i, results);
+        });
+        div.addEventListener('keydown', e=>{
+          if(e.key==='Enter'){
+            e.preventDefault();
+            selectResult(i, results);
+          }
+        });
+        frag.appendChild(div);
+      });
+      resultsList.appendChild(frag);
+    }
+
+    function updateActiveVisual(){
+      const items = resultsList.querySelectorAll('.result-item');
+      items.forEach((el,idx)=>{
+        if(idx===activeIndex){
+          el.setAttribute('aria-selected','true');
+          el.classList.add('is-active-temp');
+          el.focus({preventScroll:true});
+        } else {
+          el.removeAttribute('aria-selected');
+          el.classList.remove('is-active-temp');
+        }
+      });
+    }
+
+    function selectResult(idx, resultArr){
+      const item = resultArr[idx];
+      if(!item) return;
+      currentSelection = item.o;
+      flashCopy(resultArr, idx); // copy code
+      focusMap(item.o);
+      setStatus(`${item.o.name} (${item.o.code}) selected.`);
+    }
+
+    function flashCopy(results, idx){
+      const code = results[idx].o.code || '';
+      try {
+        navigator.clipboard.writeText(code).catch(()=>{});
+      } catch(_){}
+      const node = resultsList.querySelector(`.result-item[data-index="${idx}"]`);
+      if(!node) return;
+      node.classList.add('copied');
+      setTimeout(()=>node.classList.remove('copied'), 1400);
+    }
+
+    function focusMap(o){
+      if(typeof o.lat !== 'number' || typeof o.lon !== 'number'){
+        mapFrame.src='';
+        mapInfo.textContent='No coordinates';
+        return;
+      }
+      const {lat, lon} = o;
+      const bbox = `${(lon-MAP_DELTA)},${(lat-MAP_DELTA)},${(lon+MAP_DELTA)},${(lat+MAP_DELTA)}`;
+      const url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(lat+','+lon)}`;
+      mapFrame.src = url;
+      mapInfo.textContent = o.code || '';
+    }
+
+    function pickRandom(){
+      if(!airports) return;
+      const idx = Math.floor(Math.random()*airports.length);
+      const chosen = airports[idx].o;
+      input.value = chosen.code;
+      doLookup();
+    }
+
+    function doLookup(){
+      const rawQuery = input.value.trim();
+      lastQuery = rawQuery;
+      if(!airports){
+        setStatus('Data not loaded yet.');
+        return;
+      }
+      const queryN = norm(rawQuery);
+      if(!queryN){
+        resultsList.innerHTML='';
+        input.setAttribute('aria-expanded','false');
+        setStatus('Type something to search.');
+        return;
+      }
+      const scored=[];
+      for(const a of airports){
+        const sc = scoreEntry(a, queryN);
+        if(sc>0) scored.push({ ...a, score: sc });
+      }
+      scored.sort((a,b)=>b.score-a.score);
+      const limited = scored.slice(0, MAX_RESULTS);
+      renderResults(limited, rawQuery);
+      if(scored.length){
+        setStatus(`Found ${scored.length} (showing top ${limited.length}).`);
+        if(ENTER_SELECTS_FIRST){
+          // optionally auto-select on exact code match:
+          const exact = limited.findIndex(x=>x.code===queryN);
+          if(exact>=0) {
+            activeIndex=exact;
+            updateActiveVisual();
+          }
+        }
+      } else {
+        setStatus('No matches.', true);
+      }
+    }
+
+    /* ---------- Event Handlers ---------- */
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      doLookup();
+    });
+
+    input.addEventListener('input', ()=>{
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(()=>{
+        ensureData().then(doLookup);
+      }, 240);
+    });
+
+    input.addEventListener('keydown', e=>{
+      const items = resultsList.querySelectorAll('.result-item');
+      const max = items.length - 1;
+      if(!items.length) return;
+
+      if(e.key === 'ArrowDown'){
+        e.preventDefault();
+        activeIndex = (activeIndex < max) ? activeIndex + 1 : 0;
+        updateActiveVisual();
+      } else if(e.key === 'ArrowUp'){
+        e.preventDefault();
+        activeIndex = (activeIndex > 0) ? activeIndex - 1 : max;
+        updateActiveVisual();
+      } else if(e.key === 'Enter'){
+        if(activeIndex >=0){
+          e.preventDefault();
+          const arr = Array.from(items).map(it=>{
+            const idx = parseInt(it.getAttribute('data-index'),10);
+            return {
+              o: airportsFilteredCache[idx]?.o || null
+            };
+          });
+        }
+      }
+    });
+
+    // We'll override Enter selection more cleanly by capturing after render.
+    resultsList.addEventListener('keydown', e=>{
+      if(e.key==='Enter'){
+        const focused = document.activeElement;
+        if(focused && focused.classList.contains('result-item')){
+          focused.click();
+        }
+      }
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      input.value='';
+      lastQuery='';
+      resultsList.innerHTML='';
+      input.setAttribute('aria-expanded','false');
+      setStatus('Cleared.');
+      input.focus();
+    });
+
+    randomBtn.addEventListener('click', ()=>{
+      ensureData().then(()=>{
+        pickRandom();
+      });
+    });
+
+    // Avoid referencing airportsFilteredCache incorrectly above; simpler approach:
+    function getCurrentResultSet(){
+      // build from DOM (since we already have data embedded in closures)
+      // We'll store objects in a WeakMap if complexity grows.
+      // For now re-run the scoring quickly:
+      const rawQuery = lastQuery;
+      const queryN = norm(rawQuery);
+      if(!queryN || !airports) return [];
+      const scored=[];
+      for(const a of airports){
+        const sc=scoreEntry(a, queryN);
+        if(sc>0) scored.push({ ...a, score: sc });
+      }
+      scored.sort((a,b)=>b.score-a.score);
+      return scored.slice(0, MAX_RESULTS);
+    }
+
+    input.addEventListener('keydown', e=>{
+      if(e.key==='Enter'){
+        const current = getCurrentResultSet();
+        if(activeIndex>=0 && current[activeIndex]){
+          e.preventDefault();
+          selectResult(activeIndex, current);
+        } else if(ENTER_SELECTS_FIRST && current.length){
+          e.preventDefault();
+          selectResult(0, current);
+        }
+      }
+    });
+
+    // Lazy load data after short idle
+    window.addEventListener('DOMContentLoaded', ()=>{
+      setStatus('Loading airport data…');
+      ensureData().then(()=>{
+        if(!airports) return;
+        setStatus('Data loaded. Type to search.');
+      });
+    });
+
+    /* ---------- Accessibility: Reduced Motion for map refresh (optional) ---------- */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(prefersReducedMotion.matches){
+      // Could disable subtle transforms, already handled in CSS.
+    }
+
+  })();
+  </script>
 </body>
 </html>
