@@ -283,6 +283,9 @@ pre { background:#1f2d3a; }
   "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
 }
 </script>
+
+
+<style id="readability-hotfix"> /* Force all general text to the main foreground color */ :root { --c-text:#e6eef4; /* ensure defined (matches earlier palette) */ --c-accent:#4db5ff; --c-accent-alt:#82d3ff; } /* 1. Base textual elements */ body, .content, .content * { color: var(--c-text) !important; } /* 2. Links (normal + visited + hover) */ a, a:visited { color: var(--c-accent) !important; text-decoration:none; } a:hover, a:focus { color: var(--c-accent-alt) !important; text-decoration:underline; } /* 3. Headings keep clarity */ h1, h2, h3, h4, h5, h6, .content h1, .content h2, .content h3, .content h4 { color: var(--c-text) !important; } /* 4. Tables */ table, table * { color: var(--c-text) !important; } /* 5. Blockquote / code / pre */ blockquote, code, pre { color: var(--c-text) !important; } /* 6. Buttons: keep readable even if Bulma adds .is-link etc. */ .button, .button.is-link, .button.is-light { color:#0f2330 !important; } .button.is-link { background: var(--c-accent) !important; border:none; } .button.is-link:hover { background: var(--c-accent-alt) !important; } /* 7. Badges / tags */ .tag, .tag-badge { color: var(--c-text) !important; } /* 8. Override any lingering utility classes forcing dark text */ .has-text-dark, .has-text-black, .title.has-text-black, .subtitle.has-text-black { color: var(--c-text) !important; } </style>
 </head>
 <body>
 <section class="hero is-medium hero-banner">
