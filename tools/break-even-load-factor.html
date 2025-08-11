@@ -1,0 +1,77 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <title>Break-Even Load Factor & Flight Profit Analyzer | Airline Revenue Tool</title> <meta name="viewport" content="width=device-width,initial-scale=1"> <meta name="description" content="Instantly compute break-even load factor, flight profitability, RASM vs CASM, and margin sensitivity from fare, ancillaries, CASM and stage length."> <link rel="canonical" href="https://your-domain.example/tools/break-even-load-factor.html"> <meta property="og:title" content="Break-Even Load Factor & Flight Profit Analyzer"> <meta property="og:description" content="Compute break-even load factor, profit per flight, RASM and margin instantly."> <meta property="og:type" content="website"> <meta property="og:url" content="https://your-domain.example/tools/break-even-load-factor.html"> <meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg"> <meta name="theme-color" content="#0d1b2a"> <meta name="twitter:card" content="summary_large_image"> <style> :root{ --clr-bg:#0d1b2a;--clr-bg-alt:#132235;--clr-accent:#3298dc;--clr-accent-alt:#4fb1f5; --clr-text:#e8f0f7;--clr-text-dim:#9fb3c5;--radius:14px;--transition:.28s cubic-bezier(.4,.2,.2,1); --focus-ring:0 0 0 3px rgba(50,152,220,.55); } body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:linear-gradient(to bottom,var(--clr-bg),var(--clr-bg-alt));color:var(--clr-text);} main{max-width:1200px;margin:0 auto;padding:6rem 1.2rem 4rem;} h1{font-size:clamp(2.1rem,5vw,3rem);margin:0 0 .7rem;font-weight:700;background:linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);-webkit-background-clip:text;color:transparent;} .lede{max-width:850px;font-size:1.05rem;color:var(--clr-text-dim);line-height:1.5;margin:0 0 2.1rem;} .grid{display:grid;grid-template-columns:380px 1fr;gap:2.2rem;} @media(max-width:1000px){.grid{grid-template-columns:1fr;}} .card{background:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);border-radius:var(--radius);padding:1.6rem 1.5rem 2rem;transition:var(--transition);} .card:hover{border-color:var(--clr-accent-alt);} label{display:flex;justify-content:space-between;font-size:.68rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:.4rem;} input[type=number]{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:.65rem .8rem;color:var(--clr-text);font-size:.9rem;transition:var(--transition);} input[type=number]:focus{outline:none;box-shadow:var(--focus-ring);border-color:var(--clr-accent-alt);background:rgba(255,255,255,.12);} .field{margin-bottom:1rem;} .subgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;} .metric-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.05rem;margin-top:1.4rem;} .metric{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);padding:.9rem .95rem 1rem;border-radius:12px;} .metric h3{margin:0 0 .35rem;font-size:.62rem;letter-spacing:.55px;text-transform:uppercase;font-weight:700;color:var(--clr-text-dim);} .metric .val{font-size:1.05rem;font-weight:600;letter-spacing:.4px;} small.note{display:block;font-size:.65rem;color:var(--clr-text-dim);margin-top:.3rem;line-height:1.3;} .status{font-size:.7rem;letter-spacing:.55px;text-transform:uppercase;font-weight:600;color:var(--clr-text-dim);min-height:1rem;margin-top:.2rem;} .status.error{color:#ff9393;} .share-btn{margin-top:1rem;background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));border:none;border-radius:999px;padding:.55rem 1rem;font-size:.7rem;letter-spacing:.5px;font-weight:600;color:#fff;cursor:pointer;transition:var(--transition);} .share-btn:hover{transform:translateY(-3px);} .share-btn:focus-visible{outline:none;box-shadow:var(--focus-ring);} .share-btn.copied{background:linear-gradient(135deg,#3bb273,#66d69b);} a.inline{color:var(--clr-accent-alt);text-decoration:none;} a.inline:hover{color:#fff;} @media(prefers-reduced-motion:reduce){.card,.share-btn{transition:none!important;transform:none!important;}} </style> </head> <body> <main> <h1>Break-Even Load Factor Analyzer</h1> <p class="lede">Enter flight economics parameters. The tool instantly computes break-even load factor (BELF), RASM vs CASM gap, profit per flight and sensitivity. Useful for quick scenario checks in pricing, capacity planning and network development.</p> <div class="grid"> <div class="card" id="inputCard"> <div class="field"> <label for="seats"><span>Total Seats</span><span></span></label> <input id="seats" type="number" min="1" value="180"> </div> <div class="field"> <label for="stage"><span>Stage Length (nm)</span><span></span></label> <input id="stage" type="number" min="1" value="3000"> </div> <div class="field"> <label for="casm"><span>CASM (¢ per ASM)</span><span></span></label> <input id="casm" type="number" step="0.01" min="0" value="8.0"> </div> <div class="field"> <label for="fare"><span>Avg Base Fare (USD)</span></label> <input id="fare" type="number" step="0.01" min="0" value="380"> </div> <div class="field"> <label for="anc"><span>Ancillary per Pax (USD)</span></label> <input id="anc" type="number" step="0.01" min="0" value="42"> </div> <div class="field"> <label for="fixed"><span>Fixed Cost per Flight (USD)</span></label> <input id="fixed" type="number" step="1" min="0" value="25000"> </div> <div class="field"> <label for="actualLF"><span>Projected Load Factor (%)</span></label> <input id="actualLF" type="number" step="0.1" min="0" max="100" value="85"> </div> <div class="field"> <label for="tax"><span>Per-Pax Taxes & Fees (USD, optional)</span></label> <input id="tax" type="number" step="0.01" min="0" value="0"> </div> <div class="status" id="status" role="status" aria-live="polite">Ready.</div> <button class="share-btn" id="shareBtn" type="button">Share</button> <small class="note">CASM is entered in US cents per available seat mile; tool converts to cost per seat for the stage length. Taxes reduce net yield for break-even calculation.</small> </div> <div class="card"> <div class="metric-box"> <div class="metric"> <h3>Break-Even Load Factor</h3> <div class="val" id="belfVal">—</div> <small class="note" id="belfExplain"></small> </div> <div class="metric"> <h3>RASM (Projected)</h3> <div class="val" id="rasmVal">—</div> <small class="note">Passenger + ancillary revenue / ASM</small> </div> <div class="metric"> <h3>CASM (Input)</h3> <div class="val" id="casmValOut">—</div> <small class="note">Operating cost / ASM</small> </div> <div class="metric"> <h3>Profit per Flight</h3> <div class="val" id="profitVal">—</div> <small class="note" id="marginNote"></small> </div> <div class="metric"> <h3>Revenue / Pax (Net)</h3> <div class="val" id="revPaxVal">—</div> <small class="note">Base + ancillary − taxes</small> </div> <div class="metric"> <h3>Seat Cost (Stage)</h3> <div class="val" id="seatCostVal">—</div> <small class="note">Variable portion (CASM × stage)</small> </div> </div> </div> </div> <section style="max-width:900px;margin:3.2rem auto 0;line-height:1.55;color:var(--clr-text-dim);font-size:.9rem;"> <h2 style="font-size:1.35rem;background:linear-gradient(90deg,#fff,#c6d9e8 40%,#82bfe7);-webkit-background-clip:text;color:transparent;margin:0 0 .8rem;">Methodology</h2> <p>BELF = (Fixed Cost + Variable Cost per Seat × Seats) / (Net Revenue per Pax × Seats). Variable cost per seat is CASM (in USD) × stage length in miles (CASM¢ /100 × miles). Net revenue per pax subtracts taxes (if they do not contribute to covering operating cost). Profit per flight uses projected load factor.</p> </section> </main> <script> (function(){ const ids=['seats','stage','casm','fare','anc','fixed','actualLF','tax']; const el={}; ids.forEach(i=>el[i]=document.getElementById(i)); const statusEl=document.getElementById('status'); const belfVal=document.getElementById('belfVal'); const belfExplain=document.getElementById('belfExplain'); const rasmVal=document.getElementById('rasmVal'); const casmValOut=document.getElementById('casmValOut'); const profitVal=document.getElementById('profitVal'); const revPaxVal=document.getElementById('revPaxVal'); const seatCostVal=document.getElementById('seatCostVal'); const marginNote=document.getElementById('marginNote'); const shareBtn=document.getElementById('shareBtn');
+function num(v){return parseFloat(v)||0;}
+
+function fmtUSD(x){ if(isNaN(x)) return '—'; return '$'+x.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function fmtUSD2(x){ if(isNaN(x)) return '—'; return '$'+x.toFixed(2); }
+
+function calc(){
+const seats=num(el.seats.value);
+const stageNm=num(el.stage.value);
+const casm_c=num(el.casm.value); // cents
+const fare=num(el.fare.value);
+const anc=num(el.anc.value);
+const fixed=num(el.fixed.value);
+const lf=num(el.actualLF.value)/100;
+const tax=num(el.tax.value);
+
+Copy
+if(seats<=0||stageNm<=0){statusEl.textContent='Enter seats & stage length.';return;}
+
+const casmUSD = casm_c/100; // USD per ASM
+const ASM = seats * stageNm;
+const pax = Math.min(seats, seats*lf);
+const netRevPax = fare + anc - tax;
+const seatVarCost = casmUSD * stageNm; // variable cost per seat for full stage
+const totalVarCost = seatVarCost * seats;
+const belf = (fixed + totalVarCost)/(netRevPax*seats);
+const passengerRevenue = pax * (fare + anc);
+const rasm = passengerRevenue / ASM;
+const casmShown = casmUSD;
+const flightRevenue = pax*(fare+anc);
+const totalCost = fixed + totalVarCost + pax*tax; // taxes often a pass-through; if so remove + pax*tax
+const profit = flightRevenue - totalCost;
+const margin = flightRevenue>0? (profit/flightRevenue)*100 : 0;
+
+belfVal.textContent = (belf*100).toFixed(1)+'%';
+belfExplain.textContent='At ≥ this load factor flight turns positive.';
+rasmVal.textContent = (rasm*100).toFixed(2)+'¢';
+casmValOut.textContent = (casmShown*100).toFixed(2)+'¢';
+revPaxVal.textContent = fmtUSD2(netRevPax);
+seatCostVal.textContent = fmtUSD2(seatVarCost);
+profitVal.textContent = fmtUSD(profit);
+marginNote.textContent = 'Margin '+margin.toFixed(1)+'%';
+statusEl.textContent='Updated.';
+}
+
+function updateURL(){
+const url=new URL(window.location.href);
+ids.forEach(i=>url.searchParams.set(i,el[i].value));
+window.history.replaceState({},'',url.toString());
+}
+
+function loadFromURL(){
+const p=new URLSearchParams(window.location.search);
+let changed=false;
+ids.forEach(i=>{
+if(p.has(i)){ el[i].value=p.get(i); changed=true; }
+});
+if(changed) calc();
+}
+
+ids.forEach(i=>{
+el[i].addEventListener('input',()=>{calc();updateURL();});
+});
+
+shareBtn.addEventListener('click',()=>{
+navigator.clipboard.writeText(window.location.href).then(()=>{
+shareBtn.classList.add('copied');shareBtn.textContent='Copied!';
+setTimeout(()=>{shareBtn.classList.remove('copied');shareBtn.textContent='Share';},1500);
+});
+});
+
+loadFromURL();
+calc();
+})();
+</script>
+
+</body> </html>
