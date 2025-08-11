@@ -1,61 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Migration Paths: Coexisting with Legacy Inventory</title>
-  <meta name="description" content="Migration Paths: Coexisting with Legacy Inventory — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:title" content="Migration Paths: Coexisting with Legacy Inventory"/>
-  <meta property="og:description" content="Migration Paths: Coexisting with Legacy Inventory — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:type" content="article"/>
-  <meta property="og:image" content="/blog/images/blog-23.jpg"/>
-  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2025-05-12-migration-paths:-coexisting-with-legacy-inventory.html"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-  <style>
-    .hero-banner { background: url('/blog/images/blog-23.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Migration Paths: Coexisting with Legacy Inventory</title>
+<meta name="description" content="Deep dive into strategies, architecture patterns, and phased roadmap for coexisting with legacy airline inventory while moving toward Offer & Order, dynamic control, and RBD‑less retailing."/>
+<meta property="og:title" content="Migration Paths: Coexisting with Legacy Inventory"/>
+<meta property="og:description" content="Architecture, coexistence patterns, roadmap, risks, KPIs, and runbooks for migrating from legacy inventory to modern Offer & Order ecosystems."/>
+<meta property="og:type" content="article"/>
+<meta property="og:image" content="/blog/images/blog-23.jpg"/>
+<meta property="og:url" content="https://www.modernairlineretailing.com/blog/2025-05-12-migration-paths:-coexisting-with-legacy-inventory.html"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="canonical" href="https://www.modernairlineretailing.com/blog/2025-05-12-migration-paths:-coexisting-with-legacy-inventory.html"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+<style>
+:root {
+  --c-bg:#0d1b2a;
+  --c-overlay-top:rgba(13,27,42,.82);
+  --c-overlay-bottom:rgba(13,27,42,.55);
+  --c-accent:#3298dc;
+  --c-border:#2d445a;
+  --c-soft:#142434;
+  --c-soft2:#193247;
+  --c-warn:#d89614;
+  --c-good:#2f9e44;
+}
+body { background:#0d1b2a; color:#d9e6ef; }
+.hero-banner { background:url('/blog/images/blog-23.jpg') center/cover no-repeat; }
+.overlay { background:linear-gradient(180deg,var(--c-overlay-top),var(--c-overlay-bottom)); }
+.home-btn { position:sticky; top:0; display:inline-block; margin:.5rem 0 1rem; }
+.content p { line-height:1.75; }
+.toc-box { background:#102435; border:1px solid var(--c-border); padding:1rem 1.25rem; border-radius:10px; font-size:.9rem; }
+pre { background:#0f2435; color:#e8f0f7; padding:1rem; border-radius:6px; overflow:auto; font-size:.8rem; }
+code { background:#17354a; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
+blockquote { border-left:4px solid var(--c-accent); background:#102c43; padding:1rem 1.2rem; border-radius:6px; }
+.tag-badge { display:inline-block; background:#173146; color:#9fb3c5; padding:.25rem .55rem; margin:.15rem .25rem .15rem 0; border-radius:6px; font-size:.65rem; letter-spacing:.55px; text-transform:uppercase; }
+.callout { border:1px solid var(--c-border); background:#102c43; padding:1rem 1.25rem; border-radius:10px; margin:1.5rem 0; }
+.callout.warning { border-color:var(--c-warn); background:#3a2d01; }
+.callout.success { border-color:var(--c-good); background:#0f2d1f; }
+.inline-table { border-collapse:collapse; width:100%; font-size:.85rem; margin:1rem 0; }
+.inline-table th, .inline-table td { border:1px solid #28415a; padding:.55rem .6rem; vertical-align:top; }
+.inline-table thead { background:#132d44; }
+.diagram { background:#0f2435; border:1px solid #1e3950; padding:1rem; border-radius:8px; font-size:.72rem; line-height:1.3; overflow:auto; }
+.mini { font-size:.7rem; letter-spacing:.5px; text-transform:uppercase; opacity:.7; }
+.section-nav { margin-top:3rem; }
+.kpi-badge { background:#24405a; padding:.25rem .5rem; border-radius:4px; font-size:.65rem; letter-spacing:.5px; }
+hr { background:#173146; }
+a { color:#58b5ff; }
+a:hover { color:#8ad0ff; }
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Article",
+  "headline":"Migration Paths: Coexisting with Legacy Inventory",
+  "datePublished":"2025-05-12",
+  "dateModified":"2025-05-12",
+  "author":{"@type":"Person","name":"Modern Airline Retailing"},
+  "image":"https://www.modernairlineretailing.com/blog/images/blog-23.jpg",
+  "keywords":"airline inventory,legacy migration,offer and order,RBD-less,coexistence strategy,availability,order management,modern retailing",
+  "publisher":{"@type":"Organization","name":"Modern Airline Retailing"}
+}
+</script>
 </head>
 <body>
-  <section class="hero is-medium hero-banner">
-    <div class="hero-body overlay">
-      <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Migration Paths: Coexisting with Legacy Inventory</h1>
-        <p class="subtitle has-text-white">May 12, 2025</p>
+<section class="hero is-medium hero-banner">
+  <div class="hero-body overlay">
+    <div class="container">
+      <a class="button is-light home-btn" href="/index.html">Home</a>
+      <h1 class="title has-text-white">Migration Paths: Coexisting with Legacy Inventory</h1>
+      <p class="subtitle has-text-white">May 12, 2025 • ~32 min read</p>
+      <div>
+        <span class="tag-badge">Inventory</span>
+        <span class="tag-badge">Migration</span>
+        <span class="tag-badge">Offer &amp; Order</span>
+        <span class="tag-badge">Architecture</span>
+        <span class="tag-badge">Strategy</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container content">
-      <p>Teams argue about this in chat at 2 a.m., and the answer is usually: it depends. Migration Paths: Coexisting with Legacy Inventory sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
-      <nav class="level">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2025-04-20-security-and-trust:-signing-offers-and-protecting-apis.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          <a class="button is-link" href="/blog/2025-06-03-retail-kpis:-measuring-what-matters.html">Next →</a>
-        </div>
-      </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
+<section class="section">
+  <div class="container content">
+
+    <div class="toc-box">
+      <strong>Contents</strong>
+      <ol style="margin-top:.6rem;">
+        <li><a href="#executive">Executive Summary & Plain Definitions</a></li>
+        <li><a href="#problem">Problem Framing & Constraints</a></li>
+        <li><a href="#drivers">Migration Drivers vs Stall Forces</a></li>
+        <li><a href="#scope-of-truth">Scope of Truth Matrix</a></li>
+        <li><a href="#patterns">Coexistence Patterns (Catalog)</a></li>
+        <li><a href="#selection">Pattern Selection Decision Tree</a></li>
+        <li><a href="#domain">Domain Boundary Redraw (Target)</a></li>
+        <li><a href="#diagrams">Conceptual Diagrams</a></li>
+        <li><a href="#roadmap">Phase Roadmap (0–36 Months)</a></li>
+        <li><a href="#hybrid">Operating the Hybrid World</a></li>
+        <li><a href="#availability">Availability & Control Bridging</a></li>
+        <li><a href="#orders">Order / Ticket Duality & Transition</a></li>
+        <li><a href="#rbdless">RBD → Attribute Capacity Migration</a></li>
+        <li><a href="#data">Data, Events & Reconciliation</a></li>
+        <li><a href="#risk">Risk Register & Mitigations</a></li>
+        <li><a href="#kpi">KPIs & Observability</a></li>
+        <li><a href="#runbook">Ops Runbook & Incident Handling</a></li>
+        <li><a href="#security">Security, Trust & Integrity</a></li>
+        <li><a href="#interline">Interline & Alliance Transitional Strategy</a></li>
+        <li><a href="#accounting">Revenue Accounting & Settlement Adaptation</a></li>
+        <li><a href="#governance">Governance & Change Management</a></li>
+        <li><a href="#checklist">Implementation Checklist</a></li>
+        <li><a href="#glossary">Plain-Language Glossary</a></li>
+        <li><a href="#references">References & Disclaimer</a></li>
+      </ol>
     </div>
-  </section>
+
+    <h2 id="executive">1. Executive Summary & Plain Definitions</h2>
+    <p>Airlines want modern Offer &amp; Order retailing (dynamic availability, continuous pricing, attribute bundles) but still rely on a legacy Passenger Service System (PSS) / host for core inventory decrements, schedule integrity, ticketing, interline settlement, and dozens of embedded processes. A “big bang” replacement is rarely feasible. Coexistence—running new and old side-by-side with controlled domain carve‑outs—is the pragmatic path.</p>
+    <h3>Plain Definitions (No Jargon)</h3>
+    <ul>
+      <li><strong>Legacy Inventory / Host:</strong> The existing core system that tracks seats, booking classes (RBDs), and tickets.</li>
+      <li><strong>Modern Inventory Facade:</strong> A new API layer giving a cleaner interface while internally calling legacy functions.</li>
+      <li><strong>Offer Engine:</strong> Service that builds priced product proposals (seat + features + price) before purchase.</li>
+      <li><strong>Order:</strong> The future consolidated record replacing separate PNR + e-ticket + EMD structures.</li>
+      <li><strong>Coexistence Pattern:</strong> A deliberate method describing which system reads, writes, or mirrors a domain object during migration.</li>
+    </ul>
+    <blockquote><strong>Key Idea:</strong> Shrink the legacy system’s surface area to the few things it does best (authoritative seat decrement, regulatory clearing, deep interline), while surrounding it with modern services and gradually internalizing those remaining responsibilities.</blockquote>
+
+    <h2 id="problem">2. Problem Framing & Constraints</h2>
+    <p><strong>Goal:</strong> Introduce modern retail capabilities without losing reliability, auditability, or partner interoperability.</p>
+    <p><strong>Constraints:</strong> High change cadence risks outages; certification with partners; regulatory retention of ticket artifacts; complex refund/exchange logic coded in legacy.</p>
+
+    <h2 id="drivers">3. Migration Drivers vs Stall Forces</h2>
+    <table class="inline-table">
+      <thead><tr><th>Drivers (Push Forward)</th><th>Stall Forces (Hold Back)</th><th>Countermeasure</th></tr></thead>
+      <tbody>
+        <tr><td>Need faster feature velocity (bundles, dynamic pricing)</td><td>Legacy release cycle slow</td><td>Strangler facade + micro frontends</td></tr>
+        <tr><td>Cost of custom logic in host</td><td>High switching cost</td><td>Value accounting / ROI cases per slice</td></tr>
+        <tr><td>Offer & Order industry shift</td><td>Partner readiness variable</td><td>Channel segmentation, fallback logic</td></tr>
+        <tr><td>Data latency & limited observability</td><td>Opaque host logs</td><td>Event capture + provenance envelope</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="scope-of-truth">4. Scope of Truth Matrix</h2>
+    <p>Define, for each domain artifact, who is authoritative (Write), who is a subscriber (Read), and transitional notes.</p>
+    <table class="inline-table">
+      <thead><tr><th>Artifact</th><th>Legacy Host (Now)</th><th>Modern Layer (Target)</th><th>Transition Comment</th></tr></thead>
+      <tbody>
+        <tr><td>Seat Capacity / RBD counts</td><td>Write</td><td>Write (attribute pools)</td><td>Shadow read → dual write → migration token</td></tr>
+        <tr><td>PNR / Order</td><td>Write (PNR)</td><td>Write (Order)</td><td>Dual record with cross-reference keys</td></tr>
+        <tr><td>Ticket / EMD</td><td>Authoritative</td><td>Virtual coupon mapping</td><td>Bridge until pure order settlement accepted</td></tr>
+        <tr><td>Ancillary Inventory</td><td>Mixed / manual</td><td>Central ancillary service</td><td>Early carve-out (low coupling)</td></tr>
+        <tr><td>Pricing / Bundling</td><td>Host + filed fares</td><td>Offer engine / dynamic pricing</td><td>Facade intercept, pass fallback anchor</td></tr>
+        <tr><td>Loyalty Entitlements</td><td>Loyalty system</td><td>Context API</td><td>Read-only pass-through first</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="patterns">5. Coexistence Patterns (Catalog)</h2>
+    <ol>
+      <li><strong>Strangler Facade:</strong> New API sits in front; routes some calls to modern services, others to host. Gradually rewires underlying endpoints.</li>
+      <li><strong>Shadow Mode:</strong> Modern service processes requests in parallel (read-only) to measure divergence before switching writes.</li>
+      <li><strong>Dual Write with Reconciliation:</strong> Both host and new system receive writes; periodic diff & repair ensures drift detection.</li>
+      <li><strong>Event Sourcing Wrapper:</strong> Capture host transactions as events, rebuilding state externally to validate completeness.</li>
+      <li><strong>Carve-Out by Product:</strong> Move ancillaries, seat selection, bundles first (lower coupling) while core seat inventory stays legacy.</li>
+      <li><strong>Channel Segmentation:</strong> Direct + mobile use new Offer path; GDS/EDIFACT remain legacy until interline maturity.</li>
+      <li><strong>Temporal Cut (Forward Only):</strong> All new departures after date X use new pricing path; older inventory remains host-driven.</li>
+      <li><strong>Market / O&D Slice:</strong> Pilot on a subset of markets (e.g. domestic short-haul) to minimize risk radius.</li>
+    </ol>
+
+    <h2 id="selection">6. Pattern Selection Decision Tree</h2>
+    <div class="diagram">
+Decision Inputs → Pattern
+-------------------------------------------------------------
+Low risk tolerance + limited monitoring → Shadow Mode first
+Need immediate feature surface → Strangler Facade
+High divergence risk objects → Dual Write + Reconciliation
+Ancillaries loosely coupled → Carve-Out by Product
+Partners not ready → Channel Segmentation
+Complex schedule season change → Temporal Cut (post-season)
+</div>
+
+    <h2 id="domain">7. Domain Boundary Redraw (Target)</h2>
+    <p>Split monolith responsibilities into bounded contexts:</p>
+    <ul>
+      <li><strong>Inventory Core:</strong> Capacity pools & decrement transactions (idempotent).</li>
+      <li><strong>Offer Composition:</strong> Price + product assembly (stateless aside from caching).</li>
+      <li><strong>Order Management:</strong> State machine of customer entitlements & servicing actions.</li>
+      <li><strong>Settlement & Accounting:</strong> Ledger, revenue recognition, external clearing adapters.</li>
+      <li><strong>Ancillary Services:</strong> Seat map, baggage, bundles (feature availability service).</li>
+      <li><strong>Context & Eligibility:</strong> Loyalty tier, corporate contract, regulatory constraints.</li>
+    </ul>
+
+    <h2 id="diagrams">8. Conceptual Diagrams</h2>
+    <div class="diagram" aria-label="Strangler architecture">
+Strangler Facade Concept
+----------------------------------------------------
+Clients (Web / NDC / Mobile)
+          |
+     API Gateway
+          |
+  +---------------------+
+  | Routing Rules       |
+  |  /inventory -> host (phase 1)   |
+  |  /offer     -> new offer svc    |
+  |  /ancillary -> new ancillary    |
+  +---------------------+
+          |
+ Legacy Host (reduced call set)
+          |
+ Event Bus (captures host commits)
+          |
+ Modern Data Lake / State Projections
+</div>
+
+    <div class="diagram" aria-label="Shadow mode flow">
+Shadow Mode Flow
+----------------------------------------------------
+Request -> Legacy Path (authoritative)
+        -> Modern Path (shadow)
+Compare: availability, price, latency
+If divergence < threshold for N days → promote modern path to live
+</div>
+
+    <div class="diagram" aria-label="Dual write sequence">
+Dual Write + Reconciliation
+----------------------------------------------------
+Client Commit
+  -> Modern Order Service (persist)
+  -> Legacy Host (PNR / ticket)
+  <- Acks
+Event Log: orderId, hostPnrId, hash(state)
+Reconciler:
+  query host snapshot
+  recompute hash
+  if mismatch -> repair + alert
+</div>
+
+    <div class="diagram" aria-label="RBD to attribute path">
+RBD → Attribute Migration
+----------------------------------------------------
+Phase 1: RBD drives availability; attributes derived
+Phase 2: Attribute capacity tracked in parallel (shadow)
+Phase 3: Offer requests attribute capacity; map to RBD at commit
+Phase 4: Direct channel uses attribute only; RBD stub for partners
+Phase 5: Interline tokens accept attribute semantics -> retire RBD
+</div>
+
+    <h2 id="roadmap">9. Phase Roadmap (0–36 Months)</h2>
+    <ol>
+      <li><strong>0–3 Months Discovery:</strong> Inventory dependencies, classify APIs by change risk, instrument baseline divergence metrics.</li>
+      <li><strong>4–6 Facade & Events:</strong> Deploy API gateway; implement publish of host booking/modify/cancel events with schema & sequence numbers.</li>
+      <li><strong>7–12 Shadow & Carve-Out:</strong> Shadow availability & pricing; move ancillaries + rich content to new services; start dual IDs (orderId + PNR).</li>
+      <li><strong>13–18 Dual Write Core Orders:</strong> Orders persisted natively + mirrored to host PNR; reconciliation jobs; limited dynamic pricing live on direct.</li>
+      <li><strong>19–24 Attribute Capacity Pilot:</strong> Parallel tracking of attribute pools; offer engine consumes them for selected markets.</li>
+      <li><strong>25–30 RBD Suppression (Direct):</strong> Direct channel commits via order only; host receives derived booking for compliance. Begin ticket minimization (virtual coupons).</li>
+      <li><strong>31–36 Interline & Settlement Evolution:</strong> Introduce order-based clearing adapter; expand attribute capacity to majority of network; methodically reduce RBD reliance to exception cases.</li>
+    </ol>
+
+    <h2 id="hybrid">10. Operating the Hybrid World</h2>
+    <ul>
+      <li><strong>Dual Provenance:</strong> Every response includes legacyVersion & modernVersion to audit decision path.</li>
+      <li><strong>Channel Flags:</strong> Response metadata states pricingMode=LEGACY|HYBRID|MODERN.</li>
+      <li><strong>Fallback Policy:</strong> If modern service latency > threshold (e.g. 500 ms) route to legacy and log fallback reason.</li>
+      <li><strong>Data Freshness Budget:</strong> Decide acceptable delay (e.g. 60s) between host capacity change and modern projection update.</li>
+    </ul>
+
+    <h2 id="availability">11. Availability & Control Bridging</h2>
+    <p>Key challenge: preventing divergence between host seat counts and modern attribute-based offers.</p>
+    <ul>
+      <li><strong>Event Stream:</strong> Host emits seat decrement events with sequence & idempotent key.</li>
+      <li><strong>Projection Service:</strong> Consumes events, updates attribute pools (e.g. Flex, Light, BusinessPlus).</li>
+      <li><strong>Gap Detection:</strong> Sequence skip triggers snapshot pull & re-sync.</li>
+      <li><strong>Version Fencing:</strong> Offer commit must cite inventoryVersion; mismatch forces revalidation.</li>
+    </ul>
+
+    <h2 id="orders">12. Order / Ticket Duality & Transition</h2>
+    <p><strong>Phase A:</strong> Create order + PNR + ticket; both reference each other. <strong>Phase B:</strong> Order primary; PNR minimal skeleton; ticket virtualized. <strong>Phase C:</strong> Order only; produce bridging artifacts for external clearing.</p>
+    <ul>
+      <li><strong>Virtual Coupon Model:</strong> OrderItem lines produce pseudo coupon IDs for accounting; include decomposition (base, taxes, ancillaries).</li>
+      <li><strong>Servicing:</strong> Exchanges apply deltas to Order ledger; host receives simplified notification.</li>
+    </ul>
+
+    <h2 id="rbdless">13. RBD → Attribute Capacity Migration</h2>
+    <ol>
+      <li>Define attribute taxonomy (flexibility, change penalty, baggage, seat pitch, lounge, priority).</li>
+      <li>Map existing RBD -> attribute set (v1 mapping table with versionId).</li>
+      <li>Track attribute-level capacity shadowing RBD bookings.</li>
+      <li>Introduce attribute-based availability endpoint (internal) with RBD “shim” translator.</li>
+      <li>Switch direct channel to attribute endpoint; maintain partner RBD translation.</li>
+      <li>Optimize RM to produce protection levels by attribute cluster, not just RBD nesting.</li>
+    </ol>
+
+    <h2 id="data">14. Data, Events & Reconciliation</h2>
+    <p><strong>Event Schema (Illustrative)</strong></p>
+    <pre><code>SeatDecrementEvent {
+  eventId, sequence, flightLegKey, rbd, seats: -1,
+  cause: BOOK|CXL|INV_ADJ,
+  hostTimestamp, producer="host"
+}
+
+OrderCreated {
+  orderId, channel, items[], total, currency, pricingVersion,
+  inventoryVersion, refPnrId?, createdAt
+}</code></pre>
+    <p><strong>Reconciliation Types:</strong></p>
+    <ul>
+      <li><strong>Inventory Drift:</strong> Compare host seat counts vs projected attribute pool hourly.</li>
+      <li><strong>Order Linking:</strong> Missing PNR reference vs orderId after X minutes triggers repair job.</li>
+      <li><strong>Tax Consistency:</strong> Recompute tax on stored order components to detect rule updates.</li>
+    </ul>
+    <p><strong>Data Lineage:</strong> Each order stores a provenance object referencing pricing model, mapping version, tax table version, guardrail set.</p>
+
+    <h2 id="risk">15. Risk Register & Mitigations</h2>
+    <table class="inline-table">
+      <thead><tr><th>Risk</th><th>Impact</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Divergent Seat Counts</td><td>Booking failures / lost sales</td><td>Sequence gap detection + version fencing + read-repair</td></tr>
+        <tr><td>Dual Write Inconsistency</td><td>Refund/exchange errors</td><td>Idempotent keys + reconciliation audit</td></tr>
+        <tr><td>Latency Regression</td><td>Conversion drop</td><td>Performance budgets, async pre-compute, circuit breakers</td></tr>
+        <tr><td>Partner Rejection</td><td>Interline settlement disputes</td><td>Fallback anchor mapping, monitoring proration variance</td></tr>
+        <tr><td>Operational Complexity</td><td>Incident MTTR rise</td><td>Runbooks + unified observability dashboard</td></tr>
+        <tr><td>Scope Creep</td><td>Delayed benefits</td><td>Value-based backlog gating per phase</td></tr>
+        <tr><td>Regulatory Non-Compliance</td><td>Fines / brand harm</td><td>Compliance review gates, audit trail immutability</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="kpi">16. KPIs & Observability</h2>
+    <ul>
+      <li><span class="kpi-badge">Inventory Divergence Rate</span> (# mismatches / 1000 availability responses).</li>
+      <li><span class="kpi-badge">Fallback Rate</span> (% requests routed back to legacy path).</li>
+      <li><span class="kpi-badge">Order ↔ PNR Link Lag</span> (p95 seconds until dual reference resolves).</li>
+      <li><span class="kpi-badge">Attribute Coverage</span> (% of direct offers using attribute capacity).</li>
+      <li><span class="kpi-badge">Operational MTTR</span> (median minutes to resolve coexistence incidents).</li>
+      <li><span class="kpi-badge">Reconciliation Drift Time</span> (average minutes a drift persists before repair).</li>
+      <li><span class="kpi-badge">Change Failure Rate</span> (deploys causing rollback / total deploys).</li>
+    </ul>
+
+    <h2 id="runbook">17. Ops Runbook & Incident Handling</h2>
+    <ol>
+      <li><strong>Detection:</strong> Alert triggers on divergenceRate > threshold or commit failure spike.</li>
+      <li><strong>Scope:</strong> Identify flight/date, channel, pricingMode, versions.</li>
+      <li><strong>Compare State:</strong> Pull host snapshot vs projection hash.</li>
+      <li><strong>Classify Root Cause:</strong> Gap, latency backlog, mapping version mismatch, dual write failure.</li>
+      <li><strong>Mitigation:</strong> Force snapshot sync; temporarily route affected O&amp;D to legacy path.</li>
+      <li><strong>Audit Log:</strong> Append incident record with cause, duration, lost revenue estimate.</li>
+      <li><strong>Preventive Action:</strong> Add or tune alert, backlog ticket for structural fix.</li>
+    </ol>
+
+    <h2 id="security">18. Security, Trust & Integrity</h2>
+    <ul>
+      <li><strong>Signed Tokens:</strong> Offer / availability tokens include HMAC over inventoryVersion + expiry.</li>
+      <li><strong>Replay Protection:</strong> Nonce or short TTL on commit tokens to prevent stale re-use.</li>
+      <li><strong>Least Privilege:</strong> Modern services use scoped credentials; facade enforces domain ACLs.</li>
+      <li><strong>Data Integrity Checks:</strong> Hash chain of event sequences; gap triggers tamper alert if unexpected.</li>
+    </ul>
+
+    <h2 id="interline">19. Interline & Alliance Transitional Strategy</h2>
+    <ul>
+      <li><strong>Partner Transparency:</strong> Share migration schedule & fallback semantics with partners early.</li>
+      <li><strong>Continuous-to-Discrete Mapping:</strong> Provide anchor fare & adjustment fields; limit variance to negotiated corridor.</li>
+      <li><strong>Token Handling:</strong> If partner cannot consume offer token, include canonical fallback record.</li>
+      <li><strong>Proration Adapter:</strong> Splits dynamic total across sectors by weighted mileage or demand-based weighting, logged for audit.</li>
+      <li><strong>Monitoring:</strong> Track proration variance delta vs internal expected allocation.</li>
+    </ul>
+
+    <h2 id="accounting">20. Revenue Accounting & Settlement Adaptation</h2>
+    <p><strong>Interim:</strong> Orders + tickets coexist; accounting uses ticket coupons as primary but logs order decomposition for audit. <strong>Later:</strong> Order line ledger drives revenue recognition; produce “clearing view” transforms for BSP/ARC until industry order clearing matures.</p>
+    <ul>
+      <li><strong>Decomposition Ledger:</strong> baseFare, adjustments, ancillaries, taxes, fees each with version/tax rule reference.</li>
+      <li><strong>Rebuild Function:</strong> Reconstruct filed baseline vs sold to validate compliance.</li>
+      <li><strong>Exchange Handling:</strong> Delta ledger entries rather than re-issuing full value recalculations where possible.</li>
+    </ul>
+
+    <h2 id="governance">21. Governance & Change Management</h2>
+    <ul>
+      <li><strong>Operating Model:</strong> Cross-functional migration council (Architecture, RM, Distribution, Accounting, Ops) with RACI matrix.</li>
+      <li><strong>Decision Log:</strong> Document pattern adoption decisions & retirement criteria for legacy endpoints.</li>
+      <li><strong>Phase Exit Gates:</strong> Must meet KPI targets (e.g., divergenceRate &lt; 0.2%) before next phase.</li>
+      <li><strong>Communication Cadence:</strong> Weekly readiness review; monthly exec checkpoint on value metrics.</li>
+    </ul>
+
+    <h2 id="checklist">22. Implementation Checklist</h2>
+    <ul>
+      <li>Map domain artifacts and assign authoritative system owner.</li>
+      <li>Deploy facade gateway with routing & version headers.</li>
+      <li>Stand up event bus: seat, order, price provenance events.</li>
+      <li>Implement sequence + gap detection & snapshot reload.</li>
+      <li>Shadow availability & pricing: collect divergence metrics.</li>
+      <li>Carve-out ancillaries & rich content to new services.</li>
+      <li>Dual write orders (order + PNR) with reconciliation job.</li>
+      <li>Introduce attribute capacity shadow tracking.</li>
+      <li>Add Offer tokens (inventoryVersion, pricingMode, expiry).</li>
+      <li>Dashboard KPIs: divergence, fallback, link lag, coverage.</li>
+      <li>Risk register updated monthly; mitigation owner named.</li>
+      <li>Order-to-ticket virtual coupon mapping for accounting.</li>
+      <li>Interline fallback anchor / adjustment handshake defined.</li>
+      <li>Security: token signing, replay protection, audit log immutability.</li>
+    </ul>
+
+    <h2 id="glossary">23. Plain-Language Glossary</h2>
+    <ul>
+      <li><strong>Facade:</strong> New interface masking old system complexity.</li>
+      <li><strong>Shadow Mode:</strong> Running new logic silently in parallel to compare results.</li>
+      <li><strong>Dual Write:</strong> Writing the same change to both old and new stores.</li>
+      <li><strong>Divergence:</strong> Difference between states in legacy vs modern view beyond tolerance.</li>
+      <li><strong>Attribute Capacity:</strong> Availability expressed via product features instead of booking code letters.</li>
+      <li><strong>Virtual Coupon:</strong> Transitional accounting record linked to an order item.</li>
+      <li><strong>Strangler Pattern:</strong> Gradually replace old system by wrapping and redirecting pieces.</li>
+      <li><strong>Fallback:</strong> Automatic revert to legacy path when new path unstable.</li>
+    </ul>
+
+    <h2 id="references">24. References & Disclaimer</h2>
+    <ul>
+      <li>Public industry materials on Offer &amp; Order concepts (IATA publications).</li>
+      <li>Conference presentations (AGIFORS, T2RL, PODS) on migration & inventory modernization.</li>
+      <li>General software architecture patterns (strangler, event sourcing, dual write) publicly documented.</li>
+      <li>Public vendor whitepapers describing modern retailing approaches (verify specifics directly).</li>
+    </ul>
+    <div class="callout warning">
+      Disclaimer: This article synthesizes generally known architectural and operational concepts. It omits proprietary vendor implementation details, confidential algorithms, and commercially sensitive integration specifics. Validate all migration steps against contractual obligations, regulatory compliance (pricing, taxation, consumer display), data protection, and safety/security policies. Examples are illustrative; real implementations require detailed technical and legal review.
+    </div>
+    <p class="mini">Trademarks and product names belong to their respective owners. No endorsement implied.</p>
+
+    <hr/>
+    <nav class="level section-nav">
+      <div class="level-left">
+        <a class="button is-link is-light" href="/blog/2025-04-20-security-and-trust:-signing-offers-and-protecting-apis.html">← Previous</a>
+      </div>
+      <div class="level-right">
+        <a class="button is-link" href="/blog/2025-06-03-retail-kpis:-measuring-what-matters.html">Next →</a>
+      </div>
+    </nav>
+    <p><a href="/blog/index.html">Back to all blogs</a></p>
+
+  </div>
+</section>
 </body>
 </html>
