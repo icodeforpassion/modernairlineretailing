@@ -237,6 +237,239 @@
         </div>
     </div>
 </main>
-<script> (function() { const capacityEl = document.getElementById('capacity'); const fareTableBody = document.querySelector('#fareTable tbody'); const outBody = document.getElementById('outBody'); const statusEl = document.getElementById('status'); const protSummary = document.getElementById('protSummary'); const allocSummary = document.getElementById('allocSummary'); const expSoldEl = document.getElementById('expSold'); const expRevEl = document.getElementById('expRev'); const shareBtn = document.getElementById('shareBtn'); let rows = []; function addRow(cls, fare, mean, std) { const r = { id: Date.now() + Math.random(), cls: cls || ('C' + (rows.length + 1)), fare: fare || 500, mean: mean || 40, std: std || 10 }; rows.push(r); renderRows(); } function renderRows() { fareTableBody.innerHTML = ''; rows.forEach(r => { const tr = document.createElement('tr'); tr.innerHTML = ` <td class="code"><input type="text" value="${r.cls}" data-id="${r.id}" data-f="cls" style="width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:.3rem .4rem;color:#fff;font-size:.65rem;"></td> <td><input type="number" step="1" value="${r.fare}" data-id="${r.id}" data-f="fare"></td> <td><input type="number" step="1" value="${r.mean}" data-id="${r.id}" data-f="mean"></td> <td><input type="number" step="1" value="${r.std}" data-id="${r.id}" data-f="std"></td> <td><button class="delete-btn" data-del="${r.id}" type="button">X</button></td> `; fareTableBody.appendChild(tr); }); calc(); } function normalQuantile(p) { if (p <= 0 || p >= 1) return NaN; const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00]; const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01]; const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00]; const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00]; const plow = 0.02425, phigh = 1 - plow; let q, r; if (p < plow) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) / ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1); } else if (p > phigh) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) / ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1); } else { q = p - 0.5; r = q * q; return (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5]) * q / (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1); } } function calc() { const C = parseFloat(capacityEl.value) || 0; if (C <= 0 || rows.length === 0) { statusEl.textContent = 'Enter capacity & at least one class.'; outBody.innerHTML = ''; protSummary.textContent = allocSummary.textContent = expSoldEl.textContent = expRevEl.textContent = '—'; return; } const sorted = [...rows]; // assume already high->low const outputs = []; for (let i = 0; i < sorted.length - 1; i++) { const highClasses = sorted.slice(0, i + 1); const lowClasses = sorted.slice(i + 1); const fareHigh = sorted[i].fare; const lowDemandMean = lowClasses.reduce((s,x)=>s+x.mean,0); const lowFareAvg = lowDemandMean > 0 ? lowClasses.reduce((s,x)=>s + x.fare * x.mean,0)/lowDemandMean : (lowClasses[0]? lowClasses[0].fare : 0); const ratio = lowFareAvg / fareHigh; const meanHigh = highClasses.reduce((s,x)=>s+x.mean,0); const varHigh = highClasses.reduce((s,x)=>s + x.std**2,0); const stdHigh = Math.sqrt(varHigh); const targetCDF = 1 - ratio; let yProt; if (stdHigh > 0) { const z = normalQuantile(Math.min(Math.max(targetCDF, 0.0001), 0.9999)); yProt = meanHigh + z * stdHigh; } else { yProt = meanHigh; } yProt = Math.max(0, Math.min(C, yProt)); outputs.push({ boundaryAfter: sorted[i].cls, protect: yProt }); } const classLines = []; for (let i = 0; i < sorted.length; i++) { const protectAbove = (i === 0) ? 0 : outputs[i-1].protect; const limit = Math.max(0, C - protectAbove); classLines.push({ cls: sorted[i].cls, fare: sorted[i].fare, protectAbove, limit }); } const topProt = outputs[0] ? outputs[0].protect : 0; protSummary.textContent = topProt ? topProt.toFixed(1) : '0.0'; allocSummary.textContent = classLines.map(c => c.cls + ':' + c.limit.toFixed(0)).join(' | '); // Simple expected sold & revenue (approximation) let expSold = 0, expRev = 0; let prevLimit = 0; classLines.forEach((cl,i)=>{ // seats uniquely available to this fare (incremental bucket) const incr = Math.max(0, cl.limit - prevLimit); prevLimit = cl.limit; const demandMean = sorted[i].mean; const served = Math.min(demandMean, incr); expSold += served; expRev += served * sorted[i].fare; }); expSoldEl.textContent = expSold.toFixed(0); expRevEl.textContent = '$' + expRev.toFixed(0); outBody.innerHTML = ''; classLines.forEach(cl=>{ const tr = document.createElement('tr'); tr.innerHTML = ` <td class="code">${cl.cls}</td> <td>${cl.fare}</td> <td>${cl.protectAbove.toFixed(1)}</td> <td>${cl.limit.toFixed(1)}</td>`; outBody.appendChild(tr); }); statusEl.textContent = 'Computed protection.'; } document.getElementById('addRowBtn').addEventListener('click', addRow); fareTableBody.addEventListener('input', e => { const id = e.target.getAttribute('data-id'); const f = e.target.getAttribute('data-f'); if (!id || !f) return; const row = rows.find(r => r.id == id); if (!row) return; if (f === 'cls') row.cls = e.target.value.trim(); else row[f] = parseFloat(e.target.value) || 0; calc(); updateURL(); }); fareTableBody.addEventListener('click', e => { const del = e.target.getAttribute('data-del'); if (del) { rows = rows.filter(r => r.id != del); renderRows(); updateURL(); } }); capacityEl.addEventListener('input', () => { calc(); updateURL(); }); function updateURL() { const url = new URL(location.href); url.searchParams.set('C', capacityEl.value); url.searchParams.set('classes', rows.map(r => encodeURIComponent(r.cls)).join(',')); url.searchParams.set('fares', rows.map(r => r.fare).join(',')); url.searchParams.set('means', rows.map(r => r.mean).join(',')); url.searchParams.set('stds', rows.map(r => r.std).join(',')); history.replaceState({}, '', url.toString()); } shareBtn.addEventListener('click', () => { updateURL(); const link = location.href; // NEW: robust copy logic function showCopied(ok) { shareBtn.classList.add('copied'); shareBtn.textContent = ok ? 'Copied!' : 'Copy Failed'; setTimeout(()=> { shareBtn.classList.remove('copied'); shareBtn.textContent = 'Share'; }, 1600); } if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(link).then(()=>showCopied(true)).catch(()=>showCopied(false)); } else { // Fallback using a temporary textarea const ta = document.createElement('textarea'); ta.value = link; ta.style.position='fixed'; ta.style.top='-1000px'; document.body.appendChild(ta); ta.select(); try { const ok = document.execCommand('copy'); showCopied(ok); } catch { showCopied(false); } finally { document.body.removeChild(ta); } } }); function loadFromURL() { const p = new URLSearchParams(location.search); rows = []; if (p.has('classes')) { const cl = p.get('classes').split(','); const fares = (p.get('fares') || '').split(','); const means = (p.get('means') || '').split(','); const stds = (p.get('stds') || '').split(','); if (p.has('C')) capacityEl.value = p.get('C'); for (let i=0;i<cl.length;i++) { if (!cl[i]) continue; addRow(decodeURIComponent(cl[i]), parseFloat(fares[i])||400, parseFloat(means[i])||30, parseFloat(stds[i])||8); } calc(); } else { addRow('F', 800, 25, 6); addRow('C', 500, 30, 8); addRow('M', 300, 60, 12); addRow('L', 180, 90, 18); calc(); } } loadFromURL(); })(); </script>
+<script>
+(function() {
+    const capacityEl = document.getElementById('capacity');
+    const fareTableBody = document.querySelector('#fareTable tbody');
+    const outBody = document.getElementById('outBody');
+    const statusEl = document.getElementById('status');
+    const protSummary = document.getElementById('protSummary');
+    const allocSummary = document.getElementById('allocSummary');
+    const expSoldEl = document.getElementById('expSold');
+    const expRevEl = document.getElementById('expRev');
+    const shareBtn = document.getElementById('shareBtn');
+    let rows = [];
+
+    function addRow(cls, fare, mean, std) {
+        const r = {
+            id: Date.now() + Math.random(),
+            cls: cls || ('C' + (rows.length + 1)),
+            fare: fare || 500,
+            mean: mean || 40,
+            std: std || 10
+        };
+        rows.push(r);
+        renderRows();
+    }
+
+    function renderRows() {
+        fareTableBody.innerHTML = '';
+        rows.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="code"><input type="text" value="${r.cls}" data-id="${r.id}" data-f="cls" style="width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:.3rem .4rem;color:#fff;font-size:.65rem;"></td>
+                <td><input type="number" step="1" value="${r.fare}" data-id="${r.id}" data-f="fare"></td>
+                <td><input type="number" step="1" value="${r.mean}" data-id="${r.id}" data-f="mean"></td>
+                <td><input type="number" step="1" value="${r.std}" data-id="${r.id}" data-f="std"></td>
+                <td><button class="delete-btn" data-del="${r.id}" type="button">X</button></td>
+            `;
+            fareTableBody.appendChild(tr);
+        });
+        calc();
+    }
+
+    // Normal quantile approximation (Probit, for EMSRb)
+    function normalQuantile(p) {
+        if (p <= 0 || p >= 1) return NaN;
+        const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+        const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+        const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+        const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+        const plow = 0.02425, phigh = 1 - plow;
+        let q, r;
+        if (p < plow) {
+            q = Math.sqrt(-2 * Math.log(p));
+            return (((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) /
+                   ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1);
+        } else if (p > phigh) {
+            q = Math.sqrt(-2 * Math.log(1 - p));
+            return -(((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) /
+                    ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1);
+        } else {
+            q = p - 0.5;
+            r = q * q;
+            return (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5]) * q /
+                   (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1);
+        }
+    }
+
+    function calc() {
+        const C = parseFloat(capacityEl.value) || 0;
+        if (C <= 0 || rows.length === 0) {
+            statusEl.textContent = 'Enter capacity & at least one class.';
+            outBody.innerHTML = '';
+            protSummary.textContent = allocSummary.textContent = expSoldEl.textContent = expRevEl.textContent = '—';
+            return;
+        }
+        const sorted = [...rows]; // assume already high->low
+        const outputs = [];
+        for (let i = 0; i < sorted.length - 1; i++) {
+            const highClasses = sorted.slice(0, i + 1);
+            const lowClasses = sorted.slice(i + 1);
+            const fareHigh = sorted[i].fare;
+            const lowDemandMean = lowClasses.reduce((s,x)=>s+x.mean,0);
+            const lowFareAvg = lowDemandMean > 0 ? lowClasses.reduce((s,x)=>s + x.fare * x.mean,0)/lowDemandMean : (lowClasses[0]? lowClasses[0].fare : 0);
+            const ratio = lowFareAvg / fareHigh;
+            const meanHigh = highClasses.reduce((s,x)=>s+x.mean,0);
+            const varHigh = highClasses.reduce((s,x)=>s + x.std**2,0);
+            const stdHigh = Math.sqrt(varHigh);
+            const targetCDF = 1 - ratio;
+            let yProt;
+            if (stdHigh > 0) {
+                const z = normalQuantile(Math.min(Math.max(targetCDF, 0.0001), 0.9999));
+                yProt = meanHigh + z * stdHigh;
+            } else {
+                yProt = meanHigh;
+            }
+            yProt = Math.max(0, Math.min(C, yProt));
+            outputs.push({ boundaryAfter: sorted[i].cls, protect: yProt });
+        }
+        const classLines = [];
+        for (let i = 0; i < sorted.length; i++) {
+            const protectAbove = (i === 0) ? 0 : outputs[i-1].protect;
+            const limit = Math.max(0, C - protectAbove);
+            classLines.push({ cls: sorted[i].cls, fare: sorted[i].fare, protectAbove, limit });
+        }
+        const topProt = outputs[0] ? outputs[0].protect : 0;
+        protSummary.textContent = topProt ? topProt.toFixed(1) : '0.0';
+        allocSummary.textContent = classLines.map(c => c.cls + ':' + c.limit.toFixed(0)).join(' | ');
+        // Simple expected sold & revenue (approximation)
+        let expSold = 0, expRev = 0;
+        let prevLimit = 0;
+        classLines.forEach((cl,i)=>{
+            // seats uniquely available to this fare (incremental bucket)
+            const incr = Math.max(0, cl.limit - prevLimit);
+            prevLimit = cl.limit;
+            const demandMean = sorted[i].mean;
+            const served = Math.min(demandMean, incr);
+            expSold += served;
+            expRev += served * sorted[i].fare;
+        });
+        expSoldEl.textContent = expSold.toFixed(0);
+        expRevEl.textContent = '$' + expRev.toFixed(0);
+        outBody.innerHTML = '';
+        classLines.forEach(cl=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="code">${cl.cls}</td>
+                <td>${cl.fare}</td>
+                <td>${cl.protectAbove.toFixed(1)}</td>
+                <td>${cl.limit.toFixed(1)}</td>
+            `;
+            outBody.appendChild(tr);
+        });
+        statusEl.textContent = 'Computed protection.';
+    }
+
+    document.getElementById('addRowBtn').addEventListener('click', function() {
+        addRow();
+        updateURL();
+    });
+
+    fareTableBody.addEventListener('input', function(e) {
+        const id = e.target.getAttribute('data-id');
+        const f = e.target.getAttribute('data-f');
+        if (!id || !f) return;
+        const row = rows.find(r => r.id == id);
+        if (!row) return;
+        if (f === 'cls') row.cls = e.target.value.trim();
+        else row[f] = parseFloat(e.target.value) || 0;
+        calc();
+        updateURL();
+    });
+
+    fareTableBody.addEventListener('click', function(e) {
+        const del = e.target.getAttribute('data-del');
+        if (del) {
+            rows = rows.filter(r => r.id != del);
+            renderRows();
+            updateURL();
+        }
+    });
+
+    capacityEl.addEventListener('input', function() {
+        calc();
+        updateURL();
+    });
+
+    function updateURL() {
+        const url = new URL(location.href);
+        url.searchParams.set('C', capacityEl.value);
+        url.searchParams.set('classes', rows.map(r => encodeURIComponent(r.cls)).join(','));
+        url.searchParams.set('fares', rows.map(r => r.fare).join(','));
+        url.searchParams.set('means', rows.map(r => r.mean).join(','));
+        url.searchParams.set('stds', rows.map(r => r.std).join(','));
+        history.replaceState({}, '', url.toString());
+    }
+
+    shareBtn.addEventListener('click', function() {
+        updateURL();
+        const link = location.href;
+        // NEW: robust copy logic
+        function showCopied(ok) {
+            shareBtn.classList.add('copied');
+            shareBtn.textContent = ok ? 'Copied!' : 'Copy Failed';
+            setTimeout(()=> {
+                shareBtn.classList.remove('copied');
+                shareBtn.textContent = 'Share';
+            }, 1600);
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(link).then(()=>showCopied(true)).catch(()=>showCopied(false));
+        } else {
+            // Fallback using a temporary textarea
+            const ta = document.createElement('textarea');
+            ta.value = link;
+            ta.style.position='fixed';
+            ta.style.top='-1000px';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                const ok = document.execCommand('copy');
+                showCopied(ok);
+            } catch {
+                showCopied(false);
+            } finally {
+                document.body.removeChild(ta);
+            }
+        }
+    });
+
+    function loadFromURL() {
+        const p = new URLSearchParams(location.search);
+        rows = [];
+        if (p.has('classes')) {
+            const cl = p.get('classes').split(',');
+            const fares = (p.get('fares') || '').split(',');
+            const means = (p.get('means') || '').split(',');
+            const stds = (p.get('stds') || '').split(',');
+            if (p.has('C')) capacityEl.value = p.get('C');
+            for (let i=0;i<cl.length;i++) {
+                if (!cl[i]) continue;
+                addRow(decodeURIComponent(cl[i]), parseFloat(fares[i])||400, parseFloat(means[i])||30, parseFloat(stds[i])||8);
+            }
+            calc();
+        } else {
+            addRow('F', 800, 25, 6);
+            addRow('C', 500, 30, 8);
+            addRow('M', 300, 60, 12);
+            addRow('L', 180, 90, 18);
+            calc();
+        }
+    }
+
+    loadFromURL();
+})();
+</script>
 </body>
 </html>
