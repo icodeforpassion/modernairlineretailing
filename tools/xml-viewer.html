@@ -2,45 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Online XML Beautifier, Formatter & Viewer | Modern Airline Retailing</title>
-  <meta name="description" content="The first XML viewer on the internet to offer instant light/dark mode, offline capability, syntax highlighting, and collapsible tree view.">
+  <title>Modern XML Viewer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
       --bg: #f9fafb;
-      --fg: #111;
+      --fg: #222;
       --container-bg: #fff;
       --tree-bg: #f3f4f6;
-      --tree-fg: #222;
-      --border: #314155;
       --tag: #0451a5;
       --attr: #795e26;
       --val: #008000;
       --comment: #6a9955;
       --cdata: #af00db;
-      --highlight: #ffe066;
-      --fold: #3a4a62;
       --btn: #2563eb;
       --btn-hover: #1e40af;
-      --ln: #5d7290;
     }
     html.dark {
       --bg: #202b38;
       --fg: #e8f0fb;
       --container-bg: #232e3c;
       --tree-bg: #202b38;
-      --tree-fg: #e8f0fb;
-      --border: #314155;
       --tag: #7ec7ff;
       --attr: #fae17d;
       --val: #c3e88d;
       --comment: #7a869a;
       --cdata: #f78c6c;
-      --highlight: #ffe066;
-      --fold: #3a4a62;
       --btn: #2563eb;
       --btn-hover: #1e40af;
-      --ln: #5d7290;
     }
     body {
       font-family: 'JetBrains Mono', 'Fira Mono', Arial, sans-serif;
@@ -70,9 +59,9 @@
       padding: 10px;
       margin-bottom: 10px;
       border-radius: 8px;
-      border: 1px solid var(--border);
+      border: 1px solid #314155;
       background: var(--tree-bg);
-      color: var(--tree-fg);
+      color: var(--fg);
       resize: vertical;
       transition: background .2s, color .2s;
     }
@@ -110,26 +99,24 @@
     .tree {
       font-family: 'JetBrains Mono', 'Fira Mono', monospace;
       background: var(--tree-bg);
-      color: var(--tree-fg);
-      padding: 12px 0 12px 0;
+      color: var(--fg);
+      padding: 12px;
       border-radius: 8px;
       overflow-x: auto;
       white-space: pre;
       font-size: 1.07em;
       line-height: 1.7;
-      border: 1px solid var(--border);
+      border: 1px solid #314155;
       min-height: 80px;
       margin-bottom: 2em;
       transition: background .2s, color .2s;
     }
     .node {
-      margin-left: 20px;
       position: relative;
       user-select: text;
+      margin-left: 20px;
     }
-    .collapsed > .children {
-      display: none;
-    }
+    .collapsed > .children { display: none; }
     .tag { color: var(--tag); }
     .attr { color: var(--attr); }
     .val { color: var(--val); }
@@ -149,420 +136,57 @@
       margin: 0;
       transition: color .15s;
     }
-    .fold-toggle:hover { color: var(--highlight); }
-    .ln {
-      position: absolute; left: -2.8em; color: var(--ln); font-size: 0.98em; user-select: none;
-      width: 2em; text-align: right; opacity: .6;
+    .fold-toggle:hover { color: #ffe066; }
+    .child-count {
+      font-size: 0.9em;
+      color: #5d7290;
+      margin-left: 0.5em;
     }
     @media (max-width: 600px) {
       .container { padding: .7em .2em 1em .2em; }
       .tree { font-size: 0.97em;}
     }
-    /* Prism.js basic XML theme (light/dark aware) */
-    .token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--comment);}
-    .token.punctuation { color: var(--tag);}
-    .token.tag, .token.selector, .token.keyword { color: var(--tag);}
-    .token.attr-name { color: var(--attr);}
-    .token.attr-value { color: var(--val);}
-    .token.string { color: var(--val);}
-    .token.cdata { color: var(--cdata);}
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Online XML Beautifier, Formatter & Viewer</h1>
-    <p>Paste your XML below or upload a file to view it in a collapsible tree format. <strong>Now with instant Light/Dark mode!</strong></p>
+    <h1>Modern XML Viewer</h1>
+    <p>Paste your XML below or upload a file to view it in a collapsible tree format. <strong>Switch instantly between Light/Dark mode!</strong></p>
 
-    <textarea id="xmlInput" placeholder="Paste XML here...">&lt;?xml version="1.0"?&gt;
-&lt;airline&gt;
-  &lt;flight code="BA123" from="LHR" to="JFK"&gt;
-    &lt;departure&gt;2025-09-01T08:30:00Z&lt;/departure&gt;
-    &lt;arrival&gt;2025-09-01T11:10:00Z&lt;/arrival&gt;
-    &lt;passengers&gt;
-      &lt;passenger id="1"&gt;Alice&lt;/passenger&gt;
-      &lt;passenger id="2"&gt;Bob&lt;/passenger&gt;
-    &lt;/passengers&gt;
-  &lt;/flight&gt;
-&lt;/airline&gt;
+    <textarea id="xmlInput">&lt;?xml version="1.0"?&gt;
+&lt;books&gt;
+  &lt;book id="bk101"&gt;
+    &lt;author&gt;Author 1&lt;/author&gt;
+    &lt;title&gt;Title 1&lt;/title&gt;
+    &lt;genre&gt;Fiction&lt;/genre&gt;
+    &lt;price&gt;10.99&lt;/price&gt;
+    &lt;publish_date&gt;2020-01-01&lt;/publish_date&gt;
+    &lt;description&gt;Sample desc&lt;/description&gt;
+  &lt;/book&gt;
+  &lt;book id="bk102"&gt;
+    &lt;author&gt;Author 2&lt;/author&gt;
+    &lt;title&gt;Title 2&lt;/title&gt;
+    &lt;genre&gt;Nonfiction&lt;/genre&gt;
+    &lt;price&gt;12.99&lt;/price&gt;
+    &lt;publish_date&gt;2021-02-02&lt;/publish_date&gt;
+    &lt;description&gt;Sample desc 2&lt;/description&gt;
+  &lt;/book&gt;
+&lt;/books&gt;
     </textarea>
     <div class="toolbar">
-      <button onclick="parseXML()">Beautify & View</button>
+      <button onclick="beautifyAndRender()">Beautify & View</button>
       <button onclick="collapseAll()">Collapse All</button>
       <button onclick="expandAll()">Expand All</button>
-      <button onclick="copyXML(event)">Copy</button>
       <button onclick="downloadXML()">Download</button>
       <label>
         Upload
         <input type="file" id="fileInput" accept=".xml,text/xml" />
       </label>
-      <button onclick="shareXML(event)">Share</button>
       <button id="toggleMode" class="toggle-mode" title="Toggle light/dark mode">🌙 Dark Mode</button>
     </div>
-    <h2>XML Output</h2>
     <div id="output" class="tree"></div>
   </div>
 
-  <!-- Prism.js core (inlined, minified) -->
-  <script>
-/*! PrismJS 1.29.0 | MIT */
-var _self = (typeof window !== 'undefined')
-	? window   // if in browser
-	: (
-		(typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
-		? self // if in worker
-		: {}   // if in node js
-	);
-var Prism = (function (_self){
-	// Private helper vars
-	var lang = /\blang(?:uage)?-([\w-]+)\b/i;
-	var uniqueId = 0;
-	var plainTextAlias = { 'plain': true, 'text': true, 'txt': true };
-	var Prism = {
-		manual: _self.Prism && _self.Prism.manual,
-		disableWorkerMessageHandler: _self.Prism && _self.Prism.disableWorkerMessageHandler,
-		util: {
-			encode: function encode(tokens) {
-				if (tokens instanceof Token) {
-					return new Token(tokens.type, encode(tokens.content), tokens.alias);
-				} else if (Array.isArray(tokens)) {
-					return tokens.map(encode);
-				} else {
-					return tokens.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\u00a0/g, ' ');
-				}
-			},
-			type: function (o) {
-				return Object.prototype.toString.call(o).slice(8, -1);
-			},
-			objId: function (obj) {
-				if (!obj['__id']) {
-					Object.defineProperty(obj, '__id', { value: ++uniqueId });
-				}
-				return obj['__id'];
-			},
-			clone: function deepClone(o, visited) {
-				var clone, id, type = Prism.util.type(o);
-				visited = visited || {};
-				switch (type) {
-					case 'Object':
-						id = Prism.util.objId(o);
-						if (visited[id]) {
-							return visited[id];
-						}
-						clone = {};
-						visited[id] = clone;
-						for (var key in o) {
-							if (o.hasOwnProperty(key)) {
-								clone[key] = deepClone(o[key], visited);
-							}
-						}
-						return clone;
-					case 'Array':
-						id = Prism.util.objId(o);
-						if (visited[id]) {
-							return visited[id];
-						}
-						clone = [];
-						visited[id] = clone;
-						o.forEach(function (v, i) {
-							clone[i] = deepClone(v, visited);
-						});
-						return clone;
-					default:
-						return o;
-				}
-			}
-		},
-		languages: {
-			extend: function (id, redef) {
-				var lang = Prism.util.clone(Prism.languages[id]);
-				for (var key in redef) {
-					lang[key] = redef[key];
-				}
-				return lang;
-			},
-			insertBefore: function (inside, before, insert, root) {
-				root = root || Prism.languages;
-				var grammar = root[inside];
-				var ret = {};
-				for (var token in grammar) {
-					if (grammar.hasOwnProperty(token)) {
-						if (token == before) {
-							for (var newToken in insert) {
-								if (insert.hasOwnProperty(newToken)) {
-									ret[newToken] = insert[newToken];
-								}
-							}
-						}
-						ret[token] = grammar[token];
-					}
-				}
-				var old = root[inside];
-				root[inside] = ret;
-				Prism.languages.DFS(Prism.languages, function(key, value) {
-					if (value === old && key != inside) {
-						this[key] = ret;
-					}
-				});
-				return ret;
-			},
-			DFS: function DFS(o, callback, type, visited) {
-				visited = visited || {};
-				var objId = Prism.util.objId;
-				for (var i in o) {
-					if (o.hasOwnProperty(i)) {
-						callback.call(o, i, o[i], type || i);
-						var property = o[i],
-							propertyType = Prism.util.type(property);
-						if (propertyType === 'Object' && !visited[objId(property)]) {
-							visited[objId(property)] = true;
-							DFS(property, callback, null, visited);
-						} else if (propertyType === 'Array' && !visited[objId(property)]) {
-							visited[objId(property)] = true;
-							DFS(property, callback, i, visited);
-						}
-					}
-				}
-			}
-		},
-		plugins: {},
-		highlightAll: function(async, callback) {
-			Prism.highlightAllUnder(document, async, callback);
-		},
-		highlightAllUnder: function(container, async, callback) {
-			var env = {
-				callback: callback,
-				container: container,
-				selector: 'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'
-			};
-			Prism.hooks.run("before-highlightall", env);
-			var elements = env.container.querySelectorAll(env.selector);
-			for (var i=0, element; element = elements[i++];) {
-				Prism.highlightElement(element, async === true, env.callback);
-			}
-		},
-		highlightElement: function(element, async, callback) {
-			var language = 'none', grammar, parent = element;
-			while (parent && !lang.test(parent.className)) {
-				parent = parent.parentNode;
-			}
-			if (parent) {
-				language = (parent.className.match(lang) || [, 'none'])[1].toLowerCase();
-				grammar = Prism.languages[language];
-			}
-			element.className = element.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
-			var code = element.textContent;
-			var env = {
-				element: element,
-				language: language,
-				grammar: grammar,
-				code: code
-			};
-			function insertHighlightedCode(highlightedCode) {
-				env.highlightedCode = highlightedCode;
-				Prism.hooks.run('before-insert', env);
-				env.element.innerHTML = env.highlightedCode;
-				Prism.hooks.run('after-highlight', env);
-				Prism.hooks.run('complete', env);
-				if (callback) callback.call(env.element);
-			}
-			Prism.hooks.run('before-sanity-check', env);
-			if (!env.code) {
-				Prism.hooks.run('complete', env);
-				if (callback) callback.call(env.element);
-				return;
-			}
-			Prism.hooks.run('before-highlight', env);
-			if (!env.grammar) {
-				insertHighlightedCode(Prism.util.encode(env.code));
-				return;
-			}
-			if (async && _self.Worker) {
-				var worker = new Worker(Prism.filename);
-				worker.onmessage = function(evt) {
-					insertHighlightedCode(evt.data);
-				};
-				worker.postMessage(JSON.stringify({
-					language: env.language,
-					code: env.code,
-					immediateClose: true
-				}));
-			} else {
-				insertHighlightedCode(Prism.highlight(env.code, env.grammar, env.language));
-			}
-		},
-		highlight: function (text, grammar, language) {
-			var env = {
-				code: text,
-				grammar: grammar,
-				language: language
-			};
-			Prism.hooks.run('before-tokenize', env);
-			env.tokens = Prism.tokenize(env.code, env.grammar);
-			Prism.hooks.run('after-tokenize', env);
-			return Token.stringify(Prism.util.encode(env.tokens), env.language);
-		},
-		tokenize: function(text, grammar) {
-			var strarr = [text];
-			var rest = grammar.rest;
-			if (rest) {
-				for (var token in rest) {
-					grammar[token] = rest[token];
-				}
-				delete grammar.rest;
-			}
-			tokenloop: for (var token in grammar) {
-				if (!grammar.hasOwnProperty(token) || !grammar[token]) continue;
-				var patterns = grammar[token];
-				patterns = Prism.util.type(patterns) === "Array" ? patterns : [patterns];
-				for (var j = 0; j < patterns.length; ++j) {
-					var pattern = patterns[j],
-						inside = pattern.inside,
-						lookbehind = !!pattern.lookbehind,
-						greedy = !!pattern.greedy,
-						alias = pattern.alias;
-					pattern = pattern.pattern || pattern;
-					for (var i = 0; i < strarr.length; i++) {
-						var str = strarr[i];
-						if (strarr.length > text.length) break tokenloop;
-						if (str instanceof Token) continue;
-						pattern.lastIndex = 0;
-						var match = pattern.exec(str), delNum = 1;
-						if (!match && greedy && i != strarr.length - 1) {
-							var next = strarr[i + 1].toString();
-							var combined = str + next;
-							pattern.lastIndex = 0;
-							match = pattern.exec(combined);
-							if (!match) continue;
-							var from = match.index;
-							var len = match[0].length;
-							var k = 1;
-							while (from >= str.length && k < strarr.length - i) {
-								from -= strarr[i + k].length;
-								k++;
-							}
-							if (from < 0) continue;
-							delNum = k + 1;
-							str = strarr[i] + strarr[i + 1];
-						}
-						if (!match) continue;
-						var from = match.index + (lookbehind ? match[1].length : 0),
-							matchStr = match[0].slice(lookbehind ? match[1].length : 0),
-							to = from + matchStr.length,
-							before = str.slice(0, from),
-							after = str.slice(to);
-						var args = [i, delNum];
-						if (before) args.push(before);
-						var wrapped = new Token(token, inside ? Prism.tokenize(matchStr, inside) : matchStr, alias, matchStr);
-						args.push(wrapped);
-						if (after) args.push(after);
-						Array.prototype.splice.apply(strarr, args);
-					}
-				}
-			}
-			return strarr;
-		},
-		hooks: {
-			all: {},
-			add: function (name, callback) {
-				var hooks = Prism.hooks.all;
-				hooks[name] = hooks[name] || [];
-				hooks[name].push(callback);
-			},
-			run: function (name, env) {
-				var callbacks = Prism.hooks.all[name];
-				if (!callbacks || !callbacks.length) return;
-				for (var i=0, callback; callback = callbacks[i++];) {
-					callback(env);
-				}
-			}
-		},
-		Token: Token
-	};
-	function Token(type, content, alias, matchedStr) {
-		this.type = type;
-		this.content = content;
-		this.alias = alias;
-		this.length = (matchedStr || "").length|0;
-	}
-	Token.stringify = function(o, language) {
-		if (typeof o == 'string') return o;
-		if (Array.isArray(o)) {
-			return o.map(function(e) { return Token.stringify(e, language); }).join('');
-		}
-		var env = {
-			type: o.type,
-			content: Token.stringify(o.content, language),
-			tag: 'span',
-			classes: ['token', o.type],
-			attributes: {},
-			language: language
-		};
-		if (o.alias) {
-			var aliases = Array.isArray(o.alias) ? o.alias : [o.alias];
-			env.classes.push.apply(env.classes, aliases);
-		}
-		Prism.hooks.run('wrap', env);
-		var attributes = '';
-		for (var name in env.attributes) {
-			attributes += ' ' + name + '="' + (env.attributes[name] || '').replace(/"/g, '&quot;') + '"';
-		}
-		return '<' + env.tag + ' class="' + env.classes.join(' ') + '"' + attributes + '>' + env.content + '</' + env.tag + '>';
-	};
-	if (!_self.document) {
-		if (!_self.addEventListener) return _self.Prism = Prism;
-		_self.addEventListener('message', function(evt) {
-			var message = JSON.parse(evt.data),
-				lang = message.language,
-				code = message.code,
-				immediateClose = message.immediateClose;
-			_self.postMessage(Prism.highlight(code, Prism.languages[lang], lang));
-			if (immediateClose) _self.close();
-		}, false);
-	}
-	return Prism;
-})(_self);
-// Prism XML language definition (minified)
-Prism.languages.xml = {
-	'comment': /<!--[\s\S]*?-->/,
-	'prolog': /<\?[\s\S]+?\?>/,
-	'doctype': /<!DOCTYPE[\s\S]+?>/i,
-	'cdata': /<!\[CDATA\[[\s\S]*?]]>/i,
-	'tag': {
-		pattern: /<\/?(?!\d)[^\s>\/=$<%]+(?:\s+[^\s>\/=]+(?:=(?:"[^"]*"|'[^']*'|[^\s'">=]+))?)*\s*\/?>/i,
-		greedy: true,
-		inside: {
-			'tag': {
-				pattern: /^<\/?[^\s>\/]+/i,
-				inside: {
-					'punctuation': /^<\/?/,
-					'namespace': /^[^\s>\/:]+:/
-				}
-			},
-			'attr-value': {
-				pattern: /=(?:("|')[\s\S]*?\1|[^\s>]+)/i,
-				inside: {
-					'punctuation': [
-						/^=/,
-						{ pattern: /(^|[^\\])(["'])/, lookbehind: true }
-					]
-				}
-			},
-			'punctuation': /\/?>/,
-			'attr-name': {
-				pattern: /[^\s>\/]+/,
-				inside: {
-					'namespace': /^[^\s>\/:]+:/
-				}
-			}
-		}
-	},
-	'entity': [
-		/&#?[\da-z]{1,8};/i,
-		/&[a-z]{1,8};/i
-	]
-};
-  </script>
-  <!-- Main JS -->
   <script>
     // Dark/Light mode logic
     function setMode(mode, persist) {
@@ -575,7 +199,6 @@ Prism.languages.xml = {
       const isDark = document.documentElement.classList.contains('dark');
       setMode(isDark ? 'light' : 'dark', true);
     }
-    // On load: apply preferred mode
     (() => {
       let mode = localStorage.getItem('xmlviewer-mode');
       if (!mode) {
@@ -594,78 +217,79 @@ Prism.languages.xml = {
       const reader = new FileReader();
       reader.onload = function(ev) {
         document.getElementById("xmlInput").value = ev.target.result;
-        parseXML();
+        beautifyAndRender();
       };
       reader.readAsText(file);
     });
 
     let foldNodes = [];
 
-    function parseXML() {
+    function beautifyAndRender() {
       const input = document.getElementById("xmlInput").value.trim();
       if (!input) return alert("Please enter or upload XML.");
       try {
+        // Remove any leading blank lines or whitespace
+        const xmlText = input.replace(/^\s+/, '');
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(input, "application/xml");
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
         if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
           throw new Error("Invalid XML");
         }
         const output = document.getElementById("output");
         output.innerHTML = "";
         foldNodes = [];
-        renderNode(xmlDoc, output, 0, 1);
+        // Find the first element node (skip XML declaration)
+        let root = Array.from(xmlDoc.childNodes).find(n => n.nodeType === 1);
+        if (!root) throw new Error("No root element found");
+        renderNode(root, output, 0);
       } catch (err) {
         document.getElementById("output").innerHTML =
           `<span style="color:#ff7675;font-weight:600;font-size:1.1em;padding:1em;">Error parsing XML: ${err.message}</span>`;
       }
     }
 
-    function renderNode(node, container, depth, ln) {
-      if (node.nodeType === Node.TEXT_NODE && !node.nodeValue.trim()) return ln;
-
+    function renderNode(node, container, depth) {
+      if (node.nodeType === Node.TEXT_NODE && !node.nodeValue.trim()) return;
       if (node.nodeType === Node.ELEMENT_NODE) {
         const div = document.createElement("div");
         div.className = "node";
         div.style.marginLeft = (depth * 20) + "px";
-        div.setAttribute("data-depth", depth);
-
-        // Line number
-        const lnSpan = document.createElement("span");
-        lnSpan.className = "ln";
-        lnSpan.textContent = ln;
-        div.appendChild(lnSpan);
 
         // Folding toggle
-        const childrenHaveElements = Array.from(node.childNodes).some(c => c.nodeType === Node.ELEMENT_NODE);
-        if (childrenHaveElements) {
-          const foldBtn = document.createElement("button");
-          foldBtn.className = "fold-toggle";
-          foldBtn.innerHTML = "&#9660;";
-          foldBtn.title = "Collapse/Expand";
-          foldBtn.onclick = function(e) {
-            e.stopPropagation();
-            div.classList.toggle("collapsed");
-            foldBtn.innerHTML = div.classList.contains("collapsed") ? "&#9654;" : "&#9660;";
-          };
-          div.appendChild(foldBtn);
-          foldNodes.push({ div, btn: foldBtn });
-        }
+        const childElementNodes = Array.from(node.childNodes).filter(c => c.nodeType === Node.ELEMENT_NODE);
+        const hasChildren = childElementNodes.length > 0;
+        const foldBtn = document.createElement("button");
+        foldBtn.className = "fold-toggle";
+        foldBtn.innerHTML = hasChildren ? "&#9660;" : "&#9654;";
+        foldBtn.title = "Collapse/Expand";
+        foldBtn.onclick = function(e) {
+          e.stopPropagation();
+          div.classList.toggle("collapsed");
+          foldBtn.innerHTML = div.classList.contains("collapsed") ? "&#9654;" : "&#9660;";
+        };
+        div.appendChild(foldBtn);
+        foldNodes.push({ div, btn: foldBtn });
 
         // Start tag
         const tagOpen = document.createElement("span");
         tagOpen.innerHTML = `&lt;<span class='tag'>${node.nodeName}</span>`;
         for (let attr of node.attributes) {
-          tagOpen.innerHTML += ` <span class='attr'>${attr.name}="</span><span class='val'>${attr.value}</span>"`;
+          tagOpen.innerHTML += ` <span class='attr'>${attr.name}</span>=<span class='val'>"${attr.value}"</span>`;
         }
         tagOpen.innerHTML += "&gt;";
         div.appendChild(tagOpen);
 
+        // Child element count
+        const childCountSpan = document.createElement("span");
+        childCountSpan.className = "child-count";
+        childCountSpan.textContent = `(${childElementNodes.length})`;
+        div.appendChild(childCountSpan);
+
         // Children
         const childrenContainer = document.createElement("div");
         childrenContainer.className = "children";
-        let childLn = ln + 1;
         for (let child of node.childNodes) {
-          childLn = renderNode(child, childrenContainer, depth + 1, childLn);
+          renderNode(child, childrenContainer, depth + 1);
         }
         div.appendChild(childrenContainer);
 
@@ -675,63 +299,22 @@ Prism.languages.xml = {
         div.appendChild(tagClose);
 
         container.appendChild(div);
-        return childLn;
       } else if (node.nodeType === Node.TEXT_NODE) {
         const div = document.createElement("div");
         div.className = "node";
-        div.style.marginLeft = (depth * 20) + "px";
-        div.setAttribute("data-depth", depth);
-
-        // Line number
-        const lnSpan = document.createElement("span");
-        lnSpan.className = "ln";
-        lnSpan.textContent = ln;
-        div.appendChild(lnSpan);
-
-        // Prism highlight text nodes
-        const text = node.nodeValue.trim();
-        if (text) {
-          const code = Prism.highlight(text, Prism.languages.xml, 'xml');
-          div.innerHTML += `<span>${code}</span>`;
-        }
+        div.appendChild(document.createTextNode(node.nodeValue.trim()));
         container.appendChild(div);
-        return ln + 1;
       } else if (node.nodeType === Node.COMMENT_NODE) {
         const div = document.createElement("div");
         div.className = "node comment";
-        div.style.marginLeft = (depth * 20) + "px";
-        div.setAttribute("data-depth", depth);
-
-        // Line number
-        const lnSpan = document.createElement("span");
-        lnSpan.className = "ln";
-        lnSpan.textContent = ln;
-        div.appendChild(lnSpan);
-
-        // Prism highlight comment
-        const code = Prism.highlight("<!--" + node.nodeValue + "-->", Prism.languages.xml, 'xml');
-        div.innerHTML += `<span class="comment">${code}</span>`;
+        div.innerHTML += '<span class="comment">&lt;!-- ' + node.nodeValue + ' --&gt;</span>';
         container.appendChild(div);
-        return ln + 1;
       } else if (node.nodeType === Node.CDATA_SECTION_NODE) {
         const div = document.createElement("div");
         div.className = "node cdata";
-        div.style.marginLeft = (depth * 20) + "px";
-        div.setAttribute("data-depth", depth);
-
-        // Line number
-        const lnSpan = document.createElement("span");
-        lnSpan.className = "ln";
-        lnSpan.textContent = ln;
-        div.appendChild(lnSpan);
-
-        // Prism highlight CDATA
-        const code = Prism.highlight("<![CDATA[" + node.nodeValue + "]]>", Prism.languages.xml, 'xml');
-        div.innerHTML += `<span class="cdata">${code}</span>`;
+        div.innerHTML += '<span class="cdata">&lt;![CDATA[' + node.nodeValue + ']]&gt;</span>';
         container.appendChild(div);
-        return ln + 1;
       }
-      return ln;
     }
 
     function collapseAll() {
@@ -746,45 +329,21 @@ Prism.languages.xml = {
         btn.innerHTML = "&#9660;";
       });
     }
-    function copyXML(event) {
-      const text = document.getElementById("xmlInput").value;
-      navigator.clipboard.writeText(text).then(()=>{
-        const btn = event.target;
-        btn.textContent = "Copied!";
-        setTimeout(()=>btn.textContent="Copy",1300);
-      });
-    }
+
     function downloadXML() {
-      const text = document.getElementById("xmlInput").value;
-      const blob = new Blob([text], {type:'text/xml'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "formatted.xml";
-      a.click();
+      const xml = document.getElementById("xmlInput").value;
+      const blob = new Blob([xml], { type: "application/xml" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "xml-data.xml";
+      link.click();
+      URL.revokeObjectURL(url);
     }
-    function shareXML(event) {
-      const text = document.getElementById("xmlInput").value;
-      const url = location.origin + location.pathname + "#xml=" + encodeURIComponent(btoa(unescape(encodeURIComponent(text))));
-      navigator.clipboard.writeText(url).then(()=>{
-        const btn = event.target;
-        btn.textContent = "Link Copied!";
-        setTimeout(()=>btn.textContent="Share",1300);
-      });
-    }
-    function loadFromHash() {
-      if (location.hash.startsWith('#xml=')) {
-        try {
-          const xml = decodeURIComponent(atob(decodeURIComponent(location.hash.slice(5))));
-          document.getElementById("xmlInput").value = xml;
-        } catch {}
-      }
-    }
-    window.addEventListener("hashchange", loadFromHash);
 
     document.addEventListener("DOMContentLoaded", function() {
-      loadFromHash();
-      parseXML();
-      document.getElementById("xmlInput").addEventListener("input", parseXML);
+      beautifyAndRender();
+      document.getElementById("xmlInput").addEventListener("input", beautifyAndRender);
     });
   </script>
 </body>
