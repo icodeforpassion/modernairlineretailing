@@ -7,9 +7,26 @@
   <meta name="keywords" content="online XML viewer, online XML formatter, XML beautifier, XML parser, pretty print XML, XML tree viewer">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Prism.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" />
   <style>
+    :root {
+      --xml-bg: #202b38;
+      --xml-fg: #e8f0fb;
+      --xml-tag: #7ec7ff;
+      --xml-attr: #fae17d;
+      --xml-attr-val: #c3e88d;
+      --xml-comment: #7a869a;
+      --xml-cdata: #f78c6c;
+      --xml-highlight: #ffe066;
+      --xml-border: #314155;
+      --xml-fold: #3a4a62;
+      --xml-btn: #2563eb;
+      --xml-btn-hover: #1e40af;
+      --xml-ln: #5d7290;
+    }
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'JetBrains Mono', 'Fira Mono', Arial, sans-serif;
       margin: 0; padding: 20px;
       background: #f9fafb; color: #111;
     }
@@ -33,40 +50,78 @@
       font-size: 14px;
       padding: 10px;
       margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--xml-border);
+      background: #f3f4f6;
+      color: #222;
+      resize: vertical;
     }
-    button {
-      background: #2563eb;
+    .toolbar {
+      display: flex; gap: 0.7em; flex-wrap: wrap; margin-bottom: 1em;
+    }
+    .toolbar button, .toolbar label {
+      background: var(--xml-btn);
       color: #fff;
       border: none;
-      padding: 10px 16px;
       border-radius: 8px;
+      padding: 10px 16px;
       cursor: pointer;
-      margin: 5px 0;
+      font-size: 1em;
+      transition: background 0.15s;
+      margin-bottom: 5px;
     }
-    button:hover {
-      background: #1e40af;
-    }
-    input[type="file"] {
-      margin: 10px 0;
-    }
+    .toolbar button:hover, .toolbar label:hover { background: var(--xml-btn-hover);}
+    .toolbar input[type="file"] { display: none; }
     .tree {
-      font-family: monospace;
-      background: #f3f4f6;
-      padding: 10px;
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      background: var(--xml-bg);
+      color: var(--xml-fg);
+      padding: 12px 0 12px 0;
       border-radius: 8px;
       overflow-x: auto;
       white-space: pre;
+      font-size: 1.07em;
+      line-height: 1.7;
+      border: 1px solid var(--xml-border);
+      min-height: 80px;
+      margin-bottom: 2em;
     }
     .node {
       margin-left: 20px;
-      cursor: pointer;
+      position: relative;
+      user-select: text;
     }
     .collapsed > .children {
       display: none;
     }
-    .tag { color: #1d4ed8; }
-    .attr { color: #16a34a; }
-    .val { color: #b91c1c; }
+    .tag { color: var(--xml-tag); }
+    .attr { color: var(--xml-attr); }
+    .val { color: var(--xml-attr-val); }
+    .comment { color: var(--xml-comment);}
+    .cdata { color: var(--xml-cdata);}
+    .fold-toggle {
+      position: absolute;
+      left: -1.4em;
+      top: 1px;
+      background: none;
+      border: none;
+      color: #8ecfff;
+      cursor: pointer;
+      font-size: 1em;
+      z-index: 2;
+      padding: 0;
+      margin: 0;
+      transition: color .15s;
+    }
+    .fold-toggle:hover { color: var(--xml-highlight); }
+    .ln {
+      position: absolute; left: -2.8em; color: var(--xml-ln); font-size: 0.98em; user-select: none;
+      width: 2em; text-align: right; opacity: .6;
+    }
+    @media (max-width: 600px) {
+      .container { padding: .7em .2em 1em .2em; }
+      .tree { font-size: 0.97em;}
+    }
   </style>
 </head>
 <body>
@@ -74,17 +129,39 @@
     <h1>Online XML Beautifier, Formatter & Viewer</h1>
     <p>Paste your XML below or upload a file to view it in a collapsible tree format.</p>
 
-    <textarea id="xmlInput" placeholder="Paste XML here..."></textarea>
-    <br>
-    <button onclick="parseXML()">Format & View XML</button>
-    <br><br>
-    <input type="file" id="fileInput" accept=".xml" />
-    
+    <textarea id="xmlInput" placeholder="Paste XML here...">&lt;?xml version="1.0"?&gt;
+&lt;airline&gt;
+  &lt;flight code="BA123" from="LHR" to="JFK"&gt;
+    &lt;departure&gt;2025-09-01T08:30:00Z&lt;/departure&gt;
+    &lt;arrival&gt;2025-09-01T11:10:00Z&lt;/arrival&gt;
+    &lt;passengers&gt;
+      &lt;passenger id="1"&gt;Alice&lt;/passenger&gt;
+      &lt;passenger id="2"&gt;Bob&lt;/passenger&gt;
+    &lt;/passengers&gt;
+  &lt;/flight&gt;
+&lt;/airline&gt;
+    </textarea>
+    <div class="toolbar">
+      <button onclick="parseXML()">Beautify & View</button>
+      <button onclick="collapseAll()">Collapse All</button>
+      <button onclick="expandAll()">Expand All</button>
+      <button onclick="copyXML()">Copy</button>
+      <button onclick="downloadXML()">Download</button>
+      <label>
+        Upload
+        <input type="file" id="fileInput" accept=".xml,text/xml" />
+      </label>
+      <button onclick="shareXML()">Share</button>
+    </div>
     <h2>XML Output</h2>
     <div id="output" class="tree"></div>
   </div>
 
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-xml.min.js"></script>
   <script>
+    // File upload
     document.getElementById("fileInput").addEventListener("change", function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -96,6 +173,9 @@
       reader.readAsText(file);
     });
 
+    // Folding state
+    let foldNodes = [];
+
     function parseXML() {
       const input = document.getElementById("xmlInput").value.trim();
       if (!input) return alert("Please enter or upload XML.");
@@ -103,58 +183,186 @@
       try {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(input, "application/xml");
-
         if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
           throw new Error("Invalid XML");
         }
-
         const output = document.getElementById("output");
         output.innerHTML = "";
-        renderNode(xmlDoc.documentElement, output);
+        foldNodes = [];
+        renderNode(xmlDoc, output, 0, 1);
       } catch (err) {
-        alert("Error parsing XML: " + err.message);
+        document.getElementById("output").innerHTML =
+          `<span style="color:#ff7675;font-weight:600;font-size:1.1em;padding:1em;">Error parsing XML: ${err.message}</span>`;
       }
     }
 
-    function renderNode(node, container) {
-      if (node.nodeType === Node.TEXT_NODE && !node.nodeValue.trim()) return;
-
-      const div = document.createElement("div");
-      div.className = "node";
+    function renderNode(node, container, depth, ln) {
+      // Skip empty text nodes
+      if (node.nodeType === Node.TEXT_NODE && !node.nodeValue.trim()) return ln;
 
       if (node.nodeType === Node.ELEMENT_NODE) {
-        const tagOpen = document.createElement("span");
-        tagOpen.innerHTML = "&lt;<span class='tag'>" + node.nodeName + "</span>";
+        const div = document.createElement("div");
+        div.className = "node";
+        div.style.marginLeft = (depth * 20) + "px";
+        div.setAttribute("data-depth", depth);
 
-        // attributes
+        // Line number
+        const lnSpan = document.createElement("span");
+        lnSpan.className = "ln";
+        lnSpan.textContent = ln;
+        div.appendChild(lnSpan);
+
+        // Folding toggle
+        const childrenHaveElements = Array.from(node.childNodes).some(c => c.nodeType === Node.ELEMENT_NODE);
+        if (childrenHaveElements) {
+          const foldBtn = document.createElement("button");
+          foldBtn.className = "fold-toggle";
+          foldBtn.innerHTML = "&#9660;";
+          foldBtn.title = "Collapse/Expand";
+          foldBtn.onclick = function(e) {
+            e.stopPropagation();
+            div.classList.toggle("collapsed");
+            foldBtn.innerHTML = div.classList.contains("collapsed") ? "&#9654;" : "&#9660;";
+          };
+          div.appendChild(foldBtn);
+          foldNodes.push({ div, btn: foldBtn });
+        }
+
+        // Start tag
+        const tagOpen = document.createElement("span");
+        tagOpen.innerHTML = `&lt;<span class='tag'>${node.nodeName}</span>`;
         for (let attr of node.attributes) {
-          tagOpen.innerHTML += " <span class='attr'>" + attr.name + "=\"</span><span class='val'>" + attr.value + "</span>\"";
+          tagOpen.innerHTML += ` <span class='attr'>${attr.name}="</span><span class='val'>${attr.value}</span>"`;
         }
         tagOpen.innerHTML += "&gt;";
         div.appendChild(tagOpen);
 
+        // Children
         const childrenContainer = document.createElement("div");
         childrenContainer.className = "children";
+        let childLn = ln + 1;
         for (let child of node.childNodes) {
-          renderNode(child, childrenContainer);
+          childLn = renderNode(child, childrenContainer, depth + 1, childLn);
         }
         div.appendChild(childrenContainer);
 
-        const tagClose = document.createElement("div");
-        tagClose.innerHTML = "&lt;/<span class='tag'>" + node.nodeName + "</span>&gt;";
+        // End tag
+        const tagClose = document.createElement("span");
+        tagClose.innerHTML = `&lt;/<span class='tag'>${node.nodeName}</span>&gt;`;
         div.appendChild(tagClose);
 
-        div.addEventListener("click", function(e) {
-          if (e.target === div || e.target === tagOpen) {
-            div.classList.toggle("collapsed");
-          }
-        });
+        container.appendChild(div);
+        return childLn;
       } else if (node.nodeType === Node.TEXT_NODE) {
-        div.textContent = node.nodeValue.trim();
-      }
+        const div = document.createElement("div");
+        div.className = "node";
+        div.style.marginLeft = (depth * 20) + "px";
+        div.setAttribute("data-depth", depth);
 
-      container.appendChild(div);
+        // Line number
+        const lnSpan = document.createElement("span");
+        lnSpan.className = "ln";
+        lnSpan.textContent = ln;
+        div.appendChild(lnSpan);
+
+        // Prism highlight text nodes
+        const text = node.nodeValue.trim();
+        if (text) {
+          const code = Prism.highlight(text, Prism.languages.xml, 'xml');
+          div.innerHTML += `<span>${code}</span>`;
+        }
+        container.appendChild(div);
+        return ln + 1;
+      } else if (node.nodeType === Node.COMMENT_NODE) {
+        const div = document.createElement("div");
+        div.className = "node comment";
+        div.style.marginLeft = (depth * 20) + "px";
+        div.setAttribute("data-depth", depth);
+
+        // Line number
+        const lnSpan = document.createElement("span");
+        lnSpan.className = "ln";
+        lnSpan.textContent = ln;
+        div.appendChild(lnSpan);
+
+        // Prism highlight comment
+        const code = Prism.highlight("<!--" + node.nodeValue + "-->", Prism.languages.xml, 'xml');
+        div.innerHTML += `<span class="comment">${code}</span>`;
+        container.appendChild(div);
+        return ln + 1;
+      } else if (node.nodeType === Node.CDATA_SECTION_NODE) {
+        const div = document.createElement("div");
+        div.className = "node cdata";
+        div.style.marginLeft = (depth * 20) + "px";
+        div.setAttribute("data-depth", depth);
+
+        // Line number
+        const lnSpan = document.createElement("span");
+        lnSpan.className = "ln";
+        lnSpan.textContent = ln;
+        div.appendChild(lnSpan);
+
+        // Prism highlight CDATA
+        const code = Prism.highlight("<![CDATA[" + node.nodeValue + "]]>", Prism.languages.xml, 'xml');
+        div.innerHTML += `<span class="cdata">${code}</span>`;
+        container.appendChild(div);
+        return ln + 1;
+      }
+      return ln;
     }
+
+    function collapseAll() {
+      foldNodes.forEach(({div, btn}) => {
+        div.classList.add("collapsed");
+        btn.innerHTML = "&#9654;";
+      });
+    }
+    function expandAll() {
+      foldNodes.forEach(({div, btn}) => {
+        div.classList.remove("collapsed");
+        btn.innerHTML = "&#9660;";
+      });
+    }
+    function copyXML() {
+      const text = document.getElementById("xmlInput").value;
+      navigator.clipboard.writeText(text).then(()=>{
+        const btn = event.target;
+        btn.textContent = "Copied!";
+        setTimeout(()=>btn.textContent="Copy",1300);
+      });
+    }
+    function downloadXML() {
+      const text = document.getElementById("xmlInput").value;
+      const blob = new Blob([text], {type:'text/xml'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "formatted.xml";
+      a.click();
+    }
+    function shareXML() {
+      const text = document.getElementById("xmlInput").value;
+      const url = location.origin + location.pathname + "#xml=" + encodeURIComponent(btoa(unescape(encodeURIComponent(text))));
+      navigator.clipboard.writeText(url).then(()=>{
+        const btn = event.target;
+        btn.textContent = "Link Copied!";
+        setTimeout(()=>btn.textContent="Share",1300);
+      });
+    }
+    function loadFromHash() {
+      if (location.hash.startsWith('#xml=')) {
+        try {
+          const xml = decodeURIComponent(atob(decodeURIComponent(location.hash.slice(5))));
+          document.getElementById("xmlInput").value = xml;
+        } catch {}
+      }
+    }
+    window.addEventListener("hashchange", loadFromHash);
+
+    document.addEventListener("DOMContentLoaded", function() {
+      loadFromHash();
+      parseXML();
+      document.getElementById("xmlInput").addEventListener("input", parseXML);
+    });
   </script>
 </body>
 </html>
