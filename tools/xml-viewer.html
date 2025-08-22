@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Online XML Beautifier, Formatter & Viewer | Modern Airline Retailing</title>
+  <meta name="description" content="Free online XML beautifier, formatter, and viewer. Paste or upload XML and instantly view it in a collapsible tree format.">
+  <meta name="keywords" content="online XML viewer, online XML formatter, XML beautifier, XML parser, pretty print XML, XML tree viewer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 20px;
+      background: #f9fafb; color: #111;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px 0;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    input[type="file"] {
+      margin: 10px 0;
+    }
+    .tree {
+      font-family: monospace;
+      background: #f3f4f6;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .node {
+      margin-left: 20px;
+      cursor: pointer;
+    }
+    .collapsed > .children {
+      display: none;
+    }
+    .tag { color: #1d4ed8; }
+    .attr { color: #16a34a; }
+    .val { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Online XML Beautifier, Formatter & Viewer</h1>
+    <p>Paste your XML below or upload a file to view it in a collapsible tree format.</p>
+
+    <textarea id="xmlInput" placeholder="Paste XML here..."></textarea>
+    <br>
+    <button onclick="parseXML()">Format & View XML</button>
+    <br><br>
+    <input type="file" id="fileInput" accept=".xml" />
+    
+    <h2>XML Output</h2>
+    <div id="output" class="tree"></div>
+  </div>
+
+  <script>
+    document.getElementById("fileInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById("xmlInput").value = ev.target.result;
+        parseXML();
+      };
+      reader.readAsText(file);
+    });
+
+    function parseXML() {
+      const input = document.getElementById("xmlInput").value.trim();
+      if (!input) return alert("Please enter or upload XML.");
+
+      try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(input, "application/xml");
+
+        if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
+          throw new Error("Invalid XML");
+        }
+
+        const output = document.getElementById("output");
+        output.innerHTML = "";
+        renderNode(xmlDoc.documentElement, output);
+      } catch (err) {
+        alert("Error parsing XML: " + err.message);
+      }
+    }
+
+    function renderNode(node, container) {
+      if (node.nodeType === Node.TEXT_NODE && !node.nodeValue.trim()) return;
+
+      const div = document.createElement("div");
+      div.className = "node";
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const tagOpen = document.createElement("span");
+        tagOpen.innerHTML = "&lt;<span class='tag'>" + node.nodeName + "</span>";
+
+        // attributes
+        for (let attr of node.attributes) {
+          tagOpen.innerHTML += " <span class='attr'>" + attr.name + "=\"</span><span class='val'>" + attr.value + "</span>\"";
+        }
+        tagOpen.innerHTML += "&gt;";
+        div.appendChild(tagOpen);
+
+        const childrenContainer = document.createElement("div");
+        childrenContainer.className = "children";
+        for (let child of node.childNodes) {
+          renderNode(child, childrenContainer);
+        }
+        div.appendChild(childrenContainer);
+
+        const tagClose = document.createElement("div");
+        tagClose.innerHTML = "&lt;/<span class='tag'>" + node.nodeName + "</span>&gt;";
+        div.appendChild(tagClose);
+
+        div.addEventListener("click", function(e) {
+          if (e.target === div || e.target === tagOpen) {
+            div.classList.toggle("collapsed");
+          }
+        });
+      } else if (node.nodeType === Node.TEXT_NODE) {
+        div.textContent = node.nodeValue.trim();
+      }
+
+      container.appendChild(div);
+    }
+  </script>
+</body>
+</html>
