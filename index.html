@@ -616,99 +616,175 @@
     </div>
   </section>
 
-  <!-- Dynamic Offers Maturity Model Section -->
-  <section id="dynamic-offers" class="section" aria-labelledby="dynamic-offers-heading">
-    <div class="container">
-      <h2 id="dynamic-offers-heading" class="title is-3">IATA Dynamic Offers Maturity Model</h2>
-      <p class="maturity-headline">
-        A synthesized view of how airlines evolve from static products and filed price ladders to fully contextual,
-        dynamically constructed and dynamically priced offers. (Conceptual summary based on IATA’s Dynamic Offers
-        capabilities matrix. Use internally as an orientation aid.)
-      </p>
+<section id="dynamic-offers" class="section" aria-labelledby="dynamic-offers-heading">
+  <div class="container">
+    <h2 id="dynamic-offers-heading" class="title is-3">IATA Dynamic Offers Maturity Model</h2>
+    <p class="maturity-headline">
+      This interactive matrix summarizes how airlines evolve from static products and prices to fully dynamic, contextualized offers. Hover or tap each cell for in-depth detail, based on IATA's official factsheet.
+    </p>
 
-      <div class="maturity-wrapper">
-        <div class="maturity-toolbar" aria-label="Matrix controls">
-          <div class="left">
-            <button type="button" id="toggleExplanations" aria-pressed="false">Show Explanations</button>
-            <button type="button" id="toggleCompact" aria-pressed="false">Compact Mode</button>
-          </div>
-          <div style="font-size:.65rem; letter-spacing:.4px; color:var(--clr-text-dim);">
-            Horizontal scroll on mobile ↔
-          </div>
-        </div>
-
-        <div class="maturity-matrix-scroll" tabindex="0">
-          <div class="maturity-matrix" id="maturityMatrix" aria-describedby="dynamic-offers-heading" role="table">
-            <!-- Header Row -->
-            <div class="cell header row-head" role="rowheader"></div>
-            <div class="cell header phase phase-weak"        role="columnheader" data-col="1">Traditional Pricing</div>
-            <div class="cell header phase phase-static"      role="columnheader" data-col="2">Price Adjustment</div>
-            <div class="cell header phase phase-evolving"    role="columnheader" data-col="3">Pre‑defined Price + Dynamic Availability</div>
-            <div class="cell header phase phase-selective"   role="columnheader" data-col="4">Pre‑defined Price + Dynamic Adj.</div>
-            <div class="cell header phase phase-contextual"  role="columnheader" data-col="5">Dynamic Price Determination</div>
-            <div class="cell header phase phase-dynamic"     role="columnheader" data-col="6">Static Bundles</div>
-            <div class="cell header phase phase-advanced"    role="columnheader" data-col="7">Dynamic Determination of Pre‑defined Bundles</div>
-            <div class="cell header phase phase-leading"     role="columnheader" data-col="8">Dynamic Bundling</div>
-
-            <!-- Row 1 -->
-            <div class="cell row-head" role="rowheader">Static Flights</div>
-            <div class="cell" data-col="1">Filed fares; limited buckets.<div class="explain">ATPCO ladder drives price; capacity managed by nesting and O&amp;D controls.</div></div>
-            <div class="cell" data-col="2">Surcharges / manual markups.<div class="explain">Occasional override or passenger-specific discount applied outside core engine.</div></div>
-            <div class="cell" data-col="3">Dynamic availability only.<div class="explain">Price points stay fixed; inventory steering shifts open/close decisions.</div></div>
-            <div class="cell" data-col="4">Rule-based adjustments.<div class="explain">Algorithmic discount/premium applied to next best static fare tier.</div></div>
-            <div class="cell" data-col="5">Continuous or semi-continuous pricing.<div class="explain">Offer price synthesized from demand curve or optimization model.</div></div>
-            <div class="cell" data-col="6">Ancillaries separate.<div class="explain">No bundling; flight-only proposition predominates.</div></div>
-            <div class="cell" data-col="7">Context picks among pre-set bundles.<div class="explain">Engine chooses which pre-authored bundle to present per request.</div></div>
-            <div class="cell" data-col="8">Components composed on the fly.<div class="explain">Flight + ancillaries + services assembled per traveler context.</div></div>
-
-            <!-- Row 2 -->
-            <div class="cell row-head" role="rowheader">Static Bundles</div>
-            <div class="cell" data-col="1">Filed branded fares only.<div class="explain">Limited brand hierarchy (e.g., Light/Classic/Flex).</div></div>
-            <div class="cell" data-col="2">Uniform upsell deltas.<div class="explain">Fixed additive differences irrespective of demand context.</div></div>
-            <div class="cell" data-col="3">Inventory gating by bundle.<div class="explain">Availability varies (brand diff alloc) but prices fixed.</div></div>
-            <div class="cell" data-col="4">Additive price adjustments.<div class="explain">Bundle base + context markup/discount formula.</div></div>
-            <div class="cell" data-col="5">Optimised bundle pricing.<div class="explain">Each bundle’s price solved via optimization each request or time slice.</div></div>
-            <div class="cell" data-col="6">Static ancillary sets.<div class="explain">Predetermined combos (seat+bag etc.).</div></div>
-            <div class="cell" data-col="7">Ranked bundle selection.<div class="explain">Model selects top-N relevant static bundles.</div></div>
-            <div class="cell" data-col="8">Hybrid: static skeleton + dynamic add-ons.<div class="explain">Flexible augmentation of base bundles.</div></div>
-
-            <!-- Row 3 -->
-            <div class="cell row-head" role="rowheader">Dynamic Bundles</div>
-            <div class="cell" data-col="1">Not supported.<div class="explain">Systems not architected for composability.</div></div>
-            <div class="cell" data-col="2">Manual packaged promos.<div class="explain">Ad hoc fare+ancillary promotions w/ static pricing.</div></div>
-            <div class="cell" data-col="3">Availability-driven combos.<div class="explain">Only show combos when all underlying items open.</div></div>
-            <div class="cell" data-col="4">Rule composition engine.<div class="explain">Context triggers which ancillaries join core flight.</div></div>
-            <div class="cell" data-col="5">Real-time bundle optimization.<div class="explain">Bundle content + price co-optimized in request cycle.</div></div>
-            <div class="cell" data-col="6">Pre-authored set library.<div class="explain">Library of potential bundles maintained offline.</div></div>
-            <div class="cell" data-col="7">Model selects best library candidate.<div class="explain">Filtered/ranked by customer & itinerary attributes.</div></div>
-            <div class="cell" data-col="8">Fully generative composition.<div class="explain">Products, merchandising slots, prices all generated.</div></div>
-
-            <!-- Row 4 -->
-            <div class="cell row-head" role="rowheader">Dynamic Offers</div>
-            <div class="cell" data-col="1">Static fare filing era.<div class="explain">Nightly loads; limited request-level nuance.</div></div>
-            <div class="cell" data-col="2">Basic personalization tags.<div class="explain">Frequent flyer tier discounts; corporate codes.</div></div>
-            <div class="cell" data-col="3">Real-time seat & fare checks.<div class="explain">Dynamic availability surfaces (caching + verify).</div></div>
-            <div class="cell" data-col="4">Parametric adjustments.<div class="explain">Context signals feed pricing parameters.</div></div>
-            <div class="cell" data-col="5">Contextual predictive pricing.<div class="explain">Machine learning & willingness-to-pay models.</div></div>
-            <div class="cell" data-col="6">Static ancillary catalogue in offer.<div class="explain">Ancillary content appended post price.</div></div>
-            <div class="cell" data-col="7">Context chooses among curated sets.<div class="explain">Intelligent retrieval of prepared structures.</div></div>
-            <div class="cell" data-col="8">Unified dynamic bundling + dynamic price.<div class="explain">Co-optimization across content, constraints, revenue KPIs.</div></div>
-          </div>
-        </div>
-
-        <div class="maturity-legend" aria-hidden="true">
-          <span><i style="background:linear-gradient(160deg,#24364a,#24364a)"></i> Traditional / Static</span>
-          <span><i style="background:linear-gradient(160deg,#31526f,#2d4c68)"></i> Evolving</span>
-          <span><i style="background:linear-gradient(160deg,#406a88,#3b6480)"></i> Dynamic Pricing</span>
-          <span><i style="background:linear-gradient(160deg,#568ab0,#5184a8)"></i> Dynamic Bundling</span>
-        </div>
-
-        <p class="maturity-attrib">
-          Source concept: IATA Dynamic Offers capabilities matrix. Visualization adapted for internal educational use.
-        </p>
-      </div>
+    <div class="dynamic-matrix-wrapper" style="overflow-x:auto;max-width:100%;">
+      <table class="dynamic-matrix" style="border-collapse:collapse;min-width:860px;width:100%;background:linear-gradient(135deg,#1c2d40,#1a2a3b);color:#e8f0f7;border-radius:12px;overflow:hidden;">
+        <thead>
+          <tr>
+            <th style="background:#222f45;color:#fff;border:none;"></th>
+            <th style="background:#222f45;color:#fff;text-align:center;padding:1rem 1.2rem;border:none;">Pre-defined price points<br><span style="font-weight:400;">with dynamic availability</span></th>
+            <th style="background:#222f45;color:#fff;text-align:center;padding:1rem 1.2rem;border:none;">Pre-defined price points<br><span style="font-weight:400;">with dynamic price adjustments</span></th>
+            <th style="background:#222f45;color:#fff;text-align:center;padding:1rem 1.2rem;border:none;">Dynamic price determination</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th style="background:#222f45;color:#fff;text-align:left;padding:1.1rem 1rem;border:none;">Static flights and ancillaries</th>
+            <td class="matrix-cell traditional" data-detail="
+              <b>Traditional Pricing</b><br>
+              Filed fares, published in advance, distributed via GDS/ATPCO with 26-letter booking classes. Inventory managed by booking class availability and nesting. No real-time adjustment to price or product. Airlines have limited ability to respond to demand; offers are static and undifferentiated.
+            ">Traditional Pricing</td>
+            <td class="matrix-cell adjustment" data-detail="
+              <b>Price Adjustment</b><br>
+              Filed fares as baseline, with manual or rule-based surcharges, markups, or discounts. Basic contextual signals (e.g., corporate code, frequent flyer) may influence price, but core price points remain static. No real-time price optimization; adjustments are additive and limited in scope.
+            ">Price Adjustment</td>
+            <td class="matrix-cell dynamic" data-detail="
+              <b>Dynamic Offers</b><br>
+              Real-time price determination based on contextual data (e.g., demand, time to departure, competition, remaining capacity). Airlines use dynamic pricing engines to set prices at shopping time, not constrained by static fare filing. Enables continuous pricing: unlimited price points tailored to the request, maximizing revenue and customer satisfaction.
+            ">Dynamic Offers</td>
+          </tr>
+          <tr>
+            <th style="background:#222f45;color:#fff;text-align:left;padding:1.1rem 1rem;border:none;">Static bundles</th>
+            <td class="matrix-cell traditional" data-detail="
+              <b>Traditional Pricing</b><br>
+              Branded fares or bundles (e.g., Light, Classic, Flex) are predefined and filed. Each bundle has a fixed set of services and a published price. Customers choose from a limited menu, with little or no contextual adaptation. Ancillaries typically sold separately at fixed prices.
+            ">Traditional Pricing</td>
+            <td class="matrix-cell adjustment" data-detail="
+              <b>Price Adjustment</b><br>
+              Bundles remain static, but prices may be adjusted via rules or simple algorithms (e.g., demand-based upsell offers, limited-time discounts). Price adjustments are applied to the base bundle price, but the bundle composition is fixed. Some basic personalization may occur, but not at scale.
+            ">Price Adjustment</td>
+            <td class="matrix-cell dynamic" data-detail="
+              <b>Dynamic Offers</b><br>
+              Bundles are offered at dynamically determined prices, using real-time demand, customer context, and competitive data. Airlines can optimize bundle pricing for each request, increasing conversion and customer value. Enables more granular, personalized offers, though bundle composition is still largely static.
+            ">Dynamic Offers</td>
+          </tr>
+          <tr>
+            <th style="background:#222f45;color:#fff;text-align:left;padding:1.1rem 1rem;border:none;">Dynamic bundling</th>
+            <td class="matrix-cell empty" data-detail="
+              Not typically supported. Product and price are both static; no real-time composition of offers. Airlines lack the technology to dynamically assemble products and ancillaries during shopping.
+            ">—</td>
+            <td class="matrix-cell empty" data-detail="
+              Limited support. Some rule-based or promotional dynamic bundling may occur, but price points remain tied to filed fares or simple adjustments. Bundles may be constructed for specific campaigns, but not in real time for each request.
+            ">—</td>
+            <td class="matrix-cell dynamic" data-detail="
+              <b>Dynamic Offers</b><br>
+              Full dynamic offer creation: both the product (bundling of flights, ancillaries, and services) and the price are determined in real time using contextual, behavioral, and predictive data. The airline’s system co-optimizes what to offer and at what price, leveraging NDC and direct channels. Enables true personalization, increased conversion, and efficient use of capacity.
+            ">Dynamic Offers</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Tooltip -->
+      <div id="matrix-tooltip" style="
+        display:none;position:absolute;z-index:999;
+        max-width:380px;background:rgba(30,48,70,.98);color:#fff;
+        border-radius:10px;padding:1.1em 1.2em;box-shadow:0 6px 32px -4px #000;
+        font-size:.97em;line-height:1.5;pointer-events:none;
+      "></div>
     </div>
-  </section>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.9em;margin-bottom:1.2rem;margin-top:.9rem;">
+      <span style="display:inline-flex;align-items:center;gap:.5em;"><span style="width:18px;height:18px;display:inline-block;background:#2953a7;border-radius:4px;margin-right:.4em;"></span>Traditional Pricing</span>
+      <span style="display:inline-flex;align-items:center;gap:.5em;"><span style="width:18px;height:18px;display:inline-block;background:#e3b93c;border-radius:4px;margin-right:.4em;"></span>Price Adjustment</span>
+      <span style="display:inline-flex;align-items:center;gap:.5em;"><span style="width:18px;height:18px;display:inline-block;background:#e74a4a;border-radius:4px;margin-right:.4em;"></span>Dynamic Offers</span>
+    </div>
+    <p class="maturity-attrib" style="font-size:.7em; color:#9fb3c5;">
+      Source: IATA Dynamic Offers factsheet. <br>
+      <b>Vertical:</b> Product determination (from static flights to dynamic bundling).<br>
+      <b>Horizontal:</b> Price determination (from static to fully dynamic).
+    </p>
+  </div>
+  <style>
+    .dynamic-matrix .traditional { background:#2953a7; font-weight:600; cursor:pointer;}
+    .dynamic-matrix .adjustment { background:#e3b93c; color:#222; font-weight:600; cursor:pointer;}
+    .dynamic-matrix .dynamic { background:#e74a4a; font-weight:600; cursor:pointer;}
+    .dynamic-matrix .empty { background:#cccccc; color:#333; font-weight:600; cursor:pointer;}
+    .dynamic-matrix td, .dynamic-matrix th { border:1px solid rgba(255,255,255,.08); text-align:center; position:relative;}
+    .dynamic-matrix td { transition:box-shadow .13s,filter .13s; }
+    .dynamic-matrix td:focus, .dynamic-matrix td:hover { outline:none; box-shadow:0 0 0 3px #4fb1f5; z-index:2; filter:brightness(1.09);}
+    @media (max-width: 700px) {
+      .dynamic-matrix { font-size:.92em; }
+    }
+    /* Tooltip pointer for accessibility */
+    #matrix-tooltip:after {
+      content:"";
+      position:absolute;
+      left:24px; top:-13px;
+      border-width:0 10px 13px 10px;
+      border-style:solid;
+      border-color:transparent transparent rgba(30,48,70,.98) transparent;
+      display:block;
+    }
+  </style>
+  <script>
+    // Tooltip logic for desktop and mobile
+    (function(){
+      const tooltip = document.getElementById('matrix-tooltip');
+      let activeCell = null;
+
+      function showTooltip(cell, evt) {
+        tooltip.innerHTML = cell.getAttribute('data-detail');
+        tooltip.style.display = 'block';
+        const rect = cell.getBoundingClientRect();
+        const scrollY = window.scrollY || window.pageYOffset;
+        const scrollX = window.scrollX || window.pageXOffset;
+        let top = rect.top + scrollY + rect.height + 8;
+        let left = rect.left + scrollX + 8;
+        // If out of viewport, adjust
+        if(left + tooltip.offsetWidth > window.innerWidth - 24) {
+          left = window.innerWidth - tooltip.offsetWidth - 24;
+        }
+        tooltip.style.top = top+'px';
+        tooltip.style.left = left+'px';
+      }
+      function hideTooltip() {
+        tooltip.style.display = 'none';
+        activeCell = null;
+      }
+
+      document.querySelectorAll('.dynamic-matrix .matrix-cell').forEach(cell=>{
+        // Desktop: hover
+        cell.addEventListener('mouseenter', function(e){
+          activeCell = cell;
+          showTooltip(cell, e);
+        });
+        cell.addEventListener('mouseleave', function(){
+          if (activeCell === cell) hideTooltip();
+        });
+        // Mobile: tap
+        cell.addEventListener('touchstart', function(e){
+          e.preventDefault();
+          if(activeCell === cell) {
+            hideTooltip();
+          } else {
+            activeCell = cell;
+            showTooltip(cell, e.touches[0]);
+          }
+        });
+        // Keyboard accessible
+        cell.setAttribute('tabindex', '0');
+        cell.addEventListener('focus', function(e){
+          activeCell = cell;
+          showTooltip(cell, e);
+        });
+        cell.addEventListener('blur', function(){
+          if(activeCell === cell) hideTooltip();
+        });
+      });
+
+      // Hide tooltip on scroll or resize
+      window.addEventListener('scroll', hideTooltip, {passive:true});
+      window.addEventListener('resize', hideTooltip, {passive:true});
+      document.body.addEventListener('click', function(e){
+        if(activeCell && !e.target.classList.contains('matrix-cell')) hideTooltip();
+      });
+    })();
+  </script>
+</section>
 
   <footer class="footer">
     <div class="content has-text-centered">
