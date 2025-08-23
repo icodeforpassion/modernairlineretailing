@@ -1,0 +1,8 @@
+# Allow all bots complete access to the site
+User-agent: *
+Disallow: /private/             # Disallow access to the private directory
+Disallow: /temporary/           # Disallow access to the temporary directory, if applicable
+Allow: /
+
+# Specify the location of the sitemap
+Sitemap: https://www.modernairlineretailing.com/sitemap.xml
