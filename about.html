@@ -1,117 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Explore tools, insights, and blogs on modern airline retailing. Learn about NDC, Offer & Order, and the evolution of airline systems." />
-    <meta name="keywords" content="airline retailing, modern airline, NDC, offer and order, revenue management, aviation technology, IATA, airline systems" />
-    <meta name="author" content="Neerej S" />
-    
-    <!-- Open Graph for Social Sharing -->
-    <meta property="og:title" content="Modern Airline Retailing" />
-    <meta property="og:description" content="Tools, insights and blogs on the future of airline commerce." />
-    <meta property="og:image" content="https://www.modernairlineretailing.com/favicon.ico" />
-    <meta property="og:url" content="https://www.modernairlineretailing.com" />
-    <meta name="twitter:card" content="summary_large_image" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>About Neerej – Modern Airline Retailing</title>
+  <meta name="description" content="Discover Neerej's journey in airline technology, revenue management, and modern airline retailing. Connect for insights on NDC, Offer & Order, dynamic pricing, and the future of airline commerce." />
+  <meta name="keywords" content="modern airline retailing, airline technology, offer and order, NDC, revenue management, aviation, IATA, airline commerce, digital retailing, Neerej" />
+  <meta name="author" content="Neerej S" />
+  <meta property="og:title" content="About Neerej - Modern Airline Retailing" />
+  <meta property="og:description" content="Meet Neerej S, airline technology specialist. Explore his journey, insights, and connect for the future of airline retailing." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1504198458649-3128b932f49b?auto=format&fit=crop&w=1200&q=80" />
+  <meta property="og:url" content="https://www.modernairlineretailing.com/about.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"/>
+  <style>
+    :root {
+      --clr-bg-page: #f6f9fc;
+      --clr-bg-alt: #ffffff;
+      --clr-bg-hero-start: #e8f2fc;
+      --clr-bg-hero-end: #f6f9fc;
+      --clr-bg-gradient-dark: linear-gradient(135deg,#0d1b2a 0%,#12385d 70%,#0A66C2 100%);
+      --clr-text: #0f2742;
+      --clr-text-soft: #334964;
+      --clr-heading: #0f2742;
+      --clr-border: #d8e2ee;
+      --clr-border-soft: #e2edf5;
+      --clr-primary: #0A66C2;
+      --clr-primary-hover: #084f97;
+      --clr-accent-warm: #f59e0b;
+      --clr-accent-warm-soft: #ffbf47;
+      --clr-accent-green: #059669;
+      --clr-focus: #ffbf47;
+      --clr-badge-bg: #eef5fb;
+      --clr-badge-hover: #0A66C2;
+      --shadow-sm: 0 2px 6px rgba(15,39,66,0.08);
+      --shadow-md: 0 4px 18px -2px rgba(15,39,66,0.14);
+      --shadow-lg: 0 10px 38px -8px rgba(15,39,66,0.25);
+      --radius-sm: 6px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --trans: 0.18s cubic-bezier(.5,.2,.15,1);
+      font-size: 17px;
+    }
 
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>About - Modern Airline Retailing</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-        }
-        .hero-about {
-            background-image: url('https://images.unsplash.com/photo-1504198458649-3128b932f49b?auto=format&fit=crop&w=1470&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 6rem 1.5rem;
-        }
-        .hero-about .title {
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
-        }
-        .section:nth-child(even) {
-            background-color: #f4f4f4;
-        }
-        .section {
-            padding: 3rem 1.5rem;
-        }
-        .has-text-primary {
-            color: #3273dc !important;
-        }
-        .has-background-light {
-            background-color: #f5f5f5 !important;
-        }
-        .has-background-primary {
-            background-color: #3273dc !important;
-        }
-        .has-text-white {
-            color: #ffffff !important;
-        }
-        .box {
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    @media (max-width:560px){
+      :root { font-size: 16px; }
+    }
+
+    * { box-sizing:border-box; }
+    body {
+      font-family: system-ui,-apple-system,'Segoe UI','Arial',sans-serif;
+      background: var(--clr-bg-page);
+      color: var(--clr-text);
+      margin:0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: var(--clr-primary); text-decoration:none; }
+    a:hover { color: var(--clr-primary-hover); }
+
+    /* NAV */
+    .navbar {
+      background:#0d1b2a;
+      border-bottom: 3px solid var(--clr-primary);
+      padding: .55rem 0;
+    }
+    .navbar .navbar-item {
+      color:#f1f6fb;
+      font-weight:600;
+      letter-spacing:.03em;
+      transition:color var(--trans);
+    }
+    .navbar .navbar-item:hover,
+    .navbar .navbar-item:focus {
+      color: var(--clr-accent-warm);
+      outline: none;
+    }
+
+    /* HERO (light, inviting) */
+    .hero-glass {
+      min-height: 360px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      background: radial-gradient(circle at 25% 30%, #ffffff 0%, var(--clr-bg-hero-start) 40%, var(--clr-bg-hero-end) 100%);
+      overflow:hidden;
+    }
+    .hero-glass:before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(120deg, rgba(10,102,194,0.10), rgba(245,158,11,0.08)),
+        repeating-linear-gradient(60deg,rgba(10,102,194,0.06) 0 10px,rgba(255,255,255,0) 10px 20px);
+      mix-blend-mode:multiply;
+      opacity:.65;
+      pointer-events:none;
+    }
+    .hero-inner {
+      position:relative;
+      text-align:center;
+      padding: 3.5rem 1rem 2.2rem;
+      max-width: 860px;
+    }
+    .hero-pic {
+      width:124px;
+      height:124px;
+      object-fit:cover;
+      border-radius:50%;
+      border:5px solid #fff;
+      box-shadow: var(--shadow-md);
+      background:#fff;
+      margin-bottom:1.2rem;
+      transition: transform var(--trans), box-shadow var(--trans);
+    }
+    .hero-pic:hover { transform:scale(1.04); box-shadow: var(--shadow-lg); }
+    .hero-title {
+      font-size: clamp(2rem, 3.1vw, 2.75rem);
+      font-weight:800;
+      color: var(--clr-heading);
+      margin:0 0 .45rem;
+      position:relative;
+    }
+    .hero-subtitle {
+      font-size:1.15rem;
+      color: var(--clr-text-soft);
+      font-weight:500;
+      line-height:1.45;
+      max-width: 720px;
+      margin:0 auto;
+    }
+
+    /* PROFILE CARD */
+    .profile-card {
+      background: var(--clr-bg-alt);
+      border:1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      max-width: 640px;
+      margin:-80px auto 2.2rem;
+      padding:2.4rem 2.2rem 2.1rem;
+      box-shadow: var(--shadow-md);
+      position:relative;
+    }
+    .profile-card:before {
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: inherit;
+      background: linear-gradient(120deg, rgba(10,102,194,0.08), rgba(245,158,11,0.07));
+      opacity:.35;
+      pointer-events:none;
+    }
+    .profile-name {
+      font-size:1.9rem;
+      font-weight:700;
+      margin:0 0 .2rem;
+      color: var(--clr-primary);
+      letter-spacing:.5px;
+    }
+    .profile-role {
+      font-size:1rem;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color: var(--clr-text-soft);
+      margin:0 0 1.1rem;
+    }
+    .profile-description {
+      font-size:1.04rem;
+      line-height:1.68;
+      color: var(--clr-text);
+      margin:0 0 1.2rem;
+    }
+
+    /* LINKEDIN BUTTON */
+    .linkedin-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:.55rem;
+      background: var(--clr-primary);
+      color:#fff;
+      font-weight:600;
+      padding:.8rem 1.45rem;
+      font-size:1rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+      position:relative;
+      transition: var(--trans);
+    }
+    .linkedin-btn:hover,
+    .linkedin-btn:focus {
+      background: var(--clr-primary-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      outline:none;
+    }
+    .linkedin-btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--clr-focus), var(--shadow-md);
+    }
+
+    /* GENERIC SECTION WRAPPER */
+    .section-content {
+      background: var(--clr-bg-alt);
+      border:1px solid var(--clr-border-soft);
+      border-radius: var(--radius-lg);
+      max-width: 980px;
+      margin:2.5rem auto;
+      padding:2.4rem 2rem 2.1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .section-title {
+      font-size:1.55rem;
+      font-weight:700;
+      text-align:center;
+      color: var(--clr-heading);
+      margin:0 0 1rem;
+      position:relative;
+      display:inline-block;
+      left:50%;
+      transform:translateX(-50%);
+      padding-bottom:.4rem;
+    }
+    .section-title:after {
+      content:"";
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:0;
+      width:120px;
+      height:4px;
+      background: linear-gradient(90deg,var(--clr-primary),var(--clr-accent-warm));
+      border-radius:3px;
+    }
+    .section-text {
+      font-size:1.05rem;
+      max-width: 780px;
+      margin:0 auto;
+      line-height:1.72;
+      color: var(--clr-text-soft);
+      text-align:center;
+    }
+
+    /* EXPERTISE BADGES */
+    .expertise-list {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.9rem .9rem;
+      justify-content:center;
+      margin:2rem 0 0;
+    }
+    .expertise-item {
+      background: var(--clr-badge-bg);
+      padding:.85rem 1.2rem;
+      font-size:.95rem;
+      font-weight:600;
+      color: var(--clr-text);
+      border:1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      letter-spacing:.02em;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+      transition: var(--trans);
+      position:relative;
+      min-width: 160px;
+      text-align:center;
+    }
+    .expertise-item:hover,
+    .expertise-item:focus {
+      background: var(--clr-badge-hover);
+      color:#fff;
+      border-color: var(--clr-badge-hover);
+      box-shadow: var(--shadow-sm);
+      outline:none;
+    }
+
+    /* CTA SECTION */
+    .section-cta {
+      background: var(--clr-bg-gradient-dark);
+      color:#f3f9ff;
+      border-radius: var(--radius-lg);
+      padding:3.1rem 1.4rem 2.6rem;
+      text-align:center;
+      max-width: 980px;
+      margin:2.9rem auto 2.4rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .section-cta:before {
+      content:"";
+      position:absolute;
+      width:420px;
+      height:420px;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22), rgba(255,255,255,0) 70%);
+      top:-120px;
+      right:-120px;
+      pointer-events:none;
+      mix-blend-mode:overlay;
+    }
+    .cta-title {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      font-weight:800;
+      margin:0 0 .9rem;
+      letter-spacing:.01em;
+      position:relative;
+    }
+    .cta-title:after {
+      content:"";
+      display:block;
+      margin:.65rem auto 0;
+      width:160px;
+      height:5px;
+      background: linear-gradient(90deg,var(--clr-accent-warm),var(--clr-primary));
+      border-radius:3px;
+    }
+    .cta-text {
+      font-size:1.07rem;
+      line-height:1.7;
+      max-width: 760px;
+      margin:0 auto 1.9rem;
+      color:#e3edf6;
+    }
+    .cta-links {
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      justify-content:center;
+    }
+    .cta-link {
+      background:#ffffff;
+      color: var(--clr-primary);
+      padding:.9rem 1.55rem;
+      font-weight:600;
+      font-size:.98rem;
+      border-radius: var(--radius-sm);
+      border:1px solid #ffffff;
+      transition: var(--trans);
+      position:relative;
+      box-shadow: var(--shadow-sm);
+    }
+    .cta-link i { margin-right:.4rem; }
+    .cta-link:hover,
+    .cta-link:focus {
+      background: var(--clr-accent-warm);
+      color:#1f2d3b;
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      outline:none;
+    }
+    .cta-link:focus-visible {
+      box-shadow:0 0 0 3px var(--clr-focus), var(--shadow-md);
+    }
+
+    /* FOOTER */
+    .footer {
+      background:#0d1b2a;
+      color:#b6c8d9;
+      text-align:center;
+      font-size:.85rem;
+      padding:2.1rem 1rem 1.8rem;
+      line-height:1.5;
+      position:relative;
+    }
+    .footer span b { color:#fff; font-weight:600; }
+
+    /* FOCUS STYLES (GLOBAL) */
+    :focus-visible {
+      outline:2px solid var(--clr-focus);
+      outline-offset:3px;
+      border-radius:4px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      .profile-card, .section-content, .section-cta { margin-left:1rem; margin-right:1rem; }
+      .profile-card { padding:2rem 1.4rem 1.7rem; }
+    }
+    @media (max-width:560px){
+      .hero-title { font-size:1.9rem; }
+      .hero-pic { width:108px; height:108px; }
+      .profile-name { font-size:1.55rem; }
+      .section-title { font-size:1.35rem; }
+      .expertise-item { min-width:134px; }
+    }
+
+    /* DARK MODE (auto) */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --clr-bg-page: #0b1622;
+        --clr-bg-alt: #122130;
+        --clr-text: #dde8f2;
+        --clr-text-soft: #b5c6d4;
+        --clr-heading:#ffffff;
+        --clr-border:#1f3547;
+        --clr-border-soft:#1b2d3a;
+        --clr-badge-bg:#1d3447;
+        --clr-badge-hover:#0A66C2;
+      }
+      body { background: var(--clr-bg-page); color: var(--clr-text); }
+      .hero-glass {
+        background: radial-gradient(circle at 30% 30%, #142637 0%, #0b1622 100%);
+      }
+      .hero-glass:before { opacity:.5; }
+      .profile-card:before { opacity:.25; }
+      .section-content { box-shadow:none; }
+      .section-content,
+      .profile-card { background: var(--clr-bg-alt); }
+      .cta-link { background:#163247; color:#e3edf6; border-color:#163247; }
+      .cta-link:hover { color:#1b2834; }
+      .footer { background:#09101a; }
+    }
+  </style>
 </head>
 <body>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.modernairlineretailing.com/index.html">
+        <i class="fas fa-home"></i>&nbsp;Home
+      </a>
+    </div>
+  </nav>
 
-    <!-- Hero Section -->
-    <section class="hero hero-about">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title is-2">About Me</h1>
-                <p class="subtitle is-4">A journey through airline technology, revenue systems, and digital retailing</p>
-            </div>
-        </div>
-    </section>
+  <section class="hero-glass">
+    <div class="hero-inner">
+      
+      <h1 class="hero-title">About Me</h1>
+      <p class="hero-subtitle">
+        A journey through airline technology, revenue systems, and modern digital retailing.
+      </p>
+    </div>
+  </section>
 
-    <!-- Bio Section -->
-    <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-8">
-                    <h2 class="title is-4 has-text-primary">Hi, I'm Neerej</h2>
-                    <p class="mb-5">
-                        I am an airline technology specialist with over 20 years of experience spanning revenue management systems, availability engines, and modern retailing solutions. 
-                      I specialize in designing and implementing scalable offer and order architectures that empower airlines to deliver seamless, customer-focused experiences worldwide.
-                    </p>
-                    <p>
-                        With deep involvement in industry transformations such as NDC, cloud-based availability, and the IATA Offer & Order model,
-                        I created this site as a collaborative knowledge hub for airline professionals navigating these modern landscapes.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <section>
+    <div class="profile-card" itemscope itemtype="https://schema.org/Person">
+      <h2 class="profile-name" itemprop="name">Neerej S</h2>
+      <div class="profile-role" itemprop="jobTitle">Airline Technology Specialist & Modern Retailing Advocate</div>
+      <div class="profile-description" itemprop="description">
+        Hello! I’m Neerej, and for over two decades I’ve been deeply involved in shaping how airlines connect with travelers. My career began in the world of Passenger Service Systems, where I worked hands-on with fares, schedules, SSIM processes, and major PSS implementations. I’ve witnessed the industry’s evolution first-hand from the days of E-Ticket implementation, TTY messages to EDIFACT, through the rise of NDC, and now into the exciting frontier of Offer & Order and One Order.
 
-    <!-- Mission Section -->
-    <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-10">
-                    <div class="box has-background-light">
-                        <h2 class="title is-5 has-text-link">My Mission</h2>
-                        <p>
-                            To empower airline professionals with insights, tools, and clarity around modern airline retailing - from technical deep dives
-                            to strategic transformation. I believe in demystifying complexity and helping others grow through shared knowledge.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+What really drives me is the way data can transform airline decision-making. I’ve worked with revenue management systems of tier-1 airlines, exploring how accurate data, intelligent design, and scalable platforms can help maximize revenue while creating better experiences for passengers.
 
-    <!-- Closing Section -->
-    <section class="section has-background-primary has-text-white">
-        <div class="container has-text-centered">
-            <h2 class="title is-4">Let’s shape the future of airline retailing, together.</h2>
-            <p class="subtitle is-6">Browse my tools, read the blog, or reach out to collaborate.</p>
-        </div>
-    </section>
+Over the years, I’ve found myself at the intersection of technology and strategy—whether it’s modernizing availability in the cloud, building scalable Offer & Order architectures, or exploring how revenue management can be reimagined in a world of personalization and continuous pricing.
 
+At heart, I believe innovation in our industry comes from collaboration, sharing knowledge, and daring to challenge the status quo. This space is where I share my insights, tools, and thoughts about the future of airline retailing.      </div>
+      <a href="https://www.linkedin.com/in/neerej/" class="linkedin-btn" target="_blank" rel="noopener" aria-label="Connect with Neerej on LinkedIn">
+        <i class="fab fa-linkedin"></i> Connect on LinkedIn
+      </a>
+    </div>
+  </section>
+
+  <section class="section-content">
+    <h2 class="section-title">My Mission</h2>
+    <p class="section-text">
+      To empower airline professionals and innovators with clarity, practical tools, and honest insights about modern airline retailing.
+      My goal is to make complex systems accessible, spark new ideas, and help you navigate transformation—whether you’re a seasoned expert or just starting out.
+    </p>
+  </section>
+
+  <section class="section-content">
+    <h2 class="section-title">What I Bring to the Table</h2>
+    <div class="expertise-list">
+      <span class="expertise-item" tabindex="0">Revenue Management Systems</span>
+      <span class="expertise-item" tabindex="0">Offer &amp; Order Transformation</span>
+      <span class="expertise-item" tabindex="0">NDC &amp; Airline Distribution</span>
+      <span class="expertise-item" tabindex="0">Dynamic Pricing &amp; Availability</span>
+      <span class="expertise-item" tabindex="0">Cloud-Native Airline Solutions</span>
+      <span class="expertise-item" tabindex="0">Product &amp; Inventory Strategy</span>
+      <span class="expertise-item" tabindex="0">Mentoring &amp; Team Leadership</span>
+      <span class="expertise-item" tabindex="0">Industry Collaboration</span>
+    </div>
+  </section>
+
+  <section class="section-cta">
+    <h2 class="cta-title">Let’s Shape the Future Together</h2>
+    <p class="cta-text">
+      Exploring NDC, launching a retailing platform, or curious about what’s next? I’d love to connect.
+      Dive into my blog, try the tools, or reach out for a conversation.
+      Modern airline retailing is a journey—and it’s more exciting when we travel it together.
+    </p>
+    <div class="cta-links">
+      <a href="/tools" class="cta-link">Explore Airline Tools</a>
+      <a href="/blog" class="cta-link">Read the Blog</a>
+      <a href="mailto:hello@modernairlineretailing.com" class="cta-link">Contact Me</a>
+      <a href="https://www.linkedin.com/in/neerej/" class="cta-link" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i> LinkedIn
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div>
+     <div>
+  &copy; 2025 Neerej Sasikumar – Modern Airline Retailing.<br>
+
+  Designed with ❤️ for the airline community.</span>
+</div>
+
+    </div>
+  </footer>
 </body>
 </html>
