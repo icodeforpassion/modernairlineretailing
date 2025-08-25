@@ -501,6 +501,19 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // --- BLOG CARDS ---
+  
+  const burger = document.querySelector('.navbar-burger');
+const menu = document.getElementById('navMenu');
+
+if (burger) {
+  burger.addEventListener('click', function() {
+    burger.classList.toggle('is-active');
+    menu.classList.toggle('is-active');
+  });
+}
+
+  
+  
   const posts = [
     {
       url: "/blog/ndc-retailing.html",
@@ -801,4 +814,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         // Keyboard
         cell.setAttribute('tabindex', '0');
-        cell.setAttribute('role
+
