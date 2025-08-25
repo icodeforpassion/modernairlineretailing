@@ -192,7 +192,23 @@
   </style>
 </head>
 <body>
-  <div class="container">
+    <div class="container">
+    <div style="display: flex; justify-content: flex-start; margin-bottom: 12px;">
+      <a href="/" style="text-decoration: none;">
+        <button type="button" style="
+          background: var(--btn);
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          font-size: 1em;
+          cursor: pointer;
+          transition: background 0.15s;
+        " onmouseover="this.style.background=window.getComputedStyle(document.documentElement).getPropertyValue('--btn-hover')" onmouseout="this.style.background=window.getComputedStyle(document.documentElement).getPropertyValue('--btn')">
+          🏠 Home
+        </button>
+      </a>
+    </div>
     <h1>Online XML Formatter & Viewer</h1>
     <h2 style="font-size:1.15em; margin-bottom:8px;">Format, beautify, and view XML instantly online</h2>
     <p>
