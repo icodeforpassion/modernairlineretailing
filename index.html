@@ -26,8 +26,6 @@
       --gradient-hero: linear-gradient(160deg, rgba(13,27,42,.9), rgba(13,27,42,.55) 55%, rgba(30,55,80,.65));
       --focus-ring: 0 0 0 3px rgba(50,152,220,.5);
     }
-    
-    
     html { scroll-behavior: smooth; background: var(--clr-bg); }
     body { background: var(--clr-bg); color: var(--clr-text); font-feature-settings: "liga" 1, "kern" 1; }
     .navbar.is-dark {
@@ -38,6 +36,24 @@
     }
     .navbar a.navbar-item, .navbar a.navbar-link { color: var(--clr-text-dim); }
     .navbar a.navbar-item:hover, .navbar a.navbar-link:hover { color: var(--clr-text); background: transparent; }
+
+    /* FIX FOR TOOLS MENU DROPDOWN */
+    .navbar.is-dark .navbar-dropdown {
+      background: linear-gradient(to right, #142a40 80%, #0d1b2a 100%);
+      border: 1px solid var(--clr-border);
+    }
+    .navbar.is-dark .navbar-dropdown .navbar-item {
+      color: var(--clr-text-dim);
+    }
+    .navbar.is-dark .navbar-dropdown .navbar-item:hover {
+      color: var(--clr-text);
+      background: var(--clr-accent);
+    }
+    .navbar.is-dark .navbar-dropdown .navbar-item:focus-visible {
+      background: var(--clr-accent-alt);
+      color: #fff;
+    }
+
     .hero.is-landing {
       position: relative;
       min-height: 520px;
@@ -324,7 +340,6 @@
   border-style:solid;
   border-color:transparent transparent rgba(30,48,70,.98) transparent;
 }
-
   </style>
 </head>
 <body>
@@ -390,6 +405,7 @@
       </div>
 
       <div id="featured-cards">
+        <!-- Skeleton loaders will be replaced by real blog cards via JS -->
         <article class="post-card reveal" aria-hidden="true">
           <div class="skeleton skeleton-thumb"></div>
           <div class="post-body">
@@ -480,10 +496,239 @@
     </div>
   </footer>
 
-  <script>
-    // ---- IMAGE MODE LOGIC OMITTED FOR BREVITY (unchanged) ----
-    // ... (your previous blog/featured image code here, unchanged) ...
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // --- BLOG CARDS ---
+  const posts = [
+    {
+      url: "/blog/ndc-retailing.html",
+      img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      date: "Jul 2025",
+      badge: "NDC",
+      title: "NDC: The New Standard for Airline Retailing",
+      excerpt: "How NDC is transforming airline product distribution, with real-world implementation tips.",
+      author: "Neerej S",
+      time: "5 min read"
+    },
+    {
+      url: "/blog/offer-order-cloud.html",
+      img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+      date: "Jun 2025",
+      badge: "Offer & Order",
+      title: "Offer & Order in the Cloud Era",
+      excerpt: "Modernizing airline retailing with cloud-native Offer & Order management. What to know and how to start.",
+      author: "Neerej S",
+      time: "7 min read"
+    },
+    {
+      url: "/blog/dynamic-pricing-journey.html",
+      img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+      date: "May 2025",
+      badge: "Dynamic Pricing",
+      title: "The Airline Dynamic Pricing Journey",
+      excerpt: "From static fares to continuous pricing: lessons learned and what’s next for revenue optimization.",
+      author: "Neerej S",
+      time: "6 min read"
+    }
+  ];
+  const cards = posts.map(post => `
+    <article class="post-card reveal">
+      <a href="${post.url}">
+        <div class="post-media">
+          <img src="${post.img}" alt="${post.title}"/>
+          <span class="badge-date">${post.date}</span>
+          <span class="img-badge">${post.badge}</span>
+        </div>
+        <div class="post-body">
+          <h3 class="post-title">${post.title}</h3>
+          <p class="post-excerpt">${post.excerpt}</p>
+          <div class="post-meta">
+            <span>${post.author}</span>
+            <span>${post.time}</span>
+          </div>
+        </div>
+      </a>
+    </article>
+  `).join('');
+  document.getElementById('featured-cards').innerHTML = cards;
+
+  // --- TOOLTIP LOGIC FOR MATRIX ---
+  const tooltip = document.getElementById('matrix-tooltip');
+  let activeCell = null;
+
+  function showTooltip(cell, evt) {
+    const detail = cell.getAttribute('data-detail');
+    if (!detail) return;
+
+    tooltip.innerHTML = detail;
+    tooltip.style.display = 'block';
+
+    const rect = cell.getBoundingClientRect();
+
+    // Position below the cell
+    let top = rect.bottom + 8;
+    let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+
+    // Clamp horizontally
+    if (left < 10) left = 10;
+    if (left + tooltip.offsetWidth > window.innerWidth - 10) {
+      left = window.innerWidth - tooltip.offsetWidth - 10;
+    }
+
+    // If not enough space below, show above
+    if (top + tooltip.offsetHeight > window.innerHeight - 10) {
+      top = rect.top - tooltip.offsetHeight - 8;
+    }
+    if (top < 10) top = rect.bottom + 8;
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+
+  function hideTooltip() {
+    tooltip.style.display = 'none';
+    activeCell = null;
+  }
+
+  document.querySelectorAll('.dynamic-matrix td[data-detail]').forEach(cell => {
+    // Hover
+    cell.addEventListener('mouseenter', function(e) {
+      activeCell = cell;
+      showTooltip(cell, e);
+    });
+    cell.addEventListener('mouseleave', function() {
+      if (activeCell === cell) hideTooltip();
+    });
+    // Click/tap
+    cell.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (activeCell === cell) {
+        hideTooltip();
+      } else {
+        if (activeCell) hideTooltip();
+        activeCell = cell;
+        showTooltip(cell, e);
+      }
+    });
+    cell.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      if (activeCell === cell) {
+        hideTooltip();
+      } else {
+        if (activeCell) hideTooltip();
+        activeCell = cell;
+        showTooltip(cell, e.touches[0]);
+      }
+    });
+    // Keyboard
+    cell.setAttribute('tabindex', '0');
+    cell.setAttribute('role', 'button');
+    cell.setAttribute('aria-label', 'Click to view details');
+    cell.addEventListener('focus', function(e) {
+      activeCell = cell;
+      showTooltip(cell, e);
+    });
+    cell.addEventListener('blur', function() {
+      if (activeCell === cell) hideTooltip();
+    });
+    cell.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (activeCell === cell) {
+          hideTooltip();
+        } else {
+          activeCell = cell;
+          showTooltip(cell, e);
+        }
+      }
+    });
+  });
+
+  // Hide tooltip on scroll, resize, or click outside
+  window.addEventListener('scroll', hideTooltip, { passive: true });
+  window.addEventListener('resize', hideTooltip, { passive: true });
+  document.addEventListener('click', function(e) {
+    if (activeCell && !e.target.closest('.dynamic-matrix td[data-detail]')) {
+      hideTooltip();
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && activeCell) {
+      hideTooltip();
+    }
+  });
+
+  // --- YEAR IN FOOTER ---
+  document.getElementById('year').textContent = new Date().getFullYear();
+});
+</script>
+
+
+  <script>
+    // ---- LATEST FROM THE BLOG DYNAMIC LOADING ----
+    document.addEventListener('DOMContentLoaded', function() {
+      // Replace with your actual blog post data or fetch from API
+      const posts = [
+        {
+          url: "/blog/ndc-retailing.html",
+          img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+          date: "Jul 2025",
+          badge: "NDC",
+          title: "NDC: The New Standard for Airline Retailing",
+          excerpt: "How NDC is transforming airline product distribution, with real-world implementation tips.",
+          author: "Neerej S",
+          time: "5 min read"
+        },
+        {
+          url: "/blog/offer-order-cloud.html",
+          img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+          date: "Jun 2025",
+          badge: "Offer & Order",
+          title: "Offer & Order in the Cloud Era",
+          excerpt: "Modernizing airline retailing with cloud-native Offer & Order management. What to know and how to start.",
+          author: "Neerej S",
+          time: "7 min read"
+        },
+        {
+          url: "/blog/dynamic-pricing-journey.html",
+          img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+          date: "May 2025",
+          badge: "Dynamic Pricing",
+          title: "The Airline Dynamic Pricing Journey",
+          excerpt: "From static fares to continuous pricing: lessons learned and what’s next for revenue optimization.",
+          author: "Neerej S",
+          time: "6 min read"
+        }
+      ];
+
+      // Render blog cards
+      const cards = posts.map(post => `
+        <article class="post-card reveal">
+          <a href="${post.url}">
+            <div class="post-media">
+              <img src="${post.img}" alt="${post.title}"/>
+              <span class="badge-date">${post.date}</span>
+              <span class="img-badge">${post.badge}</span>
+            </div>
+            <div class="post-body">
+              <h3 class="post-title">${post.title}</h3>
+              <p class="post-excerpt">${post.excerpt}</p>
+              <div class="post-meta">
+                <span>${post.author}</span>
+                <span>${post.time}</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      `).join('');
+
+      document.getElementById('featured-cards').innerHTML = cards;
+    });
+  </script>
+  <script>
     // ---- TOOLTIP LOGIC FOR MATRIX ----
     document.addEventListener('DOMContentLoaded', function() {
       const tooltip = document.getElementById('matrix-tooltip');
@@ -496,26 +741,23 @@
         tooltip.innerHTML = detail;
         tooltip.style.display = 'block';
 
-        // Calculate position relative to the wrapper
-        const wrapper = cell.closest('.dynamic-matrix-wrapper');
         const rect = cell.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
 
-        // Position below cell
-        let top = rect.bottom - wrapperRect.top + 8;
-        let left = rect.left - wrapperRect.left + (rect.width/2) - (tooltip.offsetWidth/2);
+        // Position below the cell
+        let top = rect.bottom + 8;
+        let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
 
         // Clamp horizontally
         if (left < 10) left = 10;
-        if (left + tooltip.offsetWidth > wrapper.offsetWidth - 10) {
-          left = wrapper.offsetWidth - tooltip.offsetWidth - 10;
+        if (left + tooltip.offsetWidth > window.innerWidth - 10) {
+          left = window.innerWidth - tooltip.offsetWidth - 10;
         }
 
-        // Clamp vertically (show above if not enough space)
-        if (top + tooltip.offsetHeight > wrapper.offsetHeight - 10) {
-          top = rect.top - wrapperRect.top - tooltip.offsetHeight - 8;
+        // If not enough space below, show above
+        if (top + tooltip.offsetHeight > window.innerHeight - 10) {
+          top = rect.top - tooltip.offsetHeight - 8;
         }
-        if (top < 10) top = rect.bottom - wrapperRect.top + 8;
+        if (top < 10) top = rect.bottom + 8;
 
         tooltip.style.top = top + 'px';
         tooltip.style.left = left + 'px';
@@ -559,76 +801,4 @@
         });
         // Keyboard
         cell.setAttribute('tabindex', '0');
-        cell.setAttribute('role', 'button');
-        cell.setAttribute('aria-label', 'Click to view details');
-        cell.addEventListener('focus', function(e) {
-          activeCell = cell;
-          showTooltip(cell, e);
-        });
-        cell.addEventListener('blur', function() {
-          if (activeCell === cell) hideTooltip();
-        });
-        cell.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            if (activeCell === cell) {
-              hideTooltip();
-            } else {
-              activeCell = cell;
-              showTooltip(cell, e);
-            }
-          }
-        });
-      });
-
-function showTooltip(cell, evt) {
-  const detail = cell.getAttribute('data-detail');
-  if (!detail) return;
-
-  tooltip.innerHTML = detail;
-  tooltip.style.display = 'block';
-
-  const rect = cell.getBoundingClientRect();
-
-  // Position below the cell
-  let top = rect.bottom + 8;
-  let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
-
-  // Clamp horizontally
-  if (left < 10) left = 10;
-  if (left + tooltip.offsetWidth > window.innerWidth - 10) {
-    left = window.innerWidth - tooltip.offsetWidth - 10;
-  }
-
-  // If not enough space below, show above
-  if (top + tooltip.offsetHeight > window.innerHeight - 10) {
-    top = rect.top - tooltip.offsetHeight - 8;
-  }
-  if (top < 10) top = rect.bottom + 8;
-
-  tooltip.style.top = top + 'px';
-  tooltip.style.left = left + 'px';
-}
-
-
-      // Hide tooltip on scroll, resize, or click outside
-      window.addEventListener('scroll', hideTooltip, { passive: true });
-      window.addEventListener('resize', hideTooltip, { passive: true });
-      document.addEventListener('click', function(e) {
-        if (activeCell && !e.target.closest('.dynamic-matrix td[data-detail]')) {
-          hideTooltip();
-        }
-      });
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && activeCell) {
-          hideTooltip();
-        }
-      });
-    });
-  </script>
-  <script>
-    // ---- BLOG/FEATURED IMAGE LOGIC (unchanged, paste your previous script here) ----
-    // ... (your previous blog/featured image code here, unchanged) ...
-  </script>
-</body>
-</html>
+        cell.setAttribute('role
