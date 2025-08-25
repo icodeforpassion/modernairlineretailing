@@ -39,6 +39,7 @@
     ]
   }
   </script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     :root {
       --clr-bg:#0d1b2a;
@@ -118,6 +119,9 @@
     .metric .value { font-size:1.1em; font-weight:600; color:#fff;}
     #map { width:100%; height:350px; border-radius:10px; margin-top:1.3em; border:1px solid var(--clr-accent-alt);}
     .status-bar { margin-top:.4em; font-size:.95em; color:var(--clr-accent-alt);}
+    .unit-toggle { margin-top:1em; text-align:right;}
+    .unit-toggle button { margin-left:0.6em; padding:0.3em 0.8em; border:none; border-radius:6px; background:var(--clr-accent-alt); color:#082032; cursor:pointer; font-weight:600;}
+    .unit-toggle button.active { background:var(--clr-accent); color:#fff;}
     @media (max-width:700px){
       main {padding:1.4rem 0.4rem;}
       .form-row {flex-direction:column; align-items:stretch;}
@@ -149,6 +153,12 @@
         </div>
         <div class="status-bar" id="status" role="status" aria-live="polite"></div>
       </form>
+      <div class="unit-toggle">
+        Units: 
+        <button data-unit="km" class="active">km</button>
+        <button data-unit="mi">mi</button>
+        <button data-unit="nm">nm</button>
+      </div>
       <div class="popular-links">
         <span>Popular:</span>
         <a href="?from=london&to=dubai">London to Dubai</a>
@@ -157,7 +167,7 @@
       </div>
     </div>
 
-    <div class="results-box" id="results" style="display:none;">
+    <div class="results-box" id="results" style="display:none;" role="region" aria-label="Distance results">
       <div class="metrics">
         <div class="metric">
           <h3>Great Circle Distance</h3>
@@ -179,18 +189,18 @@
       <div id="map" aria-label="Great circle route map"></div>
     </div>
   </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-  // ---- LOAD AIRPORT DATA FROM SERVER ----
+  // ----- Data Load -----
   let airportList = [];
   let dataLoaded = false;
+  let unit = 'km';
+
   let dataLoadPromise = fetch('/airports.json')
     .then(r => r.json())
-    .then(data => {
-      airportList = data;
-      dataLoaded = true;
-    })
+    .then(data => { airportList = data; dataLoaded = true; })
     .catch(() => {
-      // fallback to minimal demo data if fetch fails
       airportList = [
         {code:"LHR",city:"London",name:"Heathrow",country:"UK",lat:51.4706,lon:-0.4619},
         {code:"DXB",city:"Dubai",name:"Dubai International",country:"UAE",lat:25.2532,lon:55.3657},
@@ -201,16 +211,17 @@
       dataLoaded = true;
     });
 
-  // ---- AUTOCOMPLETE ----
+  // ----- Autocomplete -----
   function findAirports(q) {
     q = q.trim().toLowerCase();
     if(!q || !airportList.length) return [];
-    return airportList.filter(a=>
-      a.code && a.code.toLowerCase().startsWith(q) ||
-      a.city && a.city.toLowerCase().includes(q) ||
-      a.name && a.name.toLowerCase().includes(q)
+    return airportList.filter(a =>
+      (a.code && a.code.toLowerCase().startsWith(q)) ||
+      (a.city && a.city.toLowerCase().includes(q)) ||
+      (a.name && a.name.toLowerCase().includes(q))
     ).slice(0,8);
   }
+
   function showAutocomplete(input, listEl) {
     const val = input.value;
     const matches = findAirports(val);
@@ -229,22 +240,17 @@
       };
     });
   }
+
   document.getElementById('origin').addEventListener('input', function(){
     showAutocomplete(this, document.getElementById('origin-autocomplete'));
   });
   document.getElementById('destination').addEventListener('input', function(){
     showAutocomplete(this, document.getElementById('destination-autocomplete'));
   });
+  document.getElementById('origin').addEventListener('blur', ()=>setTimeout(()=>document.getElementById('origin-autocomplete').style.display='none',120));
+  document.getElementById('destination').addEventListener('blur', ()=>setTimeout(()=>document.getElementById('destination-autocomplete').style.display='none',120));
 
-  // Hide autocomplete on blur
-  document.getElementById('origin').addEventListener('blur', function(){
-    setTimeout(()=>document.getElementById('origin-autocomplete').style.display='none',120);
-  });
-  document.getElementById('destination').addEventListener('blur', function(){
-    setTimeout(()=>document.getElementById('destination-autocomplete').style.display='none',120);
-  });
-
-  // Swap button logic
+  // ----- Swap Button -----
   document.getElementById('swapBtn').onclick = function() {
     const o = document.getElementById('origin').value;
     const d = document.getElementById('destination').value;
@@ -253,130 +259,100 @@
     computeResults();
   };
 
-  // Haversine and bearing calculations
-  function toRad(d){ return d * Math.PI / 180; }
-  function toDeg(r){ return r * 180 / Math.PI; }
+  // ----- Units Toggle -----
+  document.querySelectorAll('.unit-toggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      unit = btn.dataset.unit;
+      document.querySelectorAll('.unit-toggle button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      computeResults();
+    });
+  });
+
+  // ----- Haversine & Bearings -----
+  function toRad(d){ return d*Math.PI/180; }
+  function toDeg(r){ return r*180/Math.PI; }
   function haversineKm(lat1, lon1, lat2, lon2){
     const R = 6371.0088;
     const dLat = toRad(lat2-lat1);
     const dLon = toRad(lon2-lon1);
-    const a = Math.sin(dLat/2)**2 +
-      Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
   function initialBearing(lat1, lon1, lat2, lon2){
     const φ1=toRad(lat1), φ2=toRad(lat2);
     const Δλ=toRad(lon2-lon1);
     const y = Math.sin(Δλ)*Math.cos(φ2);
-    const x = Math.cos(φ1)*Math.sin(φ2) -
-              Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+    const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
     return (toDeg(Math.atan2(y,x)) + 360) % 360;
   }
-  function finalBearing(lat1, lon1, lat2, lon2){
-    const br = initialBearing(lat2, lon2, lat1, lon1);
-    return (br + 180) % 360;
-  }
+  function finalBearing(lat1, lon1, lat2, lon2){ return (initialBearing(lat2, lon2, lat1, lon1)+180)%360; }
   function midpoint(lat1, lon1, lat2, lon2){
     const φ1=toRad(lat1), λ1=toRad(lon1), φ2=toRad(lat2), Δλ=toRad(lon2-lon1);
     const Bx = Math.cos(φ2)*Math.cos(Δλ);
     const By = Math.cos(φ2)*Math.sin(Δλ);
-    const φ3 = Math.atan2(
-      Math.sin(φ1)+Math.sin(φ2),
-      Math.sqrt( (Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx) + By*By )
-    );
+    const φ3 = Math.atan2(Math.sin(φ1)+Math.sin(φ2), Math.sqrt((Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx)+By*By));
     const λ3 = λ1 + Math.atan2(By, Math.cos(φ1)+Bx);
-    return { lat: toDeg(φ3), lon: ((toDeg(λ3)+540)%360)-180 };
-  }
-  function formatBearing(b){ return b==null ? '—' : b.toFixed(1)+'°'; }
-  function formatDistance(km){
-    if(km == null) return '—';
-    return km.toFixed(2)+' km';
-  }
-  function formatFlightTime(km){
-    if(km == null) return '—';
-    const nm = km * 0.5399568;
-    const hours = nm / 450;
-    const h = Math.floor(hours);
-    const m = Math.round((hours - h)*60);
-    return `${h}h ${String(m).padStart(2,'0')}m`;
+    return {lat:toDeg(φ3), lon:((toDeg(λ3)+540)%360)-180};
   }
 
-  // Compute and show results
-  function computeResults() {
-    if (!dataLoaded) return; // wait for data!
-    const oVal = document.getElementById('origin').value.trim().toUpperCase();
-    const dVal = document.getElementById('destination').value.trim().toUpperCase();
-    const o = airportList.find(a=>a.code && a.code.toUpperCase()===oVal || a.city && a.city.toUpperCase()===oVal);
-    const d = airportList.find(a=>a.code && a.code.toUpperCase()===dVal || a.city && a.city.toUpperCase()===dVal);
-    const status = document.getElementById('status');
-    if(!o || !d) {
-      status.textContent = "Please select valid airports or cities from the list.";
-      document.getElementById('results').style.display='none';
-      return;
-    }
-    if(o.code === d.code) {
-      status.textContent = "Origin and destination are the same.";
-      document.getElementById('results').style.display='none';
-      return;
-    }
-    status.textContent = "";
-    // Calculate
-    const distKm = haversineKm(o.lat, o.lon, d.lat, d.lon);
-    const ib = initialBearing(o.lat, o.lon, d.lat, d.lon);
-    const fb = finalBearing(o.lat, o.lon, d.lat, d.lon);
-    const mid = midpoint(o.lat, o.lon, d.lat, d.lon);
-    document.getElementById('distMain').textContent = formatDistance(distKm);
-    document.getElementById('bearInit').textContent = formatBearing(ib);
-    document.getElementById('bearFinal').textContent = formatBearing(fb);
-    document.getElementById('midpoint').textContent = mid.lat.toFixed(3)+', '+mid.lon.toFixed(3);
-    document.getElementById('flightTime').textContent = formatFlightTime(distKm);
+  function convertDistance(km){
+    if(unit==='km') return km.toFixed(2)+' km';
+    if(unit==='mi') return (km*0.621371).toFixed(2)+' mi';
+    if(unit==='nm') return (km*0.5399568).toFixed(2)+' nm';
+  }
+  function formatBearing(b){ return b==null ? '—' : b.toFixed(0)+'°'; }
+  function flightTimeHours(km){ return (km/833).toFixed(1)+' h'; } // ~450 kt
+
+  // ----- Leaflet Map -----
+  let map = L.map('map',{worldCopyJump:true}).setView([20,0],2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+  let markerO, markerD, routeLine;
+
+  function updateMap(lat1, lon1, lat2, lon2){
+    if(markerO) markerO.setLatLng([lat1, lon1]); else markerO=L.marker([lat1, lon1]).addTo(map);
+    if(markerD) markerD.setLatLng([lat2, lon2]); else markerD=L.marker([lat2, lon2]).addTo(map);
+    if(routeLine) routeLine.setLatLngs([[lat1, lon1],[lat2, lon2]]); else routeLine=L.polyline([[lat1, lon1],[lat2, lon2]],{color:'#3298dc'}).addTo(map);
+    const bounds = L.latLngBounds([[lat1, lon1],[lat2, lon2]]);
+    map.fitBounds(bounds,{padding:[60,60]});
+  }
+
+  // ----- Compute Results -----
+  function computeResults(){
+    if(!dataLoaded) return;
+    const oVal=document.getElementById('origin').value.trim().toUpperCase();
+    const dVal=document.getElementById('destination').value.trim().toUpperCase();
+    const status=document.getElementById('status');
+    status.textContent='Calculating...';
+
+    const origin = airportList.find(a=>(a.code && a.code.toUpperCase()===oVal) || (a.city && a.city.toUpperCase()===oVal));
+    const dest   = airportList.find(a=>(a.code && a.code.toUpperCase()===dVal) || (a.city && a.city.toUpperCase()===dVal));
+
+    if(!origin || !dest){ status.textContent='Origin or destination not found.'; return; }
+    if(origin===dest){ status.textContent='Origin and destination cannot be the same.'; return; }
+
+    const distKm = haversineKm(origin.lat, origin.lon, dest.lat, dest.lon);
+    document.getElementById('distMain').textContent=convertDistance(distKm);
+    document.getElementById('bearInit').textContent=formatBearing(initialBearing(origin.lat, origin.lon, dest.lat, dest.lon));
+    document.getElementById('bearFinal').textContent=formatBearing(finalBearing(origin.lat, origin.lon, dest.lat, dest.lon));
+    const mid = midpoint(origin.lat, origin.lon, dest.lat, dest.lon);
+    document.getElementById('midpoint').textContent=mid.lat.toFixed(4)+', '+mid.lon.toFixed(4);
+    document.getElementById('flightTime').textContent=flightTimeHours(distKm);
+
+    updateMap(origin.lat, origin.lon, dest.lat, dest.lon);
     document.getElementById('results').style.display='block';
-    drawMap(o.lat, o.lon, d.lat, d.lon);
+    status.textContent='Distance calculated successfully.';
   }
 
-  // Listen for changes
-  document.getElementById('origin').addEventListener('change', computeResults);
-  document.getElementById('destination').addEventListener('change', computeResults);
-
-  // Pre-fill from URL (wait for data)
-  function prefillFromURL() {
+  // ----- Prefill from URL -----
+  function prefillFromURL(){
     const params = new URLSearchParams(window.location.search);
-    let from = params.get('from');
-    let to = params.get('to');
-    if(from) document.getElementById('origin').value = from;
-    if(to) document.getElementById('destination').value = to;
-    if(from && to) computeResults();
+    if(params.has('from')) document.getElementById('origin').value=params.get('from');
+    if(params.has('to')) document.getElementById('destination').value=params.get('to');
+    computeResults();
   }
-  dataLoadPromise.then(prefillFromURL);
 
-  // Minimal map (Leaflet)
-  function drawMap(lat1, lon1, lat2, lon2) {
-    if(!window.L) {
-      const link = document.createElement('link');
-      link.rel='stylesheet';
-      link.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-      const script = document.createElement('script');
-      script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.onload = ()=>drawMap(lat1,lon1,lat2,lon2);
-      document.head.appendChild(script);
-      return;
-    }
-    if(window._map) window._map.remove();
-    window._map = L.map('map',{worldCopyJump:true});
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      maxZoom:6, minZoom:1, attribution:'© OpenStreetMap'
-    }).addTo(window._map);
-    const points = [
-      [lat1,lon1],
-      [lat2,lon2]
-    ];
-    L.marker([lat1,lon1]).addTo(window._map).bindPopup("Origin");
-    L.marker([lat2,lon2]).addTo(window._map).bindPopup("Destination");
-    L.polyline(points,{color:'#4fb1f5',weight:3,opacity:.85}).addTo(window._map);
-    window._map.fitBounds([ [lat1,lon1], [lat2,lon2] ], {padding:[20,20]});
-  }
+  prefillFromURL();
   </script>
 </body>
 </html>
