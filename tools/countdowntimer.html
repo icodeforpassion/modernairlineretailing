@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Exam 30-Second Interval Timer</title>
 <style>
     body {
@@ -12,13 +12,15 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 100vh;
         margin: 0;
+        padding: 10px;
     }
     h1#countdown {
-        font-size: 8rem;
+        font-size: 10vw; /* scales with screen width */
         margin: 20px 0;
         transition: color 0.5s;
+        text-align: center;
     }
     .controls {
         display: flex;
@@ -28,27 +30,36 @@
         justify-content: center;
     }
     input[type="number"] {
-        padding: 10px;
+        padding: 15px;
         font-size: 1.2rem;
         width: 150px;
         text-align: center;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        -webkit-appearance: none;
+    }
+    input[type="number"]:focus {
+        outline: none;
+        border-color: #28a745;
     }
     button {
-        padding: 10px 20px;
+        padding: 15px 25px;
         font-size: 1.2rem;
         cursor: pointer;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         transition: background 0.3s, color 0.3s;
+        touch-action: manipulation; /* better for touch */
     }
     button:hover { opacity: 0.9; }
     .start-btn { background: #28a745; color: white; }
     .reset-btn { background: #dc3545; color: white; }
 
     .status {
-        font-size: 3rem;
+        font-size: 5vw;
         margin-top: 20px;
         font-weight: bold;
+        text-align: center;
     }
     .status div {
         margin: 10px 0;
@@ -153,15 +164,6 @@ function startTimer() {
         }
         updateDisplay();
     }, 1000);
-}
-
-function resetTimer() {
-    clearInterval(interval);
-    secondsCounter = 0;
-    totalElapsed = 0;
-    running = false;
-    localStorage.removeItem('timerData');
-    updateDisplay();
 }
 
 function resetTimer() {
