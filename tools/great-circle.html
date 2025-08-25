@@ -2,21 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Great Circle Distance Calculator | Flight Distance Between Airports or Cities</title>
+  <title>Distance Between Any Two Places | Great Circle Distance Calculator</title>
+  <meta name="description" content="Find the distance between any two cities, airports, or countries instantly. Enter any place names or codes and get flight distance, bearings, midpoint, and map. Perfect for travelers, aviation, and logistics.">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Calculate great circle flight distance, bearings, midpoint, and map between any two airports or cities. Type a city or airport name and get instant results.">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <meta name="robots" content="index,follow">
-  <meta property="og:title" content="Great Circle Distance Calculator | Flight Distance Between Airports or Cities"/>
-  <meta property="og:description" content="Calculate flight distance and bearings between any two airports or cities. Autocomplete, map, and instant results."/>
+  <link rel="canonical" href="https://your-domain.example/tools/great-circle.html"/>
+  <meta property="og:title" content="Distance Between Any Two Places | Great Circle Calculator"/>
+  <meta property="og:description" content="Find the distance between any two cities, airports, or countries instantly. Enter any place names or codes and get flight distance, bearings, midpoint, and map."/>
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://your-domain.example/tools/great-circle.html"/>
   <meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="Great Circle Distance Calculator | Flight Distance Between Airports or Cities"/>
-  <meta name="twitter:description" content="Calculate flight distance and bearings between any two airports or cities. Autocomplete, map, and instant results."/>
+  <meta name="twitter:title" content="Distance Between Any Two Places | Great Circle Calculator"/>
+  <meta name="twitter:description" content="Find the distance between any two cities, airports, or countries instantly. Enter any place names or codes and get flight distance, bearings, midpoint, and map."/>
   <meta name="twitter:image" content="https://your-domain.example/assets/og-banner.jpg"/>
-  <link rel="canonical" href="https://your-domain.example/tools/great-circle.html"/>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -24,18 +22,18 @@
     "mainEntity":[
       {
         "@type":"Question",
-        "name":"How do I find the flight distance between two cities or airports?",
+        "name":"How do I find the distance between two places?",
         "acceptedAnswer":{
           "@type":"Answer",
-          "text":"Type either airport codes or city names and select from suggestions. The tool will instantly compute the great circle distance, bearings, midpoint, and show the route on a map."
+          "text":"Type two cities, airports, or countries into the boxes. The tool will instantly show the great circle distance, bearings, midpoint, and a map."
         }
       },
       {
         "@type":"Question",
-        "name":"Can I use city names instead of IATA codes?",
+        "name":"Can I use city names, airport codes, or country names?",
         "acceptedAnswer":{
           "@type":"Answer",
-          "text":"Yes, just start typing a city or airport name. The tool will suggest the nearest matching airports."
+          "text":"Yes. Enter any city, airport, or country. The autocomplete will help you pick the correct place."
         }
       }
     ]
@@ -66,11 +64,11 @@
       margin-bottom:2rem;
     }
     .form-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: flex-end;
-}
+      display:flex; 
+      gap:1rem; 
+      flex-wrap:wrap; 
+      align-items: flex-end;
+    }
     .input-group {
       flex:1 1 220px; position:relative;
       display: flex; flex-direction:column;
@@ -86,29 +84,13 @@
     }
     input[type="text"]:focus { outline:none; box-shadow:var(--focus-ring); border-color:var(--clr-accent);}
     .swap-btn {
-  background: var(--clr-accent);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5em;
-  margin-bottom: 0.3em;
-  margin-top: 1.7em;
-  transition: background .15s;
-}
-.swap-btn:hover { background: var(--clr-accent-alt);}
-@media (max-width: 700px) {
-  .form-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-}
+      background:var(--clr-accent); color:#fff; border:none; border-radius:8px; 
+      width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+      font-size:1.5em; cursor:pointer; transition:background .15s;
+      margin-bottom:0.3em; margin-top:1.7em; padding:0;
+      box-sizing: border-box;
+    }
+    .swap-btn:hover { background:var(--clr-accent-alt);}
     .autocomplete-list {
       position: absolute; top: 100%; left: 0; right: 0;
       background: var(--clr-bg-alt); color:var(--clr-text);
@@ -138,8 +120,10 @@
     .status-bar { margin-top:.4em; font-size:.95em; color:var(--clr-accent-alt);}
     @media (max-width:700px){
       main {padding:1.4rem 0.4rem;}
-      .form-row {flex-direction:column;}
-      .swap-btn {margin-top:0.6em;}
+      .form-row {flex-direction:column; align-items:stretch;}
+      .swap-btn {
+        width:100%; margin:0.6em 0 0.3em 0; height:38px; font-size:1.2em;
+      }
     }
     .popular-links { margin-top:1.4em; text-align:center;}
     .popular-links a { color:var(--clr-accent-alt); margin:0 0.6em; text-decoration:underline;}
@@ -196,25 +180,35 @@
     </div>
   </main>
   <script>
-  // ---- UI/Autocomplete/Results Logic ----
+  // ---- LOAD AIRPORT DATA FROM SERVER ----
+  let airportList = [];
+  let dataLoaded = false;
+  let dataLoadPromise = fetch('/airports.json')
+    .then(r => r.json())
+    .then(data => {
+      airportList = data;
+      dataLoaded = true;
+    })
+    .catch(() => {
+      // fallback to minimal demo data if fetch fails
+      airportList = [
+        {code:"LHR",city:"London",name:"Heathrow",country:"UK",lat:51.4706,lon:-0.4619},
+        {code:"DXB",city:"Dubai",name:"Dubai International",country:"UAE",lat:25.2532,lon:55.3657},
+        {code:"TRV",city:"Trivandrum",name:"Trivandrum Intl",country:"India",lat:8.4821,lon:76.9207},
+        {code:"JFK",city:"New York",name:"JFK Intl",country:"USA",lat:40.6413,lon:-73.7781},
+        {code:"CDG",city:"Paris",name:"Charles de Gaulle",country:"France",lat:49.0097,lon:2.5479}
+      ];
+      dataLoaded = true;
+    });
 
-  // Mock airports data for demo, replace with real AJAX load!
-  const airportList = [
-    {code:"LHR",city:"London",name:"Heathrow",country:"UK",lat:51.4706,lon:-0.4619},
-    {code:"DXB",city:"Dubai",name:"Dubai International",country:"UAE",lat:25.2532,lon:55.3657},
-    {code:"TRV",city:"Trivandrum",name:"Trivandrum Intl",country:"India",lat:8.4821,lon:76.9207},
-    {code:"JFK",city:"New York",name:"JFK Intl",country:"USA",lat:40.6413,lon:-73.7781},
-    {code:"CDG",city:"Paris",name:"Charles de Gaulle",country:"France",lat:49.0097,lon:2.5479},
-    // ... add more for full autocomplete
-  ];
+  // ---- AUTOCOMPLETE ----
   function findAirports(q) {
     q = q.trim().toLowerCase();
-    if(!q) return [];
-    // Match by code, city, name
+    if(!q || !airportList.length) return [];
     return airportList.filter(a=>
-      a.code.toLowerCase().startsWith(q) ||
-      a.city.toLowerCase().includes(q) ||
-      a.name.toLowerCase().includes(q)
+      a.code && a.code.toLowerCase().startsWith(q) ||
+      a.city && a.city.toLowerCase().includes(q) ||
+      a.name && a.name.toLowerCase().includes(q)
     ).slice(0,8);
   }
   function showAutocomplete(input, listEl) {
@@ -310,10 +304,11 @@
 
   // Compute and show results
   function computeResults() {
+    if (!dataLoaded) return; // wait for data!
     const oVal = document.getElementById('origin').value.trim().toUpperCase();
     const dVal = document.getElementById('destination').value.trim().toUpperCase();
-    const o = airportList.find(a=>a.code===oVal || a.city.toUpperCase()===oVal);
-    const d = airportList.find(a=>a.code===dVal || a.city.toUpperCase()===dVal);
+    const o = airportList.find(a=>a.code && a.code.toUpperCase()===oVal || a.city && a.city.toUpperCase()===oVal);
+    const d = airportList.find(a=>a.code && a.code.toUpperCase()===dVal || a.city && a.city.toUpperCase()===dVal);
     const status = document.getElementById('status');
     if(!o || !d) {
       status.textContent = "Please select valid airports or cities from the list.";
@@ -344,7 +339,7 @@
   document.getElementById('origin').addEventListener('change', computeResults);
   document.getElementById('destination').addEventListener('change', computeResults);
 
-  // Pre-fill from URL
+  // Pre-fill from URL (wait for data)
   function prefillFromURL() {
     const params = new URLSearchParams(window.location.search);
     let from = params.get('from');
@@ -353,7 +348,7 @@
     if(to) document.getElementById('destination').value = to;
     if(from && to) computeResults();
   }
-  prefillFromURL();
+  dataLoadPromise.then(prefillFromURL);
 
   // Minimal map (Leaflet)
   function drawMap(lat1, lon1, lat2, lon2) {
