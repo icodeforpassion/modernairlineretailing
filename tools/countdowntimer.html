@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam 30-Second Interval Timer</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #f0f4f8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+    h1#countdown {
+        font-size: 8rem;
+        margin: 20px 0;
+        transition: color 0.5s;
+    }
+    .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    input[type="number"] {
+        padding: 10px;
+        font-size: 1.2rem;
+        width: 150px;
+        text-align: center;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        transition: background 0.3s, color 0.3s;
+    }
+    button:hover { opacity: 0.9; }
+    .start-btn { background: #28a745; color: white; }
+    .reset-btn { background: #dc3545; color: white; }
+
+    .status {
+        font-size: 3rem;
+        margin-top: 20px;
+        font-weight: bold;
+    }
+    .status div {
+        margin: 10px 0;
+    }
+</style>
+</head>
+<body>
+
+<div class="controls">
+    <input type="number" id="totalMinutes" placeholder="Total minutes" value="180" min="1">
+    <button class="start-btn" onclick="startTimer()">Start</button>
+    <button class="reset-btn" onclick="resetTimer()">Reset</button>
+</div>
+
+<h1 id="countdown">0</h1>
+
+<div class="status">
+    <div>Total Elapsed: <span id="elapsed">0</span> min</div>
+    <div>Remaining: <span id="remaining">0</span> min</div>
+</div>
+
+<script>
+let interval;
+let secondsCounter = 0;
+let totalElapsed = 0;
+let totalMinutes = 180;
+let running = false;
+
+// DOM elements
+const countdownEl = document.getElementById('countdown');
+const elapsedEl = document.getElementById('elapsed');
+const remainingEl = document.getElementById('remaining');
+const totalMinutesInput = document.getElementById('totalMinutes');
+
+function updateDisplay() {
+    countdownEl.textContent = secondsCounter + 1;
+
+    if(secondsCounter < 10){
+        countdownEl.style.color = '#28a745'; // Green
+    } else if(secondsCounter < 25){
+        countdownEl.style.color = '#ffc107'; // Amber
+    } else {
+        countdownEl.style.color = '#dc3545'; // Red
+    }
+
+    elapsedEl.textContent = totalElapsed.toFixed(1);
+    remainingEl.textContent = (totalMinutes - totalElapsed).toFixed(1);
+}
+
+// Save state to localStorage
+function saveState() {
+    localStorage.setItem('timerData', JSON.stringify({
+        startTime: Date.now(),
+        totalElapsed,
+        totalMinutes
+    }));
+}
+
+// Load state from localStorage
+function loadState() {
+    const data = JSON.parse(localStorage.getItem('timerData'));
+    if(data){
+        totalElapsed = data.totalElapsed;
+        totalMinutes = data.totalMinutes;
+        // Calculate seconds passed since last save
+        const elapsedSince = (Date.now() - data.startTime) / 1000; // in seconds
+        const fullIntervals = Math.floor(elapsedSince / 30);
+        totalElapsed += 0.5 * fullIntervals;
+        secondsCounter = Math.floor(elapsedSince % 30);
+        if(totalElapsed >= totalMinutes){
+            totalElapsed = totalMinutes;
+            secondsCounter = 0;
+            running = false;
+        }
+        updateDisplay();
+        return true;
+    }
+    return false;
+}
+
+function startTimer() {
+    if(running) return;
+    totalMinutes = parseInt(totalMinutesInput.value) || 180;
+    running = true;
+
+    // Save initial state
+    saveState();
+
+    interval = setInterval(() => {
+        secondsCounter++;
+        if(secondsCounter > 30){
+            secondsCounter = 1;
+            totalElapsed += 0.5; // 30 seconds = 0.5 min
+            saveState();
+        }
+        if(totalElapsed >= totalMinutes){
+            clearInterval(interval);
+            countdownEl.textContent = "Done!";
+            countdownEl.style.color = '#000';
+            running = false;
+            return;
+        }
+        updateDisplay();
+    }, 1000);
+}
+
+function resetTimer() {
+    clearInterval(interval);
+    secondsCounter = 0;
+    totalElapsed = 0;
+    running = false;
+    localStorage.removeItem('timerData');
+    updateDisplay();
+}
+
+function resetTimer() {
+    if(confirm("Warning: Resetting will erase this session and there is no way to come back. Do you want to proceed?")) {
+        clearInterval(interval);
+        secondsCounter = 0;
+        totalElapsed = 0;
+        running = false;
+        localStorage.removeItem('timerData');
+        updateDisplay();
+    }
+}
+
+// Load previous state if page refreshed
+loadState();
+updateDisplay();
+</script>
+
+</body>
+</html>
