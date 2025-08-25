@@ -1,819 +1,387 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Great Circle Distance Calculator | Airline Routing & Flight Planning Tool</title>
+  <title>Great Circle Distance Calculator | Flight Distance Between Airports or Cities</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Instantly compute great circle (orthodromic) distance, nautical miles, bearings and midpoint between any two IATA airport codes. Visualize the geodesic path on an interactive map for airline planning and aviation analysis.">
+  <meta name="description" content="Calculate great circle flight distance, bearings, midpoint, and map between any two airports or cities. Type a city or airport name and get instant results.">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#0d1b2a">
-  <meta property="og:title" content="Great Circle Distance Calculator">
-  <meta property="og:description" content="Compute great circle, nautical mile distance and bearings between airports. Visual map + midpoint + shareable link.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://your-domain.example/tools/great-circle.html">
-  <meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Great Circle Distance Calculator">
-  <meta name="twitter:description" content="Instant airline routing distances, bearings, midpoint and map arc.">
-  <meta name="twitter:image" content="https://your-domain.example/assets/og-banner.jpg">
-  <link rel="canonical" href="https://your-domain.example/tools/great-circle.html">
-
+  <meta property="og:title" content="Great Circle Distance Calculator | Flight Distance Between Airports or Cities"/>
+  <meta property="og:description" content="Calculate flight distance and bearings between any two airports or cities. Autocomplete, map, and instant results."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://your-domain.example/tools/great-circle.html"/>
+  <meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Great Circle Distance Calculator | Flight Distance Between Airports or Cities"/>
+  <meta name="twitter:description" content="Calculate flight distance and bearings between any two airports or cities. Autocomplete, map, and instant results."/>
+  <meta name="twitter:image" content="https://your-domain.example/assets/og-banner.jpg"/>
+  <link rel="canonical" href="https://your-domain.example/tools/great-circle.html"/>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {
+        "@type":"Question",
+        "name":"How do I find the flight distance between two cities or airports?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"Type either airport codes or city names and select from suggestions. The tool will instantly compute the great circle distance, bearings, midpoint, and show the route on a map."
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"Can I use city names instead of IATA codes?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"Yes, just start typing a city or airport name. The tool will suggest the nearest matching airports."
+        }
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       --clr-bg:#0d1b2a;
       --clr-bg-alt:#132235;
       --clr-surface:#1f3145;
-      --clr-surface-glass:rgba(31,49,69,.55);
-      --clr-border:#2f4a63;
       --clr-accent:#3298dc;
       --clr-accent-alt:#4fb1f5;
       --clr-text:#e8f0f7;
       --clr-text-dim:#9fb3c5;
       --radius:14px;
-      --transition:.28s cubic-bezier(.4,.2,.2,1);
-      --shadow-1:0 2px 6px -1px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.02) inset;
-      --shadow-2:0 8px 26px -6px rgba(0,0,0,.55);
+      --transition:.24s cubic-bezier(.4,.2,.2,1);
       --focus-ring:0 0 0 3px rgba(50,152,220,.5);
     }
-    html { scroll-behavior:smooth; background:var(--clr-bg); }
+    html { background:var(--clr-bg);}
     body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif; background:var(--clr-bg); color:var(--clr-text); }
-
-    .navbar.is-dark {
-      background: linear-gradient(to right,#0d1b2a,#142a40);
-      backdrop-filter:blur(4px);
-      border-bottom:1px solid var(--clr-border);
-    }
-    .navbar a.navbar-item, .navbar a.navbar-link { color:var(--clr-text-dim); }
-    .navbar a.navbar-item:hover, .navbar a.navbar-link:hover { color:var(--clr-text); background:transparent; }
-
-    main { padding-top:6.2rem; padding-bottom:4rem; background:linear-gradient(to bottom,var(--clr-bg),var(--clr-bg-alt)); min-height:100vh; }
-
-    .page-head {
-      max-width:1000px; margin:0 auto 2.75rem; padding:0 1.2rem; text-align:center;
-    }
-    .page-head h1 {
-      font-size: clamp(2.15rem, 5vw, 3.2rem);
-      margin:.2rem 0 .8rem;
-      font-weight:700;
-      letter-spacing:.6px;
-      background:linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);
-      -webkit-background-clip:text;
-      color:transparent;
-    }
-    .page-head p.lede {
-      font-size:1.05rem;
-      line-height:1.5;
-      color:var(--clr-text-dim);
-      max-width:760px;
-      margin:0 auto 1rem;
-    }
-    .tool-grid {
-      max-width:1300px;
-      margin:0 auto;
-      padding:0 1.2rem;
-      display:grid;
-      grid-template-columns: 400px 1fr;
-      gap:2.2rem;
-    }
-    @media (max-width:1100px){ .tool-grid { grid-template-columns: 1fr; } }
-
-    .card-glass {
-      background:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
-      border:1px solid rgba(255,255,255,.08);
+    main { max-width:900px; margin:auto; padding:3rem 1rem 2rem 1rem;}
+    h1 { font-size:2.2rem; margin-bottom:0.5rem; text-align:center;}
+    .form-box {
+      background:var(--clr-surface);
       border-radius:var(--radius);
-      box-shadow:var(--shadow-1);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      position:relative;
-      overflow:hidden;
-      transition:var(--transition);
+      box-shadow:0 2px 12px rgba(0,0,0,.13);
+      padding:2rem 1.5rem 1.5rem 1.5rem;
+      margin-bottom:2rem;
     }
-    .card-glass:hover { border-color:var(--clr-accent-alt); box-shadow:var(--shadow-2); }
-
-    .pane { padding:1.7rem 1.6rem 2.2rem; }
-
-    .fieldset {
-      display:flex;
-      flex-direction:column;
-      gap:1.25rem;
+    .form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+    .input-group {
+      flex:1 1 220px; position:relative;
+      display: flex; flex-direction:column;
     }
-    .input-row {
-      position:relative;
+    label {
+      font-size:.95em; font-weight:600; margin-bottom:0.3em; color:var(--clr-text-dim);
     }
-    .input-row label {
-      font-size:.68rem;
-      font-weight:600;
-      letter-spacing:.55px;
-      text-transform:uppercase;
-      color:var(--clr-text-dim);
-      margin-bottom:.45rem;
-      display:block;
+    input[type="text"] {
+      width:100%; font-size:1.1em; padding:.8em 1em;
+      border-radius:8px; border:1px solid var(--clr-accent-alt);
+      background:rgba(255,255,255,.07); color:var(--clr-text);
+      transition:box-shadow .18s,border-color .18s;
     }
-    .code-input {
-      width:100%;
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.18);
-      padding:.85rem 3.2rem .85rem 1rem;
-      border-radius:999px;
-      color:var(--clr-text);
-      font-size:1.15rem;
-      font-weight:600;
-      letter-spacing:2px;
-      text-transform:uppercase;
-      font-family:monospace;
-      transition:var(--transition);
-    }
-    .code-input:focus { outline:none; box-shadow:var(--focus-ring); border-color:var(--clr-accent-alt); background:rgba(255,255,255,.12); }
+    input[type="text"]:focus { outline:none; box-shadow:var(--focus-ring); border-color:var(--clr-accent);}
     .swap-btn {
-      position:absolute; right:.55rem; top:50%; transform:translateY(-50%);
-      background:rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.2);
-      backdrop-filter:blur(6px);
-      color:var(--clr-text-dim);
-      width:42px; height:42px;
-      border-radius:50%;
-      cursor:pointer;
-      display:inline-flex; align-items:center; justify-content:center;
-      font-size:1.05rem;
-      transition:var(--transition);
+  background: var(--clr-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  margin-bottom: 0.3em;
+  margin-top: 1.7em;
+  transition: background .15s;
+}
+.swap-btn:hover { background: var(--clr-accent-alt);}
+@media (max-width: 700px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+}
+    .autocomplete-list {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--clr-bg-alt); color:var(--clr-text);
+      border: 1px solid var(--clr-accent-alt); border-top:none;
+      border-radius:0 0 10px 10px;
+      z-index: 100;
+      max-height: 210px; overflow-y: auto;
+      box-shadow: 0 8px 24px -8px rgba(0,0,0,.45);
+      margin-top: 2px;
     }
-    .swap-btn:hover { color:#fff; background:var(--clr-accent); border-color:var(--clr-accent); box-shadow:0 6px 18px -6px rgba(50,152,220,.55); }
-    .swap-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-
-    .status-bar {
-      margin-top:.3rem;
-      font-size:.7rem;
-      letter-spacing:.55px;
-      text-transform:uppercase;
-      font-weight:600;
-      min-height:1.05rem;
-      color:var(--clr-text-dim);
+    .autocomplete-item {
+      padding: 0.7em 1em; cursor: pointer; font-size:1em; border-bottom:1px solid var(--clr-surface);
     }
-    .status-bar.error { color:#ff9393; }
-
-    .metrics {
-      margin-top:1.8rem;
-      display:grid;
-      gap:1.2rem;
+    .autocomplete-item:last-child { border-bottom:none;}
+    .autocomplete-item:hover, .autocomplete-item.active {
+      background: var(--clr-accent-alt); color: #082032;
     }
-    .metric {
-      background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.09);
-      padding:1rem 1.05rem 1.05rem;
-      border-radius:calc(var(--radius) - 6px);
-      display:flex;
-      flex-direction:column;
-      gap:.4rem;
-      position:relative;
+    .results-box {
+      background:var(--clr-bg-alt); border-radius:var(--radius); padding:1.5rem 1.2rem; margin-bottom:2rem;
+      box-shadow:0 2px 10px rgba(0,0,0,.10);
     }
-    .metric h3 {
-      font-size:.62rem;
-      letter-spacing:.55px;
-      text-transform:uppercase;
-      font-weight:700;
-      color:var(--clr-text-dim);
-      margin:0;
+    .metrics { display: grid; gap:1.2rem;}
+    .metric { background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.09); padding:1rem 1.05rem; border-radius:10px;}
+    .metric h3 { font-size:.9em; font-weight:700; color:var(--clr-text-dim); margin:0 0 .2em 0;}
+    .metric .value { font-size:1.1em; font-weight:600; color:#fff;}
+    #map { width:100%; height:350px; border-radius:10px; margin-top:1.3em; border:1px solid var(--clr-accent-alt);}
+    .status-bar { margin-top:.4em; font-size:.95em; color:var(--clr-accent-alt);}
+    @media (max-width:700px){
+      main {padding:1.4rem 0.4rem;}
+      .form-row {flex-direction:column;}
+      .swap-btn {margin-top:0.6em;}
     }
-    .metric .value {
-      font-size:1.05rem;
-      font-weight:600;
-      letter-spacing:.4px;
-      color:#fff;
-      line-height:1.2;
-      word-break:break-word;
-    }
-    .mid-note { font-size:.65rem; color:var(--clr-text-dim); }
-
-    .unit-toggle {
-      display:flex;
-      gap:.5rem;
-      margin-top:.4rem;
-      flex-wrap:wrap;
-    }
-    .unit-toggle button {
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.18);
-      color:var(--clr-text-dim);
-      padding:.45rem .8rem;
-      font-size:.65rem;
-      letter-spacing:.5px;
-      font-weight:600;
-      text-transform:uppercase;
-      border-radius:.55rem;
-      cursor:pointer;
-      transition:var(--transition);
-    }
-    .unit-toggle button.active,
-    .unit-toggle button:hover {
-      background:var(--clr-accent-alt);
-      color:#082032;
-      border-color:var(--clr-accent-alt);
-      box-shadow:0 4px 14px -4px rgba(79,177,245,.6);
-    }
-    .unit-toggle button:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-
-    /* MAP */
-    .map-pane { padding:0; display:flex; flex-direction:column; }
-    #map {
-      height:560px;
-      width:100%;
-      border-radius:var(--radius);
-      border:1px solid rgba(255,255,255,.14);
-      overflow:hidden;
-    }
-    @media (max-width:700px){ #map { height:460px; } }
-
-    .map-toolbar {
-      display:flex;
-      gap:.65rem;
-      flex-wrap:wrap;
-      padding:1rem 1.1rem .8rem;
-    }
-    .pill {
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.15);
-      color:var(--clr-text-dim);
-      padding:.5rem .85rem;
-      font-size:.7rem;
-      letter-spacing:.5px;
-      border-radius:999px;
-      display:inline-flex;
-      align-items:center;
-      gap:.4rem;
-      font-weight:600;
-      text-transform:uppercase;
-      cursor:default;
-    }
-    .share-btn {
-      cursor:pointer;
-      background:linear-gradient(135deg,var(--clr-accent) 0%,var(--clr-accent-alt) 100%);
-      color:#fff;
-      border:none;
-      font-size:.7rem;
-      padding:.55rem .95rem;
-      border-radius:999px;
-      font-weight:600;
-      letter-spacing:.5px;
-      display:inline-flex;
-      align-items:center;
-      gap:.4rem;
-      box-shadow:0 6px 18px -4px rgba(50,152,220,.55),0 2px 4px -1px rgba(0,0,0,.55);
-      transition:var(--transition);
-    }
-    .share-btn:hover { transform:translateY(-3px); box-shadow:0 10px 28px -6px rgba(50,152,220,.6),0 3px 6px -2px rgba(0,0,0,.55); }
-    .share-btn:active { transform:translateY(-1px); }
-    .share-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-    .share-btn.copied { background:linear-gradient(135deg,#3bb273,#66d69b); }
-
-    /* Explanation section */
-    .explain {
-      max-width:1000px;
-      margin:3.5rem auto 0;
-      padding:0 1.2rem 2.5rem;
-      line-height:1.55;
-      color:var(--clr-text-dim);
-      font-size:.92rem;
-    }
-    .explain h2 {
-      font-size:1.4rem;
-      margin:2.2rem 0 .8rem;
-      background:linear-gradient(90deg,#fff,#c6d9e8 40%,#82bfe7);
-      -webkit-background-clip:text;
-      color:transparent;
-      font-weight:600;
-      letter-spacing:.4px;
-    }
-    a.inline-link { color:var(--clr-accent-alt); text-decoration:none; }
-    a.inline-link:hover { color:#fff; }
-
-    /* Focus / a11y */
-    a:focus-visible, button:focus-visible, input:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-
-    @media (prefers-reduced-motion:reduce){
-      .card-glass,.swap-btn,.share-btn,.unit-toggle button { transition:none!important; transform:none!important; }
-    }
+    .popular-links { margin-top:1.4em; text-align:center;}
+    .popular-links a { color:var(--clr-accent-alt); margin:0 0.6em; text-decoration:underline;}
   </style>
 </head>
 <body>
-  <!-- (Optional) Include your global navbar here -->
-  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">Modern Airline Retailing</a>
-        <button class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
-          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </button>
-      </div>
-      <div id="navMenu" class="navbar-menu">
-        <div class="navbar-start">
-          <a class="navbar-item" href="/index.html">Home</a>
-          <a class="navbar-item" href="/blog/">Blog</a>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link" href="/tools/">Tools</a>
-            <div class="navbar-dropdown">
-              <a class="navbar-item is-active" aria-current="page" href="/tools/great-circle.html">Great Circle Distance</a>
-              <a class="navbar-item" href="/tools/airport-lookup.html">Airport / City Lookup</a>
-            </div>
+  <main>
+    <h1>Great Circle Distance Calculator</h1>
+    <div class="form-box">
+      <form id="gcForm" autocomplete="off" spellcheck="false">
+        <div class="form-row">
+          <div class="input-group">
+            <label for="origin">Origin (City or Airport)</label>
+            <input id="origin" type="text" maxlength="40" placeholder="e.g. London or LHR" autocomplete="off">
+            <div class="autocomplete-list" id="origin-autocomplete" style="display:none;"></div>
           </div>
-          <a class="navbar-item" href="/about.html">About Me</a>
+          <button type="button" class="swap-btn" id="swapBtn" title="Swap origin & destination" aria-label="Swap origin and destination">⇅</button>
+          <div class="input-group">
+            <label for="destination">Destination (City or Airport)</label>
+            <input id="destination" type="text" maxlength="40" placeholder="e.g. Dubai or DXB" autocomplete="off">
+            <div class="autocomplete-list" id="destination-autocomplete" style="display:none;"></div>
+          </div>
         </div>
+        <div class="status-bar" id="status" role="status" aria-live="polite"></div>
+      </form>
+      <div class="popular-links">
+        <span>Popular:</span>
+        <a href="?from=london&to=dubai">London to Dubai</a>
+        <a href="?from=trivandrum&to=dubai">Trivandrum to Dubai</a>
+        <a href="?from=new+york&to=paris">New York to Paris</a>
       </div>
     </div>
-  </nav>
 
-  <main>
-    <header class="page-head">
-      <h1>Great Circle Distance Calculator</h1>
-      <p class="lede">
-        Enter any two IATA airport codes. Once both codes are valid, we instantly compute orthodromic (great circle) distance,
-        nautical miles, initial & final bearings, midpoint, and draw the true geodesic path on an interactive map. Ideal for airline network,
-        flight planning, and route analytics.
-      </p>
-    </header>
-
-    <section class="tool-grid">
-      <!-- Left control panel -->
-      <div class="card-glass pane" id="controlPane">
-        <form id="gcForm" autocomplete="off" spellcheck="false">
-          <div class="fieldset">
-            <div class="input-row">
-              <label for="origin">Origin (IATA)</label>
-              <input id="origin" class="code-input" maxlength="3" placeholder="e.g. LHR" aria-describedby="status" inputmode="latin" pattern="[A-Za-z]{3}">
-              <button type="button" class="swap-btn" id="swapBtn" title="Swap origin & destination" aria-label="Swap origin and destination">⇅</button>
-            </div>
-            <div class="input-row">
-              <label for="destination">Destination (IATA)</label>
-              <input id="destination" class="code-input" maxlength="3" placeholder="e.g. JFK" aria-describedby="status" inputmode="latin" pattern="[A-Za-z]{3}">
-            </div>
-          </div>
-          <div class="status-bar" id="status" role="status" aria-live="polite"></div>
-        </form>
-
-        <div class="metrics" id="metrics" hidden>
-          <div class="metric">
-            <h3>Great Circle Distance</h3>
-            <div class="value" id="distMain">—</div>
-            <div class="unit-toggle" id="unitToggle">
-              <button type="button" data-unit="km" class="active">KM</button>
-              <button type="button" data-unit="nm">NM</button>
-              <button type="button" data-unit="mi">MI</button>
-            </div>
-          </div>
-          <div class="metric">
-            <h3>Initial / Final Bearings</h3>
-            <div class="value"><span id="bearInit">—</span> → <span id="bearFinal">—</span></div>
-            <div class="mid-note">Degrees true (forward / reverse path)</div>
-          </div>
-            <div class="metric">
-            <h3>Midpoint</h3>
-            <div class="value" id="midpoint">—</div>
-            <div class="mid-note">Great circle midpoint (approx; not equal time)</div>
-          </div>
-          <div class="metric">
-            <h3>Approx Flight Time</h3>
-            <div class="value" id="flightTime">—</div>
-            <div class="mid-note">Assumes 450 kt average cruise TAS</div>
-          </div>
+    <div class="results-box" id="results" style="display:none;">
+      <div class="metrics">
+        <div class="metric">
+          <h3>Great Circle Distance</h3>
+          <div class="value" id="distMain">—</div>
+        </div>
+        <div class="metric">
+          <h3>Initial / Final Bearings</h3>
+          <div class="value"><span id="bearInit">—</span> → <span id="bearFinal">—</span></div>
+        </div>
+        <div class="metric">
+          <h3>Midpoint</h3>
+          <div class="value" id="midpoint">—</div>
+        </div>
+        <div class="metric">
+          <h3>Approx Flight Time</h3>
+          <div class="value" id="flightTime">—</div>
         </div>
       </div>
-
-      <!-- Map -->
-      <div class="card-glass map-pane" id="mapCard">
-        <div class="map-toolbar">
-          <div class="pill" id="routeLabel">Route: —</div>
-          <div class="pill" id="shortSummary">Distance: —</div>
-          <button type="button" class="share-btn" id="shareBtn" title="Copy shareable link">Share</button>
-        </div>
-        <div id="map" aria-label="Great circle route map"></div>
-      </div>
-    </section>
-
-    <article class="explain">
-      <h2>What Is a Great Circle Distance?</h2>
-      <p>
-        On a sphere (or the WGS‑84 ellipsoid approximation we use for aviation), the shortest path between two surface points
-        is a segment of a great circle—an “orthodrome.” Airlines follow great circle tracks modified by winds, airspace,
-        and operational constraints. This calculator uses the haversine-based central angle and a high‑resolution spherical
-        interpolation to render the geodesic.
-      </p>
-
-      <h2>Why It Matters in Modern Airline Retailing</h2>
-      <p>
-        Accurate distance is foundational for pricing, carbon metrics, block time estimation, pro‑rata proration, and order
-        offer construction. While filed distances or MPMs (Maximum Permitted Miles) still appear in legacy flows, modern retailing
-        pipelines benefit from precise computation plus context (e.g. stage length bands, fleet assignment envelope).
-      </p>
-
-      <h2>Included Metrics</h2>
-      <ul>
-        <li><strong>Great Circle Distance:</strong> Base orthodromic length in kilometers, nautical miles, and statute miles.</li>
-        <li><strong>Initial / Final Bearings:</strong> Course to set on departure and reciprocal course approaching destination.</li>
-        <li><strong>Midpoint:</strong> Geographic midpoint along the arc (not an equal‑time point unless winds are zero and groundspeed constant).</li>
-        <li><strong>Approximate Flight Time:</strong> A quick estimate at 450 kt cruise (adjust mentally for aircraft type and winds).</li>
-      </ul>
-
-      <h2>Sharing & Deep Links</h2>
-      <p>
-        Every computed route can be shared with a URL parameter (e.g. <code>?orig=LHR&amp;dest=JFK</code>). Use the Share button to copy it.
-      </p>
-
-      <p style="margin-top:2rem;font-size:.75rem;color:var(--clr-text-dim);">
-        Distances are spherical (R=6371.0088 km). For ultra‑long routes, ellipsoidal inverse solutions (e.g. Vincenty) can differ slightly.
-        Always verify against operational flight planning systems for dispatch or safety‑critical use.
-      </p>
-    </article>
+      <div id="map" aria-label="Great circle route map"></div>
+    </div>
   </main>
+  <script>
+  // ---- UI/Autocomplete/Results Logic ----
 
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"SoftwareApplication",
-    "name":"Great Circle Distance Calculator",
-    "applicationCategory":"AviationTool",
-    "operatingSystem":"Any",
-    "description":"Compute great circle distance, nautical miles, bearings, midpoint and visualize the geodesic arc between two IATA airport codes.",
-    "url":"https://your-domain.example/tools/great-circle.html"
+  // Mock airports data for demo, replace with real AJAX load!
+  const airportList = [
+    {code:"LHR",city:"London",name:"Heathrow",country:"UK",lat:51.4706,lon:-0.4619},
+    {code:"DXB",city:"Dubai",name:"Dubai International",country:"UAE",lat:25.2532,lon:55.3657},
+    {code:"TRV",city:"Trivandrum",name:"Trivandrum Intl",country:"India",lat:8.4821,lon:76.9207},
+    {code:"JFK",city:"New York",name:"JFK Intl",country:"USA",lat:40.6413,lon:-73.7781},
+    {code:"CDG",city:"Paris",name:"Charles de Gaulle",country:"France",lat:49.0097,lon:2.5479},
+    // ... add more for full autocomplete
+  ];
+  function findAirports(q) {
+    q = q.trim().toLowerCase();
+    if(!q) return [];
+    // Match by code, city, name
+    return airportList.filter(a=>
+      a.code.toLowerCase().startsWith(q) ||
+      a.city.toLowerCase().includes(q) ||
+      a.name.toLowerCase().includes(q)
+    ).slice(0,8);
   }
-  </script>
-
-  <!-- Leaflet CSS will be injected dynamically; we still can provide a fallback preconnect -->
-  <script>
-    // Basic navbar burger for mobile
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const burger = document.querySelector('.navbar-burger');
-      const menu = document.getElementById('navMenu');
-      if(burger){
-        burger.addEventListener('click', () => {
-          burger.classList.toggle('is-active');
-          menu.classList.toggle('is-active');
-          burger.setAttribute('aria-expanded', burger.classList.contains('is-active'));
-        });
-      }
+  function showAutocomplete(input, listEl) {
+    const val = input.value;
+    const matches = findAirports(val);
+    if(matches.length === 0) { listEl.style.display='none'; return; }
+    listEl.innerHTML = matches.map(a=>`
+      <div class="autocomplete-item" data-code="${a.code}">
+        <span><strong>${a.code}</strong> - ${a.city}, ${a.country}</span>
+      </div>
+    `).join('');
+    listEl.style.display = 'block';
+    Array.from(listEl.children).forEach(item=>{
+      item.onclick = ()=>{
+        input.value = item.dataset.code;
+        listEl.style.display='none';
+        computeResults();
+      };
     });
-  </script>
+  }
+  document.getElementById('origin').addEventListener('input', function(){
+    showAutocomplete(this, document.getElementById('origin-autocomplete'));
+  });
+  document.getElementById('destination').addEventListener('input', function(){
+    showAutocomplete(this, document.getElementById('destination-autocomplete'));
+  });
 
-  <script>
-  (function(){
-    'use strict';
+  // Hide autocomplete on blur
+  document.getElementById('origin').addEventListener('blur', function(){
+    setTimeout(()=>document.getElementById('origin-autocomplete').style.display='none',120);
+  });
+  document.getElementById('destination').addEventListener('blur', function(){
+    setTimeout(()=>document.getElementById('destination-autocomplete').style.display='none',120);
+  });
 
-    // ---- DOM Elements ----
-    const originInput = document.getElementById('origin');
-    const destInput   = document.getElementById('destination');
-    const statusEl    = document.getElementById('status');
-    const metricsBox  = document.getElementById('metrics');
-    const distMain    = document.getElementById('distMain');
-    const bearInitEl  = document.getElementById('bearInit');
-    const bearFinalEl = document.getElementById('bearFinal');
-    const midEl       = document.getElementById('midpoint');
-    const flightTimeEl= document.getElementById('flightTime');
-    const unitToggle  = document.getElementById('unitToggle');
-    const routeLabel  = document.getElementById('routeLabel');
-    const shortSummary= document.getElementById('shortSummary');
-    const shareBtn    = document.getElementById('shareBtn');
-    const swapBtn     = document.getElementById('swapBtn');
+  // Swap button logic
+  document.getElementById('swapBtn').onclick = function() {
+    const o = document.getElementById('origin').value;
+    const d = document.getElementById('destination').value;
+    document.getElementById('origin').value = d;
+    document.getElementById('destination').value = o;
+    computeResults();
+  };
 
-    // ---- Data ----
-    const DATA_URL = 'airports.json'; // relative to /tools/
-    let airports = null; // object keyed by code OR we normalize
-    let airportCache = {}; // code -> {lat,lon,city,name,country}
-    let map, markersLayer, arcLayer;
-    let currentDistKm = null;
-    let currentUnit = 'km';
+  // Haversine and bearing calculations
+  function toRad(d){ return d * Math.PI / 180; }
+  function toDeg(r){ return r * 180 / Math.PI; }
+  function haversineKm(lat1, lon1, lat2, lon2){
+    const R = 6371.0088;
+    const dLat = toRad(lat2-lat1);
+    const dLon = toRad(lon2-lon1);
+    const a = Math.sin(dLat/2)**2 +
+      Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+  function initialBearing(lat1, lon1, lat2, lon2){
+    const φ1=toRad(lat1), φ2=toRad(lat2);
+    const Δλ=toRad(lon2-lon1);
+    const y = Math.sin(Δλ)*Math.cos(φ2);
+    const x = Math.cos(φ1)*Math.sin(φ2) -
+              Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+    return (toDeg(Math.atan2(y,x)) + 360) % 360;
+  }
+  function finalBearing(lat1, lon1, lat2, lon2){
+    const br = initialBearing(lat2, lon2, lat1, lon1);
+    return (br + 180) % 360;
+  }
+  function midpoint(lat1, lon1, lat2, lon2){
+    const φ1=toRad(lat1), λ1=toRad(lon1), φ2=toRad(lat2), Δλ=toRad(lon2-lon1);
+    const Bx = Math.cos(φ2)*Math.cos(Δλ);
+    const By = Math.cos(φ2)*Math.sin(Δλ);
+    const φ3 = Math.atan2(
+      Math.sin(φ1)+Math.sin(φ2),
+      Math.sqrt( (Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx) + By*By )
+    );
+    const λ3 = λ1 + Math.atan2(By, Math.cos(φ1)+Bx);
+    return { lat: toDeg(φ3), lon: ((toDeg(λ3)+540)%360)-180 };
+  }
+  function formatBearing(b){ return b==null ? '—' : b.toFixed(1)+'°'; }
+  function formatDistance(km){
+    if(km == null) return '—';
+    return km.toFixed(2)+' km';
+  }
+  function formatFlightTime(km){
+    if(km == null) return '—';
+    const nm = km * 0.5399568;
+    const hours = nm / 450;
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h)*60);
+    return `${h}h ${String(m).padStart(2,'0')}m`;
+  }
 
-    // ---- Constants ----
-    const RADIUS_KM = 6371.0088; // mean Earth radius
-    const KNOT_PER_KM = 0.5399568;
-    const MI_PER_KM = 0.6213712;
-    const AVG_CRUISE_KT = 450;
-
-    // ---- Utility Functions ----
-    function up3(v){ return (v||'').trim().toUpperCase().replace(/[^A-Z]/g,'').slice(0,3); }
-    function setStatus(msg, isErr=false){
-      statusEl.textContent = msg;
-      statusEl.className = isErr ? 'status-bar error' : 'status-bar';
+  // Compute and show results
+  function computeResults() {
+    const oVal = document.getElementById('origin').value.trim().toUpperCase();
+    const dVal = document.getElementById('destination').value.trim().toUpperCase();
+    const o = airportList.find(a=>a.code===oVal || a.city.toUpperCase()===oVal);
+    const d = airportList.find(a=>a.code===dVal || a.city.toUpperCase()===dVal);
+    const status = document.getElementById('status');
+    if(!o || !d) {
+      status.textContent = "Please select valid airports or cities from the list.";
+      document.getElementById('results').style.display='none';
+      return;
     }
-    function loadAirports(){
-      if(airports) return Promise.resolve();
-      return fetch(DATA_URL, {cache:'no-store'})
-        .then(r=>{
-          if(!r.ok) throw new Error('HTTP '+r.status);
-          return r.json();
-        })
-        .then(json=>{
-          // Accept object keyed by code or array
-          if(Array.isArray(json)){
-            json.forEach(a=>{
-              if(a.code) airportCache[a.code.toUpperCase()] = a;
-            });
-          } else {
-            Object.keys(json).forEach(k=>{
-              const a = json[k]; a.code = a.code || k;
-              airportCache[k.toUpperCase()] = a;
-            });
-          }
-          airports = airportCache;
-          setStatus('Enter two IATA codes.');
-        })
-        .catch(e=>{
-          setStatus('Failed to load airports: '+e.message,true);
-        });
+    if(o.code === d.code) {
+      status.textContent = "Origin and destination are the same.";
+      document.getElementById('results').style.display='none';
+      return;
     }
+    status.textContent = "";
+    // Calculate
+    const distKm = haversineKm(o.lat, o.lon, d.lat, d.lon);
+    const ib = initialBearing(o.lat, o.lon, d.lat, d.lon);
+    const fb = finalBearing(o.lat, o.lon, d.lat, d.lon);
+    const mid = midpoint(o.lat, o.lon, d.lat, d.lon);
+    document.getElementById('distMain').textContent = formatDistance(distKm);
+    document.getElementById('bearInit').textContent = formatBearing(ib);
+    document.getElementById('bearFinal').textContent = formatBearing(fb);
+    document.getElementById('midpoint').textContent = mid.lat.toFixed(3)+', '+mid.lon.toFixed(3);
+    document.getElementById('flightTime').textContent = formatFlightTime(distKm);
+    document.getElementById('results').style.display='block';
+    drawMap(o.lat, o.lon, d.lat, d.lon);
+  }
 
-    function toRad(d){ return d * Math.PI / 180; }
-    function toDeg(r){ return r * 180 / Math.PI; }
+  // Listen for changes
+  document.getElementById('origin').addEventListener('change', computeResults);
+  document.getElementById('destination').addEventListener('change', computeResults);
 
-    function haversineKm(lat1, lon1, lat2, lon2){
-      const dLat = toRad(lat2-lat1);
-      const dLon = toRad(lon2-lon1);
-      const a = Math.sin(dLat/2)**2 +
-        Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return RADIUS_KM * c;
-    }
+  // Pre-fill from URL
+  function prefillFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    let from = params.get('from');
+    let to = params.get('to');
+    if(from) document.getElementById('origin').value = from;
+    if(to) document.getElementById('destination').value = to;
+    if(from && to) computeResults();
+  }
+  prefillFromURL();
 
-    function initialBearing(lat1, lon1, lat2, lon2){
-      // Formula
-      const φ1=toRad(lat1), φ2=toRad(lat2);
-      const Δλ=toRad(lon2-lon1);
-      const y = Math.sin(Δλ)*Math.cos(φ2);
-      const x = Math.cos(φ1)*Math.sin(φ2) -
-                Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
-      return (toDeg(Math.atan2(y,x)) + 360) % 360;
-    }
-
-    function finalBearing(lat1, lon1, lat2, lon2){
-      // Final bearing is initial bearing from destination to origin, reversed
-      const br = initialBearing(lat2, lon2, lat1, lon1);
-      return (br + 180) % 360;
-    }
-
-    function midpoint(lat1, lon1, lat2, lon2){
-      // Great-circle midpoint
-      const φ1=toRad(lat1), λ1=toRad(lon1), φ2=toRad(lat2), Δλ=toRad(lon2-lon1);
-      const Bx = Math.cos(φ2)*Math.cos(Δλ);
-      const By = Math.cos(φ2)*Math.sin(Δλ);
-      const φ3 = Math.atan2(
-        Math.sin(φ1)+Math.sin(φ2),
-        Math.sqrt( (Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx) + By*By )
-      );
-      const λ3 = λ1 + Math.atan2(By, Math.cos(φ1)+Bx);
-      return { lat: toDeg(φ3), lon: ((toDeg(λ3)+540)%360)-180 };
-    }
-
-    function formatBearing(b){ return b==null ? '—' : b.toFixed(1)+'°'; }
-
-    function formatDistance(km){
-      if(km == null) return '—';
-      let value;
-      if(currentUnit==='km') value = km.toFixed(2)+' km';
-      else if(currentUnit==='nm') value = (km * KNOT_PER_KM).toFixed(2)+' NM';
-      else value = (km * MI_PER_KM).toFixed(2)+' mi';
-      return value;
-    }
-
-    function formatFlightTime(km){
-      if(km == null) return '—';
-      const nm = km * KNOT_PER_KM;
-      const hours = nm / AVG_CRUISE_KT;
-      const h = Math.floor(hours);
-      const m = Math.round((hours - h)*60);
-      return `${h}h ${String(m).padStart(2,'0')}m`;
-    }
-
-    function maybeCompute(){
-      const o = up3(originInput.value);
-      const d = up3(destInput.value);
-      originInput.value = o;
-      destInput.value = d;
-      if(o.length===3 && d.length===3){
-        if(!airports){
-          setStatus('Loading data…');
-          loadAirports().then(()=>computeRoute(o,d));
-        } else {
-          computeRoute(o,d);
-        }
-      } else {
-        setStatus('Enter two 3‑letter codes.');
-      }
-    }
-
-    function computeRoute(oCode, dCode){
-      const o = airports[oCode];
-      const d = airports[dCode];
-      if(!o || !d){
-        currentDistKm = null;
-        updateOutputs(null,null,null,null);
-        setStatus('Unknown code(s).', true);
-        clearMapArc();
-        return;
-      }
-      if(oCode === dCode){
-        currentDistKm = 0;
-        updateOutputs(0, 0, 0, {lat:o.lat, lon:o.lon});
-        drawArc(o, d, []);
-        setStatus('Same origin and destination.');
-        updateShare(oCode,dCode);
-        return;
-      }
-      const distKm = haversineKm(o.lat, o.lon, d.lat, d.lon);
-      const ib = initialBearing(o.lat, o.lon, d.lat, d.lon);
-      const fb = finalBearing(o.lat, o.lon, d.lat, d.lon);
-      const mid = midpoint(o.lat, o.lon, d.lat, d.lon);
-      currentDistKm = distKm;
-      updateOutputs(distKm, ib, fb, mid);
-      setStatus('Computed.');
-      updateShare(oCode,dCode);
-      drawArc(o, d);
-    }
-
-    function updateOutputs(distKm, ib, fb, mid){
-      metricsBox.hidden = distKm==null;
-      distMain.textContent = formatDistance(distKm);
-      bearInitEl.textContent = formatBearing(ib);
-      bearFinalEl.textContent = formatBearing(fb);
-      if(mid){
-        midEl.textContent = mid.lat.toFixed(3)+', '+mid.lon.toFixed(3);
-      } else {
-        midEl.textContent = '—';
-      }
-      flightTimeEl.textContent = formatFlightTime(distKm);
-      shortSummary.textContent = distKm==null ? 'Distance: —' : 'Distance: '+distKm.toFixed(1)+' km';
-      const oVal = up3(originInput.value); const dVal = up3(destInput.value);
-      routeLabel.textContent = 'Route: '+ (oVal && dVal ? (oVal+' → '+dVal) : '—');
-    }
-
-    function updateUnitButtons(){
-      unitToggle.querySelectorAll('button').forEach(btn=>{
-        btn.classList.toggle('active', btn.dataset.unit===currentUnit);
-      });
-      distMain.textContent = formatDistance(currentDistKm);
-    }
-
-    // ---- Map / Arc Drawing ----
-    function ensureMap(){
-      if(map) return;
-      // Lazy inject Leaflet CSS/JS
+  // Minimal map (Leaflet)
+  function drawMap(lat1, lon1, lat2, lon2) {
+    if(!window.L) {
       const link = document.createElement('link');
       link.rel='stylesheet';
       link.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
       document.head.appendChild(link);
-
       const script = document.createElement('script');
       script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.onload = initLeaflet;
+      script.onload = ()=>drawMap(lat1,lon1,lat2,lon2);
       document.head.appendChild(script);
+      return;
     }
-    function initLeaflet(){
-      map = L.map('map',{worldCopyJump:true});
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-        maxZoom:6, minZoom:1, attribution:'© OpenStreetMap'
-      }).addTo(map);
-      markersLayer = L.layerGroup().addTo(map);
-      arcLayer = L.layerGroup().addTo(map);
-      map.setView([20,0], 2);
-      // If URL had params, compute again to trigger drawing
-      const o = up3(originInput.value), d=up3(destInput.value);
-      if(o.length===3 && d.length===3 && airports) computeRoute(o,d);
-    }
-
-    function clearMapArc(){
-      if(!map) return;
-      markersLayer.clearLayers();
-      arcLayer.clearLayers();
-    }
-
-    function interpolateArc(o,d,segments=128){
-      // Spherical interpolation
-      const φ1=toRad(o.lat), λ1=toRad(o.lon);
-      const φ2=toRad(d.lat), λ2=toRad(d.lon);
-      const Δ = 2 * Math.asin(Math.sqrt(
-        Math.sin((φ2-φ1)/2)**2 +
-        Math.cos(φ1)*Math.cos(φ2)*Math.sin((λ2-λ1)/2)**2
-      ));
-      if(Δ===0) return [[o.lat,o.lon]];
-      const points=[];
-      for(let i=0;i<=segments;i++){
-        const f = i/segments;
-        const A = Math.sin((1-f)*Δ)/Math.sin(Δ);
-        const B = Math.sin(f*Δ)/Math.sin(Δ);
-        const x = A*Math.cos(φ1)*Math.cos(λ1) + B*Math.cos(φ2)*Math.cos(λ2);
-        const y = A*Math.cos(φ1)*Math.sin(λ1) + B*Math.cos(φ2)*Math.sin(λ2);
-        const z = A*Math.sin(φ1) + B*Math.sin(φ2);
-        const φi = Math.atan2(z, Math.sqrt(x*x + y*y));
-        const λi = Math.atan2(y,x);
-        points.push([toDeg(φi), ((toDeg(λi)+540)%360)-180]);
-      }
-      return splitAntimeridian(points);
-    }
-
-    function splitAntimeridian(points){
-      // Split polyline segments if jump > 180°
-      const lines = [[]];
-      for(let i=0;i<points.length;i++){
-        if(i>0){
-          const prev = points[i-1][1];
-            const cur = points[i][1];
-          const diff = Math.abs(cur - prev);
-          if(diff > 180){
-            // Start new line
-            lines.push([]);
-          }
-        }
-        lines[lines.length-1].push(points[i]);
-      }
-      return lines;
-    }
-
-    function drawArc(o,d){
-      ensureMap();
-      if(!map || !o || !d) return;
-      clearMapArc();
-      // Markers
-      const oMarker = L.marker([o.lat,o.lon],{title:o.code}).addTo(markersLayer).bindPopup(`<strong>${o.code}</strong><br>${(o.city||'')}`);
-      const dMarker = L.marker([d.lat,d.lon],{title:d.code}).addTo(markersLayer).bindPopup(`<strong>${d.code}</strong><br>${(d.city||'')}`);
-      // Arc(s)
-      const lines = interpolateArc(o,d);
-      lines.forEach(line=>{
-        L.polyline(line,{color:'#4fb1f5',weight:3,opacity:.85}).addTo(arcLayer);
-        L.polyline(line,{color:'#ffffff',weight:6,opacity:.15}).addTo(arcLayer);
-      });
-      // Fit
-      const allPts = lines.flat().map(p=>L.latLng(p[0],p[1]));
-      const bounds = L.latLngBounds(allPts);
-      map.fitBounds(bounds.pad(0.25), { animate: !window.matchMedia('(prefers-reduced-motion: reduce)').matches });
-      setTimeout(()=>{ oMarker.openPopup(); }, 400);
-    }
-
-    // ---- Share Link ----
-    function updateShare(o,d){
-      const url = new URL(window.location.href);
-      url.searchParams.set('orig', o);
-      url.searchParams.set('dest', d);
-      window.history.replaceState({}, '', url.toString());
-    }
-    function copyShare(){
-      try{
-        navigator.clipboard.writeText(window.location.href).then(()=>{
-          shareBtn.classList.add('copied');
-          shareBtn.textContent='Copied!';
-          setTimeout(()=>{
-            shareBtn.classList.remove('copied');
-            shareBtn.textContent='Share';
-          },1500);
-        });
-      }catch(e){
-        console.warn('Copy failed', e);
-      }
-    }
-
-    // ---- Events ----
-    ['input','blur','keyup'].forEach(ev=>{
-      originInput.addEventListener(ev, maybeCompute);
-      destInput.addEventListener(ev, maybeCompute);
-    });
-
-    swapBtn.addEventListener('click', ()=>{
-      const a = originInput.value;
-      originInput.value = destInput.value;
-      destInput.value = a;
-      maybeCompute();
-      originInput.focus();
-    });
-
-    unitToggle.addEventListener('click', e=>{
-      const btn = e.target.closest('button[data-unit]');
-      if(!btn) return;
-      currentUnit = btn.dataset.unit;
-      updateUnitButtons();
-    });
-
-    shareBtn.addEventListener('click', copyShare);
-
-    // ---- Init from URL ----
-    function initFromURL(){
-      const params = new URLSearchParams(window.location.search);
-      const o = up3(params.get('orig'));
-      const d = up3(params.get('dest'));
-      if(o) originInput.value = o;
-      if(d) destInput.value = d;
-      if(o.length===3 && d.length===3){
-        loadAirports().then(()=>computeRoute(o,d));
-      } else {
-        setStatus('Enter two 3‑letter codes.');
-      }
-    }
-
-    // Prefetch airport data after short idle
-    window.addEventListener('DOMContentLoaded', ()=>{
-      initFromURL();
-      // Preload map libs after slight idle to improve perceived speed
-      setTimeout(()=>ensureMap(), 600);
-    });
-
-  })();
+    if(window._map) window._map.remove();
+    window._map = L.map('map',{worldCopyJump:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:6, minZoom:1, attribution:'© OpenStreetMap'
+    }).addTo(window._map);
+    const points = [
+      [lat1,lon1],
+      [lat2,lon2]
+    ];
+    L.marker([lat1,lon1]).addTo(window._map).bindPopup("Origin");
+    L.marker([lat2,lon2]).addTo(window._map).bindPopup("Destination");
+    L.polyline(points,{color:'#4fb1f5',weight:3,opacity:.85}).addTo(window._map);
+    window._map.fitBounds([ [lat1,lon1], [lat2,lon2] ], {padding:[20,20]});
+  }
   </script>
 </body>
 </html>
