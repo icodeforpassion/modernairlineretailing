@@ -1,0 +1,1410 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vivaan Maths Practice</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <style>
+      body {font-family: Arial, sans-serif;margin:0;padding:0;background:#f5f7fa;color:#333;}
+      header {background:#4a90e2;color:#fff;padding:15px;text-align:center;font-size:1.6rem;font-weight:bold;}
+      #top-bar {display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;padding:10px;background:#eef3f9;}
+      #top-bar select, #top-bar button {padding:8px 10px;border-radius:6px;border:1px solid #bbb;font-size:0.9rem;cursor:pointer;background:#fff;}
+      #top-bar button.action {background:#4a90e2;color:#fff;border:none;}
+      #top-bar button.action:hover {background:#357ab7;}
+      #stats {font-size:0.85rem;line-height:1.2em;}
+      .container {max-width:980px;margin:15px auto 40px;padding:0 15px;}
+      .card {background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:20px;box-shadow:0 4px 10px rgba(0,0,0,0.08);position:relative;}
+      .card h2 {margin-top:0;margin-bottom:10px;font-size:1.15rem;}
+      .question {font-size:1rem;margin-bottom:12px;white-space:pre-line;}
+      .options button {display:block;width:100%;margin:6px 0;padding:10px 12px;border:none;border-radius:8px;background:#f0f0f0;font-size:0.95rem;cursor:pointer;text-align:left;transition:0.25s;}
+      .options button:hover {background:#e5e5e5;}
+      .options button.correct {background:#4CAF50;color:#fff;}
+      .options button.wrong {background:#E74C3C;color:#fff;}
+      .controls-row {display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+      .controls-row button.small {padding:6px 10px;font-size:0.75rem;background:#ddd;}
+      .controls-row button.small:hover {background:#ccc;}
+      .hint, .working {display:none;margin-top:8px;padding:8px 10px;background:#f8faff;border-left:4px solid #4a90e2;border-radius:6px;font-size:0.85rem;white-space:pre-line;}
+      .floating-timer {position:fixed;bottom:15px;right:15px;background:#4a90e2;color:#fff;padding:8px 12px;border-radius:8px;font-weight:bold;box-shadow:0 2px 6px rgba(0,0,0,0.25);z-index:100;}
+      .mistakes-tab {background:#fff8f8;border:1px solid #f5c6cb;padding:15px;border-radius:10px;}
+      .mistakes-tab h3 {margin-top:0;color:#c0392b;}
+      .reset-btn {background:#4a90e2;color:#fff;border:none;padding:10px 15px;font-size:1rem;border-radius:8px;cursor:pointer;margin-top:15px;}
+      .reset-btn:hover {background:#357ab7;}
+      #export-output {width:100%;height:150px;font-size:0.75rem;white-space:pre;display:none;margin-top:10px;}
+      .badge {display:inline-block;background:#4a90e2;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.65rem;margin-left:6px;}
+      .difficulty-indicator {font-size:0.75rem;color:#555;margin-left:4px;}
+      .section-meta {font-size:0.7rem;color:#777;margin-top:3px;}
+      .inline-score {font-size:0.7rem;color:#555;margin-left:6px;}
+      .adaptive-up {color:#2e8b57;font-weight:bold;}
+      .adaptive-down {color:#b22222;font-weight:bold;}
+      @media (max-width:640px){
+        #top-bar {flex-direction:column;align-items:stretch;}
+        .floating-timer {bottom:10px;right:10px;}
+      }
+    </style>
+  </head>
+  <body>
+    <header>Vivaan's Maths Practice</header>
+
+    <div id="top-bar">
+      <label>
+        Difficulty:
+        <select id="difficulty-select">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+          <option value="adaptive">Adaptive</option>
+        </select>
+      </label>
+      <button class="action" id="regenerate-btn">Regenerate All</button>
+      <button class="action" id="export-mistakes-btn">Export Mistakes</button>
+      <button class="action" id="export-test-btn">Export Full Test</button>
+      <button class="action" id="toggle-hints-btn">Toggle All Hints</button>
+      <button class="action" id="toggle-workings-btn">Toggle All Workings</button>
+      <button class="action" id="clear-score-btn">Clear Scores</button>
+      <div id="stats">
+        <div>Total Answered: <span id="stat-answered">0</span></div>
+        <div>Correct: <span id="stat-correct">0</span> | Accuracy: <span id="stat-accuracy">0%</span></div>
+        <div>Current Difficulty: <span id="stat-diff">Medium</span></div>
+        <div>Adaptive Trend: <span id="stat-trend">-</span></div>
+      </div>
+    </div>
+
+    <div class="container" id="cards-container">
+      <!-- Cards dynamically placed here (predefined skeleton below) -->
+
+      <!-- Template: each card already coded with fixed IDs -->
+      <!-- Original + New Sections (same as prior version) -->
+      <div class="card" id="mean-average-section">
+        <h2>Mean Average <span class="difficulty-indicator" data-diff-tag="mean-average-section"></span></h2>
+        <div class="question" id="mean-question"></div>
+        <div class="options" id="mean-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="mean-average-section">New</button>
+          <button class="small" data-hint="mean-average-section">Hint</button>
+          <button class="small" data-working="mean-average-section">Working</button>
+        </div>
+        <div class="hint" id="hint-mean-average-section"></div>
+        <div class="working" id="working-mean-average-section"></div>
+        <div class="section-meta" id="meta-mean-average-section"></div>
+      </div>
+
+      <div class="card" id="bearings-section">
+        <h2>Bearings <span class="difficulty-indicator" data-diff-tag="bearings-section"></span></h2>
+        <div class="question" id="bearings-question"></div>
+        <div class="options" id="bearings-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="bearings-section">New</button>
+          <button class="small" data-hint="bearings-section">Hint</button>
+          <button class="small" data-working="bearings-section">Working</button>
+        </div>
+        <div class="hint" id="hint-bearings-section"></div>
+        <div class="working" id="working-bearings-section"></div>
+        <div class="section-meta" id="meta-bearings-section"></div>
+      </div>
+
+      <div class="card" id="time-section">
+        <h2>Time & Measurements <span class="difficulty-indicator" data-diff-tag="time-section"></span></h2>
+        <div class="question" id="time-question"></div>
+        <div class="options" id="time-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="time-section">New</button>
+          <button class="small" data-hint="time-section">Hint</button>
+          <button class="small" data-working="time-section">Working</button>
+        </div>
+        <div class="hint" id="hint-time-section"></div>
+        <div class="working" id="working-time-section"></div>
+        <div class="section-meta" id="meta-time-section"></div>
+      </div>
+
+      <div class="card" id="ordering-section">
+        <h2>Ordering (Middle Value) <span class="difficulty-indicator" data-diff-tag="ordering-section"></span></h2>
+        <div class="question" id="ordering-question"></div>
+        <div class="options" id="ordering-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="ordering-section">New</button>
+          <button class="small" data-hint="ordering-section">Hint</button>
+          <button class="small" data-working="ordering-section">Working</button>
+        </div>
+        <div class="hint" id="hint-ordering-section"></div>
+        <div class="working" id="working-ordering-section"></div>
+        <div class="section-meta" id="meta-ordering-section"></div>
+      </div>
+
+      <div class="card" id="decimal-ordering-section">
+        <h2>Larger Decimals Ordering <span class="difficulty-indicator" data-diff-tag="decimal-ordering-section"></span></h2>
+        <div class="question" id="decimal-ordering-question"></div>
+        <div class="options" id="decimal-ordering-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="decimal-ordering-section">New</button>
+          <button class="small" data-hint="decimal-ordering-section">Hint</button>
+          <button class="small" data-working="decimal-ordering-section">Working</button>
+        </div>
+        <div class="hint" id="hint-decimal-ordering-section"></div>
+        <div class="working" id="working-decimal-ordering-section"></div>
+        <div class="section-meta" id="meta-decimal-ordering-section"></div>
+      </div>
+
+      <div class="card" id="percentage-discount-section">
+        <h2>Percentage Discount <span class="difficulty-indicator" data-diff-tag="percentage-discount-section"></span></h2>
+        <div class="question" id="percentage-discount-question"></div>
+        <div class="options" id="percentage-discount-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="percentage-discount-section">New</button>
+          <button class="small" data-hint="percentage-discount-section">Hint</button>
+          <button class="small" data-working="percentage-discount-section">Working</button>
+        </div>
+        <div class="hint" id="hint-percentage-discount-section"></div>
+        <div class="working" id="working-percentage-discount-section"></div>
+        <div class="section-meta" id="meta-percentage-discount-section"></div>
+      </div>
+
+      <div class="card" id="reverse-calc-section">
+        <h2>Reverse Calculation <span class="difficulty-indicator" data-diff-tag="reverse-calc-section"></span></h2>
+        <div class="question" id="reverse-calc-question"></div>
+        <div class="options" id="reverse-calc-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="reverse-calc-section">New</button>
+          <button class="small" data-hint="reverse-calc-section">Hint</button>
+          <button class="small" data-working="reverse-calc-section">Working</button>
+        </div>
+        <div class="hint" id="hint-reverse-calc-section"></div>
+        <div class="working" id="working-reverse-calc-section"></div>
+        <div class="section-meta" id="meta-reverse-calc-section"></div>
+      </div>
+
+      <div class="card" id="bodmas-section">
+        <h2>BODMAS / Arithmetic <span class="difficulty-indicator" data-diff-tag="bodmas-section"></span></h2>
+        <div class="question" id="bodmas-question"></div>
+        <div class="options" id="bodmas-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="bodmas-section">New</button>
+          <button class="small" data-hint="bodmas-section">Hint</button>
+          <button class="small" data-working="bodmas-section">Working</button>
+        </div>
+        <div class="hint" id="hint-bodmas-section"></div>
+        <div class="working" id="working-bodmas-section"></div>
+        <div class="section-meta" id="meta-bodmas-section"></div>
+      </div>
+
+      <div class="card" id="percentage-section">
+        <h2>Percentage Calculations <span class="difficulty-indicator" data-diff-tag="percentage-section"></span></h2>
+        <div class="question" id="percentage-question"></div>
+        <div class="options" id="percentage-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="percentage-section">New</button>
+          <button class="small" data-hint="percentage-section">Hint</button>
+          <button class="small" data-working="percentage-section">Working</button>
+        </div>
+        <div class="hint" id="hint-percentage-section"></div>
+        <div class="working" id="working-percentage-section"></div>
+        <div class="section-meta" id="meta-percentage-section"></div>
+      </div>
+
+      <div class="card" id="angle-section">
+        <h2>Percentage of Angles <span class="difficulty-indicator" data-diff-tag="angle-section"></span></h2>
+        <div class="question" id="angle-question"></div>
+        <div class="options" id="angle-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="angle-section">New</button>
+          <button class="small" data-hint="angle-section">Hint</button>
+          <button class="small" data-working="angle-section">Working</button>
+        </div>
+        <div class="hint" id="hint-angle-section"></div>
+        <div class="working" id="working-angle-section"></div>
+        <div class="section-meta" id="meta-angle-section"></div>
+      </div>
+
+      <div class="card" id="day-week-section">
+        <h2>Day of the Week <span class="difficulty-indicator" data-diff-tag="day-week-section"></span></h2>
+        <div class="question" id="day-week-question"></div>
+        <div class="options" id="day-week-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="day-week-section">New</button>
+          <button class="small" data-hint="day-week-section">Hint</button>
+          <button class="small" data-working="day-week-section">Working</button>
+        </div>
+        <div class="hint" id="hint-day-week-section"></div>
+        <div class="working" id="working-day-week-section"></div>
+        <div class="section-meta" id="meta-day-week-section"></div>
+      </div>
+
+      <div class="card" id="total-bill-section">
+        <h2>Total Bill (Reverse %) <span class="difficulty-indicator" data-diff-tag="total-bill-section"></span></h2>
+        <div class="question" id="total-bill-question"></div>
+        <div class="options" id="total-bill-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="total-bill-section">New</button>
+          <button class="small" data-hint="total-bill-section">Hint</button>
+          <button class="small" data-working="total-bill-section">Working</button>
+        </div>
+        <div class="hint" id="hint-total-bill-section"></div>
+        <div class="working" id="working-total-bill-section"></div>
+        <div class="section-meta" id="meta-total-bill-section"></div>
+      </div>
+
+      <div class="card" id="temperature-section">
+        <h2>Temperature Sequence <span class="difficulty-indicator" data-diff-tag="temperature-section"></span></h2>
+        <div class="question" id="temperature-question"></div>
+        <div class="options" id="temperature-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="temperature-section">New</button>
+          <button class="small" data-hint="temperature-section">Hint</button>
+          <button class="small" data-working="temperature-section">Working</button>
+        </div>
+        <div class="hint" id="hint-temperature-section"></div>
+        <div class="working" id="working-temperature-section"></div>
+        <div class="section-meta" id="meta-temperature-section"></div>
+      </div>
+
+      <div class="card" id="number-sequence-section">
+        <h2>Number & Sequence <span class="difficulty-indicator" data-diff-tag="number-sequence-section"></span></h2>
+        <div class="question" id="number-sequence-question"></div>
+        <div class="options" id="number-sequence-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="number-sequence-section">New</button>
+          <button class="small" data-hint="number-sequence-section">Hint</button>
+          <button class="small" data-working="number-sequence-section">Working</button>
+        </div>
+        <div class="hint" id="hint-number-sequence-section"></div>
+        <div class="working" id="working-number-sequence-section"></div>
+        <div class="section-meta" id="meta-number-sequence-section"></div>
+      </div>
+
+      <div class="card" id="ratio-sharing-section">
+        <h2>Ratio Sharing <span class="difficulty-indicator" data-diff-tag="ratio-sharing-section"></span></h2>
+        <div class="question" id="ratio-sharing-question"></div>
+        <div class="options" id="ratio-sharing-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="ratio-sharing-section">New</button>
+          <button class="small" data-hint="ratio-sharing-section">Hint</button>
+          <button class="small" data-working="ratio-sharing-section">Working</button>
+        </div>
+        <div class="hint" id="hint-ratio-sharing-section"></div>
+        <div class="working" id="working-ratio-sharing-section"></div>
+        <div class="section-meta" id="meta-ratio-sharing-section"></div>
+      </div>
+
+      <div class="card" id="fraction-simplify-section">
+        <h2>Simplify Fractions <span class="difficulty-indicator" data-diff-tag="fraction-simplify-section"></span></h2>
+        <div class="question" id="fraction-simplify-question"></div>
+        <div class="options" id="fraction-simplify-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="fraction-simplify-section">New</button>
+          <button class="small" data-hint="fraction-simplify-section">Hint</button>
+          <button class="small" data-working="fraction-simplify-section">Working</button>
+        </div>
+        <div class="hint" id="hint-fraction-simplify-section"></div>
+        <div class="working" id="working-fraction-simplify-section"></div>
+        <div class="section-meta" id="meta-fraction-simplify-section"></div>
+      </div>
+
+      <div class="card" id="fraction-of-amount-section">
+        <h2>Fraction of Amount <span class="difficulty-indicator" data-diff-tag="fraction-of-amount-section"></span></h2>
+        <div class="question" id="fraction-of-amount-question"></div>
+        <div class="options" id="fraction-of-amount-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="fraction-of-amount-section">New</button>
+          <button class="small" data-hint="fraction-of-amount-section">Hint</button>
+          <button class="small" data-working="fraction-of-amount-section">Working</button>
+        </div>
+        <div class="hint" id="hint-fraction-of-amount-section"></div>
+        <div class="working" id="working-fraction-of-amount-section"></div>
+        <div class="section-meta" id="meta-fraction-of-amount-section"></div>
+      </div>
+
+      <div class="card" id="fraction-convert-section">
+        <h2>Fraction Conversion <span class="difficulty-indicator" data-diff-tag="fraction-convert-section"></span></h2>
+        <div class="question" id="fraction-convert-question"></div>
+        <div class="options" id="fraction-convert-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="fraction-convert-section">New</button>
+          <button class="small" data-hint="fraction-convert-section">Hint</button>
+          <button class="small" data-working="fraction-convert-section">Working</button>
+        </div>
+        <div class="hint" id="hint-fraction-convert-section"></div>
+        <div class="working" id="working-fraction-convert-section"></div>
+        <div class="section-meta" id="meta-fraction-convert-section"></div>
+      </div>
+
+      <div class="card" id="probability-section">
+        <h2>Basic Probability <span class="difficulty-indicator" data-diff-tag="probability-section"></span></h2>
+        <div class="question" id="probability-question"></div>
+        <div class="options" id="probability-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="probability-section">New</button>
+          <button class="small" data-hint="probability-section">Hint</button>
+          <button class="small" data-working="probability-section">Working</button>
+        </div>
+        <div class="hint" id="hint-probability-section"></div>
+        <div class="working" id="working-probability-section"></div>
+        <div class="section-meta" id="meta-probability-section"></div>
+      </div>
+
+      <div class="card" id="area-perimeter-section">
+        <h2>Area & Perimeter <span class="difficulty-indicator" data-diff-tag="area-perimeter-section"></span></h2>
+        <div class="question" id="area-perimeter-question"></div>
+        <div class="options" id="area-perimeter-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="area-perimeter-section">New</button>
+          <button class="small" data-hint="area-perimeter-section">Hint</button>
+          <button class="small" data-working="area-perimeter-section">Working</button>
+        </div>
+        <div class="hint" id="hint-area-perimeter-section"></div>
+        <div class="working" id="working-area-perimeter-section"></div>
+        <div class="section-meta" id="meta-area-perimeter-section"></div>
+      </div>
+
+      <div class="card" id="factors-multiples-section">
+        <h2>LCM / HCF <span class="difficulty-indicator" data-diff-tag="factors-multiples-section"></span></h2>
+        <div class="question" id="factors-multiples-question"></div>
+        <div class="options" id="factors-multiples-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="factors-multiples-section">New</button>
+          <button class="small" data-hint="factors-multiples-section">Hint</button>
+          <button class="small" data-working="factors-multiples-section">Working</button>
+        </div>
+        <div class="hint" id="hint-factors-multiples-section"></div>
+        <div class="working" id="working-factors-multiples-section"></div>
+        <div class="section-meta" id="meta-factors-multiples-section"></div>
+      </div>
+
+      <div class="card" id="prime-number-section">
+        <h2>Prime Numbers <span class="difficulty-indicator" data-diff-tag="prime-number-section"></span></h2>
+        <div class="question" id="prime-number-question"></div>
+        <div class="options" id="prime-number-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="prime-number-section">New</button>
+          <button class="small" data-hint="prime-number-section">Hint</button>
+          <button class="small" data-working="prime-number-section">Working</button>
+        </div>
+        <div class="hint" id="hint-prime-number-section"></div>
+        <div class="working" id="working-prime-number-section"></div>
+        <div class="section-meta" id="meta-prime-number-section"></div>
+      </div>
+
+      <div class="card" id="solve-x-section">
+        <h2>Solve for x <span class="difficulty-indicator" data-diff-tag="solve-x-section"></span></h2>
+        <div class="question" id="solve-x-question"></div>
+        <div class="options" id="solve-x-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="solve-x-section">New</button>
+          <button class="small" data-hint="solve-x-section">Hint</button>
+          <button class="small" data-working="solve-x-section">Working</button>
+        </div>
+        <div class="hint" id="hint-solve-x-section"></div>
+        <div class="working" id="working-solve-x-section"></div>
+        <div class="section-meta" id="meta-solve-x-section"></div>
+      </div>
+
+      <div class="card" id="speed-distance-time-section">
+        <h2>Speed / Distance / Time <span class="difficulty-indicator" data-diff-tag="speed-distance-time-section"></span></h2>
+        <div class="question" id="speed-distance-time-question"></div>
+        <div class="options" id="speed-distance-time-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="speed-distance-time-section">New</button>
+          <button class="small" data-hint="speed-distance-time-section">Hint</button>
+          <button class="small" data-working="speed-distance-time-section">Working</button>
+        </div>
+        <div class="hint" id="hint-speed-distance-time-section"></div>
+        <div class="working" id="working-speed-distance-time-section"></div>
+        <div class="section-meta" id="meta-speed-distance-time-section"></div>
+      </div>
+
+      <div class="card" id="volume-cuboid-section">
+        <h2>Volume of a Cuboid <span class="difficulty-indicator" data-diff-tag="volume-cuboid-section"></span></h2>
+        <div class="question" id="volume-cuboid-question"></div>
+        <div class="options" id="volume-cuboid-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="volume-cuboid-section">New</button>
+          <button class="small" data-hint="volume-cuboid-section">Hint</button>
+          <button class="small" data-working="volume-cuboid-section">Working</button>
+        </div>
+        <div class="hint" id="hint-volume-cuboid-section"></div>
+        <div class="working" id="working-volume-cuboid-section"></div>
+        <div class="section-meta" id="meta-volume-cuboid-section"></div>
+      </div>
+
+      <div class="card" id="triangle-angle-section">
+        <h2>Missing Triangle Angle <span class="difficulty-indicator" data-diff-tag="triangle-angle-section"></span></h2>
+        <div class="question" id="triangle-angle-question"></div>
+        <div class="options" id="triangle-angle-options"></div>
+        <div class="controls-row">
+          <button class="small" data-refresh="triangle-angle-section">New</button>
+          <button class="small" data-hint="triangle-angle-section">Hint</button>
+          <button class="small" data-working="triangle-angle-section">Working</button>
+        </div>
+        <div class="hint" id="hint-triangle-angle-section"></div>
+        <div class="working" id="working-triangle-angle-section"></div>
+        <div class="section-meta" id="meta-triangle-angle-section"></div>
+      </div>
+
+      <!-- Mistakes -->
+      <div class="card mistakes-tab" id="mistakes-tab">
+        <h3>Mistakes</h3>
+        <ul id="mistakes-list"></ul>
+        <textarea id="export-output" readonly></textarea>
+      </div>
+
+      <button class="reset-btn" onclick="resetAll()">Reset All (New Questions & Clear Mistakes)</button>
+    </div>
+
+    <div id="timer" class="floating-timer">Time: 0s</div>
+
+    <script>
+      /************* GLOBAL STATE *************/
+      const QUESTION_REGISTRY = {}; // key: sectionId -> latest question object
+      const SECTION_GENERATORS = {}; // mapping after definitions
+      const QUESTION_HISTORY = []; // all generated questions for this full test
+      let RECENT_RESULTS = []; // last 20 correctness booleans for adaptive
+      let difficultyMode = 'medium'; // easy, medium, hard, adaptive
+      let adaptiveLevel = 2; // 1 easy, 2 medium, 3 hard (internal)
+      let totalAnswered = 0;
+      let totalCorrect = 0;
+      let seconds = 0;
+      let timerInterval;
+
+      /************* UTILITIES *************/
+      function shuffle(array){ return array.sort(()=>Math.random()-0.5); }
+      function gcd(a,b){ return b===0?a:gcd(b,a%b); }
+      function isPrime(n){ if(n<2) return false; for(let i=2;i*i<=n;i++) if(n%i===0) return false; return true; }
+      function addRecentResult(correct){
+        RECENT_RESULTS.push(correct);
+        if(RECENT_RESULTS.length>20) RECENT_RESULTS.shift();
+        if(difficultyMode==='adaptive'){
+          const last10 = RECENT_RESULTS.slice(-10);
+          const acc = last10.reduce((a,b)=>a+(b?1:0),0)/last10.length;
+          let trend = '';
+            if(acc>=0.8 && adaptiveLevel<3){ adaptiveLevel++; trend='▲'; }
+            else if(acc<=0.5 && adaptiveLevel>1){ adaptiveLevel--; trend='▼'; }
+            else trend='→';
+          document.getElementById('stat-trend').textContent = trend;
+          updateDifficultyStat();
+        }
+      }
+      function updateDifficultyStat(){
+        const levelName = difficultyMode==='adaptive'
+          ? (adaptiveLevel===1?'Adaptive (Easy)':
+             adaptiveLevel===2?'Adaptive (Medium)':'Adaptive (Hard)')
+          : difficultyMode.charAt(0).toUpperCase()+difficultyMode.slice(1);
+        document.getElementById('stat-diff').textContent = levelName;
+        document.querySelectorAll('[data-diff-tag]').forEach(span=>{
+          span.textContent = levelName.includes('Adaptive')? levelName.split(' ')[1]:difficultyMode;
+        });
+      }
+      function currentNumericDifficulty(){
+        if(difficultyMode==='easy') return 1;
+        if(difficultyMode==='medium') return 2;
+        if(difficultyMode==='hard') return 3;
+        return adaptiveLevel;
+      }
+
+      function registerQuestion(sectionId, data){
+        QUESTION_REGISTRY[sectionId] = data;
+        QUESTION_HISTORY.push(data);
+        // meta info
+        const meta = document.getElementById('meta-'+sectionId);
+        if(meta){
+          meta.textContent = `Answer: ${data.correctAnswer}`;
+        }
+        // hint & working
+        const hintEl = document.getElementById('hint-'+sectionId);
+        const workEl = document.getElementById('working-'+sectionId);
+        if(hintEl) hintEl.textContent = data.hint || 'No hint available.';
+        if(workEl) workEl.textContent = data.working || 'No working stored.';
+      }
+
+      function saveMistake(question, chosen, correct, section){
+        let mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+        mistakes.push({section,question,chosen,correct});
+        sessionStorage.setItem("mistakes", JSON.stringify(mistakes));
+        renderMistakes();
+      }
+
+      function renderMistakes(){
+        let mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+        let list = document.getElementById("mistakes-list");
+        list.innerHTML="";
+        mistakes.forEach((m,i)=>{
+          const li = document.createElement("li");
+          li.textContent = `${i+1}. [${m.section}] Q: ${m.question} | Your: ${m.chosen} | Correct: ${m.correct}`;
+          list.appendChild(li);
+        });
+      }
+
+      function renderOptions(sectionId, containerId, options, correctAnswer, questionText){
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        options.forEach(opt=>{
+          const btn = document.createElement("button");
+          btn.textContent = opt;
+          btn.onclick = ()=>{
+            if(btn.classList.contains('correct')||btn.classList.contains('wrong')) return;
+            totalAnswered++;
+            let correct = false;
+            if(opt==correctAnswer){
+              btn.classList.add("correct");
+              totalCorrect++;
+              correct = true;
+            } else {
+              btn.classList.add("wrong");
+              const qObj = QUESTION_REGISTRY[sectionId];
+              saveMistake(questionText, opt, correctAnswer, sectionId);
+            }
+            addRecentResult(correct);
+            updateStats();
+          };
+          container.appendChild(btn);
+        });
+      }
+
+      function updateStats(){
+        document.getElementById('stat-answered').textContent = totalAnswered;
+        document.getElementById('stat-correct').textContent = totalCorrect;
+        const acc = totalAnswered===0?0:Math.round(100*totalCorrect/totalAnswered);
+        document.getElementById('stat-accuracy').textContent = acc+"%";
+      }
+
+      function startTimer(){
+        clearInterval(timerInterval);
+        seconds = 0;
+        document.getElementById('timer').textContent = `Time: ${seconds}s`;
+        timerInterval = setInterval(()=>{
+          seconds++;
+          document.getElementById('timer').textContent = `Time: ${seconds}s`;
+        },1000);
+      }
+
+      function resetAll(){
+        sessionStorage.clear();
+        renderMistakes();
+        QUESTION_HISTORY.length=0;
+        totalAnswered = 0;
+        totalCorrect = 0;
+        RECENT_RESULTS = [];
+        if(difficultyMode==='adaptive') adaptiveLevel = 2;
+        updateDifficultyStat();
+        updateStats();
+        loadAll();
+        startTimer();
+      }
+
+      /************* EXPORT FUNCTIONS *************/
+      function exportMistakes(){
+        const mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+        if(mistakes.length===0){ alert("No mistakes to export."); return; }
+        const header = "Section,Question,Chosen,Correct\n";
+        const csv = header + mistakes.map(m=>`"${m.section}","${m.question.replace(/"/g,'""')}","${m.chosen}","${m.correct}"`).join("\n");
+        downloadFile(csv, "mistakes.csv", "text/csv");
+      }
+      function exportFullTest(){
+        if(QUESTION_HISTORY.length===0){ alert("No questions generated yet."); return; }
+        const data = {
+          generatedAt: new Date().toISOString(),
+          difficultyMode,
+          adaptiveLevel,
+            totalQuestions: QUESTION_HISTORY.length,
+          questions: QUESTION_HISTORY
+        };
+        const json = JSON.stringify(data,null,2);
+        downloadFile(json,"full_test.json","application/json");
+      }
+      function downloadFile(content, filename, mime){
+        const blob = new Blob([content], {type: mime});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href=url;
+        a.download=filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(()=>{
+          URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        },0);
+      }
+
+      /************* HINT / WORKING TOGGLES *************/
+      function toggleHint(sectionId){
+        const el = document.getElementById('hint-'+sectionId);
+        if(el) el.style.display = el.style.display==='block'?'none':'block';
+      }
+      function toggleWorking(sectionId){
+        const el = document.getElementById('working-'+sectionId);
+        if(el) el.style.display = el.style.display==='block'?'none':'block';
+      }
+      function toggleAll(type){
+        const sel = type==='hint'? '[id^="hint-"]':'[id^="working-"]';
+        document.querySelectorAll(sel).forEach(el=>{
+          el.style.display = (el.style.display==='block')?'none':'block';
+        });
+      }
+
+      /************* BASE DIFFICULTY HELPERS *************/
+      function chooseRange(baseMin, baseMax, diff){
+        // diff 1 easy, 2 medium, 3 hard
+        const span = baseMax - baseMin;
+        const factor = diff===1?0.6: diff===2?1:1.4;
+        const mid = (baseMax+baseMin)/2;
+        const half = span*factor/2;
+        return [Math.max(1, Math.round(mid-half)), Math.round(mid+half)];
+      }
+
+      /************* QUESTION GENERATORS *************/
+      // Each returns {question, correctAnswer, options, hint, working, sectionId}
+      // We'll adapt logic with difficulty numeric.
+
+      function genMeanAverage(){
+        const diff = currentNumericDifficulty();
+        const length = diff===1?3: diff===2?4:6;
+        const maxVal = diff===1?30: diff===2?60:120;
+        const nums = Array.from({length}, ()=>Math.floor(Math.random()*maxVal)+1);
+        const meanRaw = nums.reduce((a,b)=>a+b,0)/length;
+        const mean = (diff===3?meanRaw.toFixed(2):meanRaw.toFixed(1));
+        const distractors = new Set([mean]);
+        while(distractors.size<4){
+          let delta = (Math.random()* (diff===3?4:2) - (diff===3?2:1));
+          let val = (meanRaw+delta).toFixed(diff===3?2:1);
+          distractors.add(val);
+        }
+        const options = shuffle(Array.from(distractors));
+        return {
+          sectionId:'mean-average-section',
+          question:`Find the mean average of ${nums.join(", ")}`,
+          correctAnswer: mean,
+          options,
+          hint:"Add all numbers and divide by how many there are.",
+          working:`Sum = ${nums.reduce((a,b)=>a+b,0)}; Count = ${length}; Mean = ${meanRaw}`
+        };
+      }
+
+      function genBearings(){
+        const directions = ["North","North East","East","South East","South","South West","West","North West"];
+        const startIndex = Math.floor(Math.random()*directions.length);
+        const start = directions[startIndex];
+        const diff = currentNumericDifficulty();
+        const turnChoices = diff===1?[90,180]: diff===2?[90,135,180,270]:[45,90,135,180,225,270,315];
+        const turn = turnChoices[Math.floor(Math.random()*turnChoices.length)];
+        const clockwise = Math.random()>0.5;
+        let newIndex = clockwise ? (startIndex + turn/45) : (startIndex - turn/45);
+        newIndex = (newIndex + directions.length) % directions.length;
+        const answer = directions[newIndex];
+        const q = `I face ${start}. I turn ${turn}° ${clockwise?"clockwise":"anticlockwise"}. Which direction now?`;
+        let opts = new Set([answer]);
+        while(opts.size<4){
+          opts.add(directions[Math.floor(Math.random()*directions.length)]);
+        }
+        return {
+          sectionId:'bearings-section',
+          question:q,
+          correctAnswer:answer,
+          options: shuffle(Array.from(opts)),
+          hint:"Think of compass points every 45°.",
+          working:`Start index ${startIndex}, turn = ${turn}°, steps = ${turn/45}, new index = ${newIndex}.`
+        };
+      }
+
+      function genTime(){
+        const diff = currentNumericDifficulty();
+        const baseTimes = [
+          { h: 0, m: 0, label: "midnight" },
+          { h: 12, m: 0, label: "noon" },
+          { h: 6, m: 45, label: "6:45am" },
+          { h: 15, m: 30, label: "3:30pm" }
+        ];
+        if(diff>2) baseTimes.push({h:23,m:15,label:"11:15pm"});
+        const base = baseTimes[Math.floor(Math.random()*baseTimes.length)];
+        const offsetH = Math.floor(Math.random()* (diff===1?6: diff===2?10:18))+1;
+        const offsetM = Math.floor(Math.random()* (diff===3?60:30));
+        const before = Math.random()>0.5;
+        let totalMinutes = base.h*60+base.m + (before?-1:1)*(offsetH*60+offsetM);
+        while(totalMinutes<0) totalMinutes += 1440;
+        totalMinutes %= 1440;
+        const answerH = Math.floor(totalMinutes/60);
+        const answerM = totalMinutes%60;
+        const formattedAnswer = `${((answerH +11)%12+1)}:${answerM.toString().padStart(2,"0")}${answerH<12?"am":"pm"}`;
+        const q = `What time is ${offsetH}h ${offsetM}m ${before?"before":"after"} ${base.label}?`;
+        let opts = new Set([formattedAnswer]);
+        while(opts.size<5){
+          const rH = Math.floor(Math.random()*24);
+          const rM = Math.floor(Math.random()*60);
+          const r = `${((rH+11)%12+1)}:${rM.toString().padStart(2,"0")}${rH<12?"am":"pm"}`;
+          opts.add(r);
+        }
+        return {
+          sectionId:'time-section',
+          question:q,
+          correctAnswer:formattedAnswer,
+          options:shuffle(Array.from(opts)),
+          hint:"Convert times to minutes from midnight, adjust, convert back.",
+          working:`Base minutes=${base.h*60+base.m}, offset=${offsetH*60+offsetM} (${before?"subtract":"add"}) => total=${totalMinutes}`
+        };
+      }
+
+      function genOrdering(){
+        const diff = currentNumericDifficulty();
+        const count = diff===1?5:7;
+        const nums = Array.from({length:count}, ()=>{
+          const decimals = diff===3?4: (diff===2?3:2);
+          return parseFloat((Math.random()*40 - 10).toFixed(decimals));
+        });
+        const sorted = [...nums].sort((a,b)=>a-b);
+        const middle = sorted[Math.floor(sorted.length/2)];
+        const q = `Order from smallest to largest: ${nums.join(", ")}. Which is in the middle?`;
+        return {
+          sectionId:'ordering-section',
+          question:q,
+          correctAnswer: middle.toString(),
+          options: shuffle(nums.slice(0,4).map(String)),
+          hint:"Sort all values; pick median (middle position).",
+          working:`Sorted: ${sorted.join(", ")}. Middle index ${Math.floor(sorted.length/2)} => ${middle}`
+        };
+      }
+
+      function genDecimalOrdering(){
+        const diff = currentNumericDifficulty();
+        const count = diff===1?5:7;
+        const precision = diff===1?2: diff===2?4:6;
+        const decimals = Array.from({length:count},()=>parseFloat((Math.random()*20).toFixed(precision)));
+        const sorted = [...decimals].sort((a,b)=>a-b);
+        const mid = sorted[Math.floor(sorted.length/2)];
+        const q = `Decimals: ${decimals.join(", ")}. Which is middle when ordered?`;
+        return {
+          sectionId:'decimal-ordering-section',
+          question:q,
+          correctAnswer:mid.toString(),
+          options:shuffle(decimals.slice(0,4).map(String)),
+          hint:"Compare from smallest to largest; median in middle.",
+          working:`Sorted: ${sorted.join(", ")}; middle = ${mid}`
+        };
+      }
+
+      function genPercentageDiscount(){
+        const diff = currentNumericDifficulty();
+        const baseMax = diff===1?100: diff===2?300:1000;
+        const original = (Math.random()*baseMax + 10).toFixed(2);
+        const discount = diff===1? (Math.floor(Math.random()*21)+5)
+                        : diff===2? (Math.floor(Math.random()*31)+5)
+                        : (Math.floor(Math.random()*46)+5);
+        const sale = (original*(1-discount/100)).toFixed(2);
+        const opts = new Set([sale]);
+        while(opts.size<4){
+          let factor = 1 + (Math.random()*0.1 -0.05);
+          opts.add((sale*factor).toFixed(2));
+        }
+        const q = `${discount}% off an item originally £${original}. Sale price?`;
+        return {
+          sectionId:'percentage-discount-section',
+          question:q,
+          correctAnswer:sale,
+          options:shuffle(Array.from(opts)),
+          hint:"Sale price = Original × (1 - discount%).",
+          working:`Sale = ${original} × (1 - ${discount}/100) = £${sale}`
+        };
+      }
+
+      function genReverseCalc(){
+        const diff = currentNumericDifficulty();
+        const original = Math.floor(Math.random()*(diff===1?15: diff===2?30:60))+5;
+        const multipliers = diff===3?[2,3,4,5,6,8,9,12]:[2,4,8,16];
+        const multiplier = multipliers[Math.floor(Math.random()*multipliers.length)];
+        const divisor = [1,2,4,5,8,10,16][Math.floor(Math.random()*7)];
+        const add = Math.floor(Math.random()*(diff===3?200: (diff===2?100:50))) + (diff===3?50:(diff===2?30:10));
+        const result = ((original*multiplier)/divisor + add).toFixed(2);
+        const correct = original.toString();
+        const opts = new Set([correct]);
+        while(opts.size<4){
+          let v = original + Math.floor(Math.random()*7-3);
+          if(v>0) opts.add(v.toString());
+        }
+        const q = `Think of a number, ×${multiplier}, ÷${divisor}, +${add} = ${result}. Original number?`;
+        return {
+          sectionId:'reverse-calc-section',
+          question:q,
+          correctAnswer:correct,
+          options:shuffle(Array.from(opts)),
+          hint:"Reverse steps: subtract then × divisor ÷ multiplier.",
+          working:`((x*${multiplier})/${divisor}) + ${add} = ${result} ⇒ (x*${multiplier})/${divisor} = ${result - add} ⇒ x = (((${result}-${add})*${divisor})/${multiplier}).`
+        };
+      }
+
+      function genBODMAS(){
+        const diff = currentNumericDifficulty();
+        const length = diff===1?4: diff===2?5:6;
+        const nums = Array.from({length},()=>Math.floor(Math.random()*(diff===3?90:50))+1);
+        const opsSet = diff===1? ['+','-']: diff===2? ['+','-','*']:['+','-','*','÷'];
+        let expr=""+nums[0];
+        for(let i=1;i<nums.length;i++){
+          expr += " "+ opsSet[Math.floor(Math.random()*opsSet.length)] +" "+nums[i];
+        }
+        let correct;
+        try{
+          correct = eval(expr.replace(/÷/g,'/'));
+          correct = diff===3? correct.toFixed(2):correct.toFixed(1);
+        }catch(e){
+          correct="Error";
+        }
+        const opts = new Set([correct]);
+        while(opts.size<4){
+          let pert = (parseFloat(correct) + (Math.random()* (diff===3?10:5) - (diff===3?5:2.5))).toFixed(diff===3?2:1);
+          opts.add(pert);
+        }
+        return {
+          sectionId:'bodmas-section',
+          question:`Solve: ${expr}`,
+          correctAnswer:correct,
+          options:shuffle(Array.from(opts)),
+          hint:"Apply order: brackets, orders, multiplication/division, addition/subtraction.",
+          working:`Expression: ${expr}. JS eval path applied for precedence.`
+        };
+      }
+
+      function genPercentagePart(){
+        const diff = currentNumericDifficulty();
+        const total = Math.floor(Math.random()*(diff===1?80: diff===2?150:400))+20;
+        const part = Math.floor(Math.random()*total);
+        const percent = Math.round(part/total*100);
+        const opts = new Set([percent]);
+        while(opts.size<4){
+          let perturb = percent + Math.floor(Math.random()* (diff===3?11:7) - (diff===3?5:3));
+          if(perturb>=0 && perturb<=100) opts.add(perturb);
+        }
+        const q = `${part} is _____% of ${total}`;
+        return {
+          sectionId:'percentage-section',
+          question:q,
+          correctAnswer:percent.toString(),
+          options:shuffle(Array.from(opts).map(String)),
+          hint:"Percentage = (part / total) × 100.",
+          working:`(${part}/${total})×100 = ${percent}%`
+        };
+      }
+
+      function genAnglePercent(){
+        const diff = currentNumericDifficulty();
+        const base=90;
+        const percent = diff===1? (Math.floor(Math.random()*41)+110)
+                     : diff===2? (Math.floor(Math.random()*81)+100)
+                     : (Math.floor(Math.random()*121)+90);
+        const answer = Math.round(base*percent/100);
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let p = answer + Math.floor(Math.random()*11-5);
+          if(p>0) opts.add(p);
+        }
+        const q = `How many degrees in ${percent}% of a right angle?`;
+        return {
+          sectionId:'angle-section',
+          question:q,
+          correctAnswer:answer.toString(),
+          options:shuffle(Array.from(opts).map(String)),
+          hint:"Right angle = 90°. Multiply 90 by percentage then divide by 100.",
+          working:`${percent}% of 90 = 90×${percent}/100 = ${answer}`
+        };
+      }
+
+      function genDayOfWeek(){
+        const diff = currentNumericDifficulty();
+        const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const startDayIndex = Math.floor(Math.random()*7);
+        const startDate = Math.floor(Math.random()*20)+1;
+        const offset = Math.floor(Math.random()*(diff===1?10: diff===2?20:50))+1;
+        const targetDateIndex = (startDayIndex + offset)%7;
+        const q = `If the ${startDate}th is a ${days[startDayIndex]}, what day is the ${startDate+offset}th?`;
+        const answer = days[targetDateIndex];
+        const opts = new Set([answer]);
+        while(opts.size<5) opts.add(days[Math.floor(Math.random()*7)]);
+        return {
+          sectionId:'day-week-section',
+          question:q,
+          correctAnswer:answer,
+          options:shuffle(Array.from(opts)),
+          hint:"Each day advances by 1 mod 7.",
+          working:`Start index ${startDayIndex}, +${offset} ⇒ ${(startDayIndex+offset)%7}`
+        };
+      }
+
+      function genTotalBill(){
+        const diff = currentNumericDifficulty();
+        const percentage = Math.floor(Math.random()*(diff===1?21: diff===2?31:51)) + (diff===3?10:20);
+        const total = Math.floor(Math.random()*(diff===1?80: diff===2?200:500))+30;
+        const part = (total*percentage/100).toFixed(2);
+        const correct = (part/percentage*100).toFixed(2);
+        const opts = new Set([correct]);
+        while(opts.size<5){
+          let fuzz = (parseFloat(correct) + (Math.random()* (diff===3?40:20) - (diff===3?20:10))).toFixed(2);
+          if(fuzz>0) opts.add(fuzz);
+        }
+        const q = `I paid £${part}, which was ${percentage}% of the bill. What was the total?`;
+        return {
+          sectionId:'total-bill-section',
+          question:q,
+          correctAnswer:correct,
+          options:shuffle(Array.from(opts)),
+          hint:"Total = part ÷ (percentage/100).",
+          working:`Total = ${part} / (${percentage}/100) = £${correct}`
+        };
+      }
+
+      function genTemperatureSequence(){
+        const diff = currentNumericDifficulty();
+        const monday = Math.floor(Math.random()* (diff===3?21:11)) + (diff===1?5:10);
+        const dropTue = Math.floor(Math.random()* (diff===1?4: diff===2?6:9))+2;
+        const tuesday = monday - dropTue;
+        const wMultiplier = diff===1?2: (Math.random()*0.7 +1.5);
+        const wednesday = Math.round(tuesday*wMultiplier);
+        const thursdayDrop = Math.floor(Math.random()* (diff===3?6:4))+2;
+        const thursday = wednesday - thursdayDrop;
+        const q = `Temperatures:\nMon: ${monday}°C\nTue: ${dropTue}°C colder than Monday\nWed: ~${wMultiplier.toFixed(2)}× Tuesday\nThu: ${thursdayDrop}°C colder than Wednesday\nWhat was Thursday's temperature?`;
+        const correct=thursday+"°C";
+        const opts = new Set([correct]);
+        while(opts.size<5){
+          let val = thursday + Math.floor(Math.random()*9-4);
+          opts.add(val+"°C");
+        }
+        return {
+          sectionId:'temperature-section',
+          question:q,
+          correctAnswer:correct,
+          options:shuffle(Array.from(opts)),
+            hint:"Track each day sequentially from Monday.",
+          working:`Tue=${monday}-${dropTue}=${tuesday}; Wed≈${tuesday}×${wMultiplier.toFixed(2)}=${wednesday}; Thu=${wednesday}-${thursdayDrop}=${thursday}`
+        };
+      }
+
+      function genNumberSequence(){
+        const diff = currentNumericDifficulty();
+        const type = Math.floor(Math.random()*4);
+        if(type===0){
+          // tenths
+          return {
+            sectionId:'number-sequence-section',
+            question:"How many tenths are there in 100?",
+            correctAnswer:"1000",
+            options:shuffle(["10","100","1000","1","10000"]),
+            hint:"1 whole = 10 tenths; 100 = 100×10.",
+            working:"100 ÷ 0.1 = 1000"
+          };
+        } else if(type===1){
+          const hour = Math.floor(Math.random()*12)+1;
+          const minute = Math.floor(Math.random()*60);
+          const ampm = Math.random()>0.5?'am':'pm';
+          let hour24 = hour%12;
+          if(ampm==='pm') hour24 +=12;
+          if(ampm==='am' && hour===12) hour24=0;
+          const answer = hour24.toString().padStart(2,'0')+":"+minute.toString().padStart(2,'0');
+          const opts = new Set([answer]);
+          while(opts.size<5){
+            const h = Math.floor(Math.random()*24);
+            const m = Math.floor(Math.random()*60);
+            opts.add(h.toString().padStart(2,'0')+":"+m.toString().padStart(2,'0'));
+          }
+          return {
+            sectionId:'number-sequence-section',
+            question:`Convert ${hour}:${minute.toString().padStart(2,'0')}${ampm} to 24-hour time.`,
+            correctAnswer:answer,
+            options:shuffle(Array.from(opts)),
+            hint:"Add 12 for pm (except 12pm). 12am is 00.",
+            working:`${hour}:${minute}${ampm} => ${answer}`
+          };
+        } else if(type===2){
+          return {
+            sectionId:'number-sequence-section',
+            question:"Which number is a square number? 33, 19, 26, 14, 81",
+            correctAnswer:"81",
+            options:shuffle(["33","19","26","14","81"]),
+            hint:"A square is n×n (e.g. 9×9=81).",
+            working:"81 = 9×9"
+          };
+        } else {
+          return {
+            sectionId:'number-sequence-section',
+            question:"Sequence: 1, 6, ?, 19, 27, ?, 46. Fill the two missing values.",
+            correctAnswer:"11 and 35",
+            options:shuffle(["11 and 35","11 and 34","12 and 34","12 and 35","12 and 36"]),
+            hint:"Look at differences: 5, ?, 8, ?, 19 ... pattern of increases.",
+            working:"Diffs: 5,5,8,8,19; thus missing terms 11,35."
+          };
+        }
+      }
+
+      function genRatioSharing(){
+        const diff = currentNumericDifficulty();
+        const a = Math.floor(Math.random()* (diff===3?6:3))+2;
+        const b = Math.floor(Math.random()* (diff===3?8:4))+3;
+        const total = (Math.floor(Math.random()* (diff===3?40:20))+10)*(a+b);
+        const targetFirst = Math.random()>0.5;
+        const shareA = total*a/(a+b);
+        const shareB = total*b/(a+b);
+        const answer = targetFirst? shareA:shareB;
+        const q = `£${total} shared in ratio ${a}:${b}. How much does the ${targetFirst?"first":"second"} person get?`;
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let pert = answer + Math.floor(Math.random()* (diff===3?21:11) - (diff===3?10:5));
+          if(pert>0) opts.add(pert);
+        }
+        return {
+          sectionId:'ratio-sharing-section',
+          question:q,
+          correctAnswer:"£"+answer,
+          options:shuffle(Array.from(opts)).map(v=>"£"+v),
+          hint:"Share = total × (part / sum of ratio).",
+          working:`Sum ratio = ${a+b}; share = ${total}×${targetFirst? a:b}/${a+b} = £${answer}`
+        };
+      }
+
+      function genFractionSimplify(){
+        const diff = currentNumericDifficulty();
+        let base = Math.floor(Math.random()* (diff===3?12:8))+2;
+        let m = Math.floor(Math.random()* (diff===3?9:5))+2;
+        let n = Math.floor(Math.random()* (diff===3?9:5))+2;
+        let num=base*m, den=base*n;
+        let g=gcd(num,den);
+        const simp = (num/g)+"/"+(den/g);
+        const opts = new Set([simp]);
+        while(opts.size<4){
+          let d1 = (num/g)+Math.floor(Math.random()*3-1);
+          let d2 = (den/g)+Math.floor(Math.random()*3-1);
+          if(d1>0 && d2>0) opts.add(d1+"/"+d2);
+        }
+        return {
+          sectionId:'fraction-simplify-section',
+          question:`Simplify ${num}/${den}`,
+          correctAnswer:simp,
+          options:shuffle(Array.from(opts)),
+          hint:"Divide top & bottom by their highest common factor.",
+          working:`HCF(${num},${den})=${g} ⇒ ${num}/${den} = ${num/g}/${den/g}`
+        };
+      }
+
+      function genFractionOfAmount(){
+        const diff = currentNumericDifficulty();
+        const denominator = Math.floor(Math.random()* (diff===3?15:10))+2;
+        const numerator = Math.floor(Math.random()* (diff===3?denominator-1:Math.min(denominator-1,8)))+1;
+        const whole = (Math.floor(Math.random()*(diff===3?30:15))+5)*denominator;
+        const answer = whole*numerator/denominator;
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let pert = answer + Math.floor(Math.random()* (diff===3?21:11)- (diff===3?10:5));
+          if(pert>0) opts.add(pert);
+        }
+        return {
+          sectionId:'fraction-of-amount-section',
+          question:`What is ${numerator}/${denominator} of ${whole}?`,
+          correctAnswer:answer.toString(),
+          options:shuffle(Array.from(opts).map(String)),
+          hint:"Multiply whole by numerator then divide by denominator.",
+          working:`(${whole}×${numerator})/${denominator}=${answer}`
+        };
+      }
+
+      function genFractionConvert(){
+        const diff = currentNumericDifficulty();
+        const denominators = diff===3?[2,3,4,5,6,8,9,10,12,15,16,20,25,40,50,100]:[2,4,5,8,10,20,25,50];
+        let d = denominators[Math.floor(Math.random()*denominators.length)];
+        let n = Math.floor(Math.random()*(d-1))+1;
+        let g=gcd(n,d);
+        n/=g; d/=g;
+        const askPercent = Math.random()>0.5;
+        const decimal = (n/d).toFixed( askPercent?4:3).replace(/0+$/,'').replace(/\.$/,'');
+        const percent = ((n/d)*100).toFixed(2).replace(/0+$/,'').replace(/\.$/,'')+"%";
+        const correct = askPercent? percent: decimal;
+        const opts = new Set([correct]);
+        while(opts.size<4){
+          if(askPercent){
+            let pNoise = ((n/d)*100 + (Math.random()* (diff===3?12:8)- (diff===3?6:4))).toFixed(2);
+            opts.add(pNoise.replace(/0+$/,'').replace(/\.$/,'')+"%");
+          } else {
+            let dNoise = (n/d + (Math.random()*0.2-0.1)).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
+            opts.add(dNoise);
+          }
+        }
+        return {
+          sectionId:'fraction-convert-section',
+          question:`Convert ${n}/${d} to a ${askPercent?"percentage":"decimal"}.`,
+          correctAnswer:correct,
+          options:shuffle(Array.from(opts)),
+          hint:askPercent? "Percent = (fraction × 100)%." :"Decimal = numerator ÷ denominator.",
+          working:`n/d=${(n/d)}; decimal=${decimal}; percent=${percent}`
+        };
+      }
+
+      function genProbability(){
+        const diff = currentNumericDifficulty();
+        const colorsCount = diff===3?4:3;
+        const colorNames = ["red","blue","green","yellow","purple","black"];
+        let picks = [];
+        for(let i=0;i<colorsCount;i++){
+          picks.push({c:colorNames[i],v:Math.floor(Math.random()* (diff===3?10:6))+1});
+        }
+        const target = picks[Math.floor(Math.random()*picks.length)];
+        const total = picks.reduce((a,b)=>a+b.v,0);
+        const g=gcd(target.v,total);
+        const answer = `${target.v/g}/${total/g}`;
+        const q = `Bag has ${picks.map(p=>p.v+" "+p.c).join(", ")} counters. Probability of ${target.c}? (simplified fraction)`;
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let n = target.v + Math.floor(Math.random()*3-1);
+          if(n<1) n=1;
+          let g2=gcd(n,total);
+          opts.add(`${n/g2}/${total/g2}`);
+        }
+        return {
+          sectionId:'probability-section',
+          question:q,
+          correctAnswer:answer,
+          options:shuffle(Array.from(opts)),
+          hint:"Probability = favourable/total. Simplify fraction.",
+          working:`Favourable=${target.v}, total=${total} ⇒ ${target.v}/${total} simplified ⇒ ${answer}`
+        };
+      }
+
+      function genAreaPerimeter(){
+        const diff = currentNumericDifficulty();
+        const length = Math.floor(Math.random()* (diff===3?30:15))+5;
+        const width = Math.floor(Math.random()* (diff===3?20:10))+3;
+        const type = Math.random()>0.5? 'area':'perimeter';
+        let answer, q;
+        if(type==='area'){ answer = length*width; q=`Area of rectangle length ${length} cm, width ${width} cm?`; }
+        else { answer = 2*(length+width); q=`Perimeter of rectangle length ${length} cm, width ${width} cm?`; }
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let cand = answer + Math.floor(Math.random()* (diff===3?31:21)- (diff===3?15:10));
+          if(cand>0) opts.add(cand);
+        }
+        return {
+          sectionId:'area-perimeter-section',
+          question:q,
+          correctAnswer: answer + (type==='area'?' cm²':' cm'),
+          options:shuffle(Array.from(opts)).map(v=>v + (type==='area'?' cm²':' cm')),
+          hint:type==='area'?"Area = L × W":"Perimeter = 2(L+W)",
+          working:type==='area'? `${length}×${width}=${answer} cm²`: `2(${length}+${width})=2(${length+width})=${answer} cm`
+        };
+      }
+
+      function genFactorsMultiples(){
+        const diff = currentNumericDifficulty();
+        const a = Math.floor(Math.random()* (diff===3?40:20))+4;
+        const b = Math.floor(Math.random()* (diff===3?40:20))+4;
+        const requestLCM = Math.random()>0.5;
+        function hcf(x,y){ return y===0?x:hcf(y,x%y); }
+        const h = hcf(a,b);
+        const lcm = a*b/h;
+        const answer = requestLCM? lcm: h;
+        const q = requestLCM? `Find the LCM of ${a} and ${b}`:`Find the HCF of ${a} and ${b}`;
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let cand = answer + Math.floor(Math.random()* (diff===3?21:11) - (diff===3?10:5));
+          if(cand>0) opts.add(cand);
+        }
+        return {
+          sectionId:'factors-multiples-section',
+          question:q,
+          correctAnswer:answer.toString(),
+          options:shuffle(Array.from(opts)).map(String),
+          hint:requestLCM?"LCM = (a×b)/HCF":"HCF: largest common factor dividing both.",
+          working:`HCF(${a},${b})=${h}; LCM=${a}×${b}/${h}=${lcm}`
+        };
+      }
+
+      function genPrimeNumber(){
+        let prime;
+        const diff = currentNumericDifficulty();
+        const rangeMax = diff===1?40: diff===2?70:120;
+        do { prime = Math.floor(Math.random()*rangeMax)+11; } while(!isPrime(prime));
+        const opts = new Set([prime]);
+        while(opts.size<4){
+          let cand = Math.floor(Math.random()*rangeMax)+11;
+          if(cand!==prime) opts.add(cand);
+        }
+        return {
+          sectionId:'prime-number-section',
+          question:"Which number is prime?",
+          correctAnswer:prime.toString(),
+          options:shuffle(Array.from(opts)).map(String),
+          hint:"Prime has exactly two factors: 1 and itself.",
+          working:`Prime candidate ${prime}. Checked divisibility up to √${prime}.`
+        };
+      }
+
+      function genSolveX(){
+        const diff = currentNumericDifficulty();
+        const a = Math.floor(Math.random()* (diff===3?15:8))+2;
+        const x = Math.floor(Math.random()* (diff===3?40:20))+2;
+        const b = Math.floor(Math.random()* (diff===3?30:12)) - Math.floor(Math.random()* (diff===3?25:6));
+        const c = a*x + b;
+        const q = `Solve: ${a}x ${b<0? "- "+(-b):"+ "+b} = ${c}`;
+        const answer = x;
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let cand = answer + Math.floor(Math.random()* (diff===3?11:7)- (diff===3?5:3));
+          if(cand!==answer) opts.add(cand);
+        }
+        return {
+          sectionId:'solve-x-section',
+          question:q,
+          correctAnswer:answer.toString(),
+          options:shuffle(Array.from(opts)).map(String),
+          hint:"Isolate x: subtract then divide.",
+          working:`${a}x = ${c - b} ⇒ x = ${(c-b)}/${a} = ${answer}`
+        };
+      }
+
+      function genSpeedDistanceTime(){
+        const diff = currentNumericDifficulty();
+        const speed = Math.floor(Math.random()* (diff===3?140: (diff===2?90:50))) + 10;
+        const time = Math.floor(Math.random()* (diff===3?10: (diff===2?6:4))) + 1;
+        const distance = speed*time;
+        const mode = ["distance","speed","time"][Math.floor(Math.random()*3)];
+        let q, answer, unit;
+        if(mode==="distance"){ q=`A vehicle travels at ${speed} km/h for ${time} h. Distance?`; answer = distance; unit=" km"; }
+        else if(mode==="speed"){ q=`A journey of ${distance} km takes ${time} h. Average speed?`; answer=speed; unit=" km/h"; }
+        else { q=`A cyclist covers ${distance} km at ${speed} km/h. Time taken?`; answer=time; unit=" h"; }
+        const opts = new Set([answer]);
+        while(opts.size<4){
+          let cand = answer + Math.floor(Math.random()* (diff===3?31:21)-(diff===3?15:10));
+          if(cand>0) opts.add(cand);
+        }
+        return {
+          sectionId:'speed-distance-time-section',
+          question:q,
+          correctAnswer:answer+unit,
+          options:shuffle(Array.from(opts)).map(o=>o+unit),
+          hint:"Distance = Speed×Time; Speed = Distance÷Time; Time = Distance÷Speed.",
+          working:`Given: speed=${speed}, time=${time}, distance=${distance}.`
+        };
+      }
+
+      function genVolumeCuboid(){
+        const diff = currentNumericDifficulty();
+        const l = Math.floor(Math.random()* (diff===3?20:10))+3;
+        const w = Math.floor(Math.random()* (diff===3?15:8))+2;
+        const h = Math.floor(Math.random()* (diff===3?15:8))+2;
+        const volume = l*w*h;
+        const q = `Volume of cuboid: ${l}×${w}×${h}?`;
+        const opts = new Set([volume]);
+        while(opts.size<4){
+          let cand = volume + Math.floor(Math.random()* (diff===3?61:31)-(diff===3?30:15));
+          if(cand>0) opts.add(cand);
+        }
+        return {
+          sectionId:'volume-cuboid-section',
+          question:q,
+          correctAnswer:volume+" cm³",
+          options:shuffle(Array.from(opts)).map(o=>o+" cm³"),
+          hint:"Volume = length × width × height.",
+          working:`${l}×${w}×${h}=${volume} cm³`
+        };
+      }
+
+      function genTriangleAngle(){
+        const diff = currentNumericDifficulty();
+        let a1 = Math.floor(Math.random()* (diff===3?100:70))+30;
+        let a2 = Math.floor(Math.random()* (diff===3?100:70))+20;
+        while(a1+a2>=178){
+          a1 = Math.floor(Math.random()*70)+30;
+          a2 = Math.floor(Math.random()*70)+20;
+        }
+        const missing = 180 - (a1+a2);
+        const q = `Triangle angles: ${a1}° and ${a2}°. Third angle?`;
+        const opts = new Set([missing]);
+        while(opts.size<4){
+          let cand = missing + Math.floor(Math.random()*11-5);
+          if(cand>0 && cand<180) opts.add(cand);
+        }
+        return {
+          sectionId:'triangle-angle-section',
+          question:q,
+          correctAnswer:missing+"°",
+          options:shuffle(Array.from(opts)).map(o=>o+"°"),
+          hint:"Sum of interior angles in a triangle = 180°.",
+          working:`180 - (${a1}+${a2}) = ${missing}°`
+        };
+      }
+
+      /************* SECTION GENERATOR MAP *************/
+      SECTION_GENERATORS['mean-average-section']=genMeanAverage;
+      SECTION_GENERATORS['bearings-section']=genBearings;
+      SECTION_GENERATORS['time-section']=genTime;
+      SECTION_GENERATORS['ordering-section']=genOrdering;
+      SECTION_GENERATORS['decimal-ordering-section']=genDecimalOrdering;
+      SECTION_GENERATORS['percentage-discount-section']=genPercentageDiscount;
+      SECTION_GENERATORS['reverse-calc-section']=genReverseCalc;
+      SECTION_GENERATORS['bodmas-section']=genBODMAS;
+      SECTION_GENERATORS['percentage-section']=genPercentagePart;
+      SECTION_GENERATORS['angle-section']=genAnglePercent;
+      SECTION_GENERATORS['day-week-section']=genDayOfWeek;
+      SECTION_GENERATORS['total-bill-section']=genTotalBill;
+      SECTION_GENERATORS['temperature-section']=genTemperatureSequence;
+      SECTION_GENERATORS['number-sequence-section']=genNumberSequence;
+      SECTION_GENERATORS['ratio-sharing-section']=genRatioSharing;
+      SECTION_GENERATORS['fraction-simplify-section']=genFractionSimplify;
+      SECTION_GENERATORS['fraction-of-amount-section']=genFractionOfAmount;
+      SECTION_GENERATORS['fraction-convert-section']=genFractionConvert;
+      SECTION_GENERATORS['probability-section']=genProbability;
+      SECTION_GENERATORS['area-perimeter-section']=genAreaPerimeter;
+      SECTION_GENERATORS['factors-multiples-section']=genFactorsMultiples;
+      SECTION_GENERATORS['prime-number-section']=genPrimeNumber;
+      SECTION_GENERATORS['solve-x-section']=genSolveX;
+      SECTION_GENERATORS['speed-distance-time-section']=genSpeedDistanceTime;
+      SECTION_GENERATORS['volume-cuboid-section']=genVolumeCuboid;
+      SECTION_GENERATORS['triangle-angle-section']=genTriangleAngle;
+
+      const SECTION_ORDER = Object.keys(SECTION_GENERATORS); // all sections
+
+      /************* LOAD / REGENERATE *************/
+      function loadSection(sectionId){
+        const gen = SECTION_GENERATORS[sectionId];
+        if(!gen) return;
+        const data = gen();
+        registerQuestion(sectionId,data);
+        document.getElementById(data.sectionId.replace('-section','-question')).textContent = data.question;
+        renderOptions(data.sectionId, data.sectionId.replace('-section','-options'), data.options, data.correctAnswer, data.question);
+      }
+
+      function loadAll(){
+        SECTION_ORDER.forEach(loadSection);
+        updateDifficultyStat();
+      }
+
+      /************* EVENT LISTENERS *************/
+      document.getElementById('difficulty-select').addEventListener('change', e=>{
+        difficultyMode = e.target.value;
+        if(difficultyMode!=='adaptive') adaptiveLevel = (difficultyMode==='easy'?1: difficultyMode==='medium'?2:3);
+        updateDifficultyStat();
+        // optionally regenerate?
+      });
+
+      document.getElementById('regenerate-btn').addEventListener('click', ()=>{
+        // Keep scores? Keep test history? We'll start a new test portion but preserve score.
+        SECTION_ORDER.forEach(loadSection);
+      });
+      document.getElementById('export-mistakes-btn').addEventListener('click', exportMistakes);
+      document.getElementById('export-test-btn').addEventListener('click', exportFullTest);
+      document.getElementById('toggle-hints-btn').addEventListener('click', ()=>toggleAll('hint'));
+      document.getElementById('toggle-workings-btn').addEventListener('click', ()=>toggleAll('working'));
+      document.getElementById('clear-score-btn').addEventListener('click', ()=>{
+        totalAnswered=0; totalCorrect=0; RECENT_RESULTS=[]; updateStats(); if(difficultyMode==='adaptive'){adaptiveLevel=2;updateDifficultyStat();}
+      });
+
+      document.addEventListener('click', e=>{
+        const refresh = e.target.getAttribute('data-refresh');
+        if(refresh){
+          loadSection(refresh);
+        }
+        const hintBtn = e.target.getAttribute('data-hint');
+        if(hintBtn){
+          toggleHint(hintBtn);
+        }
+        const workBtn = e.target.getAttribute('data-working');
+        if(workBtn){
+          toggleWorking(workBtn);
+        }
+      });
+
+      /************* INIT *************/
+      loadAll();
+      renderMistakes();
+      updateStats();
+      startTimer();
+    </script>
+  </body>
+  </html>
