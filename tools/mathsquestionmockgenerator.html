@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vivaan Maths Practice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+    #timer {
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: normal;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+          position: relative;
+
+    }
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #f0f0f0;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background: #e0e0e0;
+    }
+    .options button.correct {
+      background: #4CAF50;
+      color: white;
+    }
+    .options button.wrong {
+      background: #E74C3C;
+      color: white;
+    }
+    .mistakes-tab {
+      background: #fff8f8;
+      border: 1px solid #f5c6cb;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .mistakes-tab h3 {
+      margin-top: 0;
+      color: #c0392b;
+    }
+    .reset-btn {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .reset-btn:hover {
+      background: #357ab7;
+    }
+    
+    
+    .floating-timer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #4a90e2;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 100;
+    transition: top 0.3s, left 0.3s;
+}
+.card {
+    position: relative; /* make this relative so the timer is positioned inside the card */
+}
+
+  </style>
+</head>
+<body>
+
+<div id="timer" class="floating-timer">Time: 0s</div>
+
+  <header>
+    Vivaan's Maths Practice
+    
+  </header>
+  <div class="container">
+
+    <!-- Section 1: Mean Average -->
+    <div class="card" id="mean-average-section">
+      <h2>Mean Average</h2>
+      <div class="question" id="mean-question"></div>
+      <div class="options" id="mean-options"></div>
+    </div>
+
+    <!-- Section 2: Bearings -->
+    <div class="card" id="bearings-section">
+      <h2>Bearings</h2>
+      <div class="question" id="bearings-question"></div>
+      <div class="options" id="bearings-options"></div>
+    </div>
+
+    <!-- Section 3: Time & Measurements -->
+    <div class="card" id="time-section">
+      <h2>Time & Measurements</h2>
+      <div class="question" id="time-question"></div>
+      <div class="options" id="time-options"></div>
+    </div>
+
+    <!-- Section 4: Ordering -->
+    <div class="card" id="ordering-section">
+      <h2>Ordering</h2>
+      <div class="question" id="ordering-question"></div>
+      <div class="options" id="ordering-options"></div>
+    </div>
+
+    <!-- Section 5: Larger Decimals Ordering -->
+    <div class="card" id="decimal-ordering-section">
+      <h2>Larger Decimals Ordering</h2>
+      <div class="question" id="decimal-ordering-question"></div>
+      <div class="options" id="decimal-ordering-options"></div>
+    </div>
+
+	<!-- Section 6: Percentage Discount -->
+<div class="card" id="percentage-discount-section">
+  <h2>Percentage Discount</h2>
+  <div class="question" id="percentage-discount-question"></div>
+  <div class="options" id="percentage-discount-options"></div>
+</div>
+
+<!-- Section 7: Reverse Calculation -->
+<div class="card" id="reverse-calc-section">
+  <h2>Reverse Calculation</h2>
+  <div class="question" id="reverse-calc-question"></div>
+  <div class="options" id="reverse-calc-options"></div>
+</div>
+
+
+<!-- Section 8: BODMAS -->
+<div class="card" id="bodmas-section">
+  <h2>BODMAS / Arithmetic</h2>
+  <div class="question" id="bodmas-question"></div>
+  <div class="options" id="bodmas-options"></div>
+</div>
+
+
+<!-- Section 9: Percentage Calculations -->
+<div class="card" id="percentage-section">
+  <h2>Percentage Calculations</h2>
+  <div class="question" id="percentage-question"></div>
+  <div class="options" id="percentage-options"></div>
+</div>
+
+
+<!-- Section 10: Percentage of Angles -->
+<div class="card" id="angle-section">
+  <h2>Percentage of Angles</h2>
+  <div class="question" id="angle-question"></div>
+  <div class="options" id="angle-options"></div>
+</div>
+
+<!-- Section 11: Day of the Week -->
+<div class="card" id="day-week-section">
+  <h2>Day of the Week</h2>
+  <div class="question" id="day-week-question"></div>
+  <div class="options" id="day-week-options"></div>
+</div>
+
+<!-- Section 12: Total Bill from Part & Percentage -->
+<div class="card" id="total-bill-section">
+  <h2>Total Bill from Part & Percentage</h2>
+  <div class="question" id="total-bill-question"></div>
+  <div class="options" id="total-bill-options"></div>
+</div>
+
+
+<div class="card" id="temperature-section" style="display:none;">
+  <h2>Temperature Sequence</h2>
+  <div class="question" id="temperature-question"></div>
+  <div class="options" id="temperature-options"></div>
+</div>
+
+
+    <!-- Mistakes Tab -->
+    <div class="card mistakes-tab" id="mistakes-tab">
+      <h3>Mistakes</h3>
+      <ul id="mistakes-list"></ul>
+    </div>
+
+    <!-- Reset Button -->
+    <button class="reset-btn" onclick="resetAll()">Reset All</button>
+  </div>
+
+  <script>
+    // ----------------- Utilities -----------------
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function saveMistake(question, chosen, correct) {
+      let mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+      mistakes.push({question, chosen, correct});
+      sessionStorage.setItem("mistakes", JSON.stringify(mistakes));
+      renderMistakes();
+    }
+
+    function renderMistakes() {
+      let mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+      let list = document.getElementById("mistakes-list");
+      list.innerHTML = "";
+      mistakes.forEach(m => {
+        let li = document.createElement("li");
+        li.textContent = `Q: ${m.question} | Your Answer: ${m.chosen} | Correct: ${m.correct}`;
+        list.appendChild(li);
+      });
+    }
+
+    // ----------------- Render Options -----------------
+    function renderOptions(containerId, options, correctAnswer, questionText) {
+      let container = document.getElementById(containerId);
+      container.innerHTML = "";
+      options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if(opt == correctAnswer){
+            btn.classList.add("correct");
+          } else {
+            btn.classList.add("wrong");
+            saveMistake(questionText, opt, correctAnswer);
+          }
+        };
+        container.appendChild(btn);
+      });
+    }
+
+
+
+    // ----------------- Section Functions -----------------
+
+    // Section 1: Mean Average
+    function loadMeanAverage() {
+      let nums = Array.from({length: 3 + Math.floor(Math.random()*3)}, () => Math.floor(Math.random() * 50) + 1);
+      let mean = (nums.reduce((a,b) => a+b,0)/nums.length).toFixed(2);
+      let options = shuffle([mean, (mean-1).toFixed(2), (parseFloat(mean)+1).toFixed(2), (mean*1.1).toFixed(2)]);
+      document.getElementById("mean-question").textContent = `Find the mean average of ${nums.join(", ")}`;
+      renderOptions("mean-options", options, mean, `Mean of ${nums.join(", ")}`);
+    }
+
+    // Section 2: Bearings
+    function loadBearings() {
+      const directions = ["North","North East","East","South East","South","South West","West","North West"];
+      const startIndex = Math.floor(Math.random()*directions.length);
+      const start = directions[startIndex];
+      const turns = [90,180,270];
+      const turn = turns[Math.floor(Math.random()*turns.length)];
+      const clockwise = Math.random()>0.5;
+      let newIndex = clockwise ? (startIndex + turn/45) : (startIndex - turn/45);
+      newIndex = (newIndex + directions.length) % directions.length;
+      const answer = directions[newIndex];
+      const q = `I am facing ${start}. I turn ${turn}° ${clockwise?"clockwise":"anticlockwise"}. In which direction am I now facing?`;
+      let opts = shuffle([answer,...shuffle(directions).slice(0,3)]);
+      document.getElementById("bearings-question").textContent = q;
+      renderOptions("bearings-options", opts, answer, q);
+    }
+
+    // Section 3: Time & Measurements
+    function loadTime() {
+      const baseTimes = [
+        { h: 0, m: 0, label: "midnight" },
+        { h: 12, m: 0, label: "noon" },
+        { h: 6, m: 45, label: "6:45am" },
+        { h: 15, m: 30, label: "3:30pm" }
+      ];
+      const base = baseTimes[Math.floor(Math.random() * baseTimes.length)];
+      const offsetH = Math.floor(Math.random() * 10) + 1;
+      const offsetM = Math.floor(Math.random() * 60);
+      const before = Math.random() > 0.5;
+      let totalMinutes = base.h * 60 + base.m + (before ? -1 : 1) * (offsetH * 60 + offsetM);
+      while (totalMinutes < 0) totalMinutes += 24 * 60;
+      totalMinutes = totalMinutes % (24 * 60);
+      const answerH = Math.floor(totalMinutes / 60);
+      const answerM = totalMinutes % 60;
+      const formattedAnswer = `${((answerH + 11) % 12 + 1)}:${answerM.toString().padStart(2,"0")}${answerH < 12 ? "am":"pm"}`;
+      const q = `What time is ${offsetH} hours and ${offsetM} minutes ${before?"before":"after"} ${base.label}?`;
+      let opts = [formattedAnswer];
+      while(opts.length<5){
+        let rand = `${((Math.floor(Math.random()*24)+11)%12+1)}:${Math.floor(Math.random()*60).toString().padStart(2,"0")}${Math.random()>0.5?"am":"pm"}`;
+        if(!opts.includes(rand)) opts.push(rand);
+      }
+      renderOptions("time-options", shuffle(opts), formattedAnswer, q);
+      document.getElementById("time-question").textContent = q;
+    }
+
+    // Section 4: Ordering (smaller numbers)
+    function loadOrdering() {
+      const numCount = 5;
+      const nums = [];
+      for (let i = 0; i < numCount; i++) {
+        const value = (Math.random() * 20 - 5).toFixed(Math.random()>0.5?2:3);
+        nums.push(parseFloat(value));
+      }
+      const middle = getMiddle(nums);
+      const q = `Order these numbers from smallest to largest: ${nums.join(", ")}. Which number is in the middle?`;
+      renderOptions("ordering-options", shuffle(nums.map(String)), middle.toString(), q);
+      document.getElementById("ordering-question").textContent = q;
+    }
+
+    // Section 5: Larger Decimals Ordering
+    function loadDecimalOrdering() {
+      const decimals = Array.from({length: 5}, () =>
+          (Math.random() * 10).toFixed(Math.floor(Math.random() * 3) + 5)
+      ).map(Number);
+      const questionText = "Look at these decimals: " + decimals.join(", ") +
+                           ". If you order them from smallest to largest, which number would be in the middle?";
+      const answer = getMiddle(decimals);
+      const options = shuffle(decimals.map(String));
+      document.getElementById("decimal-ordering-question").textContent = questionText;
+      renderOptions("decimal-ordering-options", options, answer.toString(), questionText);
+    }
+
+
+	// ----------------- Section 6: Percentage Discount -----------------
+	// ----------------- Section 6: Percentage Discount -----------------
+function loadPercentageDiscount() {
+    // Random original price and discount
+    const originalPrice = (Math.random() * 90 + 10).toFixed(2); // £10 to £100
+    const discount = Math.floor(Math.random() * 46) + 5; // 5% to 50%
+    const salePrice = (originalPrice * (1 - discount / 100)).toFixed(2);
+
+    // Generate 3 random wrong options close to correct
+    const optionsSet = new Set();
+    optionsSet.add(salePrice);
+    while (optionsSet.size < 4) {
+        let variation = (salePrice * (1 + (Math.random() * 0.1 - 0.05))).toFixed(2); // ±5%
+        optionsSet.add(variation);
+    }
+    const options = shuffle(Array.from(optionsSet));
+
+    // Question text
+    const questionText = `There is ${discount}% off a jumper in the summer sale. It was originally £${originalPrice}. How much does it cost in the sale?`;
+
+    // Render question
+    document.getElementById("percentage-discount-question").textContent = questionText;
+    renderOptions("percentage-discount-options", options, salePrice, questionText);
+}
+
+
+
+// ----------------- Section 7: Reverse Calculation -----------------
+function loadReverseCalculation() {
+    // Random original number
+    const original = Math.floor(Math.random() * 20) + 5; // 5 to 24
+    // Random multiplier and divisor
+    const multiplier = [2, 4, 8, 16][Math.floor(Math.random() * 4)];
+    const divisor = [1, 2, 4, 8, 16][Math.floor(Math.random() * 5)];
+    // Random addition
+    const add = Math.floor(Math.random() * 50) + 10;
+    // Calculate final result
+    const result = ((original * multiplier) / divisor + add).toFixed(2);
+
+    // Correct answer is original
+    const correctAnswer = original.toString();
+
+    // Generate 3 distractors
+    const optionsSet = new Set();
+    optionsSet.add(correctAnswer);
+    while(optionsSet.size < 4){
+        let variation = original + Math.floor(Math.random()*5-2); // ±2
+        optionsSet.add(variation.toString());
+    }
+    const options = shuffle(Array.from(optionsSet));
+
+    // Question text
+    const questionText = `I think of a number, multiply it by ${multiplier}, then divide by ${divisor}. After adding ${add} to the result, I get ${result}. What number did I think of?`;
+
+    // Render question
+    document.getElementById("reverse-calc-question").textContent = questionText;
+    renderOptions("reverse-calc-options", options, correctAnswer, questionText);
+}
+
+// ----------------- Section 8: BODMAS / Complex Arithmetic -----------------
+function loadBODMASQuestion() {
+    // Random numbers for the expression
+    const nums = Array.from({length: 4 + Math.floor(Math.random()*2)}, () => Math.floor(Math.random()*50)+1);
+    
+    // Random operations
+    const ops = ['+', '-', '*', '÷'];
+    let expr = "" + nums[0];
+    for(let i=1; i<nums.length; i++){
+        expr += ` ${ops[Math.floor(Math.random()*ops.length)]} ${nums[i]}`;
+    }
+    
+    // Evaluate using JavaScript
+    let correctAnswer;
+    try {
+        // Replace ÷ with / for JS eval
+        correctAnswer = eval(expr.replace(/÷/g,'/')).toFixed(2);
+    } catch(e){
+        correctAnswer = "Error";
+    }
+
+    // Generate distractors: small perturbations or ignoring precedence
+    const distractors = new Set();
+    distractors.add(correctAnswer);
+    while(distractors.size < 4){
+        let perturb = (parseFloat(correctAnswer) + (Math.floor(Math.random()*5)-2)).toFixed(2);
+        distractors.add(perturb);
+    }
+    const options = shuffle(Array.from(distractors));
+
+    // Question text
+    const questionText = `Solve: ${expr}`;
+
+    // Render question
+    document.getElementById("bodmas-question").textContent = questionText;
+    renderOptions("bodmas-options", options, correctAnswer, questionText);
+}
+
+
+// ----------------- Section 9: Percentage Calculations -----------------
+function loadPercentageQuestion() {
+    // Generate random numbers
+    const total = Math.floor(Math.random()*90)+10;  // Total number (denominator)
+    const part = Math.floor(Math.random()*total);   // Part (numerator)
+
+    // Calculate correct percentage
+    const correctAnswer = Math.round((part / total) * 100);
+
+    // Generate distractors (close values)
+    const distractors = new Set();
+    distractors.add(correctAnswer);
+    while(distractors.size < 4){
+        let perturb = correctAnswer + (Math.floor(Math.random()*7)-3); // ±3 variation
+        distractors.add(perturb);
+    }
+    const options = shuffle(Array.from(distractors));
+
+    // Question text
+    const questionText = `${part} is _____% of ${total}`;
+
+    // Render question
+    document.getElementById("percentage-question").textContent = questionText;
+    renderOptions("percentage-options", options, correctAnswer, questionText);
+}
+
+
+// ----------------- Section 10: Percentage of Angles -----------------
+function loadAnglePercentageQuestion() {
+    // Generate random fraction of right angle and random percentage
+    const baseAngle = 90; // right angle
+    const percent = Math.floor(Math.random()*60) + 110; // 110% to 170%
+    const answer = Math.round(baseAngle * percent / 100);
+
+    // Generate distractors around the correct answer
+    const distractors = new Set();
+    distractors.add(answer);
+    while(distractors.size < 4){
+        let perturb = answer + (Math.floor(Math.random()*11)-5); // ±5 variation
+        distractors.add(perturb);
+    }
+
+    const options = shuffle(Array.from(distractors));
+    const questionText = `How many degrees are there in ${percent}% of a right angle?`;
+
+    // Render question
+    document.getElementById("angle-question").textContent = questionText;
+    renderOptions("angle-options", options, answer, questionText);
+}
+
+
+// ----------------- Section 11: Day of the Week -----------------
+function loadDayOfWeekQuestion() {
+    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    
+    // Random starting date
+    const startDayIndex = Math.floor(Math.random() * 7);
+    const startDate = Math.floor(Math.random() * 20) + 1; // 1–20
+    const startMonth = Math.floor(Math.random() * 12); // 0–11
+    const targetOffset = Math.floor(Math.random() * 20) + 1; // 1–20 days later
+    
+    const targetDateIndex = (startDayIndex + targetOffset) % 7;
+    
+    const questionText = `If the ${startDate}th of a month is a ${days[startDayIndex]}, what day will the ${startDate + targetOffset}th be?`;
+
+    // Generate options
+    const options = new Set();
+    options.add(days[targetDateIndex]);
+    while (options.size < 5) {
+        options.add(days[Math.floor(Math.random()*7)]);
+    }
+
+    // Render
+    document.getElementById("day-week-question").textContent = questionText;
+    renderOptions("day-week-options", shuffle(Array.from(options)), days[targetDateIndex], questionText);
+}
+
+
+// ----------------- Section 12: Total Bill -----------------
+function loadTotalBillQuestion() {
+    // Random part paid and percentage
+    const percentage = Math.floor(Math.random() * 30) + 20; // 20% to 50%
+    const total = Math.floor(Math.random() * 50 + 30); // total bill base
+    const part = (total * percentage / 100).toFixed(2);
+
+    const questionText = `I went to a café with my friend. I paid £${part} which was ${percentage}% of the bill. What was our total bill?`;
+
+    // Correct answer
+    const correctAnswer = (part / percentage * 100).toFixed(2);
+
+    // Generate fuzzy options
+    const options = new Set();
+    options.add(correctAnswer);
+    while (options.size < 5) {
+        const fuzz = (Math.random() * 10 - 5).toFixed(2); // ±5
+        options.add((parseFloat(correctAnswer) + parseFloat(fuzz)).toFixed(2));
+    }
+
+    // Render
+    document.getElementById("total-bill-question").textContent = questionText;
+    renderOptions("total-bill-options", shuffle(Array.from(options)), correctAnswer, questionText);
+}
+
+
+function loadTemperatureSequence() {
+    // Generate Monday temperature randomly between 10 and 20
+    const monday = Math.floor(Math.random() * 11) + 10; 
+
+    // Tuesday: 3-8°C colder than Monday
+    const tuesday = monday - (Math.floor(Math.random() * 6) + 3);
+
+    // Wednesday: 1.5x to 2x Tuesday
+    const wMultiplier = Math.random() * 0.5 + 1.5; 
+    const wednesday = Math.round(tuesday * wMultiplier);
+
+    // Thursday: 2-5°C colder than Wednesday
+    const thursday = wednesday - (Math.floor(Math.random() * 4) + 2);
+
+    const questionText = `The Science Club records temperatures at their school weather station:\n` +
+        `Monday: ${monday}°C\n` +
+        `Tuesday: ${monday - tuesday}°C colder than Monday\n` +
+        `Wednesday: Twice as warm as Tuesday\n` +
+        `Thursday: 3°C colder than Wednesday\n` +
+        `What was the temperature on Thursday?`;
+
+    // Generate 4 random options including correct answer
+    let options = [thursday];
+    while(options.length < 5){
+        let randOpt = thursday + (Math.floor(Math.random() * 7) - 3); // ±3 range
+        if(!options.includes(randOpt)) options.push(randOpt);
+    }
+
+    // Shuffle options
+    options = shuffle(options);
+
+    // Render
+    document.getElementById("temperature-section").style.display = "block"; // make sure section exists
+    document.getElementById("temperature-question").textContent = questionText;
+    renderOptions("temperature-options", options.map(opt => opt + "°C"), thursday + "°C", "Temperature sequence question");
+}
+
+
+
+
+    // ----------------- Timer -----------------
+    let seconds = 0;
+    let timerInterval;
+    function startTimer() {
+      clearInterval(timerInterval);
+      seconds = 0;
+      document.getElementById("timer").textContent = `Time: ${seconds}s`;
+      timerInterval = setInterval(()=>{
+        seconds++;
+        document.getElementById("timer").textContent = `Time: ${seconds}s`;
+      },1000);
+    }
+
+    // ----------------- Reset -----------------
+    function resetAll() {
+      sessionStorage.clear();
+      renderMistakes();
+      loadAll();
+      startTimer();
+    }
+    
+    
+    let activeSection = null;
+
+function attachTimerTo(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    section.appendChild(document.getElementById("timer"));
+    activeSection = sectionId;
+}
+
+    // ----------------- Load All -----------------
+ function loadAll() {
+  loadMeanAverage();
+  loadBearings();
+  loadTime();
+  loadOrdering();
+  loadDecimalOrdering();
+  loadPercentageDiscount();
+  loadReverseCalculation();
+  loadBODMASQuestion();
+  loadPercentageQuestion();
+  loadAnglePercentageQuestion();
+  loadDayOfWeekQuestion();
+  loadTotalBillQuestion(); // NEW Section 12
+  loadTemperatureSequence();
+}
+
+
+
+
+
+    // ----------------- Helper -----------------
+    function getMiddle(arr) {
+      const sorted = [...arr].sort((a, b) => a - b);
+      return sorted[Math.floor(sorted.length / 2)];
+    }
+
+    // ----------------- Initialize -----------------
+    loadAll();
+    renderMistakes();
+    startTimer();
+
+  </script>
+</body>
+</html>
