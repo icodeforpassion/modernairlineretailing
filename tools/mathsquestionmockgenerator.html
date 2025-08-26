@@ -215,6 +215,25 @@
 </div>
 
 
+<div class="card" id="number-sequence-section" style="display:none;">
+  <h2>Number & Sequence</h2>
+  <div class="question" id="number-sequence-question"></div>
+  <div class="options" id="number-sequence-options"></div>
+</div>
+
+<div class="card" id="discount-section" style="display:none;">
+  <h2>Discounts & Percentages</h2>
+  <div class="question" id="discount-question"></div>
+  <div class="options" id="discount-options"></div>
+</div>
+
+<div class="card" id="unknown-number-section" style="display:none;">
+  <h2>Unknown Number</h2>
+  <div class="question" id="unknown-number-question"></div>
+  <div class="options" id="unknown-number-options"></div>
+</div>
+
+
     <!-- Mistakes Tab -->
     <div class="card mistakes-tab" id="mistakes-tab">
       <h3>Mistakes</h3>
@@ -267,6 +286,7 @@
         container.appendChild(btn);
       });
     }
+
 
 
 
@@ -594,7 +614,94 @@ function loadTemperatureSequence() {
 }
 
 
+function loadNumberSequenceQuestions() {
+    const questionTypes = [
+        // Tenths question
+        function() {
+            const options = shuffle(["10","100","1000","1","10000"]);
+            const q = "How many tenths are there in 100?";
+            const a = "1000";
+            return {q, options, a};
+        },
+        // 24-hour clock
+        function() {
+            const hour = Math.floor(Math.random()*12); // 0-11
+            const minute = Math.floor(Math.random()*60);
+            const ampm = Math.random()>0.5 ? "am":"pm";
+            const q = `Convert ${hour}:${minute.toString().padStart(2,"0")}${ampm} to 24-hour format.`;
+            const answerHour = ampm==="am" ? hour : (hour===12?12:hour+12);
+            const a = `${answerHour.toString().padStart(2,"0")}:${minute.toString().padStart(2,"0")}`;
+            let options = [a];
+            while(options.length<5){
+                let randHour = Math.floor(Math.random()*24);
+                let randMin = Math.floor(Math.random()*60);
+                let randOpt = `${randHour.toString().padStart(2,"0")}:${randMin.toString().padStart(2,"0")}`;
+                if(!options.includes(randOpt)) options.push(randOpt);
+            }
+            options = shuffle(options);
+            return {q, options, a};
+        },
+        // Square number question
+        function() {
+            const numbers = [33,19,26,14,81];
+            const a = "81";
+            const q = "Which of the numbers is a square number?";
+            const options = shuffle(numbers.map(String));
+            return {q, options, a};
+        },
+        // Missing numbers in sequence
+        function() {
+            const sequences = [
+                {seq:"1, 6, ?, 19, 27, ? , 46", a:"11 and 35", options:["11 and 35","11 and 34","12 and 34","12 and 35","12 and 36"]}
+            ];
+            const s = sequences[Math.floor(Math.random()*sequences.length)];
+            return {q:`What are the missing numbers in this sequence?\n${s.seq}`, options:shuffle(s.options), a:s.a};
+        }
+    ];
 
+    const chosenFunc = questionTypes[Math.floor(Math.random()*questionTypes.length)];
+    const questionData = chosenFunc();
+
+    document.getElementById("number-sequence-section").style.display = "block"; // make sure section exists
+    document.getElementById("number-sequence-question").textContent = questionData.q;
+    renderOptions("number-sequence-options", questionData.options, questionData.a, questionData.q);
+}
+
+
+
+function loadDiscountQuestion() {
+    const original = Math.floor(Math.random()*80) + 20; // £20–£100
+    const discount = Math.floor(Math.random()*50) + 10; // 10–60%
+    const answer = (original * (1 - discount/100)).toFixed(2);
+    const q = `There is ${discount}% off a jumper in the sale. It was originally £${original}. How much does it cost now?`;
+    let options = [answer,
+                   (answer*0.99).toFixed(2),
+                   (answer*1.01).toFixed(2),
+                   (answer*0.95).toFixed(2)];
+    options = shuffle(options);
+    document.getElementById("discount-section").style.display = "block";
+    document.getElementById("discount-question").textContent = q;
+    renderOptions("discount-options", options, answer, q);
+}
+
+
+
+function loadUnknownNumberQuestion() {
+    const x = Math.floor(Math.random()*20) + 5;
+    const multiplier = [2,3,4,5][Math.floor(Math.random()*4)];
+    const adder = Math.floor(Math.random()*20)+5;
+    const result = x*multiplier + adder;
+    const q = `I think of a number, multiply it by ${multiplier}, then add ${adder}. I get ${result}. What number did I think of?`;
+    const answer = x.toString();
+    let options = [answer,
+                   (x+1).toString(),
+                   (x-1).toString(),
+                   (x+2).toString()];
+    options = shuffle(options);
+    document.getElementById("unknown-number-section").style.display = "block";
+    document.getElementById("unknown-number-question").textContent = q;
+    renderOptions("unknown-number-options", options, answer, q);
+}
 
     // ----------------- Timer -----------------
     let seconds = 0;
@@ -642,6 +749,7 @@ function attachTimerTo(sectionId) {
   loadDayOfWeekQuestion();
   loadTotalBillQuestion(); // NEW Section 12
   loadTemperatureSequence();
+  loadNumberSequenceQuestions()
 }
 
 
