@@ -849,7 +849,9 @@
         mobCheck: document.getElementById("mobCheck"),
         mobNext: document.getElementById("mobNext"),
         mobFlip: document.getElementById("mobFlip"),
-        mobBookmark: document.getElementById("mobBookmark")
+        mobBookmark: document.getElementById("mobBookmark"),
+         fileInput: document.getElementById("fileInput"),
+    dragZone: document.getElementById("dragZone"),
       };
       /*********************************************************
        * Utility Functions
@@ -1375,30 +1377,7 @@
       });
 
 
-  /*********************************************************
-   * State & Persistence
-   *********************************************************/
-  let words = [];
-  let activePool = []; // excludes mastered
-  let mastered = new Set(JSON.parse(localStorage.getItem("masteredWords") || "[]"));
-  let current = null;
-  let mode = localStorage.getItem("studyMode") || "input"; // "input" | "choice"
-  let stats = JSON.parse(localStorage.getItem("stats") || JSON.stringify({
-    answered: 0,
-    correct: 0,
-    streak: 0
-  }));
-  let bookmarks = JSON.parse(localStorage.getItem("bookmarksV2") || "[]");
-  let lastAnswerCorrect = null;
-  let theme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  if (theme === "dark") document.documentElement.classList.add("dark");
-
-  const els = {
-    // ... (other elements)
-    fileInput: document.getElementById("fileInput"),
-    dragZone: document.getElementById("dragZone"),
-    // ...
-  };
+ 
 
   /*********************************************************
    * Utility Functions
