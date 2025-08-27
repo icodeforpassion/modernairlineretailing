@@ -1,332 +1,1392 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Vocabulary Flashcards</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      margin: 0;
-      padding: 20px;
-      background: #f3f6fb;
-    }
-    .left-panel {
-      flex: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .right-panel {
-      flex: 1;
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-left: 20px;
-      height: fit-content;
-    }
-    .card {
-      width: 300px;
-      height: 200px;
-      perspective: 1000px;
-      margin-bottom: 20px;
-    }
-    .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-      cursor: pointer;
-    }
-    .card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-    .card-front, .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      padding: 15px;
-    }
-    .card-front {
-      background: #4a90e2;
-      color: white;
-    }
-    .card-back {
-      background: #f5f5f5;
-      color: #333;
-      transform: rotateY(180deg);
-    }
-    button {
-      padding: 10px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 8px;
-      background: #4a90e2;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover { background: #357abd; }
-    input[type="text"] {
-      padding: 8px;
-      width: 80%;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin: 10px 0;
-    }
-    .options label {
-      display: block;
-      background: #e9eff7;
-      margin: 6px 0;
-      padding: 8px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 25px);
-      gap: 5px;
-    }
-    .summary-cell {
-      width: 25px;
-      height: 25px;
-      text-align: center;
-      line-height: 25px;
-      border-radius: 4px;
-      background: #ddd;
-      font-size: 12px;
-    }
-    .correct { background: #4caf50; color: white; }
-    .wrong { background: #e74c3c; color: white; }
-    .bookmark-list {
-      margin-top: 20px;
-    }
-    .bookmark-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      background: #f1f5f9;
-      margin: 4px 0;
-      border-radius: 6px;
-    }
-    .bookmark-item span {
-      cursor: pointer;
-      flex: 1;
-    }
-    .bookmark-item:hover {
-      background: #dbeafe;
-    }
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #e74c3c;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    .delete-btn:hover {
-      color: #c0392b;
-    }
-  </style>
-</head>
-<body>
-  <div class="left-panel">
-    <h2>Flashcards Game</h2>
-    <input type="file" id="fileInput" accept=".txt">
-    <div>
-      <button onclick="setMode('input')">Typing Mode</button>
-      <button onclick="setMode('choice')">Multiple Choice</button>
-    </div>
-
-    <div class="card" onclick="flipCard()" id="flashcard">
-      <div class="card-inner">
-        <div class="card-front" id="question">Load a file first</div>
-        <div class="card-back" id="answer">---</div>
+   <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vocabulary Flashcards</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light dark">
+    <style>
+      :root {
+        --bg: #f5f8fc;
+        --bg-alt: #ffffff;
+        --bg-accent: linear-gradient(135deg,#5c8dfd,#3b65ff);
+        --text: #1f2933;
+        --text-light: #4b5b68;
+        --border: #d9e2ec;
+        --primary: #3b65ff;
+        --primary-hover: #2d51d6;
+        --danger: #e54848;
+        --danger-hover: #c93b3b;
+        --warning: #f7b500;
+        --success: #2ecc71;
+        --radius-s: 6px;
+        --radius-m: 12px;
+        --radius-l: 22px;
+        --shadow-xs: 0 1px 2px rgba(0,0,0,0.06);
+        --shadow-s: 0 2px 6px rgba(0,0,0,0.08);
+        --shadow-m: 0 4px 14px rgba(0,0,0,0.12);
+        --transition: 160ms cubic-bezier(.4,0,.2,1);
+        --focus-ring: 0 0 0 3px rgba(80,125,255,0.45);
+        --card-front: linear-gradient(145deg,#3b65ff,#6b8dff);
+        --card-back: #ffffff;
+        --gradient-text: linear-gradient(90deg,#3558ff,#8f46ff 55%, #ff8a3d);
+      }
+      .dark {
+        --bg: #0f141b;
+        --bg-alt: #1b2430;
+        --bg-accent: linear-gradient(135deg,#375bd9,#2741a3);
+        --text: #f1f5f9;
+        --text-light: #b6c2cf;
+        --border: #2c3a47;
+        --primary: #5b82ff;
+        --primary-hover: #4870f0;
+        --card-back: #243244;
+        --shadow-s: 0 2px 8px rgba(0,0,0,0.5);
+        --shadow-m: 0 4px 18px rgba(0,0,0,0.55);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.4;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1,h2,h3 {
+        font-weight: 600;
+        letter-spacing: -.5px;
+        margin: 0 0 .65em;
+      }
+      h1.gradient {
+        background: var(--gradient-text);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      a:hover { text-decoration: underline; }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .4rem;
+        background: var(--primary);
+        color: #fff;
+        border-radius: var(--radius-s);
+        padding: .65rem 1.1rem;
+        font-weight: 500;
+        letter-spacing: .3px;
+        position: relative;
+        transition: var(--transition);
+        box-shadow: var(--shadow-xs);
+      }
+      button:hover, button:focus-visible {
+        background: var(--primary-hover);
+      }
+      button:focus-visible {
+        outline: none;
+        box-shadow: var(--focus-ring);
+      }
+      button.secondary {
+        background: var(--bg-alt);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      button.secondary:hover {
+        background: #e7eef9;
+      }
+      .dark button.secondary:hover {
+        background: #2d3b49;
+      }
+      button.danger {
+        background: var(--danger);
+      }
+      button.danger:hover {
+        background: var(--danger-hover);
+      }
+      button.outline {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+      }
+      button.outline:hover {
+        color: var(--text);
+        background: rgba(0,0,0,0.05);
+      }
+      .dark button.outline:hover {
+        background: rgba(255,255,255,0.07);
+      }
+      header {
+        padding: clamp(.7rem,2vw,1.1rem) clamp(1rem,3vw,2rem);
+        display: flex;
+        flex-wrap: wrap;
+        gap: .8rem 2rem;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg-alt);
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-xs);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      header .left, header .right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .download-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        background: var(--bg-accent);
+        color: #fff;
+        padding: .55rem .95rem;
+        border-radius: var(--radius-s);
+        font-size: .9rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-s);
+        transition: var(--transition);
+      }
+      .download-link:hover {
+        filter: brightness(1.08);
+        text-decoration: none;
+      }
+      .toggle-theme {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--bg-accent);
+        box-shadow: var(--shadow-s);
+        font-size: 1.05rem;
+      }
+      main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(0,1fr) 360px;
+        gap: 1.5rem;
+        padding: clamp(1rem,2.2vw,2rem);
+      }
+      @media (max-width: 1100px) {
+        main {
+          grid-template-columns: minmax(0,1fr) 320px;
+        }
+      }
+      @media (max-width: 980px) {
+        main {
+          grid-template-columns: 100%;
+          padding-bottom: 6rem;
+        }
+      }
+      .panel {
+        background: var(--bg-alt);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-l);
+        padding: clamp(1rem,2.2vw,1.5rem);
+        box-shadow: var(--shadow-s);
+        position: relative;
+        overflow: hidden;
+      }
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(at 30% 15%,rgba(255,255,255,0.35),transparent 60%),
+          radial-gradient(at 85% 85%,rgba(255,255,255,0.12),transparent 70%);
+        opacity: .7;
+      }
+      .panel h2 {
+        margin-top: 0;
+        font-size: clamp(1.15rem,1.9vw,1.45rem);
+      }
+      .flex-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+      }
+      .segmented {
+        display: inline-flex;
+        background: var(--bg);
+        padding: .35rem;
+        border-radius: 1000px;
+        border: 1px solid var(--border);
+        gap: .35rem;
+      }
+      .segmented button {
+        border-radius: 1000px;
+        background: transparent;
+        color: var(--text-light);
+        padding: .5rem .9rem;
+        font-size: .85rem;
+        border: none;
+        box-shadow: none;
+      }
+      .segmented button.active {
+        background: var(--primary);
+        color: #fff;
+      }
+      .segmented button:hover {
+        background: var(--primary-hover);
+        color: #fff;
+      }
+      .card-wrapper {
+        margin: 1.1rem auto 1.4rem;
+        max-width: 420px;
+        width: 100%;
+      }
+      .flashcard {
+        width: 100%;
+        aspect-ratio: 3/2;
+        perspective: 1400px;
+        cursor: pointer;
+      }
+      .flashcard-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 700ms cubic-bezier(.65,.02,.25,1);
+        border-radius: 24px;
+        box-shadow: var(--shadow-m);
+      }
+      .flashcard.flipped .flashcard-inner {
+        transform: rotateY(180deg);
+      }
+      .face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 24px;
+        display: flex;
+        padding: 1.2rem 1.1rem 1rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        line-height: 1.25;
+        font-weight: 500;
+        font-size: clamp(1rem,1.8vw,1.35rem);
+      }
+      .face.front {
+        background: var(--card-front);
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .face.front::after {
+        content:"";
+        position:absolute;
+        width: 180%;
+        height: 180%;
+        top:-40%;
+        left:-40%;
+        background:
+          radial-gradient(circle at 30% 30%,rgba(255,255,255,0.25),transparent 60%),
+          radial-gradient(circle at 75% 70%,rgba(255,255,255,0.15),transparent 65%);
+        animation: pulse 7s linear infinite;
+      }
+      @keyframes pulse {
+        0% { transform: rotate(0deg) scale(1);}
+        50% { transform: rotate(25deg) scale(1.04);}
+        100% { transform: rotate(0deg) scale(1);}
+      }
+      .face.back {
+        background: var(--card-back);
+        color: var(--text);
+        transform: rotateY(180deg);
+        align-items: flex-start;
+        font-size: clamp(.85rem,1.3vw,1rem);
+        overflow-y: auto;
+      }
+      .face.back::-webkit-scrollbar {
+        width: 8px;
+      }
+      .face.back::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .face.back::-webkit-scrollbar-thumb {
+        background: linear-gradient(var(--primary),var(--primary-hover));
+        border-radius: 100px;
+      }
+      .answer-block {
+        width: 100%;
+        text-align: left;
+        line-height: 1.35;
+        word-wrap: break-word;
+      }
+      .answer-block h4 {
+        margin: 0 0 .4rem;
+        font-size: .85rem;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        opacity: .5;
+      }
+      .meta-line {
+        font-size: .75rem;
+        opacity: .65;
+        margin-top: .75rem;
+        font-weight: 400;
+      }
+      input[type="text"], .search-box, textarea {
+        width: 100%;
+        padding: .7rem .85rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-m);
+        font: inherit;
+        background: var(--bg);
+        color: var(--text);
+        transition: var(--transition);
+        outline: none;
+      }
+      input[type="text"]:focus, .search-box:focus, textarea:focus {
+        box-shadow: var(--focus-ring);
+        background: var(--bg-alt);
+      }
+      .options {
+        margin-top: .6rem;
+        display: grid;
+        gap: .55rem;
+      }
+      .option-label {
+        display: flex;
+        gap: .65rem;
+        align-items: center;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: .65rem .8rem;
+        border-radius: var(--radius-m);
+        font-size: .85rem;
+        cursor: pointer;
+        position: relative;
+        transition: var(--transition);
+      }
+      .option-label:hover, .option-label:has(input:focus-visible) {
+        border-color: var(--primary);
+        background: linear-gradient(90deg,rgba(70,110,255,0.12),transparent);
+      }
+      .option-label input {
+        accent-color: var(--primary);
+        transform: scale(1.1);
+      }
+      #feedback {
+        margin-top: .6rem;
+        font-size: .9rem;
+        font-weight: 500;
+      }
+      .feedback-positive { color: var(--success); }
+      .feedback-negative { color: var(--danger); }
+      .actions-row {
+        margin-top: .8rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+      }
+      .stats-bar {
+        display: flex;
+        gap: .6rem;
+        flex-wrap: wrap;
+        align-items: stretch;
+        margin-top: .6rem;
+      }
+      .stat-chip {
+        flex: 1 1 110px;
+        min-width: 110px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-m);
+        padding: .55rem .7rem;
+        display: flex;
+        flex-direction: column;
+        gap: .2rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-chip strong {
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .5px;
+        opacity: .6;
+      }
+      .stat-chip span {
+        font-size: .95rem;
+        font-weight: 600;
+      }
+      .progress-outer {
+        width: 100%;
+        height: 10px;
+        background: var(--bg);
+        border-radius: 100px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        margin: .3rem 0 .8rem;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+      }
+      .progress-inner {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg,#3b65ff,#6a8fff,#8f46ff);
+        background-size: 200% 100%;
+        animation: progressFlow 9s linear infinite;
+        transition: width 400ms cubic-bezier(.4,0,.2,1);
+      }
+      @keyframes progressFlow {
+        0% { background-position: 0 0; }
+        100% { background-position: 200% 0; }
+      }
+      .bookmarks {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+      }
+      .bookmark-toolbar {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+      }
+      .bookmark-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: .3rem;
+        display: flex;
+        flex-direction: column;
+        gap: .4rem;
+      }
+      .bookmark-list::-webkit-scrollbar {
+        width: 8px;
+      }
+      .bookmark-list::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 100px;
+      }
+      .bookmark-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+        padding: .55rem .7rem;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-m);
+        font-size: .8rem;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+      .bookmark-item:hover {
+        background: linear-gradient(90deg,rgba(80,120,255,0.18),rgba(80,120,255,0.05));
+        border-color: var(--primary);
+      }
+      .bookmark-item button {
+        padding: .3rem .45rem;
+        font-size: .75rem;
+        background: var(--danger);
+      }
+      .bookmark-item button:hover {
+        background: var(--danger-hover);
+      }
+      .tag {
+        display: inline-flex;
+        padding: .2rem .55rem;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 1000px;
+        font-size: .65rem;
+        font-weight: 600;
+        letter-spacing: .5px;
+      }
+      .mode-utils {
+        display: flex;
+        gap: .45rem;
+        flex-wrap: wrap;
+      }
+      .muted {
+        opacity: .6;
+        font-size: .75rem;
+      }
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: .9rem 0 1rem;
+        width: 100%;
+      }
+      .drag-zone {
+        margin-top: .6rem;
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-m);
+        padding: 1rem .9rem;
+        text-align: center;
+        font-size: .8rem;
+        color: var(--text-light);
+        background: var(--bg);
+        transition: var(--transition);
+      }
+      .drag-zone.dragover {
+        background: linear-gradient(150deg,rgba(70,110,255,0.12),rgba(140,90,255,0.12));
+        border-color: var(--primary);
+        color: var(--text);
+      }
+      .inline-badge {
+        background: var(--primary);
+        color: #fff;
+        padding: .15rem .5rem;
+        border-radius: 1000px;
+        font-size: .6rem;
+        letter-spacing: .5px;
+        font-weight: 600;
+      }
+      .pill-row {
+        display: flex;
+        gap: .4rem;
+        flex-wrap: wrap;
+        margin-top: .4rem;
+      }
+      .pill {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        font-size: .65rem;
+        padding: .35rem .6rem;
+        border-radius: 1000px;
+        color: var(--text-light);
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+      }
+      .pill strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .footer-mobile {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-alt);
+        border-top: 1px solid var(--border);
+        display: none;
+        padding: .7rem .9rem env(safe-area-inset-bottom);
+        gap: .6rem;
+        justify-content: center;
+        z-index: 30;
+      }
+      @media (max-width: 980px) {
+        .footer-mobile {
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+      .footer-mobile button {
+        flex: 1 1 calc(50% - .6rem);
+        min-width: 140px;
+      }
+      .mastered-badge {
+        position: absolute;
+        top: .7rem;
+        right: .7rem;
+        background: linear-gradient(90deg,#2ecc71,#54d88b);
+        color: #fff;
+        font-size: .6rem;
+        padding: .3rem .55rem;
+        border-radius: 1000px;
+        letter-spacing: .75px;
+        font-weight: 600;
+        box-shadow: var(--shadow-s);
+      }
+      .info-block {
+        font-size: .7rem;
+        opacity: .65;
+        margin-top: .8rem;
+        line-height: 1.3;
+      }
+      .empty {
+        opacity: .55;
+        font-style: italic;
+        font-size: .8rem;
+        padding: .3rem 0;
+      }
+      .danger-link {
+        background: var(--danger);
+      }
+      .danger-link:hover {
+        background: var(--danger-hover);
+      }
+      .link-btn {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--text-light);
+      }
+      .link-btn:hover {
+        color: var(--text);
+        background: var(--bg-accent);
+        color: #fff;
+      }
+      .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .hidden { display: none !important; }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        border: 0;
+      }
+      .fade-in {
+        animation: fadeIn .5s ease;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .scale-in {
+        animation: scaleIn .5s cubic-bezier(.4,0,.2,1);
+      }
+      @keyframes scaleIn {
+        0% { transform: scale(.94); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="left">
+        <h1 class="gradient" style="font-size:clamp(1.2rem,2.2vw,1.65rem);">Vocabulary Flashcards</h1>
+        <a class="download-link" href="sample_vocabulary.txt" download title="Download sample word list">
+          <span>⬇️ Sample List</span>
+        </a>
       </div>
+      <div class="right">
+        <div class="segmented" role="tablist" aria-label="Study Mode">
+          <button id="modeTyping" role="tab" aria-selected="true" class="active" data-mode="input">Typing</button>
+            <button id="modeChoice" role="tab" aria-selected="false" data-mode="choice">Multiple Choice</button>
+        </div>
+        <button class="toggle-theme" id="themeToggle" title="Toggle Light/Dark" aria-label="Toggle theme">🌓</button>
+      </div>
+    </header>
+    <main>
+      <!-- LEFT / PRIMARY -->
+      <section class="panel" id="primaryPanel" aria-label="Flashcards Study Panel">
+        <div class="mode-utils">
+          <button class="secondary" id="btnShuffle" title="Shuffle all words">🔀 Shuffle</button>
+          <button class="secondary" id="btnResetStats" title="Reset statistics">♻️ Reset Stats</button>
+          <button class="secondary" id="btnRestoreMastered" title="Restore mastered words">🔁 Restore Mastered</button>
+          <button class="secondary" id="btnExportBookmarks" title="Export bookmarks as CSV">📤 Export Bookmarks</button>
+        </div>
+        <div class="progress-outer" aria-label="Progress">
+          <div class="progress-inner" id="progressFill"></div>
+        </div>
+        <div class="stats-bar" aria-live="polite">
+          <div class="stat-chip">
+            <strong>Answered</strong>
+            <span id="statAnswered">0</span>
+          </div>
+            <div class="stat-chip">
+            <strong>Correct</strong>
+            <span id="statCorrect">0</span>
+          </div>
+          <div class="stat-chip">
+            <strong>Accuracy</strong>
+            <span id="statAccuracy">0%</span>
+          </div>
+          <div class="stat-chip">
+            <strong>Streak</strong>
+            <span id="statStreak">0</span>
+          </div>
+          <div class="stat-chip">
+            <strong>Pool</strong>
+            <span id="statPool">0</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <!-- FLASHCARD -->
+        <div class="card-wrapper">
+          <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-pressed="false" aria-label="Flip card">
+            <div class="flashcard-inner" id="flashcardInner">
+              <div class="face front" id="frontFace">
+                <div id="questionWord">Load a file</div>
+              </div>
+              <div class="face back" id="backFace">
+                <div class="answer-block">
+                  <h4>Meaning</h4>
+                  <div id="meaningText">---</div>
+                  <h4 style="margin-top:.85rem;">Example</h4>
+                  <div id="exampleText">---</div>
+                  <div class="meta-line" id="metaInfo"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- INPUT MODE -->
+        <div id="inputArea" class="fade-in">
+          <input type="text" id="userAnswer" placeholder="Type the meaning..." autocomplete="off" aria-label="Type your answer" />
+        </div>
+        <!-- CHOICE MODE -->
+        <div id="choiceArea" class="options hidden" aria-label="Options"></div>
+        <div id="feedback" aria-live="polite"></div>
+        <div class="actions-row">
+          <button id="btnCheck" title="Check your answer">✅ Check</button>
+          <button id="btnReveal" class="secondary" title="Reveal answer (flip)">🙈 Reveal</button>
+          <button id="btnNext" title="Next card">➡️ Next</button>
+          <button id="btnBookmark" class="secondary" title="Bookmark this card">🔖 Bookmark</button>
+          <button id="btnMastered" class="outline" title="Mark as mastered (temporarily remove)">🏆 Mastered</button>
+        </div>
+        <div class="pill-row" id="keywordPills"></div>
+        <div class="info-block">
+          Shortcuts: Enter = Check / Next, Space = Flip card, M = Toggle mode, D = Toggle theme.<br />
+          Add a sample list file named <code>sample_vocabulary.txt</code> in this folder. Format per line:<br />
+          <code>1. Word – definition – example usage sentence</code>
+        </div>
+        <div class="drag-zone" id="dragZone">
+          <strong>Drag & Drop</strong> a .txt file here or
+          <label style="cursor:pointer;text-decoration:underline;color:var(--primary);">
+            browse
+            <input type="file" id="fileInput" accept=".txt" hidden />
+          </label>
+          <div class="muted" style="margin-top:.4rem;">Your data stays in your browser only.</div>
+        </div>
+      </section>
+      <!-- RIGHT / SECONDARY -->
+      <aside class="panel" aria-label="Bookmarks and Management" id="rightPanel">
+        <h2 style="display:flex;align-items:center;justify-content:space-between;margin-top:0;">
+          <span>📚 Bookmarks</span>
+          <span class="inline-badge" id="bookmarkCount">0</span>
+        </h2>
+        <input type="text" id="bookmarkSearch" class="search-box" placeholder="Search bookmarks..." aria-label="Search bookmarks" />
+        <div class="bookmark-toolbar">
+          <button class="outline" id="btnClearBookmarks" title="Clear all bookmarks">🧹 Clear All</button>
+          <button class="outline" id="btnCollapseBookmarks" title="Collapse/Expand list">🗂 Toggle</button>
+        </div>
+        <div class="divider" style="margin:.8rem 0 .7rem;"></div>
+        <div class="bookmarks">
+          <div id="bookmarkList" class="bookmark-list" role="list" aria-label="Bookmarked words"></div>
+          <div id="noBookmarks" class="empty">No bookmarks yet.</div>
+        </div>
+      </aside>
+    </main>
+    <!-- MOBILE FOOTER QUICK ACTIONS -->
+    <div class="footer-mobile">
+      <button id="mobCheck">Check</button>
+      <button id="mobNext">Next</button>
+      <button id="mobFlip">Flip</button>
+      <button id="mobBookmark">🔖</button>
     </div>
-
-    <!-- Typing Mode -->
-    <div id="input-area" style="display:none;">
-      <input type="text" id="userAnswer" placeholder="Type your answer...">
-      <button onclick="checkAnswer()">Check</button>
-      <div id="feedback"></div>
-    </div>
-
-    <!-- Multiple Choice Mode -->
-    <div id="choice-area" style="display:none;" class="options"></div>
-    <div id="choice-check" style="display:none;">
-      <button onclick="checkAnswer()">Check</button>
-      <div id="feedback"></div>
-    </div>
-
-    <div>
-      <button onclick="nextQuestion()">Next Question</button>
-      <button onclick="bookmarkCard()">🔖 Bookmark</button>
-    </div>
-  </div>
-
-  <div class="right-panel">
-    <h3>Progress</h3>
-    <div class="summary-grid" id="summary"></div>
-    <div class="bookmark-list">
-      <h3>Bookmarks</h3>
-      <div id="bookmark-container"></div>
-    </div>
-  </div>
-
-<script>
-let words = [];
-let current = {};
-let mode = "input";
-let qCount = 0;
-let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
-
-document.getElementById("fileInput").addEventListener("change", loadFile);
-
-function loadFile(evt) {
-  const file = evt.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const lines = e.target.result.split("\n").filter(l => l.trim());
-    words = lines.map(line => {
-      const parts = line.split("–").map(p => p.trim());
-      return {
-        word: parts[0].replace(/^\d+\.\s*/, ""),
-        meaning: parts[1] || "",
-        example: parts[2] || ""
+    <script>
+      /*********************************************************
+       * State & Persistence
+       *********************************************************/
+      let words = [];
+      let activePool = []; // excludes mastered
+      let mastered = new Set(JSON.parse(localStorage.getItem("masteredWords") || "[]"));
+      let current = null;
+      let mode = localStorage.getItem("studyMode") || "input"; // "input" | "choice"
+      let stats = JSON.parse(localStorage.getItem("stats") || JSON.stringify({
+        answered: 0,
+        correct: 0,
+        streak: 0
+      }));
+      let bookmarks = JSON.parse(localStorage.getItem("bookmarksV2") || "[]");
+      let lastAnswerCorrect = null;
+      let theme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      if (theme === "dark") document.documentElement.classList.add("dark");
+      const els = {
+        modeTyping: document.getElementById("modeTyping"),
+        modeChoice: document.getElementById("modeChoice"),
+        inputArea: document.getElementById("inputArea"),
+        choiceArea: document.getElementById("choiceArea"),
+        userAnswer: document.getElementById("userAnswer"),
+        feedback: document.getElementById("feedback"),
+        questionWord: document.getElementById("questionWord"),
+        meaningText: document.getElementById("meaningText"),
+        exampleText: document.getElementById("exampleText"),
+        metaInfo: document.getElementById("metaInfo"),
+        flashcard: document.getElementById("flashcard"),
+        flashcardInner: document.getElementById("flashcardInner"),
+        keywordPills: document.getElementById("keywordPills"),
+        statAnswered: document.getElementById("statAnswered"),
+        statCorrect: document.getElementById("statCorrect"),
+        statAccuracy: document.getElementById("statAccuracy"),
+        statStreak: document.getElementById("statStreak"),
+        statPool: document.getElementById("statPool"),
+        progressFill: document.getElementById("progressFill"),
+        btnCheck: document.getElementById("btnCheck"),
+        btnReveal: document.getElementById("btnReveal"),
+        btnNext: document.getElementById("btnNext"),
+        btnBookmark: document.getElementById("btnBookmark"),
+        btnMastered: document.getElementById("btnMastered"),
+        btnShuffle: document.getElementById("btnShuffle"),
+        btnResetStats: document.getElementById("btnResetStats"),
+        btnRestoreMastered: document.getElementById("btnRestoreMastered"),
+        btnExportBookmarks: document.getElementById("btnExportBookmarks"),
+        fileInput: document.getElementById("fileInput"),
+        dragZone: document.getElementById("dragZone"),
+        themeToggle: document.getElementById("themeToggle"),
+        bookmarkList: document.getElementById("bookmarkList"),
+        bookmarkCount: document.getElementById("bookmarkCount"),
+        bookmarkSearch: document.getElementById("bookmarkSearch"),
+        noBookmarks: document.getElementById("noBookmarks"),
+        btnClearBookmarks: document.getElementById("btnClearBookmarks"),
+        btnCollapseBookmarks: document.getElementById("btnCollapseBookmarks"),
+        mobCheck: document.getElementById("mobCheck"),
+        mobNext: document.getElementById("mobNext"),
+        mobFlip: document.getElementById("mobFlip"),
+        mobBookmark: document.getElementById("mobBookmark")
       };
-    });
-    nextQuestion();
-  };
-  reader.readAsText(file);
-}
-
-function setMode(m) {
-  mode = m;
-  document.getElementById("input-area").style.display = m === "input" ? "block" : "none";
-  document.getElementById("choice-area").style.display = m === "choice" ? "block" : "none";
-  document.getElementById("choice-check").style.display = m === "choice" ? "block" : "none";
-  document.getElementById("feedback").innerText = "";
-}
-
-function flipCard() {
-  document.getElementById("flashcard").classList.toggle("flipped");
-}
-
-function nextQuestion() {
-  if (words.length === 0) return;
-  current = words[Math.floor(Math.random() * words.length)];
-  qCount++;
-  document.getElementById("question").innerText = current.word;
-  document.getElementById("answer").innerText = current.meaning + "\n" + current.example;
-  document.getElementById("flashcard").classList.remove("flipped");
-  if (document.getElementById("userAnswer")) document.getElementById("userAnswer").value = "";
-  document.getElementById("feedback").innerText = "";
-
-  if (mode === "choice") {
-    const choiceArea = document.getElementById("choice-area");
-    choiceArea.innerHTML = "";
-    let options = [current.meaning];
-    while (options.length < 4) {
-      let rand = words[Math.floor(Math.random() * words.length)].meaning;
-      if (!options.includes(rand)) options.push(rand);
-    }
-    options.sort(() => Math.random() - 0.5);
-    options.forEach(opt => {
-      choiceArea.innerHTML += `<label><input type="radio" name="opt" value="${opt}"> ${opt}</label>`;
-    });
-  }
-}
-
-function checkAnswer() {
-  let correct = false;
-  let feedback = "";
-
-  if (mode === "input") {
-    const ans = document.getElementById("userAnswer").value.toLowerCase().split(/\s+/);
-    const targetWords = current.meaning.toLowerCase().split(/\s+/);
-    let matched = ans.filter(word => targetWords.includes(word)).length;
-    let percent = Math.round((matched / targetWords.length) * 100);
-
-    correct = percent > 60; // at least 60% words matched
-    feedback = `Matched ${percent}% of key words.`;
-  } else {
-    const sel = document.querySelector('input[name="opt"]:checked');
-    if (sel) {
-      correct = sel.value === current.meaning;
-      feedback = correct ? "Correct!" : `Wrong. Correct answer: ${current.meaning}`;
-    } else {
-      feedback = "Please select an option.";
-    }
-  }
-
-  if (feedback) document.getElementById("feedback").innerText = feedback;
-  if (feedback !== "Please select an option.") addSummary(correct);
-}
-
-function addSummary(correct) {
-  const cell = document.createElement("div");
-  cell.className = "summary-cell " + (correct ? "correct" : "wrong");
-  cell.innerText = qCount;
-  document.getElementById("summary").appendChild(cell);
-}
-
-function bookmarkCard() {
-  const id = Date.now();
-  const entry = { id, ...current };
-  bookmarks.push(entry);
-  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-  renderBookmarks();
-}
-
-function deleteBookmark(id) {
-  bookmarks = bookmarks.filter(b => b.id !== id);
-  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-  renderBookmarks();
-}
-
-function renderBookmarks() {
-  const container = document.getElementById("bookmark-container");
-  container.innerHTML = "";
-  bookmarks.forEach(b => {
-    const div = document.createElement("div");
-    div.className = "bookmark-item";
-
-    const span = document.createElement("span");
-    span.textContent = b.word;
-    span.onclick = () => {
-      current = b;
-      document.getElementById("question").innerText = current.word;
-      document.getElementById("answer").innerText = current.meaning + "\n" + current.example;
-      document.getElementById("flashcard").classList.remove("flipped");
-    };
-
-    const btn = document.createElement("button");
-    btn.className = "delete-btn";
-    btn.innerHTML = "🗑";
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      deleteBookmark(b.id);
-    };
-
-    div.appendChild(span);
-    div.appendChild(btn);
-    container.appendChild(div);
-  });
-}
-
-// Render saved bookmarks on load
-renderBookmarks();
-</script>
-</body>
-</html>
+      /*********************************************************
+       * Utility Functions
+       *********************************************************/
+      function saveStats() {
+        localStorage.setItem("stats", JSON.stringify(stats));
+      }
+      function updateStatsUI() {
+        els.statAnswered.textContent = stats.answered;
+        els.statCorrect.textContent = stats.correct;
+        els.statStreak.textContent = stats.streak;
+        const accuracy = stats.answered ? Math.round((stats.correct / stats.answered) * 100) : 0;
+        els.statAccuracy.textContent = accuracy + "%";
+        const poolSize = activePool.length;
+        els.statPool.textContent = poolSize;
+        // progress = answered out of words (bounded)
+        const total = words.length || 1;
+        const pct = Math.min(100, (stats.answered / total) * 100);
+        els.progressFill.style.width = pct + "%";
+      }
+      function persistBookmarks() {
+        localStorage.setItem("bookmarksV2", JSON.stringify(bookmarks));
+      }
+      function persistMastered() {
+        localStorage.setItem("masteredWords", JSON.stringify(Array.from(mastered)));
+      }
+      function setMode(newMode) {
+        mode = newMode;
+        localStorage.setItem("studyMode", mode);
+        els.modeTyping.classList.toggle("active", mode === "input");
+        els.modeChoice.classList.toggle("active", mode === "choice");
+        els.modeTyping.setAttribute("aria-selected", mode === "input");
+        els.modeChoice.setAttribute("aria-selected", mode === "choice");
+        if (mode === "input") {
+          els.inputArea.classList.remove("hidden");
+          els.choiceArea.classList.add("hidden");
+          setTimeout(() => els.userAnswer.focus(), 50);
+        } else {
+          els.inputArea.classList.add("hidden");
+          els.choiceArea.classList.remove("hidden");
+        }
+        renderCurrent();
+      }
+      function randomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+      function shuffleInPlace(arr) {
+        for (let i = arr.length -1; i > 0; i--) {
+          const j = Math.floor(Math.random()*(i+1));
+          [arr[i],arr[j]] = [arr[j],arr[i]];
+        }
+      }
+      function sanitizeMeaning(str) {
+        return str.toLowerCase().replace(/[^\w\s]/g," ").replace(/\s+/g," ").trim();
+      }
+      function extractKeywords(meaning) {
+        const words = sanitizeMeaning(meaning).split(/\s+/).filter(Boolean);
+        const stop = new Set(["the","a","an","and","or","of","to","in","on","for","with","by","is","are","be","as","at","that","this","it"]);
+        const freq = {};
+        words.forEach(w=>{
+          if (!stop.has(w)) freq[w] = (freq[w]||0)+1;
+        });
+        // pick up to 6 most frequent tokens
+        return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>e[0]);
+      }
+      function levenshtein(a,b) {
+        if (a===b) return 0;
+        const al=a.length, bl=b.length;
+        if (!al) return bl;
+        if (!bl) return al;
+        const v0 = new Array(bl+1).fill(0);
+        const v1 = new Array(bl+1).fill(0);
+        for (let i=0;i<=bl;i++) v0[i]=i;
+        for (let i=0;i<al;i++) {
+          v1[0]=i+1;
+          for (let j=0;j<bl;j++) {
+            const cost = a[i]===b[j]?0:1;
+            v1[j+1] = Math.min(v1[j]+1,v0[j+1]+1,v0[j]+cost);
+          }
+          for (let j=0;j<=bl;j++) v0[j]=v1[j];
+        }
+        return v1[bl];
+      }
+      function similarity(a,b) {
+        a = a.trim().toLowerCase();
+        b = b.trim().toLowerCase();
+        if (!a && !b) return 1;
+        if (!a || !b) return 0;
+        const dist = levenshtein(a,b);
+        return 1 - dist / Math.max(a.length,b.length);
+      }
+      function partialKeywordScore(user, target) {
+        const userTokens = sanitizeMeaning(user).split(" ").filter(Boolean);
+        const targetTokens = sanitizeMeaning(target).split(" ").filter(Boolean);
+        if (!targetTokens.length) return 0;
+        let matched = 0;
+        targetTokens.forEach(t=>{
+          if (userTokens.includes(t)) matched++;
+        });
+        return matched / targetTokens.length;
+      }
+      function formatExample(example) {
+        if (!example) return "<em style='opacity:.55;'>No example</em>";
+        return example;
+      }
+      /*********************************************************
+       * Core Rendering
+       *********************************************************/
+      function chooseNext() {
+        if (!activePool.length) {
+          current = null;
+          els.questionWord.textContent = "All mastered!";
+          els.meaningText.textContent = "Restore mastered to continue.";
+          els.exampleText.textContent = "";
+          return;
+        }
+        current = randomItem(activePool);
+      }
+      function renderCurrent() {
+        els.flashcard.classList.remove("flipped");
+        if (!current) {
+          chooseNext();
+        }
+        if (!current) return;
+        els.questionWord.textContent = current.word;
+        els.meaningText.innerHTML = current.meaning;
+        els.exampleText.innerHTML = formatExample(current.example);
+        els.metaInfo.textContent = "";
+        // mastered badge
+        document.querySelectorAll(".mastered-badge").forEach(b=>b.remove());
+        if (mastered.has(current.word)) {
+          const badge = document.createElement("div");
+            badge.className = "mastered-badge";
+          badge.textContent = "MASTERED";
+          els.flashcard.appendChild(badge);
+        }
+        // Build keyword pills
+        els.keywordPills.innerHTML = "";
+        const keys = extractKeywords(current.meaning);
+        keys.forEach(k=>{
+          const div = document.createElement("div");
+          div.className = "pill";
+          div.innerHTML = "<strong>"+k+"</strong>";
+          els.keywordPills.appendChild(div);
+        });
+        // Multiple choice render
+        if (mode === "choice") {
+          renderChoices();
+        }
+        // Clear feedback
+        els.feedback.textContent = "";
+        els.feedback.className = "";
+        if (mode === "input") {
+          els.userAnswer.value = "";
+          els.userAnswer.focus();
+        }
+      }
+      function renderChoices() {
+        els.choiceArea.innerHTML = "";
+        if (!current) return;
+        const correct = current.meaning;
+        const opts = new Set([correct]);
+        const pool = activePool.length ? activePool : words;
+        while (opts.size < Math.min(4, pool.length)) {
+          const cand = randomItem(pool).meaning;
+          opts.add(cand);
+        }
+        const final = Array.from(opts);
+        shuffleInPlace(final);
+        final.forEach(opt=>{
+          const id = "opt_" + Math.random().toString(36).slice(2);
+          const label = document.createElement("label");
+          label.className = "option-label";
+          label.setAttribute("for",id);
+          label.innerHTML = `<input type="radio" name="mc" id="${id}" value="${encodeURIComponent(opt)}" /> <span>${opt}</span>`;
+          els.choiceArea.appendChild(label);
+        });
+      }
+      function updateBookmarkUI() {
+        els.bookmarkCount.textContent = bookmarks.length;
+        persistBookmarks();
+        filterAndRenderBookmarks();
+      }
+      function filterAndRenderBookmarks() {
+        const query = els.bookmarkSearch.value.trim().toLowerCase();
+        const list = bookmarks.filter(b => !query || b.word.toLowerCase().includes(query));
+        els.bookmarkList.innerHTML = "";
+        if (!list.length) {
+          els.noBookmarks.classList.remove("hidden");
+        } else {
+          els.noBookmarks.classList.add("hidden");
+        }
+        list.forEach(b=>{
+          const item = document.createElement("div");
+          item.className = "bookmark-item";
+          item.setAttribute("role","listitem");
+          item.title = b.meaning;
+          item.addEventListener("click", ()=>{
+            current = b;
+            if (!mastered.has(b.word)) {
+              // ensure present in pool
+              if (!activePool.find(x=>x.word===b.word)) activePool.push(b);
+            }
+            renderCurrent();
+            window.scrollTo({top:0,behavior:"smooth"});
+          });
+          const span = document.createElement("div");
+          span.className="truncate";
+          span.style.flex="1";
+          span.textContent = b.word;
+          const del = document.createElement("button");
+          del.textContent = "✖";
+          del.className = "danger";
+          del.title = "Remove bookmark";
+          del.addEventListener("click", (e)=>{
+            e.stopPropagation();
+            bookmarks = bookmarks.filter(x=>!(x.word===b.word && x.meaning===b.meaning));
+            updateBookmarkUI();
+          });
+          item.appendChild(span);
+          item.appendChild(del);
+          els.bookmarkList.appendChild(item);
+        });
+      }
+      /*********************************************************
+       * Answer Checking
+       *********************************************************/
+      function checkAnswer() {
+        if (!current) return;
+        let isCorrect = false;
+        let feedbackMsg = "";
+        if (mode === "input") {
+          const user = els.userAnswer.value.trim();
+          if (!user) {
+            feedbackMsg = "Please type an answer.";
+            showFeedback(feedbackMsg,false,true);
+            return;
+          }
+          const target = current.meaning;
+          const sim = similarity(user, target);
+          const keyCoverage = partialKeywordScore(user, target);
+          // logic: if similarity high OR combination good
+          isCorrect = sim >= 0.7 || (sim >= 0.55 && keyCoverage >= 0.45) || keyCoverage >= 0.65;
+          const percent = Math.round(sim * 100);
+          const kc = Math.round(keyCoverage * 100);
+          feedbackMsg = (isCorrect ? "✅ Good! " : "❌ Not quite. ") + `Similarity: ${percent}%, Keyword match: ${kc}%.`;
+          if (!isCorrect) feedbackMsg += " Flip or try again.";
+        } else {
+          const sel = els.choiceArea.querySelector("input[name='mc']:checked");
+          if (!sel) {
+            feedbackMsg = "Select an option.";
+            showFeedback(feedbackMsg,false,true);
+            return;
+          }
+          const chosen = decodeURIComponent(sel.value);
+          isCorrect = chosen === current.meaning;
+          feedbackMsg = isCorrect ? "✅ Correct!" : "❌ Wrong. Correct: " + current.meaning;
+        }
+        applyResult(isCorrect, feedbackMsg);
+      }
+      function applyResult(correct, msg) {
+        stats.answered++;
+        if (correct) {
+          stats.correct++;
+          stats.streak++;
+        } else {
+          stats.streak = 0;
+        }
+        lastAnswerCorrect = correct;
+        saveStats();
+        updateStatsUI();
+        showFeedback(msg, correct);
+      }
+      function showFeedback(msg, positive, subtle) {
+        els.feedback.textContent = msg;
+        els.feedback.className = "";
+        if (!subtle) {
+          els.feedback.classList.add(positive?"feedback-positive":"feedback-negative");
+        }
+      }
+      /*********************************************************
+       * Actions
+       *********************************************************/
+      function nextQuestion(force=false) {
+        if (!activePool.length) {
+          renderCurrent();
+          return;
+        }
+        if (!force && lastAnswerCorrect === true) {
+          // naive spaced repetition: if correct, less likely to appear immediately
+          for (let i=0;i<3;i++) {
+            const candidate = randomItem(activePool);
+            if (candidate.word !== current.word) {
+              current = candidate;
+              break;
+            }
+          }
+        } else {
+          current = randomItem(activePool);
+        }
+        lastAnswerCorrect = null;
+        renderCurrent();
+      }
+      function flipCard() {
+        els.flashcard.classList.toggle("flipped");
+      }
+      function toggleBookmark() {
+        if (!current) return;
+        const exists = bookmarks.find(b=>b.word===current.word && b.meaning===current.meaning);
+        if (exists) {
+          bookmarks = bookmarks.filter(b=>!(b.word===current.word && b.meaning===current.meaning));
+        } else {
+          bookmarks.push({...current});
+        }
+        updateBookmarkUI();
+        els.btnBookmark.textContent = exists ? "🔖 Bookmark" : "✅ Bookmarked";
+        setTimeout(()=>{ if (!exists) els.btnBookmark.textContent="🔖 Bookmark"; },1200);
+      }
+      function markMastered() {
+        if (!current) return;
+        if (mastered.has(current.word)) {
+          mastered.delete(current.word);
+        } else {
+          mastered.add(current.word);
+        }
+        persistMastered();
+        rebuildActivePool();
+        nextQuestion(true);
+      }
+      function restoreMastered() {
+        mastered.clear();
+        persistMastered();
+        rebuildActivePool();
+        renderCurrent();
+      }
+      function rebuildActivePool() {
+        activePool = words.filter(w=>!mastered.has(w.word));
+        updateStatsUI();
+      }
+      function resetStats() {
+        if (!confirm("Reset statistics?")) return;
+        stats = {answered:0,correct:0,streak:0};
+        saveStats();
+        updateStatsUI();
+      }
+      function shuffleWords() {
+        shuffleInPlace(words);
+        rebuildActivePool();
+        nextQuestion(true);
+      }
+      function exportBookmarksCSV() {
+        if (!bookmarks.length) {
+          alert("No bookmarks to export.");
+          return;
+        }
+        let csv = "Word,Meaning,Example\n";
+        bookmarks.forEach(b=>{
+          const line = [
+            JSON.stringify(b.word),
+            JSON.stringify(b.meaning),
+            JSON.stringify(b.example || "")
+          ].join(",");
+          csv += line + "\n";
+        });
+        const blob = new Blob([csv], {type:"text/csv"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "bookmarks.csv";
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        a.remove();
+      }
+      function clearBookmarks() {
+        if (!bookmarks.length) return;
+        if (!confirm("Clear all bookmarks?")) return;
+        bookmarks = [];
+        updateBookmarkUI();
+      }
+      let bookmarksCollapsed = false;
+      function toggleBookmarksCollapse() {
+        bookmarksCollapsed = !bookmarksCollapsed;
+        els.bookmarkList.style.display = bookmarksCollapsed ? "none":"flex";
+        els.noBookmarks.style.display = bookmarksCollapsed ? "none": (bookmarks.length?"none":"block");
+        els.btnCollapseBookmarks.textContent = bookmarksCollapsed ? "🗂 Expand" : "🗂 Collapse";
+      }
+      function toggleTheme() {
+        document.documentElement.classList.toggle("dark");
+        theme = document.documentElement.classList.contains("dark")?"dark":"light";
+        localStorage.setItem("theme", theme);
+      }
+      /*********************************************************
+       * File Loading
+       *********************************************************/
+      function parseLines(raw) {
+        return raw.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(line=>{
+          // Split on – or - (en dash or hyphen) but prefer first dash after numbering
+          let parts = line.split("–");
+          if (parts.length < 2) parts = line.split(" - ");
+          const [rawWord, rawMeaning, rawExample] = [
+            parts[0]||"",
+            parts[1]||"",
+            parts.slice(2).join("–") // allow extra dashes for extended example
+          ];
+          return {
+            word: rawWord.replace(/^\d+\.\s*/,"").trim(),
+            meaning: (rawMeaning||"").trim(),
+            example: (rawExample||"").trim()
+          };
+        }).filter(obj=>obj.word);
+      }
+      function handleFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+          const text = e.target.result;
+          words = parseLines(text);
+          if (!words.length) {
+            alert("No valid lines found.");
+            return;
+          }
+          rebuildActivePool();
+          chooseNext();
+          renderCurrent();
+          updateStatsUI();
+          els.dragZone.classList.remove("dragover");
+        };
+        reader.readAsText(file);
+      }
+      /*********************************************************
+       * Event Listeners
+       *********************************************************/
+      els.modeTyping.addEventListener("click", ()=> setMode("input"));
+      els.modeChoice.addEventListener("click", ()=> setMode("choice"));
+      els.btnCheck.addEventListener("click", checkAnswer);
+      els.btnReveal.addEventListener("click", flipCard);
+      els.btnNext.addEventListener("click", ()=> nextQuestion(true));
+      els.btnBookmark.addEventListener("click", toggleBookmark);
+      els.btnMastered.addEventListener("click", markMastered);
+      els.btnShuffle.addEventListener("click", shuffleWords);
+      els.btnResetStats.addEventListener("click", resetStats);
+      els.btnRestoreMastered.addEventListener("click", restoreMastered);
+      els.btnExportBookmarks.addEventListener("click", exportBookmarksCSV);
+      els.bookmarkSearch.addEventListener("input", filterAndRenderBookmarks);
+      els.btnClearBookmarks.addEventListener("click", clearBookmarks);
+      els.btnCollapseBookmarks.addEventListener("click", toggleBookmarksCollapse);
+      els.themeToggle.addEventListener("click", toggleTheme);
+      els.fileInput.addEventListener("change", e=>{
+        if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+      });
+      // Drag & drop
+      ["dragenter","dragover"].forEach(evt=>{
+        els.dragZone.addEventListener(evt, e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          els.dragZone.classList.add("dragover");
+        });
+      });
+      ["dragleave","drop"].forEach(evt=>{
+        els.dragZone.addEventListener(evt, e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          if (evt==="drop") {
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+          }
+          els.dragZone.classList.remove("dragover");
+        });
+      });
+      els.dragZone.addEventListener("click", ()=>{
+        els.fileInput.click();
+      });
+      // Flashcard flipping via keyboard
+      els.flashcard.addEventListener("click", flipCard);
+      els.flashcard.addEventListener("keydown", e=>{
+        if (e.code === "Space" || e.key === "Enter") {
+          e.preventDefault();
+          flipCard();
+        }
+      });
+      // Answer/Next shortcuts
+      document.addEventListener("keydown", e=>{
+        if (["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) {
+          if (e.key === "Enter") {
+            if (lastAnswerCorrect !== null) {
+              nextQuestion(true);
+            } else {
+              checkAnswer();
+            }
+          }
+          return;
+        }
+        if (e.key === "Enter") {
+          if (lastAnswerCorrect !== null) {
+            nextQuestion(true);
+          } else {
+            checkAnswer();
+          }
+        } else if (e.code === "Space") {
+          e.preventDefault();
+          flipCard();
+        } else if (e.key.toLowerCase() === "m") {
+          setMode(mode === "input" ? "choice" : "input");
+        } else if (e.key.toLowerCase() === "d") {
+          toggleTheme();
+        }
+      });
+      // Mobile footer buttons
+      els.mobCheck.addEventListener("click", checkAnswer);
+      els.mobNext.addEventListener("click", ()=> nextQuestion(true));
+      els.mobFlip.addEventListener("click", flipCard);
+      els.mobBookmark.addEventListener("click", toggleBookmark);
+      // Press Enter inside typing to check or next
+      els.userAnswer.addEventListener("keydown", e=>{
+        if (e.key === "Enter") {
+          if (lastAnswerCorrect !== null) {
+            nextQuestion(true);
+          } else {
+            checkAnswer();
+          }
+        }
+      });
+      /*********************************************************
+       * Initial Load
+       *********************************************************/
+      function init() {
+        setMode(mode);
+        updateStatsUI();
+        updateBookmarkUI();
+        if (words.length) {
+          rebuildActivePool();
+          chooseNext();
+          renderCurrent();
+        }
+      }
+      init();
+    </script>
+  </body>
+  </html>
