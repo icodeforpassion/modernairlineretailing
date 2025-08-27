@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Non-Verbal Reasoning Practice (Extended)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg:#0f1115;
+    --panel:#1d232b;
+    --panel-alt:#252e38;
+    --accent:#3fa9f5;
+    --accent-grad:#7fdbff;
+    --danger:#ff4d4d;
+    --ok:#41d370;
+    --text:#e8eef5;
+    --muted:#9aa6b4;
+    --warn:#ffcc47;
+    --symbol-scale:1.25; /* Default scale (adjustable via slider) */
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Open Sans,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0;
+    background:linear-gradient(145deg,#10151b,#161e26 60%,#10151b);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  header {
+    padding:1rem 1.2rem;
+    background:#12171d;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    flex-wrap:wrap;
+    border-bottom:1px solid #222c36;
+  }
+  header h1 {
+    font-size:1.2rem;
+    margin:0;
+    background:linear-gradient(90deg,var(--accent),var(--accent-grad));
+    -webkit-background-clip:text;
+    color:transparent;
+    font-weight:600;
+    letter-spacing:.5px;
+  }
+  main {
+    width:100%;
+    max-width:1320px;
+    margin:0 auto;
+    padding:1.2rem;
+    flex:1;
+    display:grid;
+    gap:1.2rem;
+    grid-template-columns:340px 1fr;
+  }
+  @media (max-width:1100px){
+    main { grid-template-columns:1fr; }
+  }
+  .panel {
+    background:var(--panel);
+    border:1px solid #222c36;
+    border-radius:14px;
+    padding:1rem 1.1rem 1.3rem;
+    box-shadow:0 4px 16px -6px rgba(0,0,0,.5),0 1px 0 0 #27323d inset;
+    position:relative;
+  }
+  .panel h2 { margin:.1rem 0 1rem; font-size:1.05rem; font-weight:600; letter-spacing:.5px; color:var(--accent); }
+  fieldset {
+    border:1px solid #2a3541;
+    padding:.75rem .9rem 1rem;
+    border-radius:10px;
+    margin:0 0 .85rem;
+  }
+  fieldset legend {
+    padding:0 .5rem;
+    font-size:.7rem;
+    font-weight:600;
+    letter-spacing:.55px;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .grid-2 { display:grid; gap:.6rem .8rem; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); }
+  select, button, input[type=number], input[type=range] {
+    background:var(--panel-alt);
+    border:1px solid #303c48;
+    color:var(--text);
+    padding:.55rem .65rem;
+    font-size:.85rem;
+    border-radius:8px;
+    font-family:inherit;
+    transition:.2s border,.2s background;
+    width:100%;
+  }
+  input[type=range]{ padding:.3rem 0; }
+  select:focus, button:focus, input:focus {
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 2px rgba(63,169,245,.15);
+  }
+  button {
+    cursor:pointer;
+    font-weight:600;
+    letter-spacing:.3px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.5rem;
+    background:linear-gradient(145deg,#2a3642,#222c35);
+  }
+  button.primary {
+    background:linear-gradient(145deg,var(--accent),#2b7eb8);
+    border:1px solid #2d90ce;
+    color:#fff;
+  }
+  button.primary:hover { filter:brightness(1.15); }
+  button:not(.primary):hover { background:#2f3a46; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .badge {
+    font-size:.63rem;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    padding:.35rem .55rem .3rem;
+    background:#27323d;
+    border:1px solid #33424f;
+    border-radius:50px;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .badge.accent {
+    background:linear-gradient(145deg,var(--accent),var(--accent-grad));
+    color:#081620;
+    border:none;
+  }
+  .question-wrapper { display:flex; flex-direction:column; gap:1rem; }
+  .question-header { display:flex; flex-wrap:wrap; gap:.8rem; align-items:center; justify-content:space-between; }
+  .question-stem {
+    background:var(--panel-alt);
+    border:1px solid #2c3844;
+    padding:1rem 1rem 1.1rem;
+    border-radius:12px;
+    font-family:ui-monospace,Consolas,"SF Mono",monospace;
+    font-size:calc(.9rem * var(--symbol-scale) * .85);
+    line-height:1.25;
+    overflow-x:auto;
+    min-height:52px;
+  }
+  .matrix, .grid { display:inline-grid; gap:.4rem; }
+  .matrix { grid-template-columns:repeat(3,minmax(32px,1fr)); }
+  .grid.dynamic { --cols:5; grid-template-columns:repeat(var(--cols), minmax(24px,1fr)); }
+  .cell, .seq-item, .option-btn {
+    font-size:calc(0.95rem * var(--symbol-scale));
+    line-height:1.1;
+  }
+  .cell {
+    padding:.4rem .45rem;
+    min-width:36px;
+    min-height:36px;
+    text-align:center;
+    background:#1f272f;
+    border:1px solid #313f4c;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:500;
+  }
+  .stem-sequence {
+    display:flex; gap:.6rem; flex-wrap:wrap; word-break:break-all;
+  }
+  .stem-sequence .seq-item {
+    background:#1f272f;
+    border:1px solid #313f4c;
+    padding:.6rem .7rem;
+    border-radius:8px;
+    min-width:54px;
+    text-align:center;
+    font-family:ui-monospace,monospace;
+  }
+  .options {
+    display:grid;
+    gap:.75rem;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  }
+  .option-btn {
+    border:1px solid #2c3844;
+    background:#222b33;
+    color:var(--text);
+    padding:.8rem .85rem .9rem;
+    text-align:center;
+    font-size:calc(.85rem * var(--symbol-scale));
+    line-height:1.25;
+    border-radius:10px;
+    cursor:pointer;
+    min-height:68px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:ui-monospace,monospace;
+    white-space:pre-wrap;
+    transition:.2s background,.2s transform;
+  }
+  .option-btn:hover { background:#2b3640; }
+  .option-btn.correct {
+    background:linear-gradient(145deg,var(--ok),#1f9f54);
+    color:#062012;
+    border:1px solid #23c665;
+    font-weight:600;
+  }
+  .option-btn.incorrect {
+    background:linear-gradient(145deg,#772e2e,#602222);
+    border:1px solid #a54242;
+    color:#f9eaea;
+  }
+  .feedback { margin-top:.4rem; font-size:.85rem; font-weight:500; min-height:1.2em; }
+  .feedback .ok { color:var(--ok); }
+  .feedback .bad { color:var(--danger); }
+  .explain {
+    background:#182028;
+    padding:.85rem .95rem;
+    border-radius:10px;
+    border:1px solid #27323d;
+    font-size:.74rem;
+    line-height:1.35;
+    margin-top:.8rem;
+    position:relative;
+  }
+  .explain:before {
+    content:"Explanation";
+    position:absolute;
+    top:-.6rem; left:.9rem;
+    background:#182028;
+    padding:0 .45rem;
+    font-size:.58rem;
+    letter-spacing:.8px;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .scorebar { display:flex; align-items:center; gap:.5rem; margin-top:.6rem; }
+  .progress-wrap {
+    flex:1; background:#1b232b; border:1px solid #29323c; height:10px; border-radius:20px; overflow:hidden; position:relative;
+  }
+  .progress { position:absolute; inset:0; background:linear-gradient(90deg,var(--accent),var(--accent-grad)); width:0%; transition:.4s width cubic-bezier(.65,.05,.36,1); }
+  .score-stats { font-size:.68rem; letter-spacing:.45px; color:var(--muted); display:flex; gap:1.1rem; flex-wrap:wrap; }
+  .pill-row { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .pill {
+    background:#222c35;
+    border:1px solid #2f3a45;
+    padding:.38rem .65rem .42rem;
+    border-radius:40px;
+    font-size:.62rem;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+  }
+  .pill.active {
+    background:linear-gradient(145deg,var(--accent),var(--accent-grad));
+    color:#082033;
+    border:none;
+  }
+  .flash { animation:flash .95s ease; }
+  @keyframes flash {
+    0% { box-shadow:0 0 0 0 rgba(63,169,245,.0); }
+    30% { box-shadow:0 0 0 6px rgba(63,169,245,.25); }
+    100% { box-shadow:0 0 0 0 rgba(63,169,245,0); }
+  }
+  footer {
+    text-align:center;
+    padding:1rem .8rem 1.4rem;
+    font-size:.6rem;
+    color:#5d6b79;
+    letter-spacing:.5px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Non-Verbal Reasoning Practice Suite (20 Types)</h1>
+  <div class="pill-row" id="modePills"></div>
+</header>
+<main>
+  <aside class="panel" id="controlPanel">
+    <h2>Controls</h2>
+    <fieldset>
+      <legend>Question Type</legend>
+      <select id="questionType">
+        <option value="any">(Random Any Type)</option>
+      </select>
+      <label style="margin-top:.7rem;">
+        Difficulty
+        <select id="difficulty">
+          <option value="0">(Mixed)</option>
+          <option value="1">Level 1 (Easy)</option>
+          <option value="2">Level 2 (Medium)</option>
+          <option value="3">Level 3 (Hard)</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Session</legend>
+      <div class="grid-2">
+        <label>
+          Target #
+          <input type="number" id="targetCount" min="1" max="300" value="20" />
+          <span style="font-size:.62rem;color:var(--muted);display:block;margin-top:.3rem;">Planned total.</span>
+        </label>
+        <label>
+          Timer (s)
+          <input type="number" id="timerPerQ" min="0" max="999" value="0" />
+          <span style="font-size:.62rem;color:var(--muted);display:block;margin-top:.3rem;">0 = none.</span>
+        </label>
+      </div>
+      <div style="margin-top:.65rem;display:flex;gap:.55rem;">
+        <button class="primary" id="startBtn">Start / Next</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Display</legend>
+      <label style="display:block;">
+        Symbol Size (x)
+        <input type="range" id="symbolSizeRange" min="0.6" max="2.8" step=".1" value="1.25" />
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Utilities</legend>
+      <div style="display:flex;flex-wrap:wrap;gap:.55rem;">
+        <button id="showHintBtn" disabled>Hint</button>
+        <button id="showExplainBtn" disabled>Explain</button>
+        <button id="skipBtn" disabled>Skip</button>
+        <button id="exportBtn">Export JSON</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Live Stats</legend>
+      <div class="scorebar">
+        <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+      </div>
+      <div class="score-stats" id="scoreStats">
+        <span>0 / 0</span><span>Acc: 0%</span><span>Streak: 0</span>
+      </div>
+      <div style="margin-top:.5rem;">
+        <span class="badge" id="timerBadge" style="display:none;">00</span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Tip</legend>
+      <div style="font-size:.63rem;line-height:1.35;color:var(--muted);">
+        Use the Symbol Size slider any time. Keyboard: 1-9 answers, N/Enter next (after answer), H=Hint, E=Explain, S=Skip.
+      </div>
+    </fieldset>
+  </aside>
+
+  <section class="panel" id="questionPanel">
+    <div class="question-wrapper">
+      <div class="question-header">
+        <div class="badge accent" id="qTypeBadge">No Question Loaded</div>
+        <div class="badge" id="qDifficultyBadge">--</div>
+      </div>
+      <div id="questionText" style="font-size:.9rem;color:var(--muted);">
+        Press Start to generate a question.
+      </div>
+      <div class="question-stem" id="stemContainer" aria-live="polite"></div>
+      <div class="options" id="optionsContainer" aria-label="Answer options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="explain" id="explainBox" style="display:none;"></div>
+    </div>
+  </section>
+</main>
+<footer>
+  Non-Verbal Reasoning Practice Demo – 20 generated question types. Adjustable symbol scale.
+</footer>
+
+<script>
+/* ------------------ Shared Helpers ------------------ */
+function rndInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+const SHAPES = ["■","●","▲","◆","★","⬟","⬢","⬡","□","○","△","◇","☆","✦","✧","✪","✶","⬥","⬤","⬛","⬜"];
+const ARROWS = ["↑","→","↓","←"];
+function pickDistinct(k, pool=SHAPES){
+  const copy=[...pool];
+  shuffle(copy);
+  return copy.slice(0,k);
+}
+
+/* -------------- Original 10 Generators -------------- */
+function genNVPatternSequence(){
+  const diff = rndInt(1,3);
+  const shapes = pickDistinct(2+diff);
+  const base = shapes.join("");
+  const seqLen = 5;
+  const sequence = [];
+  for(let i=1;i<=seqLen;i++) sequence.push(base.repeat(i));
+  const missingIndex = rndInt(1,seqLen-2);
+  const correct = sequence[missingIndex];
+  const stem = sequence.map((s,i)=> i===missingIndex ? "?" : s);
+  const distractors = new Set();
+  let attempts=0;
+  while(distractors.size<3 && attempts<25){
+    attempts++;
+    const delta = rndInt(-2,2) || 1;
+    let r = (missingIndex+1) + delta;
+    if(r<1) r=1;
+    if(r>seqLen) r=seqLen;
+    distractors.add(base.repeat(r));
+  }
+  distractors.delete(correct);
+  const options = shuffle([correct, ...Array.from(distractors).slice(0,3)]);
+  return { type:"non-verbal", subtype:"Pattern Sequence", question:"Fill the missing term in the visual sequence.", stem, options,
+    correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Count how many times the block repeats each step.",
+    working:`Repetition counts: ${sequence.map(s=>s.length/base.length).join(", ")}.`,
+    difficulty:diff };
+}
+function genNVMatrixCompletion(){
+  const diff=rndInt(1,3);
+  const shape=pickDistinct(1)[0];
+  const base=rndInt(1,diff===1?2:3);
+  const incRow=rndInt(1,diff+1);
+  const incCol=rndInt(1,diff+1);
+  const grid=[];
+  for(let r=0;r<3;r++){
+    const row=[];
+    for(let c=0;c<3;c++){
+      row.push(shape.repeat(base + r*incRow + c*incCol));
+    }
+    grid.push(row);
+  }
+  const missing=[rndInt(0,2),rndInt(0,2)];
+  const correct=grid[missing[0]][missing[1]];
+  grid[missing[0]][missing[1]]="?";
+  const distract=new Set();
+  let tries=0;
+  while(distract.size<3 && tries<30){
+    tries++;
+    const delta=rndInt(-2,2)||1;
+    const len=Math.max(1,correct.length+delta);
+    if(len!==correct.length) distract.add(shape.repeat(len));
+  }
+  const options=shuffle([correct,...Array.from(distract).slice(0,3)]);
+  return { type:"non-verbal", subtype:"Matrix Completion", question:"Find the missing cell in the 3x3 pattern matrix.",
+    stem:grid, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Right adds a fixed number; down adds another.",
+    working:`Row increment +${incRow}, column increment +${incCol}.`,
+    difficulty:diff };
+}
+function genNVOddOneOut(){
+  const diff=rndInt(1,3);
+  const setSize=5;
+  const shapes=pickDistinct(6+diff);
+  const base=rndInt(1,2+diff);
+  const common=base;
+  const odd=common+(diff+1);
+  const arr=[];
+  const oddIndex=rndInt(0,setSize-1);
+  for(let i=0;i<setSize;i++){
+    arr.push(shapes[i].repeat(i===oddIndex?odd:common));
+  }
+  return { type:"non-verbal", subtype:"Odd One Out", question:"Select the odd one out.", stem:arr, options:arr,
+    correctAnswer:arr[oddIndex], correctIndex:oddIndex,
+    hint:"One item has more repeats.", working:`Common length ${common}, odd length ${odd}.`,
+    difficulty:diff };
+}
+function genNVAnalogyPairs(){
+  const diff=rndInt(1,3);
+  const pairShapes=pickDistinct(4+diff);
+  function makeTransform(s){ const t=rndInt(1,3); if(t===1)return s+s; if(t===2)return s+s+s; return s; }
+  const A=pairShapes[0], B=makeTransform(A), C=pairShapes[1];
+  function infer(a,b){ if(b===a+a) return x=>x+x; if(b===a+a+a) return x=>x+x+x; return x=>x; }
+  const f=infer(A,B);
+  const correct=f(C);
+  const opts=new Set([correct]);
+  while(opts.size<4){
+    const s=pairShapes[rndInt(2,pairShapes.length-1)];
+    const v=rndInt(0,1)? s+s : s+s+s;
+    opts.add(v);
+  }
+  const options=shuffle([...opts]);
+  return { type:"non-verbal", subtype:"Analogy", question:"Complete the analogy A : B :: C : ?", stem:{A,B,C},
+    options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Find length relation A->B then apply to C.", working:`Length ratio B/A = ${(B.length)/(A.length)}; apply to C.`,
+    difficulty:diff };
+}
+function genNVRotationMatch(){
+  const diff=rndInt(1,3);
+  const base=pickDistinct(4+diff).slice(0,diff+3);
+  const pattern=base.join("");
+  const steps=rndInt(1,base.length-1);
+  function rotate(str,k){ k=((k%str.length)+str.length)%str.length; return str.slice(k)+str.slice(0,k); }
+  const correct=rotate(pattern,steps);
+  const set=new Set([correct]);
+  while(set.size<4) set.add(rotate(pattern,rndInt(1,base.length-1)));
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Rotation", question:"Which option is a rotation of the pattern?", stem:pattern,
+    options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Imagine cyclic shift.", working:`Rotation by ${steps} step(s).`, difficulty:diff };
+}
+function genNVMirrorImage(){
+  const diff=rndInt(1,3);
+  const seq=pickDistinct(3+diff).join("");
+  const correct=seq.split("").reverse().join("");
+  const set=new Set([correct]);
+  while(set.size<4) set.add(shuffle(seq.split("")).join(""));
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Mirror Image", question:"Select the mirror image (reverse).", stem:seq,
+    options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Mirror reverses order.", working:`Reverse of ${seq} is ${correct}.`, difficulty:diff };
+}
+function genNVPaperFold(){
+  const diff=rndInt(1,3);
+  const width=2+diff*2;
+  const dots=rndInt(2,2+diff);
+  const half=[];
+  while(half.length<dots){
+    const p=rndInt(0,Math.floor(width/2)-1);
+    if(!half.includes(p)) half.push(p);
+  }
+  half.sort((a,b)=>a-b);
+  function render(pos,mirror=false){
+    const arr=new Array(width).fill(".");
+    pos.forEach(p=>{
+      arr[p]="●";
+      if(mirror){ arr[width-1-p]="●"; }
+    });
+    return arr.join("");
+  }
+  const folded=render(half,true);
+  const set=new Set([folded]);
+  while(set.size<4){
+    const arr=folded.split("");
+    const idxs=arr.map((ch,i)=>ch==="●"?i:null).filter(v=>v!==null);
+    if(idxs.length){
+      const flip=idxs[rndInt(0,idxs.length-1)];
+      arr[flip]=".";
+    }
+    let add=rndInt(0,width-1);
+    if(arr[add]==="●") add=(add+1)%width;
+    arr[add]="●";
+    set.add(arr.join(""));
+  }
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Paper Fold", question:"After vertical fold & punch, which unfolded pattern appears?",
+    stem:{ foldAxis:"vertical", punchedSide:render(half,false) },
+    options, correctAnswer:folded, correctIndex:options.indexOf(folded),
+    hint:"Dots mirror across fold.", working:`Left positions ${half.join(", ")} mirrored (width ${width}).`, difficulty:diff };
+}
+function genNVCubeNet(){
+  const diff=rndInt(1,3);
+  const faces=["F","B","L","R","U","D"];
+  const correct=shuffle([...faces]).join("");
+  const set=new Set([correct]);
+  while(set.size<4) set.add(shuffle([...faces]).join(""));
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Cube Net (Abstract)", question:"Which sequence lists all faces once?",
+    stem:"Faces: F,B,L,R,U,D", options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Each face exactly once.", working:"Permutation with all six unique.", difficulty:diff };
+}
+function genNVShapeCount(){
+  const diff=rndInt(1,3);
+  const rows=3+diff, cols=4+diff;
+  const target=pickDistinct(1)[0];
+  const other=pickDistinct(6).filter(s=>s!==target);
+  const grid=[]; let count=0;
+  for(let r=0;r<rows;r++){
+    const row=[];
+    for(let c=0;c<cols;c++){
+      const use=Math.random()< (0.2 + diff*0.1);
+      const sym=use?target:other[rndInt(0,other.length-1)];
+      if(use) count++;
+      row.push(sym);
+    }
+    grid.push(row);
+  }
+  const correct=String(count);
+  const set=new Set([correct]);
+  while(set.size<4){
+    let delta=rndInt(-2,2); if(delta===0) delta=1;
+    let val=count+delta; if(val<0) val=0;
+    set.add(String(val));
+  }
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Shape Count", question:`How many '${target}' are in the grid?`,
+    stem:grid, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Scan row by row.", working:`Counted ${count}.`, difficulty:diff };
+}
+function genNVSeriesAlternating(){
+  const diff=rndInt(1,3);
+  const a=pickDistinct(1)[0];
+  let b; do { b=pickDistinct(1)[0]; } while(b===a);
+  const len=7;
+  const seq=[];
+  for(let i=0;i<len;i++){
+    const sym=(i%2===0)?a:b;
+    seq.push(sym.repeat(1+Math.floor(i/2)));
+  }
+  const miss=rndInt(2,len-2);
+  const correct=seq[miss];
+  const stem=seq.map((s,i)=>i===miss?"?":s);
+  const distract=new Set();
+  while(distract.size<3){
+    const sym=(miss%2===0)?a:b;
+    const varLen=correct.length + rndInt(-1,1);
+    distract.add(sym.repeat(Math.max(1,varLen)));
+  }
+  distract.delete(correct);
+  const options=shuffle([correct,...[...distract].slice(0,3)]);
+  return { type:"non-verbal", subtype:"Alternating Series", question:"Find the missing term.",
+    stem, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Two interleaved growth subsequences.", working:`Even slots: ${a}; odd slots: ${b}.`, difficulty:diff };
+}
+
+/* -------------- New 10 Generators -------------- */
+// 11. Symmetry (palindrome)
+function genNVSymmetry(){
+  const diff=rndInt(1,3);
+  const centerCount=diff; // affects complexity
+  const pool=pickDistinct(4+diff);
+  function makePalindrome(){
+    const left=shuffle(pool.slice(0,rndInt(2,2+diff))).slice(0,rndInt(2,3+diff)).join("");
+    const mid = centerCount? pool[rndInt(0,pool.length-1)] : "";
+    return left + mid + left.split("").reverse().join("");
+  }
+  const correct=makePalindrome();
+  const set=new Set([correct]);
+  while(set.size<4){
+    let s=makePalindrome();
+    // break symmetry intentionally
+    if(Math.random()<0.7){
+      const arr=s.split("");
+      arr[rndInt(0,arr.length-1)]=pool[rndInt(0,pool.length-1)];
+      s=arr.join("");
+    }
+    if(s!==correct && s!==s.split("").reverse().join("")) set.add(s);
+  }
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Symmetry", question:"Select the symmetric (palindromic) pattern.",
+    stem:"Identify the palindrome.", options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Read forward vs backward.", working:`Correct reads same reversed.`, difficulty:diff };
+}
+// 12. SpacingGrowth (increasing spaces between two identical symbols)
+function genNVSpacingGrowth(){
+  const diff=rndInt(1,3);
+  const sym=pickDistinct(1)[0];
+  const terms=5;
+  const sequence=[];
+  for(let i=0;i<terms;i++){
+    sequence.push(sym + " ".repeat(i) + sym);
+  }
+  const miss=rndInt(1,terms-2);
+  const correct=sequence[miss];
+  const stem=sequence.map((t,i)=>i===miss?"?":t.replace(/ /g,"·"));
+  const distract=new Set();
+  while(distract.size<3){
+    let spaces = miss + rndInt(-2,2);
+    if(spaces<0) spaces=0;
+    const cand = sym + " ".repeat(spaces) + sym;
+    if(cand!==correct) distract.add(cand);
+  }
+  const options=shuffle([correct,...[...distract].slice(0,3)]).map(o=>o.replace(/ /g,"·"));
+  return { type:"non-verbal", subtype:"Spacing Growth", question:"Fill the missing spacing pattern (· shows space).",
+    stem, options, correctAnswer:correct.replace(/ /g,"·"), correctIndex:options.indexOf(correct.replace(/ /g,"·")),
+    hint:"Spaces increase by 1 each step.", working:`Spaces: ${sequence.map(s=>s.length-2).join(", ")}.`,
+    difficulty:diff };
+}
+// 13. EmbeddedCount (count occurrences of subpattern)
+function genNVEmbeddedCount(){
+  const diff=rndInt(1,3);
+  const baseShapes=pickDistinct(3+diff);
+  const target=baseShapes[rndInt(0,baseShapes.length-1)];
+  const pattern = target + (diff>1 ? baseShapes[rndInt(0,baseShapes.length-1)] : "");
+  let long="";
+  const len=18 + diff*4;
+  for(let i=0;i<len;i++){
+    long += baseShapes[rndInt(0,baseShapes.length-1)];
+  }
+  function countOccurrences(str, pat){
+    let count=0;
+    for(let i=0;i<=str.length-pat.length;i++){
+      if(str.slice(i,i+pat.length)===pat) count++;
+    }
+    return count;
+  }
+  const correctCount = countOccurrences(long,pattern);
+  const correct=String(correctCount);
+  const set=new Set([correct]);
+  while(set.size<4){
+    let val=correctCount + rndInt(-2,2);
+    if(val<0) val=0;
+    set.add(String(val));
+  }
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Embedded Count", question:`How many times '${pattern}' appears (non-overlapping counted each start)?`,
+    stem:long, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Slide window along the string.", working:`Counted ${correctCount} starts of '${pattern}'.`, difficulty:diff };
+}
+// 14. TransformNext (each step replace first symbol with last, rotate)
+function genNVTransformNext(){
+  const diff=rndInt(1,3);
+  const seqShapes=pickDistinct(3+diff);
+  let current=seqShapes.join("");
+  const steps=5;
+  const series=[current];
+  for(let i=0;i<steps-1;i++){
+    // rule: move first char to end; swap positions 1 and last-1 if diff>1
+    current = current.slice(1) + current[0];
+    if(diff>1 && current.length>3){
+      const arr=current.split("");
+      [arr[1],arr[arr.length-2]]=[arr[arr.length-2],arr[1]];
+      current=arr.join("");
+    }
+    series.push(current);
+  }
+  const miss=rndInt(1,steps-2);
+  const correct=series[miss];
+  const stem=series.map((s,i)=>i===miss?"?":s);
+  const distract=new Set();
+  while(distract.size<3){
+    let arr=correct.split("");
+    const i1=rndInt(0,arr.length-1), i2=rndInt(0,arr.length-1);
+    [arr[i1],arr[i2]]=[arr[i2],arr[i1]];
+    const cand=arr.join("");
+    if(cand!==correct) distract.add(cand);
+  }
+  const options=shuffle([correct,...[...distract].slice(0,3)]);
+  return { type:"non-verbal", subtype:"Transform Next", question:"Find the missing transformed string.",
+    stem, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Observe rotation + occasional swap.", working:`Rule: Move first to end; (if long) swap 2nd & second-last.`,
+    difficulty:diff };
+}
+// 15. ShapeValueSum (assign value = number of points/sides group)
+function genNVShapeValueSum(){
+  const diff=rndInt(1,3);
+  const pool=pickDistinct(5+diff);
+  function value(ch){
+    // crude heuristic: filled vs hollow same; triangles=3, squares=4, stars=5, circles=1, diamonds=4, etc.
+    if("▲△".includes(ch)) return 3;
+    if("■□⬛⬜".includes(ch)) return 4;
+    if("◆◇⬥".includes(ch)) return 4;
+    if("★☆✦✧✪✶".includes(ch)) return 5;
+    if("●○⬤".includes(ch)) return 1;
+    if("⬟⬢⬡".includes(ch)) return 6;
+    return 2;
+  }
+  const a=pool[rndInt(0,pool.length-1)];
+  const b=pool[rndInt(0,pool.length-1)];
+  const c=pool[rndInt(0,pool.length-1)];
+  const expr = `${a}${b} + ${c}`;
+  const correctVal = value(a)+value(b)+value(c);
+  const correct=String(correctVal);
+  const set=new Set([correct]);
+  while(set.size<4){
+    let val=correctVal + rndInt(-3,3);
+    if(val<0) val=0;
+    set.add(String(val));
+  }
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Shape Value Sum", question:"Compute the total (abstract shape values).",
+    stem:`Values: triangle=3, square/diamond=4, circle=1, star=5, hexagon=6, others≈2`,
+    options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Add each symbol's value.", working:`${expr} => ${value(a)}+${value(b)}+${value(c)}=${correctVal}`,
+    difficulty:diff };
+}
+// 16. InterleavedSeries (two sequences interleaving lengths)
+function genNVInterleavedSeries(){
+  const diff=rndInt(1,3);
+  const s1=pickDistinct(1)[0], s2=pickDistinct(1)[0];
+  const total=8;
+  const seq=[];
+  for(let i=0;i<total;i++){
+    if(i%2===0) seq.push(s1.repeat(1+Math.floor(i/4)+ (diff>1?Math.floor(i/2)%2:0)));
+    else seq.push(s2.repeat(1+Math.floor(i/3)));
+  }
+  const miss=rndInt(2,total-3);
+  const correct=seq[miss];
+  const stem=seq.map((x,i)=>i===miss?"?":x);
+  const distract=new Set();
+  while(distract.size<3){
+    let len=correct.length + rndInt(-1,1);
+    if(len<1) len=1;
+    const sym = (miss%2===0)? s1 : s2;
+    const cand=sym.repeat(len);
+    if(cand!==correct) distract.add(cand);
+  }
+  const options=shuffle([correct,...[...distract].slice(0,3)]);
+  return { type:"non-verbal", subtype:"Interleaved Series", question:"Find the missing interleaved term.",
+    stem, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Even & odd positions have separate growth rules.", working:`Track lengths separately for ${s1} & ${s2}.`,
+    difficulty:diff };
+}
+// 17. ArrowRotation
+function genNVArrowRotation(){
+  const diff=rndInt(1,3);
+  const steps=6;
+  let startIndex=rndInt(0,3);
+  const seq=[];
+  for(let i=0;i<steps;i++){
+    seq.push(ARROWS[(startIndex+i*(diff===3?2:1)) % 4]);
+  }
+  const miss=rndInt(1,steps-2);
+  const correct=seq[miss];
+  const stem=seq.map((a,i)=>i===miss?"?":a);
+  const set=new Set([correct]);
+  while(set.size<4) set.add(ARROWS[rndInt(0,3)]);
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Arrow Rotation", question:"Find the missing rotated arrow.",
+    stem, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Consistent rotation step each move.", working:`Rotation step ${(diff===3?2:1)} quadrant(s).`,
+    difficulty:diff };
+}
+// 18. DoublingBlocks
+function genNVDoublingBlocks(){
+  const diff=rndInt(1,3);
+  const sym=pickDistinct(1)[0];
+  const len=5;
+  const seq=[sym];
+  for(let i=1;i<len;i++){
+    const factor = diff===1 ? 2 : (i%2?2: (diff===3?3:2));
+    seq.push(sym.repeat(Math.min(64, seq[i-1].length*factor)));
+  }
+  const miss=rndInt(1,len-2);
+  const correct=seq[miss];
+  const stem=seq.map((s,i)=>i===miss?"?":s);
+  const set=new Set();
+  while(set.size<3){
+    let mult = correct.length + rndInt(-correct.length/2|0, correct.length/2|0);
+    if(mult<1) mult=1;
+    set.add(sym.repeat(mult));
+  }
+  const options=shuffle([correct,...[...set].slice(0,3)]);
+  return { type:"non-verbal", subtype:"Doubling Blocks", question:"Fill the exponential growth gap.",
+    stem, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Lengths mostly double (or triple occasionally).", working:`Observe ratio between successive terms.`,
+    difficulty:diff };
+}
+// 19. Checkerboard (missing cell)
+function genNVCheckerboard(){
+  const diff=rndInt(1,3);
+  const a=pickDistinct(1)[0], b=pickDistinct(1)[0];
+  const size= diff===3 ? 6 : 4;
+  const grid=[];
+  let missR=rndInt(0,size-1), missC=rndInt(0,size-1);
+  for(let r=0;r<size;r++){
+    const row=[];
+    for(let c=0;c<size;c++){
+      if(r===missR && c===missC){ row.push("?"); continue; }
+      row.push( ((r+c)%2===0)? a : b );
+    }
+    grid.push(row);
+  }
+  const correct = ((missR+missC)%2===0)? a : b;
+  const options=shuffle([correct, ((correct===a)?b:a), pickDistinct(1)[0], pickDistinct(1)[0]]);
+  return { type:"non-verbal", subtype:"Checkerboard", question:"What symbol replaces '?' in the alternating grid?",
+    stem:grid, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Pattern alternates every adjacent cell.", working:`Parity rule (r+c even => ${a}, odd => ${b}).`,
+    difficulty:diff };
+}
+// 20. DifferenceMatrix
+function genNVDifferenceMatrix(){
+  const diff=rndInt(1,3);
+  const base=pickDistinct(4+diff);
+  function makeStr(){
+    let s="";
+    const len=rndInt(3,4+diff);
+    for(let i=0;i<len;i++) s+=base[rndInt(0,base.length-1)];
+    return s;
+  }
+  function diffStr(a,b){
+    // multiset difference a - b (remove matching occurrences)
+    const arr=a.split("");
+    for(const ch of b){
+      const idx=arr.indexOf(ch);
+      if(idx>-1) arr.splice(idx,1);
+    }
+    return arr.join("") || "∅";
+  }
+  const rows=2;
+  const cols=3;
+  const grid=[];
+  const data=[];
+  for(let r=0;r<rows;r++){
+    const A=makeStr();
+    const B=makeStr();
+    const C=diffStr(A,B);
+    data.push([A,B,C]);
+  }
+  const missRow=rndInt(0,rows-1), missCol=2;
+  const correct=data[missRow][missCol];
+  const stem=data.map((row,r)=> row.map((c,cidx)=> (r===missRow && cidx===missCol)?"?":c));
+  // distractors: shuffle leftover letters or remove one more
+  const set=new Set([correct]);
+  while(set.size<4){
+    let cand=correct;
+    if(cand!=="∅"){
+      const arr=cand.replace("∅","").split("");
+      if(arr.length){
+        const action=rndInt(0,1);
+        if(action===0){
+          shuffle(arr);
+        } else {
+            arr.splice(rndInt(0,arr.length-1),1);
+        }
+        cand=arr.join("")||"∅";
+      }
+    } else {
+      cand=base[rndInt(0,base.length-1)];
+    }
+    set.add(cand);
+  }
+  const options=shuffle([...set]);
+  return { type:"non-verbal", subtype:"Difference Matrix", question:"Find the missing multiset difference (col3 = col1 - col2).",
+    stem:stem, options, correctAnswer:correct, correctIndex:options.indexOf(correct),
+    hint:"Remove letters in second from first.", working:`Row example: A - B = leftover letters (∅ if none).`,
+    difficulty:diff };
+}
+
+/* -------------- Registry (20 types) -------------- */
+const NON_VERBAL_GENERATORS = {
+  PatternSequence: genNVPatternSequence,
+  MatrixCompletion: genNVMatrixCompletion,
+  OddOneOut: genNVOddOneOut,
+  Analogy: genNVAnalogyPairs,
+  Rotation: genNVRotationMatch,
+  MirrorImage: genNVMirrorImage,
+  PaperFold: genNVPaperFold,
+  CubeNet: genNVCubeNet,
+  ShapeCount: genNVShapeCount,
+  SeriesAlternating: genNVSeriesAlternating,
+  Symmetry: genNVSymmetry,
+  SpacingGrowth: genNVSpacingGrowth,
+  EmbeddedCount: genNVEmbeddedCount,
+  TransformNext: genNVTransformNext,
+  ShapeValueSum: genNVShapeValueSum,
+  InterleavedSeries: genNVInterleavedSeries,
+  ArrowRotation: genNVArrowRotation,
+  DoublingBlocks: genNVDoublingBlocks,
+  Checkerboard: genNVCheckerboard,
+  DifferenceMatrix: genNVDifferenceMatrix
+};
+
+/* ------------------ UI Elements ------------------ */
+const questionTypeSel=document.getElementById('questionType');
+const difficultySel=document.getElementById('difficulty');
+const targetCountInput=document.getElementById('targetCount');
+const timerPerQInput=document.getElementById('timerPerQ');
+const startBtn=document.getElementById('startBtn');
+const resetBtn=document.getElementById('resetBtn');
+const showHintBtn=document.getElementById('showHintBtn');
+const showExplainBtn=document.getElementById('showExplainBtn');
+const skipBtn=document.getElementById('skipBtn');
+const exportBtn=document.getElementById('exportBtn');
+const symbolSizeRange=document.getElementById('symbolSizeRange');
+
+const qTypeBadge=document.getElementById('qTypeBadge');
+const qDifficultyBadge=document.getElementById('qDifficultyBadge');
+const questionText=document.getElementById('questionText');
+const stemContainer=document.getElementById('stemContainer');
+const optionsContainer=document.getElementById('optionsContainer');
+const feedbackEl=document.getElementById('feedback');
+const explainBox=document.getElementById('explainBox');
+const progressBar=document.getElementById('progressBar');
+const scoreStats=document.getElementById('scoreStats');
+const timerBadge=document.getElementById('timerBadge');
+const modePills=document.getElementById('modePills');
+
+/* ------------------ Session State ------------------ */
+let session = {
+  questions:[],
+  current:null,
+  answered:0,
+  correct:0,
+  streak:0,
+  maxStreak:0,
+  target:20,
+  timerPerQ:0,
+  remaining:0,
+  timerId:null
+};
+
+/* ------------------ Initialization ------------------ */
+function initSelectors(){
+  Object.keys(NON_VERBAL_GENERATORS).forEach(k=>{
+    const opt=document.createElement('option');
+    opt.value=k;
+    opt.textContent=k;
+    questionTypeSel.appendChild(opt);
+  });
+  ["Practice","Focused","Speed"].forEach(mode=>{
+    const pill=document.createElement('button');
+    pill.className='pill';
+    pill.textContent=mode;
+    pill.dataset.mode=mode;
+    pill.addEventListener('click',()=>{
+      document.querySelectorAll('.pill-row .pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      if(mode==="Speed"){
+        if(timerPerQInput.value==="0") timerPerQInput.value = "25";
+      }
+      if(mode==="Focused"){
+        // Optionally set a chosen type (leave as user selected)
+      }
+    });
+    modePills.appendChild(pill);
+  });
+}
+initSelectors();
+
+/* ------------------ Utility Functions ------------------ */
+function formatPercent(n,d){ return d? ((n/d)*100).toFixed(0)+"%":"0%"; }
+function updateScoreBar(){
+  const {answered,target,correct,streak}=session;
+  progressBar.style.width= target? Math.min(100,(answered/target)*100)+"%":"0%";
+  scoreStats.innerHTML=`
+    <span>${answered} / ${target}</span>
+    <span>Acc: ${formatPercent(correct,answered)}</span>
+    <span>Streak: ${streak}</span>
+  `;
+}
+function clearTimer(){ if(session.timerId){ clearInterval(session.timerId); session.timerId=null; } timerBadge.style.display="none"; }
+function startTimer(){
+  clearTimer();
+  if(session.timerPerQ<=0) return;
+  session.remaining=session.timerPerQ;
+  timerBadge.style.display="inline-block";
+  timerBadge.textContent=session.remaining;
+  session.timerId=setInterval(()=>{
+    session.remaining--;
+    timerBadge.textContent=session.remaining;
+    if(session.remaining<=0){
+      clearTimer();
+      lockOptions();
+      feedbackEl.innerHTML=`<span class="bad">Time up.</span> Correct: <code class="inline">${session.current.correctAnswer}</code>`;
+      showExplainBtn.disabled=false;
+    }
+  },1000);
+}
+function lockOptions(){
+  optionsContainer.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  showHintBtn.disabled=true;
+  skipBtn.disabled=true;
+}
+function unlockOptions(){
+  optionsContainer.querySelectorAll('.option-btn').forEach(b=>b.disabled=false);
+  showHintBtn.disabled=false;
+  skipBtn.disabled=false;
+}
+function renderStem(stem){
+  stemContainer.innerHTML="";
+  if(Array.isArray(stem)){
+    if(stem.length && Array.isArray(stem[0])){
+      // 2D grid
+      const rows=stem.length, cols=stem[0].length;
+      const wrap=document.createElement('div');
+      wrap.className='matrix';
+      wrap.style.gridTemplateColumns=`repeat(${cols},minmax(32px,1fr))`;
+      stem.forEach(r=> r.forEach(cell=>{
+        const d=document.createElement('div');
+        d.className='cell';
+        d.textContent=cell;
+        wrap.appendChild(d);
+      }));
+      stemContainer.appendChild(wrap);
+    } else {
+      const seqWrap=document.createElement('div');
+      seqWrap.className='stem-sequence';
+      stem.forEach(item=>{
+        const d=document.createElement('div');
+        d.className='seq-item';
+        d.textContent=item;
+        seqWrap.appendChild(d);
+      });
+      stemContainer.appendChild(seqWrap);
+    }
+  } else if(typeof stem === 'object' && stem!==null){
+    const pre=document.createElement('pre');
+    pre.style.margin="0";
+    pre.style.fontSize=`calc(.7rem * var(--symbol-scale))`;
+    pre.textContent=JSON.stringify(stem,null,2);
+    stemContainer.appendChild(pre);
+  } else {
+    stemContainer.textContent=stem;
+  }
+}
+function renderQuestion(q){
+  session.current=q;
+  qTypeBadge.textContent=q.subtype;
+  qDifficultyBadge.textContent="D"+q.difficulty;
+  questionText.textContent=q.question;
+  renderStem(q.stem);
+  optionsContainer.innerHTML="";
+  q.options.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.type='button';
+    btn.dataset.index=i;
+    btn.textContent=opt;
+    btn.addEventListener('click',()=>handleAnswer(i,btn));
+    optionsContainer.appendChild(btn);
+  });
+  feedbackEl.textContent="";
+  explainBox.style.display="none";
+  explainBox.textContent="";
+  unlockOptions();
+  showHintBtn.disabled=false;
+  showExplainBtn.disabled=true;
+  skipBtn.disabled=false;
+  startTimer();
+}
+function pickGenerator(){
+  const sel=questionTypeSel.value;
+  const diffSel=parseInt(difficultySel.value,10);
+  const gens = (sel==="any") ? Object.values(NON_VERBAL_GENERATORS) : [NON_VERBAL_GENERATORS[sel]];
+  let q; let safety=0;
+  do {
+    const g=gens[rndInt(0,gens.length-1)];
+    q=g();
+    if(diffSel>0) q.difficulty=diffSel;
+    safety++;
+  } while(diffSel>0 && q.difficulty!==diffSel && safety<40);
+  return q;
+}
+function nextQuestion(){
+  if(session.answered>=session.target){
+    feedbackEl.innerHTML=`<span class="ok">Session complete.</span> Accuracy ${formatPercent(session.correct,session.answered)}. Max streak ${session.maxStreak}.`;
+    lockOptions();
+    return;
+  }
+  const q=pickGenerator();
+  session.questions.push(q);
+  renderQuestion(q);
+  updateScoreBar();
+}
+function handleAnswer(index,btn){
+  if(!session.current) return;
+  lockOptions();
+  clearTimer();
+  const {correctIndex,correctAnswer}=session.current;
+  optionsContainer.querySelectorAll('.option-btn').forEach(b=>{
+    const idx=parseInt(b.dataset.index,10);
+    if(idx===correctIndex) b.classList.add('correct');
+  });
+  if(index===correctIndex){
+    btn.classList.add('correct');
+    session.correct++;
+    session.streak++;
+    if(session.streak>session.maxStreak) session.maxStreak=session.streak;
+    feedbackEl.innerHTML=`<span class="ok">Correct!</span>`;
+  } else {
+    btn.classList.add('incorrect');
+    session.streak=0;
+    feedbackEl.innerHTML=`<span class="bad">Incorrect.</span> Correct: <code class="inline">${correctAnswer}</code>`;
+  }
+  session.answered++;
+  updateScoreBar();
+  showExplainBtn.disabled=false;
+}
+function resetSession(){
+  clearTimer();
+  session = {
+    questions:[],
+    current:null,
+    answered:0,
+    correct:0,
+    streak:0,
+    maxStreak:0,
+    target:parseInt(targetCountInput.value,10)||20,
+    timerPerQ:parseInt(timerPerQInput.value,10)||0,
+    remaining:0,
+    timerId:null
+  };
+  qTypeBadge.textContent="Reset";
+  qDifficultyBadge.textContent="--";
+  questionText.textContent="Session reset. Press Start.";
+  stemContainer.textContent="";
+  optionsContainer.innerHTML="";
+  feedbackEl.textContent="";
+  explainBox.style.display="none";
+  progressBar.style.width="0%";
+  scoreStats.innerHTML=`<span>0 / ${session.target}</span><span>Acc: 0%</span><span>Streak: 0</span>`;
+  showHintBtn.disabled=true;
+  showExplainBtn.disabled=true;
+  skipBtn.disabled=true;
+}
+function showHint(){
+  if(!session.current) return;
+  feedbackEl.innerHTML=`<span class="accent">Hint:</span> ${session.current.hint||"Consider the transformation."}`;
+  feedbackEl.classList.add('flash');
+  setTimeout(()=>feedbackEl.classList.remove('flash'),900);
+  showHintBtn.disabled=true;
+}
+function showExplanation(){
+  if(!session.current) return;
+  explainBox.style.display="block";
+  explainBox.textContent=session.current.working||"Explanation unavailable.";
+  showExplainBtn.disabled=true;
+}
+function skipQuestion(){
+  if(!session.current) return;
+  lockOptions();
+  clearTimer();
+  feedbackEl.innerHTML=`<span style="color:var(--warn);">Skipped.</span> Correct: <code class="inline">${session.current.correctAnswer}</code>`;
+  session.answered++;
+  session.streak=0;
+  updateScoreBar();
+  showExplainBtn.disabled=false;
+}
+function exportJSON(){
+  const data={
+    meta:{
+      generatedAt:new Date().toISOString(),
+      total:session.questions.length,
+      correct:session.correct,
+      answered:session.answered,
+      accuracy: session.answered? session.correct/session.answered : 0,
+      maxStreak:session.maxStreak
+    },
+    questions:session.questions.map((q,i)=>({
+      n:i+1,
+      type:q.subtype,
+      question:q.question,
+      stem:q.stem,
+      options:q.options,
+      correct:q.correctAnswer,
+      difficulty:q.difficulty
+    }))
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='non_verbal_session.json';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },100);
+}
+
+/* ------------------ Event Bindings ------------------ */
+startBtn.addEventListener('click', ()=>{
+  if(!session.current || session.answered>=session.target){
+    resetSession();
+  }
+  session.target=parseInt(targetCountInput.value,10)||20;
+  session.timerPerQ=parseInt(timerPerQInput.value,10)||0;
+  nextQuestion();
+});
+resetBtn.addEventListener('click', resetSession);
+showHintBtn.addEventListener('click', showHint);
+showExplainBtn.addEventListener('click', showExplanation);
+skipBtn.addEventListener('click', skipQuestion);
+exportBtn.addEventListener('click', exportJSON);
+symbolSizeRange.addEventListener('input', ()=>{
+  document.documentElement.style.setProperty('--symbol-scale', symbolSizeRange.value);
+});
+
+document.addEventListener('keydown', e=>{
+  if(!session.current) return;
+  if(e.key>='1' && e.key<='9'){
+    const idx=parseInt(e.key,10)-1;
+    const btn=optionsContainer.querySelector(`.option-btn[data-index="${idx}"]`);
+    if(btn && !btn.disabled) btn.click();
+  }
+  if(e.key==='n' || e.key==='Enter'){
+    if(session.current && session.answered===session.questions.length && session.answered<session.target){
+      nextQuestion();
+    }
+  }
+  if(e.key==='h' && !showHintBtn.disabled) showHintBtn.click();
+  if(e.key==='e' && !showExplainBtn.disabled) showExplainBtn.click();
+  if(e.key==='s' && !skipBtn.disabled) skipBtn.click();
+});
+
+/* ------------------ Start State ------------------ */
+resetSession();
+</script>
+</body>
+</html>
