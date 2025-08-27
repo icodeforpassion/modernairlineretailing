@@ -1373,6 +1373,76 @@
           }
         }
       });
+
+
+  /*********************************************************
+   * State & Persistence
+   *********************************************************/
+  let words = [];
+  let activePool = []; // excludes mastered
+  let mastered = new Set(JSON.parse(localStorage.getItem("masteredWords") || "[]"));
+  let current = null;
+  let mode = localStorage.getItem("studyMode") || "input"; // "input" | "choice"
+  let stats = JSON.parse(localStorage.getItem("stats") || JSON.stringify({
+    answered: 0,
+    correct: 0,
+    streak: 0
+  }));
+  let bookmarks = JSON.parse(localStorage.getItem("bookmarksV2") || "[]");
+  let lastAnswerCorrect = null;
+  let theme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  if (theme === "dark") document.documentElement.classList.add("dark");
+
+  const els = {
+    // ... (other elements)
+    fileInput: document.getElementById("fileInput"),
+    dragZone: document.getElementById("dragZone"),
+    // ...
+  };
+
+  /*********************************************************
+   * Utility Functions
+   *********************************************************/
+  function loadDefaultVocabulary() {
+    fetch('sample_vocabulary.txt')
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text();
+      })
+      .then(data => {
+        words = parseLines(data);
+        if (!words.length) {
+          alert("No valid lines found in the sample vocabulary.");
+          return;
+        }
+        rebuildActivePool();
+        chooseNext();
+        renderCurrent();
+        updateStatsUI();
+      })
+      .catch(error => console.error('Error loading vocabulary:', error));
+  }
+
+  function parseLines(raw) {
+    return raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(line => {
+      let parts = line.split("–");
+      if (parts.length < 2) parts = line.split(" - ");
+      const [rawWord, rawMeaning, rawExample] = [
+        parts[0] || "",
+        parts[1] || "",
+        parts.slice(2).join("–")
+      ];
+      return {
+        word: rawWord.replace(/^\d+\.\s*/, "").trim(),
+        meaning: (rawMeaning || "").trim(),
+        example: (rawExample || "").trim()
+      };
+    }).filter(obj => obj.word);
+  }
+
+
+
+       
       /*********************************************************
        * Initial Load
        *********************************************************/
@@ -1380,6 +1450,7 @@
         setMode(mode);
         updateStatsUI();
         updateBookmarkUI();
+         loadDefaultVocabulary();
         if (words.length) {
           rebuildActivePool();
           chooseNext();
