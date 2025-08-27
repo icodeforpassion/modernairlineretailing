@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vocabulary Flashcards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      margin: 0;
+      padding: 20px;
+      background: #f3f6fb;
+    }
+    .left-panel {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .right-panel {
+      flex: 1;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-left: 20px;
+      height: fit-content;
+    }
+    .card {
+      width: 300px;
+      height: 200px;
+      perspective: 1000px;
+      margin-bottom: 20px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      padding: 15px;
+    }
+    .card-front {
+      background: #4a90e2;
+      color: white;
+    }
+    .card-back {
+      background: #f5f5f5;
+      color: #333;
+      transform: rotateY(180deg);
+    }
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      background: #4a90e2;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { background: #357abd; }
+    input[type="text"] {
+      padding: 8px;
+      width: 80%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .options label {
+      display: block;
+      background: #e9eff7;
+      margin: 6px 0;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 25px);
+      gap: 5px;
+    }
+    .summary-cell {
+      width: 25px;
+      height: 25px;
+      text-align: center;
+      line-height: 25px;
+      border-radius: 4px;
+      background: #ddd;
+      font-size: 12px;
+    }
+    .correct { background: #4caf50; color: white; }
+    .wrong { background: #e74c3c; color: white; }
+    .bookmark-list {
+      margin-top: 20px;
+    }
+    .bookmark-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      background: #f1f5f9;
+      margin: 4px 0;
+      border-radius: 6px;
+    }
+    .bookmark-item span {
+      cursor: pointer;
+      flex: 1;
+    }
+    .bookmark-item:hover {
+      background: #dbeafe;
+    }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <h2>Flashcards Game</h2>
+    <input type="file" id="fileInput" accept=".txt">
+    <div>
+      <button onclick="setMode('input')">Typing Mode</button>
+      <button onclick="setMode('choice')">Multiple Choice</button>
+    </div>
+
+    <div class="card" onclick="flipCard()" id="flashcard">
+      <div class="card-inner">
+        <div class="card-front" id="question">Load a file first</div>
+        <div class="card-back" id="answer">---</div>
+      </div>
+    </div>
+
+    <!-- Typing Mode -->
+    <div id="input-area" style="display:none;">
+      <input type="text" id="userAnswer" placeholder="Type your answer...">
+      <button onclick="checkAnswer()">Check</button>
+      <div id="feedback"></div>
+    </div>
+
+    <!-- Multiple Choice Mode -->
+    <div id="choice-area" style="display:none;" class="options"></div>
+    <div id="choice-check" style="display:none;">
+      <button onclick="checkAnswer()">Check</button>
+      <div id="feedback"></div>
+    </div>
+
+    <div>
+      <button onclick="nextQuestion()">Next Question</button>
+      <button onclick="bookmarkCard()">🔖 Bookmark</button>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <h3>Progress</h3>
+    <div class="summary-grid" id="summary"></div>
+    <div class="bookmark-list">
+      <h3>Bookmarks</h3>
+      <div id="bookmark-container"></div>
+    </div>
+  </div>
+
+<script>
+let words = [];
+let current = {};
+let mode = "input";
+let qCount = 0;
+let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+document.getElementById("fileInput").addEventListener("change", loadFile);
+
+function loadFile(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split("\n").filter(l => l.trim());
+    words = lines.map(line => {
+      const parts = line.split("–").map(p => p.trim());
+      return {
+        word: parts[0].replace(/^\d+\.\s*/, ""),
+        meaning: parts[1] || "",
+        example: parts[2] || ""
+      };
+    });
+    nextQuestion();
+  };
+  reader.readAsText(file);
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById("input-area").style.display = m === "input" ? "block" : "none";
+  document.getElementById("choice-area").style.display = m === "choice" ? "block" : "none";
+  document.getElementById("choice-check").style.display = m === "choice" ? "block" : "none";
+  document.getElementById("feedback").innerText = "";
+}
+
+function flipCard() {
+  document.getElementById("flashcard").classList.toggle("flipped");
+}
+
+function nextQuestion() {
+  if (words.length === 0) return;
+  current = words[Math.floor(Math.random() * words.length)];
+  qCount++;
+  document.getElementById("question").innerText = current.word;
+  document.getElementById("answer").innerText = current.meaning + "\n" + current.example;
+  document.getElementById("flashcard").classList.remove("flipped");
+  if (document.getElementById("userAnswer")) document.getElementById("userAnswer").value = "";
+  document.getElementById("feedback").innerText = "";
+
+  if (mode === "choice") {
+    const choiceArea = document.getElementById("choice-area");
+    choiceArea.innerHTML = "";
+    let options = [current.meaning];
+    while (options.length < 4) {
+      let rand = words[Math.floor(Math.random() * words.length)].meaning;
+      if (!options.includes(rand)) options.push(rand);
+    }
+    options.sort(() => Math.random() - 0.5);
+    options.forEach(opt => {
+      choiceArea.innerHTML += `<label><input type="radio" name="opt" value="${opt}"> ${opt}</label>`;
+    });
+  }
+}
+
+function checkAnswer() {
+  let correct = false;
+  let feedback = "";
+
+  if (mode === "input") {
+    const ans = document.getElementById("userAnswer").value.toLowerCase().split(/\s+/);
+    const targetWords = current.meaning.toLowerCase().split(/\s+/);
+    let matched = ans.filter(word => targetWords.includes(word)).length;
+    let percent = Math.round((matched / targetWords.length) * 100);
+
+    correct = percent > 60; // at least 60% words matched
+    feedback = `Matched ${percent}% of key words.`;
+  } else {
+    const sel = document.querySelector('input[name="opt"]:checked');
+    if (sel) {
+      correct = sel.value === current.meaning;
+      feedback = correct ? "Correct!" : `Wrong. Correct answer: ${current.meaning}`;
+    } else {
+      feedback = "Please select an option.";
+    }
+  }
+
+  if (feedback) document.getElementById("feedback").innerText = feedback;
+  if (feedback !== "Please select an option.") addSummary(correct);
+}
+
+function addSummary(correct) {
+  const cell = document.createElement("div");
+  cell.className = "summary-cell " + (correct ? "correct" : "wrong");
+  cell.innerText = qCount;
+  document.getElementById("summary").appendChild(cell);
+}
+
+function bookmarkCard() {
+  const id = Date.now();
+  const entry = { id, ...current };
+  bookmarks.push(entry);
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  renderBookmarks();
+}
+
+function deleteBookmark(id) {
+  bookmarks = bookmarks.filter(b => b.id !== id);
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  renderBookmarks();
+}
+
+function renderBookmarks() {
+  const container = document.getElementById("bookmark-container");
+  container.innerHTML = "";
+  bookmarks.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "bookmark-item";
+
+    const span = document.createElement("span");
+    span.textContent = b.word;
+    span.onclick = () => {
+      current = b;
+      document.getElementById("question").innerText = current.word;
+      document.getElementById("answer").innerText = current.meaning + "\n" + current.example;
+      document.getElementById("flashcard").classList.remove("flipped");
+    };
+
+    const btn = document.createElement("button");
+    btn.className = "delete-btn";
+    btn.innerHTML = "🗑";
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      deleteBookmark(b.id);
+    };
+
+    div.appendChild(span);
+    div.appendChild(btn);
+    container.appendChild(div);
+  });
+}
+
+// Render saved bookmarks on load
+renderBookmarks();
+</script>
+</body>
+</html>
