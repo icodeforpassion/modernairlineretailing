@@ -684,39 +684,38 @@ if (burger) {
     // ---- LATEST FROM THE BLOG DYNAMIC LOADING ----
     document.addEventListener('DOMContentLoaded', function() {
       // Replace with your actual blog post data or fetch from API
-      const posts = [
-        {
-          url: "/blog/ndc-retailing.html",
-          img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-          date: "Jul 2025",
-          badge: "NDC",
-          title: "NDC: The New Standard for Airline Retailing",
-          excerpt: "How NDC is transforming airline product distribution, with real-world implementation tips.",
-          author: "Neerej S",
-          time: "5 min read"
-        },
-        {
-          url: "/blog/offer-order-cloud.html",
-          img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
-          date: "Jun 2025",
-          badge: "Offer & Order",
-          title: "Offer & Order in the Cloud Era",
-          excerpt: "Modernizing airline retailing with cloud-native Offer & Order management. What to know and how to start.",
-          author: "Neerej S",
-          time: "7 min read"
-        },
-        {
-          url: "/blog/dynamic-pricing-journey.html",
-          img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
-          date: "May 2025",
-          badge: "Dynamic Pricing",
-          title: "The Airline Dynamic Pricing Journey",
-          excerpt: "From static fares to continuous pricing: lessons learned and what’s next for revenue optimization.",
-          author: "Neerej S",
-          time: "6 min read"
-        }
-      ];
-
+    const posts = [
+  {
+    url: "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html",
+    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+    date: "Jul 2025",
+    badge: "NDC",
+    title: "NDC: The New Standard for Airline Retailing",
+    excerpt: "How NDC is transforming airline product distribution, with real-world implementation tips.",
+    author: "Neerej S",
+    time: "5 min read"
+  },
+  {
+    url: "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html",
+    img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+    date: "Jun 2025",
+    badge: "Offer & Order",
+    title: "Offer & Order in the Cloud Era",
+    excerpt: "Modernizing airline retailing with cloud-native Offer & Order management. What to know and how to start.",
+    author: "Neerej S",
+    time: "7 min read"
+  },
+  {
+    url: "/blog/2024-11-17-merchandising:-attributes,-bundles-and-post-purchase.html",
+    img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+    date: "May 2025",
+    badge: "Dynamic Pricing",
+    title: "The Airline Dynamic Pricing Journey",
+    excerpt: "From static fares to continuous pricing: lessons learned and what’s next for revenue optimization.",
+    author: "Neerej S",
+    time: "6 min read"
+  }
+];
       // Render blog cards
       const cards = posts.map(post => `
         <article class="post-card reveal">
