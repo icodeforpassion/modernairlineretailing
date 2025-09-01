@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Compose Blog Post</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Compose New Blog Post</h1>
+        <input type="password" id="secretCode" placeholder="Enter Secret Code" class="input"/>
+        <button id="accessButton" class="button is-link">Access</button>
+
+        <div id="composeSection" style="display:none;">
+            <input type="text" id="postTitle" placeholder="Post Title" class="input" />
+            <textarea id="postContent" placeholder="Post Content" class="textarea" rows="10"></textarea>
+            <button id="savePost" class="button is-success">Save Post</button>
+        </div>
+    </div>
+
+    <script>
+        const SECRET_CODE = "your_secret_code"; // Set your secret code here
+
+        document.getElementById('accessButton').onclick = function() {
+            const inputCode = document.getElementById('secretCode').value;
+            if (inputCode === SECRET_CODE) {
+                document.getElementById('composeSection').style.display = 'block';
+            } else {
+                alert('Invalid Secret Code!');
+            }
+        };
+
+        document.getElementById('savePost').onclick = function() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.html'; // Create slug
+
+            // Save post to local storage
+            const posts = JSON.parse(localStorage.getItem('blogPosts')) || {};
+            posts[slug] = { title, content };
+            localStorage.setItem('blogPosts', JSON.stringify(posts));
+
+            alert('Post saved successfully!');
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+        };
+    </script>
+</body>
+</html>
