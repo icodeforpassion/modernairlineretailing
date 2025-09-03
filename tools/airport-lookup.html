@@ -1,30 +1,153 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Airport / City Lookup | Modern Airline Retailing Tools</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Search airports by IATA code, city, or name with fuzzy matching and quick map view.">
+  <meta name="description" content="Search airports by IATA code, city, or name with fuzzy matching, interactive results, and instant map view.">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <meta name="keywords" content="airport lookup, city search, IATA code, airline tools, map, fuzzy search, travel, aviation">
+  <meta property="og:title" content="Airport / City Lookup | Modern Airline Retailing Tools">
+  <meta property="og:description" content="Search airports by IATA code, city, or name with fuzzy matching and instant map view.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com/airport-lookup">
+  <meta property="og:image" content="https://yourdomain.com/og-image.png">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <!-- Bulma (already used on site) -->
+  <!-- Bulma (for base) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <!-- (Optional) Preload if you have a shared font file -->
+  <!-- Google Fonts for cool headings -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Schema.org for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Airport / City Lookup",
+    "url": "https://yourdomain.com/airport-lookup",
+    "description": "Search airports by IATA code, city, or name with fuzzy matching and map view.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Modern Airline Retailing Tools"
+    }
+  }
+  </script>
   <style>
-    /* Uses existing site tokens. Only adding component styles. */
-
-    body {
+    :root {
+      --clr-bg: #0d1b2a;
+      --clr-bg-alt: #132235;
+      --clr-surface: #1f3145;
+      --clr-accent: #3298dc;
+      --clr-accent-alt: #4fb1f5;
+      --clr-text: #e8f0f7;
+      --clr-text-dim: #9fb3c5;
+      --radius: 14px;
+      --focus-ring: 0 0 0 3px rgba(50,152,220,.5);
+      --shadow-1: 0 2px 12px rgba(0,0,0,.13);
+      --shadow-2: 0 6px 28px -8px rgba(50,152,220,.25);
+      --transition: .24s cubic-bezier(.4,.2,.2,1);
+      --font-heading: 'Montserrat', 'Inter', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+    html, body {
       background: var(--clr-bg);
       color: var(--clr-text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      margin: 0;
     }
-
+    body {
+      position: relative;
+      overflow-x: hidden;
+    }
+    .animated-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 60% 20%, #3298dc33 0%, #0d1b2a 75%);
+      opacity: 0.7;
+      animation: bgmove 15s linear infinite alternate;
+    }
+    @keyframes bgmove {
+      0% { background-position: 70% 40%; }
+      100% { background-position: 30% 70%; }
+    }
+    .skip-link {
+      position:absolute; left:-999px; top:auto;
+      width:1px; height:1px; overflow:hidden;
+    }
+    .skip-link:focus {
+      position:fixed;
+      left:1rem; top:1rem;
+      width:auto; height:auto;
+      padding:.7rem 1rem;
+      background:var(--clr-accent);
+      color:#fff;
+      border-radius:.6rem;
+      z-index:1000;
+      box-shadow:var(--focus-ring);
+    }
+    .navbar {
+      width: 100%;
+      background: linear-gradient(90deg, var(--clr-surface) 60%, var(--clr-accent-alt) 120%);
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 90;
+      box-shadow: var(--shadow-1);
+      padding: 0.6rem 0;
+    }
+    .navbar-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.2rem;
+    }
+    .navbar-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: .7px;
+      color: #fff;
+      text-shadow: 0 2px 8px #3298dc33;
+      margin-right: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .navbar-home-btn {
+      background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 14px -4px var(--clr-accent-alt);
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .navbar-home-btn:hover, .navbar-home-btn:focus-visible {
+      background: var(--clr-accent-alt);
+      color: #082032;
+      box-shadow: 0 10px 28px -6px var(--clr-accent-alt);
+      outline: none;
+      transform: translateY(-2px);
+    }
     main.tools-wrapper {
-      padding-top: 6.5rem; /* account for fixed navbar */
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 5.5rem;
       padding-bottom: 4rem;
-      background: linear-gradient(to bottom, var(--clr-bg), var(--clr-bg-alt));
       min-height: 100vh;
     }
-
     .lookup-hero {
       text-align:center;
       margin-bottom: 2.5rem;
@@ -33,22 +156,24 @@
       margin-right:auto;
     }
     .lookup-hero h1 {
+      font-family: var(--font-heading);
       font-size: clamp(2.05rem, 5vw, 2.9rem);
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing:.6px;
       background: linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);
       -webkit-background-clip:text;
       color:transparent;
       margin-bottom:.7rem;
+      text-shadow: 0 2px 10px #3298dc22;
     }
     .lookup-hero p {
       color: var(--clr-text-dim);
-      font-size:1.05rem;
+      font-size:1.11rem;
       line-height:1.5;
       max-width:680px;
       margin:0 auto 1.2rem;
+      font-family: var(--font-body);
     }
-
     .lookup-panel {
       position: relative;
       max-width: 960px;
@@ -57,11 +182,9 @@
       gap: 2rem;
       grid-template-columns: 1fr 420px;
     }
-
     @media (max-width: 980px){
       .lookup-panel { grid-template-columns: 1fr; }
     }
-
     .surface-card {
       background: linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
       border: 1px solid rgba(255,255,255,.08);
@@ -77,16 +200,13 @@
       border-color: var(--clr-accent-alt);
       box-shadow: var(--shadow-2);
     }
-
     .lookup-card {
       padding: 1.6rem 1.6rem 2.1rem;
     }
-
     .lookup-fieldwrap {
       position: relative;
       margin-bottom: 1.15rem;
     }
-
     .lookup-label {
       font-size:.68rem;
       letter-spacing:.55px;
@@ -95,18 +215,19 @@
       color: var(--clr-text-dim);
       display:block;
       margin-bottom:.45rem;
+      font-family: var(--font-body);
     }
-
     .lookup-input {
       width:100%;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.15);
       color: var(--clr-text);
-      font-size:.95rem;
+      font-size:1rem;
       line-height:1.25;
       padding:.85rem 1.05rem .85rem 2.7rem;
       border-radius: 999px;
       transition: var(--transition);
+      font-family: var(--font-body);
       backdrop-filter: blur(4px);
     }
     .lookup-input:focus {
@@ -115,7 +236,6 @@
       box-shadow: var(--focus-ring);
       background: rgba(255,255,255,.10);
     }
-
     .lookup-icon {
       position:absolute;
       top:50%;
@@ -129,7 +249,6 @@
     .lookup-fieldwrap:focus-within .lookup-icon {
       color: var(--clr-accent-alt);
     }
-
     .actions-row {
       display:flex;
       gap:.65rem;
@@ -137,27 +256,29 @@
       align-items:center;
       margin-bottom:.4rem;
     }
-
     .btn-primary-gradient {
       background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
       color:#fff;
       border:none;
-      font-weight:600;
+      font-weight:700;
       letter-spacing:.3px;
       padding:.75rem 1.25rem;
       border-radius:999px;
       cursor:pointer;
-      font-size:.9rem;
+      font-size:1rem;
       display:inline-flex;
       align-items:center;
       gap:.5rem;
       position:relative;
       box-shadow:0 6px 18px -4px rgba(50,152,220,.55), 0 2px 3px -1px rgba(0,0,0,.55);
       transition:var(--transition);
+      font-family: var(--font-heading);
     }
     .btn-primary-gradient:hover {
       transform:translateY(-3px);
       box-shadow:0 10px 28px -6px rgba(50,152,220,.6), 0 3px 5px -2px rgba(0,0,0,.55);
+      background: var(--clr-accent-alt);
+      color:#082032;
     }
     .btn-primary-gradient:active { transform: translateY(-1px); }
     .btn-primary-gradient:focus-visible { outline:none; box-shadow: var(--focus-ring); }
@@ -167,13 +288,12 @@
       transform:none;
       box-shadow:0 2px 6px -2px rgba(0,0,0,.4);
     }
-
     .btn-soft {
       background: rgba(79,177,245,.13);
       color:#cfeafe;
       border:1px solid rgba(79,177,245,.30);
       padding:.62rem 1rem;
-      font-size:.75rem;
+      font-size:.85rem;
       border-radius:.75rem;
       display:inline-flex;
       align-items:center;
@@ -182,6 +302,7 @@
       letter-spacing:.4px;
       cursor:pointer;
       transition:var(--transition);
+      font-family: var(--font-heading);
     }
     .btn-soft:hover {
       background: var(--clr-accent-alt);
@@ -190,7 +311,6 @@
       box-shadow:0 4px 14px -4px rgba(79,177,245,.6);
     }
     .btn-soft:focus-visible { outline:none; box-shadow: var(--focus-ring); }
-
     #status {
       margin-top:.4rem;
       font-size:.68rem;
@@ -199,9 +319,9 @@
       text-transform:uppercase;
       color:var(--clr-text-dim);
       min-height:1.1em;
+      font-family: var(--font-heading);
     }
     #status.error { color:#ff9393; }
-
     .results-wrapper {
       margin-top:1.4rem;
       display:flex;
@@ -209,7 +329,6 @@
       gap:.95rem;
       position:relative;
     }
-
     .result-item {
       position:relative;
       padding: .85rem 1rem .9rem 1rem;
@@ -222,6 +341,7 @@
       gap:.3rem;
       transition: var(--transition);
       outline:none;
+      font-family: var(--font-body);
     }
     .result-item:hover, .result-item[aria-selected="true"] {
       border-color: var(--clr-accent-alt);
@@ -233,21 +353,22 @@
       transform:translateY(-1px);
     }
     .result-item strong {
-      font-weight:600;
+      font-weight:700;
       letter-spacing:.4px;
       color:#fff;
+      font-family: var(--font-heading);
     }
     .result-line {
       display:flex;
       flex-wrap:wrap;
       gap:.45rem .9rem;
       align-items:baseline;
-      font-size:.82rem;
+      font-size:.95rem;
       line-height:1.2;
       color:var(--clr-text-dim);
     }
     .result-meta {
-      font-size:.6rem;
+      font-size:.75rem;
       letter-spacing:.55px;
       text-transform:uppercase;
       color: var(--clr-text-dim);
@@ -255,57 +376,59 @@
       gap:.8rem;
       flex-wrap:wrap;
       align-items:center;
+      font-family: var(--font-heading);
     }
     .score-pill {
       background:rgba(13,27,42,.75);
       border:1px solid rgba(255,255,255,.15);
-      font-size:.6rem;
-      font-weight:600;
+      font-size:.7rem;
+      font-weight:700;
       padding:.3rem .55rem;
       border-radius:999px;
       letter-spacing:.5px;
       color:#cfeafe;
       backdrop-filter:blur(6px);
+      font-family: var(--font-heading);
     }
     .copy-indicator {
-      font-size:.55rem;
+      font-size:.62rem;
       letter-spacing:.5px;
       text-transform:uppercase;
       color: var(--clr-accent-alt);
       display:none;
-      font-weight:600;
+      font-weight:700;
+      font-family: var(--font-heading);
     }
     .result-item.copied .copy-indicator { display:inline; }
-
     mark {
       background: rgba(79,177,245,.35);
       color:#fff;
       padding:0 3px;
       border-radius:4px;
     }
-
     .empty-hint {
-      font-size:.8rem;
+      font-size:.9rem;
       color: var(--clr-text-dim);
       padding:.6rem .2rem;
+      font-family: var(--font-heading);
     }
-
-    /* Map panel */
     .map-card {
       padding: 1.15rem 1.15rem 1.3rem;
       display:flex;
       flex-direction:column;
       gap:.85rem;
+      font-family: var(--font-body);
     }
     .map-card header {
       font-size:.68rem;
-      font-weight:600;
+      font-weight:700;
       letter-spacing:.55px;
       text-transform:uppercase;
       color:var(--clr-text-dim);
       display:flex;
       align-items:center;
       justify-content:space-between;
+      font-family: var(--font-heading);
     }
     .map-frame {
       width:100%;
@@ -316,9 +439,9 @@
     }
     @media (max-width: 600px){
       .map-frame { height:320px; }
+      .lookup-card, .map-card { padding: 1rem 0.7rem 1.2rem; }
+      .lookup-panel { gap: 1.2rem; }
     }
-
-    /* Spinner (inline inside button) */
     .spinner {
       width:16px; height:16px;
       border:2px solid rgba(255,255,255,.55);
@@ -327,8 +450,6 @@
       animation:spin .65s linear infinite;
     }
     @keyframes spin { to { transform:rotate(360deg); } }
-
-    /* Skeleton placeholder for result list area */
     .skeleton-block {
       background: linear-gradient(90deg, #1e3044 0%, #263d55 45%, #1e3044 90%);
       background-size:200% 100%;
@@ -345,7 +466,6 @@
       0% { background-position:200% 0; }
       100% { background-position:-200% 0; }
     }
-
     @media (prefers-reduced-motion: reduce) {
       .result-item,
       .btn-primary-gradient,
@@ -357,39 +477,40 @@
       }
       .skeleton-block { animation:none; }
     }
-
-    /* Accessible skip link (if used standalone) */
-    .skip-link {
-      position:absolute; left:-999px; top:auto;
-      width:1px; height:1px; overflow:hidden;
-    }
-    .skip-link:focus {
-      position:fixed;
-      left:1rem; top:1rem;
-      width:auto; height:auto;
-      padding:.7rem 1rem;
-      background:var(--clr-accent);
-      color:#fff;
-      border-radius:.6rem;
-      z-index:1000;
-      box-shadow:var(--focus-ring);
-    }
   </style>
 </head>
 <body>
-  <!-- Optional: include your existing navbar via server-side include or duplicate markup -->
+  <div class="animated-bg"></div>
   <a href="#main" class="skip-link">Skip to content</a>
-
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-content">
+      <span class="navbar-title">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" style="vertical-align:middle;" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="13" cy="13" r="13" fill="#3298dc"/>
+          <path d="M13 6L15 13H11L13 6Z" fill="#fff"/>
+          <rect x="11" y="14" width="4" height="6" rx="1.5" fill="#fff"/>
+        </svg>
+        Airport / City Lookup
+      </span>
+      <a href="/" class="navbar-home-btn" aria-label="Home">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="vertical-align:middle;" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2L2 9H4V16H7V12H11V16H14V9H16L9 2Z" fill="currentColor"/>
+        </svg>
+        Home
+      </a>
+    </div>
+  </nav>
   <main id="main" class="tools-wrapper">
     <section class="lookup-hero">
       <h1>Airport / City Lookup</h1>
-      <p>Type an IATA code (e.g. LHR), a city (e.g. Dubai), or part of an airport name. Fuzzy matching tolerates small typos. Select a result to view map location.</p>
+      <p>Type an IATA code (e.g. <b>LHR</b>), a city (<b>Dubai</b>), or part of an airport name. Fuzzy matching tolerates small typos. Select a result to view map location. 
+        <br><span style="color:var(--clr-accent-alt);font-weight:600;">Fast, accurate</span>
+      </p>
     </section>
-
     <section class="lookup-panel">
       <!-- Left: Search & Results -->
       <div class="surface-card lookup-card" id="searchCard">
-        <form id="lookupForm" novalidate>
+        <form id="lookupForm" novalidate autocomplete="off">
           <label class="lookup-label" for="lookupInput">Search Query</label>
             <div class="lookup-fieldwrap">
               <span class="lookup-icon" aria-hidden="true">🔍</span>
@@ -421,9 +542,7 @@
           </div>
           <div id="status" role="status" aria-live="polite"></div>
         </form>
-
         <div id="resultsRegion" class="results-wrapper" aria-label="Search results">
-          <!-- JS will fill -->
           <div id="skeletonContainer" class="skeleton-grid" style="display:none;">
             <div class="skeleton-block"></div>
             <div class="skeleton-block"></div>
@@ -431,12 +550,10 @@
           </div>
           <div id="resultsList" role="listbox"></div>
         </div>
-
         <noscript>
           <p class="empty-hint" style="margin-top:1rem;">Enable JavaScript to use the interactive lookup.</p>
         </noscript>
       </div>
-
       <!-- Right: Map -->
       <aside class="surface-card map-card" aria-label="Map panel">
         <header>
@@ -452,27 +569,23 @@
       </aside>
     </section>
   </main>
-
   <script>
   (function(){
     'use strict';
-
-    /* ---------- Configuration ---------- */
+    // ---------- Configuration ----------
     const DATA_URL = 'airports.json'; // Adjust if stored elsewhere
     const MAX_RESULTS = 15;
     const MAP_DELTA = 0.18;
-    const ENTER_SELECTS_FIRST = true; // if user presses Enter with no active item
-
-    /* ---------- State ---------- */
-    let airports = null; // normalized
-    let rawAirports = null; // original
+    const ENTER_SELECTS_FIRST = true;
+    // ---------- State ----------
+    let airports = null;
+    let rawAirports = null;
     let loadingData = false;
     let lastQuery = '';
     let activeIndex = -1;
-    let currentSelection = null; // store last selected airport object
+    let currentSelection = null;
     let debounceTimer = null;
-
-    /* ---------- DOM ---------- */
+    // ---------- DOM ----------
     const input = document.getElementById('lookupInput');
     const form = document.getElementById('lookupForm');
     const statusEl = document.getElementById('status');
@@ -484,8 +597,7 @@
     const randomBtn = document.getElementById('randomBtn');
     const mapFrame = document.getElementById('mapFrame');
     const mapInfo = document.getElementById('mapInfo');
-
-    /* ---------- Utils ---------- */
+    // ---------- Utils ----------
     function norm(str){
       return (str||'')
         .normalize('NFD')
@@ -493,7 +605,6 @@
         .toUpperCase()
         .trim();
     }
-
     function levenshtein(a,b){
       if(a===b) return 0;
       const al=a.length, bl=b.length;
@@ -511,7 +622,6 @@
       }
       return v1[bl];
     }
-
     function scoreEntry(entryQ, queryN){
       if(!queryN) return 0;
       let s=0;
@@ -521,10 +631,8 @@
         if(entryQ.city===queryN || entryQ.name===queryN) s=Math.max(s,115);
         if(entryQ.city.startsWith(queryN) || entryQ.name.startsWith(queryN)) s=Math.max(s,110);
         if(entryQ.city.includes(queryN) || entryQ.name.includes(queryN)) s=Math.max(s,95);
-
         const dCode=levenshtein(entryQ.code,queryN);
         if(dCode>0 && dCode<=2) s=Math.max(s,90 - dCode*8);
-
         if(queryN.length>=3){
           const dCity=levenshtein(entryQ.city.slice(0,queryN.length+3),queryN);
           if(dCity<=2) s=Math.max(s,78 - dCity*6);
@@ -534,24 +642,20 @@
       }
       return s;
     }
-
     function highlight(text, rawQuery){
       if(!rawQuery) return escapeHTML(text);
       const escQ = rawQuery.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
       return escapeHTML(text).replace(new RegExp('('+escQ+')','ig'), '<mark>$1</mark>');
     }
-
     function escapeHTML(str){
       return (str+'').replace(/[&<>'"]/g,c=>({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
-
     function setStatus(msg, isError=false){
       statusEl.textContent = msg;
       statusEl.className = isError ? 'error' : '';
     }
-
     function setLoading(isLoading){
       if(isLoading){
         searchBtn.disabled=true;
@@ -561,11 +665,9 @@
         btnSpinnerSlot.innerHTML='';
       }
     }
-
     function showSkeleton(show){
       skeletonContainer.style.display = show ? 'grid':'none';
     }
-
     async function ensureData(){
       if(airports || loadingData) return;
       loadingData=true;
@@ -575,7 +677,6 @@
         const res = await fetch(DATA_URL, {cache:'no-store'});
         if(!res.ok) throw new Error('HTTP '+res.status);
         const json = await res.json();
-        // Assume json is object keyed by code OR array
         let list;
         if(Array.isArray(json)){
           list=json;
@@ -604,17 +705,14 @@
         showSkeleton(false);
       }
     }
-
     function renderResults(results, rawQuery){
       resultsList.innerHTML='';
       input.setAttribute('aria-expanded', 'true');
       activeIndex=-1;
-
       if(!results.length){
         resultsList.innerHTML='<div class="empty-hint" role="note">No matches. Try a broader or different term.</div>';
         return;
       }
-
       const frag = document.createDocumentFragment();
       results.forEach((r,i)=>{
         const orig=r.o;
@@ -623,11 +721,9 @@
         div.setAttribute('role','option');
         div.setAttribute('data-index', i);
         div.tabIndex=-1;
-
         const codeDisplay = highlight(orig.code, rawQuery);
         const cityDisplay = orig.city ? highlight(orig.city, rawQuery) : '';
         const nameDisplay = highlight(orig.name, rawQuery);
-
         div.innerHTML=`
           <div class="result-line">
             <strong>${codeDisplay}</strong>
@@ -652,7 +748,6 @@
       });
       resultsList.appendChild(frag);
     }
-
     function updateActiveVisual(){
       const items = resultsList.querySelectorAll('.result-item');
       items.forEach((el,idx)=>{
@@ -666,16 +761,14 @@
         }
       });
     }
-
     function selectResult(idx, resultArr){
       const item = resultArr[idx];
       if(!item) return;
       currentSelection = item.o;
-      flashCopy(resultArr, idx); // copy code
+      flashCopy(resultArr, idx);
       focusMap(item.o);
       setStatus(`${item.o.name} (${item.o.code}) selected.`);
     }
-
     function flashCopy(results, idx){
       const code = results[idx].o.code || '';
       try {
@@ -686,7 +779,6 @@
       node.classList.add('copied');
       setTimeout(()=>node.classList.remove('copied'), 1400);
     }
-
     function focusMap(o){
       if(typeof o.lat !== 'number' || typeof o.lon !== 'number'){
         mapFrame.src='';
@@ -699,7 +791,6 @@
       mapFrame.src = url;
       mapInfo.textContent = o.code || '';
     }
-
     function pickRandom(){
       if(!airports) return;
       const idx = Math.floor(Math.random()*airports.length);
@@ -707,7 +798,6 @@
       input.value = chosen.code;
       doLookup();
     }
-
     function doLookup(){
       const rawQuery = input.value.trim();
       lastQuery = rawQuery;
@@ -733,7 +823,6 @@
       if(scored.length){
         setStatus(`Found ${scored.length} (showing top ${limited.length}).`);
         if(ENTER_SELECTS_FIRST){
-          // optionally auto-select on exact code match:
           const exact = limited.findIndex(x=>x.code===queryN);
           if(exact>=0) {
             activeIndex=exact;
@@ -744,25 +833,20 @@
         setStatus('No matches.', true);
       }
     }
-
-    /* ---------- Event Handlers ---------- */
     form.addEventListener('submit', e=>{
       e.preventDefault();
       doLookup();
     });
-
     input.addEventListener('input', ()=>{
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(()=>{
         ensureData().then(doLookup);
       }, 240);
     });
-
     input.addEventListener('keydown', e=>{
       const items = resultsList.querySelectorAll('.result-item');
       const max = items.length - 1;
       if(!items.length) return;
-
       if(e.key === 'ArrowDown'){
         e.preventDefault();
         activeIndex = (activeIndex < max) ? activeIndex + 1 : 0;
@@ -783,78 +867,7 @@
         }
       }
     });
-
-    // We'll override Enter selection more cleanly by capturing after render.
     resultsList.addEventListener('keydown', e=>{
       if(e.key==='Enter'){
         const focused = document.activeElement;
         if(focused && focused.classList.contains('result-item')){
-          focused.click();
-        }
-      }
-    });
-
-    clearBtn.addEventListener('click', ()=>{
-      input.value='';
-      lastQuery='';
-      resultsList.innerHTML='';
-      input.setAttribute('aria-expanded','false');
-      setStatus('Cleared.');
-      input.focus();
-    });
-
-    randomBtn.addEventListener('click', ()=>{
-      ensureData().then(()=>{
-        pickRandom();
-      });
-    });
-
-    // Avoid referencing airportsFilteredCache incorrectly above; simpler approach:
-    function getCurrentResultSet(){
-      // build from DOM (since we already have data embedded in closures)
-      // We'll store objects in a WeakMap if complexity grows.
-      // For now re-run the scoring quickly:
-      const rawQuery = lastQuery;
-      const queryN = norm(rawQuery);
-      if(!queryN || !airports) return [];
-      const scored=[];
-      for(const a of airports){
-        const sc=scoreEntry(a, queryN);
-        if(sc>0) scored.push({ ...a, score: sc });
-      }
-      scored.sort((a,b)=>b.score-a.score);
-      return scored.slice(0, MAX_RESULTS);
-    }
-
-    input.addEventListener('keydown', e=>{
-      if(e.key==='Enter'){
-        const current = getCurrentResultSet();
-        if(activeIndex>=0 && current[activeIndex]){
-          e.preventDefault();
-          selectResult(activeIndex, current);
-        } else if(ENTER_SELECTS_FIRST && current.length){
-          e.preventDefault();
-          selectResult(0, current);
-        }
-      }
-    });
-
-    // Lazy load data after short idle
-    window.addEventListener('DOMContentLoaded', ()=>{
-      setStatus('Loading airport data…');
-      ensureData().then(()=>{
-        if(!airports) return;
-        setStatus('Data loaded. Type to search.');
-      });
-    });
-
-    /* ---------- Accessibility: Reduced Motion for map refresh (optional) ---------- */
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if(prefersReducedMotion.matches){
-      // Could disable subtle transforms, already handled in CSS.
-    }
-
-  })();
-  </script>
-</body>
-</html>
