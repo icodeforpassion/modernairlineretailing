@@ -54,16 +54,58 @@
       color: #fff;
     }
 
-    .hero.is-landing {
-      position: relative;
-      min-height: 520px;
-      display: flex;
-      align-items: center;
-      background:
-        var(--gradient-hero),
-        url('/assets/og-banner.jpg') center/cover no-repeat;
-      overflow: hidden;
-    }
+    /* --- Fix Safari/WebKit clipping of last letter on gradient text --- */
+
+/* Make sure ancestors don't clip */
+.hero.is-landing,
+.hero.is-landing .hero-body,
+.hero.is-landing .container {
+  overflow: visible !important;
+}
+
+/* Base heading: render real text normally (visible, non‑gradient) */
+.hero.is-landing .title.is-1 {
+  position: relative;
+  display: inline-block;
+  background: none !important;
+  color: #fff;
+  -webkit-text-fill-color: currentColor;
+  margin: 0;
+  padding: 0;
+  line-height: 1.08;
+  overflow: visible;
+}
+
+/* Gradient overlay clone (cannot truncate the actual glyphs) */
+.hero.is-landing .title.is-1::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(95deg,#82e0ff 0%,#b388ff 28%,#ff6ec7 55%,#ffcf5d 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  padding-right: 1rem; /* extends paint area so last letter isn’t cut */
+  pointer-events: none;
+}
+
+/* Slightly more padding on iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  .hero.is-landing .title.is-1::after {
+    padding-right: 1.25rem;
+  }
+}
+
+/* Optional: responsive sizing if you need it (remove if redundant) */
+.hero.is-landing .title.is-1 {
+  font-size: clamp(2.2rem, 7.5vw, 3rem);
+}
+
+/* If current HTML lacks data-text, add this attribute in markup:
+   <h1 class="title is-1" data-text="Modern Airline Retailing">Modern Airline Retailing</h1>
+   (No JS required if you can edit HTML.) */
+
     .hero::after {
       content:"";
       position:absolute;
