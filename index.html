@@ -341,6 +341,68 @@
   border-color:transparent transparent rgba(30,48,70,.98) transparent;
 }
   </style>
+
+  <!-- ============ MOBILE WIDTH FIX START (ADDITIVE) ============ -->
+  <style>
+    /* Hard guard: prevent the module from exceeding viewport on small screens */
+    @media (max-width: 920px){
+      #retailing-comparison-module {
+        max-width:100vw !important;
+        width:100% !important;
+        overflow-x:clip;
+      }
+      #retailing-comparison-module .rcm-panels {
+        flex-direction:column !important;
+        display:flex !important;
+        gap:20px !important;
+      }
+      #retailing-comparison-module .rcm-panel {
+        width:100% !important;
+        max-width:100% !important;
+        min-width:0 !important;
+      }
+    }
+    /* If any internal grid pushes width, allow wrap & smaller min sizes */
+    @media (max-width:560px){
+      #retailing-comparison-module .legacy-grid {
+        grid-template-columns:repeat(auto-fill,minmax(150px,1fr)) !important;
+      }
+    }
+    /* Emergency class (applied only if overflow detected by JS) */
+    #retailing-comparison-module.rcm-force-narrow {
+      max-width:100vw !important;
+      width:100% !important;
+      overflow-x:hidden !important;
+    }
+    #retailing-comparison-module.rcm-force-narrow .rcm-panels {
+      display:block !important;
+    }
+    #retailing-comparison-module.rcm-force-narrow .rcm-panel {
+      display:block !important;
+      width:100% !important;
+    }
+  </style>
+  <script>
+    // Runtime safeguard: if intrinsic width > viewport, force corrective class
+    (function(){
+      function enforceRCMWidth(){
+        var m = document.getElementById('retailing-comparison-module');
+        if(!m) return;
+        var vw = window.innerWidth;
+        var w = m.getBoundingClientRect().width;
+        if(w > vw + 2){
+          m.classList.add('rcm-force-narrow');
+        }
+      }
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', enforceRCMWidth);
+      } else {
+        enforceRCMWidth();
+      }
+      window.addEventListener('resize', enforceRCMWidth);
+    })();
+  </script>
+  <!-- ============ MOBILE WIDTH FIX END ============== -->
 </head>
 <body>
   <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
@@ -444,7 +506,7 @@
     #retailing-comparison-module.theme-dual #futurePanel {
       --future-panel-tint: linear-gradient(175deg, hsla(var(--rcm-future-hue) 65% 42% / .30), rgba(13,27,42,.9) 55%);
     }
-    /* Base section visual background (only lightly visible so it blends) */
+    /* Base section visual background */
     #retailing-comparison-module:before {
       content:"";
       position:absolute;
@@ -500,7 +562,6 @@
       margin:16px 0 10px;
       color: var(--rcm-text-dim);
     }
-    /* Theme Switcher / Controls */
     .rcm-controls-bar {
       display:flex;
       gap:12px;
@@ -578,7 +639,6 @@
       background: #fff;
     }
 
-    /* Configuration Panel */
     .rcm-config {
       margin-top:28px;
       background: var(--rcm-card-glass);
@@ -753,7 +813,6 @@
       color:#0f172a;
     }
 
-    /* Panels */
     .rcm-panels {
       display:flex;
       gap:26px;
@@ -835,7 +894,6 @@
     }
     .theme-light .rcm-intro { color:#475569; }
 
-    /* Legacy documents grid */
     .legacy-grid {
       display:grid;
       gap:12px;
@@ -930,7 +988,6 @@
     }
     .theme-light .inv-bar { background:#eef2f7; }
 
-    /* Order panel */
     .order-wrapper {
       background: linear-gradient(140deg, rgba(16,185,129,.18), rgba(79,177,245,.18));
       border:1px solid rgba(79,177,245,.35);
@@ -1029,7 +1086,6 @@
     }
     .theme-light .ol-price { color:#065f46; }
 
-    /* Advantages & lifecycle trace */
     .key-advantages, .trace {
       margin-top:16px;
       background: var(--rcm-card-glass);
@@ -1072,7 +1128,6 @@
     .trace strong { color:#fff; }
     .theme-light .trace strong { color:#0f172a; }
 
-    /* Legend */
     .legend {
       position:absolute;
       top:10px;
@@ -1094,7 +1149,6 @@
     }
     .theme-light .legend span { background:#f1f5f9; border-color:#e2e8f0; color:#0f172a; }
 
-    /* Tooltips */
     .rcm-tooltip-anchor { position:relative; }
     .rcm-tooltip {
       pointer-events:none;
@@ -1134,7 +1188,6 @@
       background:#0f172a;
     }
 
-    /* Disclaimer */
     .rcm-disclaimer {
       margin-top:26px;
       font-size:.64rem;
@@ -1150,7 +1203,6 @@
     .theme-light .rcm-disclaimer { background:#fff; border:1px solid #e2e8f0; color:#475569; }
     .theme-light .rcm-disclaimer strong { color:#0f172a; }
 
-    /* Flash highlight mapping */
     @keyframes rcmFlashPulse {
       0% {box-shadow:0 0 0 0 rgba(79,177,245,0);}
       30% {box-shadow:0 0 0 8px rgba(79,177,245,.35);}
@@ -1159,13 +1211,11 @@
     }
     .flash { animation: rcmFlashPulse 1.2s ease; }
 
-    /* Compact mode adjustments */
     .rcm.compact .rcm-config { padding:16px 16px 14px; }
     .rcm.compact .rcm-panel { padding:18px 18px 18px; }
     .rcm.compact .order-line,
     .rcm.compact .doc-card { padding:8px 10px; }
 
-    /* Focus rings */
     .doc-card:focus-visible,
     .order-line:focus-visible,
     .rcm-btn:focus-visible,
@@ -1177,9 +1227,9 @@
       outline-offset:2px;
     }
   </style>
-  <style> /* Ensure panels don’t clip */ #retailing-comparison-module .rcm-panel { overflow: visible !important; } /* Reset base stacking */ #retailing-comparison-module .legacy-grid, #retailing-comparison-module .order-items, #retailing-comparison-module .rcm-panel { position:relative; z-index:0; } /* Each card / line gets its own baseline */ #retailing-comparison-module .doc-card, #retailing-comparison-module .order-line { position:relative; z-index:1; /* (Important) force a 3d context removal if needed */ transform-style: flat; } /* Raise the hovered / focused one so its tooltip can sit over neighbors */ #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .doc-card:focus-within, #retailing-comparison-module .order-line:hover, #retailing-comparison-module .order-line:focus-within { z-index: 1200; } /* Tooltip on top of everything inside the module */ #retailing-comparison-module .rcm-tooltip { z-index: 1500; } /* If a card’s box-shadow pseudo element is covering the tooltip, push it behind */ #retailing-comparison-module .doc-card:before, #retailing-comparison-module .order-line:before { z-index: -1; } /* Make sure no unintended parent creates a new stacking context higher than 1500 */ #retailing-comparison-module { isolation:isolate; } /* (Optional) slightly higher z-index for panel backgrounds' pseudo elements if you added any */ #retailing-comparison-module .rcm-panel:before, #retailing-comparison-module .rcm-panel:after { z-index:0; } </style>
-<style> /* Allow tooltips to extend beyond card/line */ #retailing-comparison-module .doc-card, #retailing-comparison-module .order-line { overflow: visible !important; } /* Keep the decorative highlight pseudo element contained */ #retailing-comparison-module .doc-card:before, #retailing-comparison-module .order-line:before { border-radius: inherit; pointer-events: none; } /* Explicit positioning for tooltip so it appears below card and not “inside” text flow */ #retailing-comparison-module .rcm-tooltip { top: 100%; left: 0; margin-top: 8px; transform: none; width: 260px; } /* Lift hovered host above neighbors */ #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .doc-card:focus-within, #retailing-comparison-module .order-line:hover, #retailing-comparison-module .order-line:focus-within { z-index: 1600; } /* Tooltip above everything within the module */ #retailing-comparison-module .rcm-tooltip { z-index: 1700; } /* (Optional) soften entry */ #retailing-comparison-module .rcm-tooltip { opacity: 0; transition: opacity .18s ease; } #retailing-comparison-module .rcm-tooltip-anchor:hover .rcm-tooltip, #retailing-comparison-module .rcm-tooltip-anchor:focus-within .rcm-tooltip { opacity: 1; } </style>
-  <!-- Top heading & controls -->
+  <style> #retailing-comparison-module .rcm-panel { overflow: visible !important; } #retailing-comparison-module .legacy-grid, #retailing-comparison-module .order-items, #retailing-comparison-module .rcm-panel { position:relative; z-index:0; } #retailing-comparison-module .doc-card, #retailing-comparison-module .order-line { position:relative; z-index:1; transform-style: flat; } #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .doc-card:focus-within, #retailing-comparison-module .order-line:hover, #retailing-comparison-module .order-line:focus-within { z-index: 1200; } #retailing-comparison-module .rcm-tooltip { z-index: 1500; } #retailing-comparison-module .doc-card:before, #retailing-comparison-module .order-line:before { z-index: -1; } #retailing-comparison-module { isolation:isolate; } #retailing-comparison-module .rcm-panel:before, #retailing-comparison-module .rcm-panel:after { z-index:0; } </style>
+<style> #retailing-comparison-module .doc-card, #retailing-comparison-module .order-line { overflow: visible !important; } #retailing-comparison-module .doc-card:before, #retailing-comparison-module .order-line:before { border-radius: inherit; pointer-events: none; } #retailing-comparison-module .rcm-tooltip { top: 100%; left: 0; margin-top: 8px; transform: none; width: 260px; } #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .doc-card:focus-within, #retailing-comparison-module .order-line:hover, #retailing-comparison-module .order-line:focus-within { z-index: 1600; } #retailing-comparison-module .rcm-tooltip { z-index: 1700; } #retailing-comparison-module .rcm-tooltip { opacity: 0; transition: opacity .18s ease; } #retailing-comparison-module .rcm-tooltip-anchor:hover .rcm-tooltip, #retailing-comparison-module .rcm-tooltip-anchor:focus-within .rcm-tooltip { opacity: 1; } </style>
+  <style> @media (max-width: 640px){ #retailing-comparison-module { margin: 48px auto 34px; padding: 0 14px 8px; } #retailing-comparison-module h2.rcm-heading { font-size: 1.55rem; padding-bottom: 10px; } #retailing-comparison-module .rcm-sub { font-size: .78rem; margin-top: 10px; } } @media (max-width: 760px){ #retailing-comparison-module .rcm-panel { min-height: auto; padding: 16px 16px 18px; } } @media (max-width: 560px){ #retailing-comparison-module .legacy-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; } #retailing-comparison-module .doc-card { padding: 8px 9px 9px; } } @media (max-width: 560px){ #retailing-comparison-module .rcm-field select, #retailing-comparison-module .rcm-field input[type=date], #retailing-comparison-module .rcm-field input[type=number], #retailing-comparison-module .rcm-field input[type=text] { font-size:16px; line-height:1.2; padding:10px 12px; } #retailing-comparison-module .rcm-config { padding:16px 14px 14px; } #retailing-comparison-module .rcm-field-grid { gap:10px; } } #retailing-comparison-module .ol-main, #retailing-comparison-module .doc-title, #retailing-comparison-module .doc-meta { word-break: break-word; overflow-wrap: anywhere; } @media (max-width:560px){ #retailing-comparison-module .order-line .ol-main { max-width:100%; } } @media (hover:none), (pointer:coarse){ #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .order-line:hover { transform:none; box-shadow: var(--rcm-shadow-1); } #retailing-comparison-module .rcm-panel { animation: none; } #retailing-comparison-module .rcm-tooltip { transition: opacity .08s; } } @media (max-width:480px){ #retailing-comparison-module .rcm-tooltip { left: 50% !important; top: 100% !important; transform: translateX(-50%) !important; width: calc(100vw - 34px); max-width: 360px; } #retailing-comparison-module .rcm-tooltip:before { left: 50%; transform: translateX(-50%) rotate(45deg); } } @media (max-width: 520px){ #retailing-comparison-module .rcm-controls-bar { width:100%; justify-content:flex-start; } #retailing-comparison-module .rcm-theme-switch button { padding:6px 8px; font-size:.58rem; } } @media (max-width:420px){ #retailing-comparison-module.accent-animated h2.rcm-heading:after { width: 120px; } } @supports (padding: max(0px)) { @media (max-width:640px){ #retailing-comparison-module { padding-bottom: max(12px, env(safe-area-inset-bottom)); } } } #retailing-comparison-module { overflow-x: clip; max-width: 100%; box-sizing: border-box; } @media (max-width:640px){ #retailing-comparison-module .rcm-config:before, #retailing-comparison-module .rcm-config:after { opacity:.22; width:120px; height:120px; } } @media (max-width:640px){ #retailing-comparison-module .key-advantages ul { grid-template-columns:1fr !important; gap:4px 10px; } } @media (max-width:400px){ #retailing-comparison-module .order-status { font-size:.52rem; padding:4px 10px; } #retailing-comparison-module .order-id { font-size:1rem; } } @media (max-width:760px){ #retailing-comparison-module .rcm-panels { gap: 18px; margin-top: 26px; } } #retailing-comparison-module #futurePanel .order-line strong { display:inline; white-space:normal; } </style>
   <div class="rcm-topbar">
     <div>
       <h2 class="rcm-heading">From Fragmented Records to Unified Orders</h2>
@@ -1206,7 +1256,6 @@
     </div>
   </div>
 
-  <!-- CONFIGURATION -->
   <div class="rcm-config" aria-label="Itinerary and ancillary configuration">
     <h3>Configure Journey & Services</h3>
     <div class="rcm-field-grid">
@@ -1294,9 +1343,7 @@
     </div>
   </div>
 
-  <!-- PANELS -->
   <div class="rcm-panels">
-    <!-- LEGACY -->
     <section class="rcm-panel" id="legacyPanel" aria-label="Current multi-document environment">
       <div class="legend"><span>Legacy Documents</span></div>
       <span class="rcm-label-strip legacy-tag">Current multi-record model</span>
@@ -1308,7 +1355,6 @@
       <div class="trace" id="legacyTrace"></div>
     </section>
 
-    <!-- FUTURE -->
     <section class="rcm-panel" id="futurePanel" aria-label="Offer and One Order model">
       <div class="legend"><span>Unified Order</span></div>
       <span class="rcm-label-strip future-tag">Offer & One Order model</span>
@@ -1322,7 +1368,7 @@
             <div class="order-id" id="orderId">ORD-</div>
             <div style="font-size:.6rem; color:#5ee2b2; margin-top:2px;" id="offerContext">Offer accepted and normalized into Order.</div>
           </div>
-          <div class="order-finance">
+            <div class="order-finance">
             <div class="order-total" id="orderTotal">Total: —</div>
             <div class="order-status" id="orderStatus">INITIAL</div>
           </div>
@@ -1356,7 +1402,6 @@
       const el = document.getElementById(id);
       if(el) el.value = date.toISOString().split('T')[0];
     }
-    // Default dates
     const dep = new Date(today.getFullYear(), today.getMonth()+1, 1);
     const ret = new Date(today.getFullYear(), today.getMonth()+1, 9);
     setDate('departureDate', dep);
@@ -1549,7 +1594,6 @@
           mapTo:'taxi-line'
         }));
       }
-      // Inventory sample
       const inv = document.createElement('div');
       inv.className='doc-card rcm-tooltip-anchor';
       const classes = ['Y','K','M','J','F'];
@@ -1674,7 +1718,6 @@
       }
     }
 
-    // Event handlers
     els.hotel.addEventListener('change', () => {
       els.hotelDatesWrap.style.display = els.hotel.checked ? 'flex' : 'none';
     });
@@ -1695,7 +1738,6 @@
       buildAll();
     });
 
-    // Theme switching
     els.themeButtons.forEach(btn=>{
       btn.addEventListener('click', ()=>{
         els.themeButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
@@ -1705,12 +1747,10 @@
       });
     });
 
-    // Compact toggle
     els.compactToggle.addEventListener('change', ()=>{
       root.classList.toggle('compact', els.compactToggle.checked);
     });
 
-    // Accent animation toggle
     els.accentToggle.addEventListener('change', ()=>{
       root.classList.toggle('accent-animated', els.accentToggle.checked);
     });
@@ -1806,7 +1846,6 @@
       </div>
 
       <div id="featured-cards">
-        <!-- Skeleton loaders will be replaced by real blog cards via JS -->
         <article class="post-card reveal" aria-hidden="true">
           <div class="skeleton skeleton-thumb"></div>
           <div class="post-body">
@@ -1817,7 +1856,7 @@
         </article>
         <article class="post-card reveal" aria-hidden="true">
           <div class="skeleton skeleton-thumb"></div>
-          <div class="post-body">
+            <div class="post-body">
             <div class="skeleton skeleton-line"></div>
             <div class="skeleton skeleton-line"></div>
             <div class="skeleton skeleton-line short"></div>
@@ -1836,8 +1875,6 @@
     </div>
   </section>
 
-  <!-- --- DYNAMIC OFFERS MATURITY MATRIX WITH TOOLTIP --- -->
-
   <footer class="footer">
     <div class="content has-text-centered">
       <p>© <span id="year"></span> Modern Airline Retailing</p>
@@ -1849,52 +1886,47 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // --- BLOG CARDS ---
-  
   const burger = document.querySelector('.navbar-burger');
-const menu = document.getElementById('navMenu');
-
-if (burger) {
-  burger.addEventListener('click', function() {
-    burger.classList.toggle('is-active');
-    menu.classList.toggle('is-active');
-  });
-}
-
-  
-  
-const posts = [
-  {
-    url: "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html",
-    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-    date: "Jun 2024",
-    badge: "NDC",
-    title: "NDC in the Real World: Seller and Airline Responsibilities",
-    excerpt: "Exploring the practical responsibilities of sellers and airlines when implementing NDC at scale.",
-    author: "Neerej S",
-    time: "5 min read"
-  },
-  {
-    url: "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html",
-    img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
-    date: "Jul 2024",
-    badge: "Offer & Order",
-    title: "Order Management: Life After PNR, Tickets and EMDs",
-    excerpt: "How the transition to Order Management is reshaping airline retailing beyond legacy artifacts.",
-    author: "Neerej S",
-    time: "7 min read"
-  },
-  {
-    url: "/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html",
-    img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
-    date: "May 2024",
-    badge: "Dynamic Pricing",
-    title: "Continuous Pricing: Beyond Filed Ladders",
-    excerpt: "A look into continuous pricing — how airlines are moving from static filed fares to dynamic price points.",
-    author: "Neerej S",
-    time: "6 min read"
+  const menu = document.getElementById('navMenu');
+  if (burger) {
+    burger.addEventListener('click', function() {
+      burger.classList.toggle('is-active');
+      menu.classList.toggle('is-active');
+    });
   }
-];
+
+  const posts = [
+    {
+      url: "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html",
+      img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      date: "Jun 2024",
+      badge: "NDC",
+      title: "NDC in the Real World: Seller and Airline Responsibilities",
+      excerpt: "Exploring the practical responsibilities of sellers and airlines when implementing NDC at scale.",
+      author: "Neerej S",
+      time: "5 min read"
+    },
+    {
+      url: "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html",
+      img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+      date: "Jul 2024",
+      badge: "Offer & Order",
+      title: "Order Management: Life After PNR, Tickets and EMDs",
+      excerpt: "How the transition to Order Management is reshaping airline retailing beyond legacy artifacts.",
+      author: "Neerej S",
+      time: "7 min read"
+    },
+    {
+      url: "/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html",
+      img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+      date: "May 2024",
+      badge: "Dynamic Pricing",
+      title: "Continuous Pricing: Beyond Filed Ladders",
+      excerpt: "A look into continuous pricing — how airlines are moving from static filed fares to dynamic price points.",
+      author: "Neerej S",
+      time: "6 min read"
+    }
+  ];
 
   const cards = posts.map(post => `
     <article class="post-card reveal">
@@ -1917,7 +1949,7 @@ const posts = [
   `).join('');
   document.getElementById('featured-cards').innerHTML = cards;
 
-  // --- TOOLTIP LOGIC FOR MATRIX ---
+  // Matrix tooltip logic
   const tooltip = document.getElementById('matrix-tooltip');
   let activeCell = null;
 
@@ -1929,23 +1961,17 @@ const posts = [
     tooltip.style.display = 'block';
 
     const rect = cell.getBoundingClientRect();
-
-    // Position below the cell
     let top = rect.bottom + 8;
     let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
 
-    // Clamp horizontally
     if (left < 10) left = 10;
     if (left + tooltip.offsetWidth > window.innerWidth - 10) {
       left = window.innerWidth - tooltip.offsetWidth - 10;
     }
-
-    // If not enough space below, show above
     if (top + tooltip.offsetHeight > window.innerHeight - 10) {
       top = rect.top - tooltip.offsetHeight - 8;
     }
     if (top < 10) top = rect.bottom + 8;
-
     tooltip.style.top = top + 'px';
     tooltip.style.left = left + 'px';
   }
@@ -1956,7 +1982,6 @@ const posts = [
   }
 
   document.querySelectorAll('.dynamic-matrix td[data-detail]').forEach(cell => {
-    // Hover
     cell.addEventListener('mouseenter', function(e) {
       activeCell = cell;
       showTooltip(cell, e);
@@ -1964,7 +1989,6 @@ const posts = [
     cell.addEventListener('mouseleave', function() {
       if (activeCell === cell) hideTooltip();
     });
-    // Click/tap
     cell.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -1986,7 +2010,6 @@ const posts = [
         showTooltip(cell, e.touches[0]);
       }
     });
-    // Keyboard
     cell.setAttribute('tabindex', '0');
     cell.setAttribute('role', 'button');
     cell.setAttribute('aria-label', 'Click to view details');
@@ -2010,7 +2033,6 @@ const posts = [
     });
   });
 
-  // Hide tooltip on scroll, resize, or click outside
   window.addEventListener('scroll', hideTooltip, { passive: true });
   window.addEventListener('resize', hideTooltip, { passive: true });
   document.addEventListener('click', function(e) {
@@ -2024,50 +2046,46 @@ const posts = [
     }
   });
 
-  // --- YEAR IN FOOTER ---
   document.getElementById('year').textContent = new Date().getFullYear();
 });
 </script>
 
 
   <script>
-    // ---- LATEST FROM THE BLOG DYNAMIC LOADING ----
     document.addEventListener('DOMContentLoaded', function() {
-      // Replace with your actual blog post data or fetch from API
     const posts = [
-  {
-    url: "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html",
-    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-    date: "Jun 2024",
-    badge: "NDC",
-    title: "NDC in the Real World: Seller and Airline Responsibilities",
-    excerpt: "Exploring the practical responsibilities of sellers and airlines when implementing NDC at scale.",
-    author: "Neerej S",
-    time: "5 min read"
-  },
-  {
-    url: "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html",
-    img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
-    date: "Jul 2024",
-    badge: "Offer & Order",
-    title: "Order Management: Life After PNR, Tickets and EMDs",
-    excerpt: "How the transition to Order Management is reshaping airline retailing beyond legacy artifacts.",
-    author: "Neerej S",
-    time: "7 min read"
-  },
-  {
-    url: "/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html",
-    img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
-    date: "May 2024",
-    badge: "Dynamic Pricing",
-    title: "Continuous Pricing: Beyond Filed Ladders",
-    excerpt: "A look into continuous pricing — how airlines are moving from static filed fares to dynamic price points.",
-    author: "Neerej S",
-    time: "6 min read"
-  }
-];
+      {
+        url: "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html",
+        img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+        date: "Jun 2024",
+        badge: "NDC",
+        title: "NDC in the Real World: Seller and Airline Responsibilities",
+        excerpt: "Exploring the practical responsibilities of sellers and airlines when implementing NDC at scale.",
+        author: "Neerej S",
+        time: "5 min read"
+      },
+      {
+        url: "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html",
+        img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+        date: "Jul 2024",
+        badge: "Offer & Order",
+        title: "Order Management: Life After PNR, Tickets and EMDs",
+        excerpt: "How the transition to Order Management is reshaping airline retailing beyond legacy artifacts.",
+        author: "Neerej S",
+        time: "7 min read"
+      },
+      {
+        url: "/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html",
+        img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+        date: "May 2024",
+        badge: "Dynamic Pricing",
+        title: "Continuous Pricing: Beyond Filed Ladders",
+        excerpt: "A look into continuous pricing — how airlines are moving from static filed fares to dynamic price points.",
+        author: "Neerej S",
+        time: "6 min read"
+      }
+    ];
 
-      // Render blog cards
       const cards = posts.map(post => `
         <article class="post-card reveal">
           <a href="${post.url}">
@@ -2091,8 +2109,8 @@ const posts = [
       document.getElementById('featured-cards').innerHTML = cards;
     });
   </script>
+  <style id="rcm-mobile-width-fix">@media (max-width: 920px){ #retailing-comparison-module { width:100% !important; max-width:100% !important; box-sizing:border-box; } #retailing-comparison-module .rcm-panels { width:100% !important; max-width:100% !important; } #retailing-comparison-module .rcm-panels { flex-wrap:wrap !important; display:block !important; } #retailing-comparison-module .rcm-panels { grid-template-columns:1fr !important; } #retailing-comparison-module .rcm-panel { width:100% !important; max-width:100% !important; min-width:0 !important; flex:1 1 100% !important; box-sizing:border-box; margin:0 0 22px 0; } #retailing-comparison-module .rcm-panel:last-child { margin-bottom:0; } #retailing-comparison-module .legacy-grid { width:100% !important; max-width:100% !important; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; gap:12px 12px !important; } #retailing-comparison-module .doc-card { min-width:0 !important; width:100% !important; } #retailing-comparison-module .order-line { min-width:0 !important; width:100% !important; } } #retailing-comparison-module .rcm-panel { min-width:0; } </style>
   <script>
-    // ---- TOOLTIP LOGIC FOR MATRIX ----
     document.addEventListener('DOMContentLoaded', function() {
       const tooltip = document.getElementById('matrix-tooltip');
       let activeCell = null;
@@ -2106,17 +2124,13 @@ const posts = [
 
         const rect = cell.getBoundingClientRect();
 
-        // Position below the cell
         let top = rect.bottom + 8;
         let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
 
-        // Clamp horizontally
         if (left < 10) left = 10;
         if (left + tooltip.offsetWidth > window.innerWidth - 10) {
           left = window.innerWidth - tooltip.offsetWidth - 10;
         }
-
-        // If not enough space below, show above
         if (top + tooltip.offsetHeight > window.innerHeight - 10) {
           top = rect.top - tooltip.offsetHeight - 8;
         }
@@ -2132,7 +2146,6 @@ const posts = [
       }
 
       document.querySelectorAll('.dynamic-matrix td[data-detail]').forEach(cell => {
-        // Hover
         cell.addEventListener('mouseenter', function(e) {
           activeCell = cell;
           showTooltip(cell, e);
@@ -2140,7 +2153,6 @@ const posts = [
         cell.addEventListener('mouseleave', function() {
           if (activeCell === cell) hideTooltip();
         });
-        // Click/tap
         cell.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
@@ -2162,6 +2174,9 @@ const posts = [
             showTooltip(cell, e.touches[0]);
           }
         });
-        // Keyboard
         cell.setAttribute('tabindex', '0');
-
+      });
+    });
+  </script>
+</body>
+</html>
