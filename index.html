@@ -382,6 +382,1350 @@
           Read Latest Blogs <span style="font-size:1.1em;">↘</span>
         </a>
       </div>
+      <section id="retailing-comparison-module" class="rcm theme-dark accent-animated" aria-label="Airline Retailing Transformation Illustration">
+  <style>
+    /* =========================================================
+       Retailing Comparison Module (Namespaced: rcm-*)
+       Theme system: add class theme-light | theme-dark | theme-dual
+       Optional extras: accent-animated, compact
+       ========================================================= */
+    #retailing-comparison-module {
+      --rcm-font-stack: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      --rcm-radius-sm: 8px;
+      --rcm-radius: 14px;
+      --rcm-radius-lg: 18px;
+      --rcm-dur: .28s cubic-bezier(.4,.2,.2,1);
+      --rcm-accent-1: #3298dc;
+      --rcm-accent-2: #4fb1f5;
+      --rcm-accent-alt: #10b981;
+      --rcm-warn: #e3b93c;
+      --rcm-legacy-hue: 38;
+      --rcm-future-hue: 168;
+      --rcm-shadow-1: 0 2px 6px -1px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.02) inset;
+      --rcm-shadow-2: 0 10px 32px -10px rgba(0,0,0,.55);
+      --rcm-border-soft: 1px solid rgba(255,255,255,.10);
+      --rcm-border-strong: 1px solid rgba(255,255,255,.25);
+      --rcm-bg-base: #0d1b2a;
+      --rcm-bg-alt: #132235;
+      --rcm-bg-surface: #1f3145;
+      --rcm-text: #e8f0f7;
+      --rcm-text-dim: #9fb3c5;
+      --rcm-text-faint: #6f8294;
+      --rcm-card-glass: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      --rcm-card-glass-strong: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      font-family: var(--rcm-font-stack);
+      max-width: 1320px;
+      margin: 70px auto 40px;
+      padding: 0 18px 8px;
+      position: relative;
+      color: var(--rcm-text);
+      line-height: 1.4;
+      isolation: isolate;
+    }
+    /* Light theme base */
+    #retailing-comparison-module.theme-light {
+      --rcm-bg-base: #f5f7fa;
+      --rcm-bg-alt: #eef2f6;
+      --rcm-bg-surface: #ffffff;
+      --rcm-text: #0f172a;
+      --rcm-text-dim: #4a5a6b;
+      --rcm-text-faint: #758599;
+      --rcm-card-glass: linear-gradient(160deg,#ffffff,#f2f6f9);
+      --rcm-card-glass-strong: linear-gradient(160deg,#ffffff,#edf3f7);
+      --rcm-border-soft: 1px solid #d9e2eb;
+      --rcm-border-strong: 1px solid #c2d1dd;
+      --rcm-shadow-1: 0 3px 10px -2px rgba(15,23,42,.10), 0 0 0 1px rgba(15,23,42,.04) inset;
+      --rcm-shadow-2: 0 16px 42px -10px rgba(15,23,42,.22);
+    }
+    /* Dual accent adds tinted panels */
+    #retailing-comparison-module.theme-dual #legacyPanel {
+      --legacy-panel-tint: linear-gradient(175deg, hsla(var(--rcm-legacy-hue) 72% 48% / .28), rgba(13,27,42,.9) 55%);
+    }
+    #retailing-comparison-module.theme-dual #futurePanel {
+      --future-panel-tint: linear-gradient(175deg, hsla(var(--rcm-future-hue) 65% 42% / .30), rgba(13,27,42,.9) 55%);
+    }
+    /* Base section visual background (only lightly visible so it blends) */
+    #retailing-comparison-module:before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 72% 20%, rgba(79,177,245,.18), transparent 60%),
+        radial-gradient(circle at 16% 72%, rgba(16,185,129,.16), transparent 62%);
+      opacity:.6;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    #retailing-comparison-module .rcm-topbar {
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      align-items:flex-end;
+      justify-content:space-between;
+    }
+    #retailing-comparison-module h2.rcm-heading {
+      margin:0;
+      font-size: clamp(1.9rem, 1.5rem + 1.4vw, 2.55rem);
+      font-weight:700;
+      letter-spacing:.5px;
+      background: linear-gradient(95deg,#ffffff,#b9dcf5 45%,#4fb1f5 70%, #10b981 92%);
+      -webkit-background-clip:text;
+      color:transparent;
+      position:relative;
+      display:inline-block;
+      padding-bottom:14px;
+    }
+    #retailing-comparison-module.accent-animated h2.rcm-heading:after {
+      content:"";
+      position:absolute;
+      left:2px;
+      bottom:0;
+      height:4px;
+      width:170px;
+      border-radius:5px;
+      background:
+        linear-gradient(90deg,var(--rcm-accent-1),var(--rcm-accent-2),var(--rcm-accent-alt));
+      background-size:200% 100%;
+      animation: rcmAccentMove 6.5s linear infinite;
+      box-shadow:0 0 14px -2px rgba(79,177,245,.85), 0 0 24px -4px rgba(16,185,129,.75);
+    }
+    @keyframes rcmAccentMove {
+      0% { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+      100% { background-position:0% 50%; }
+    }
+    #retailing-comparison-module .rcm-sub {
+      font-size: .95rem;
+      max-width: 980px;
+      margin:16px 0 10px;
+      color: var(--rcm-text-dim);
+    }
+    /* Theme Switcher / Controls */
+    .rcm-controls-bar {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+    .rcm-theme-switch {
+      display:inline-flex;
+      gap:4px;
+      background: var(--rcm-card-glass);
+      border: var(--rcm-border-soft);
+      padding:4px 6px;
+      border-radius: 999px;
+      position:relative;
+      box-shadow: var(--rcm-shadow-1);
+    }
+    .rcm-theme-switch button {
+      background:transparent;
+      border:none;
+      color: var(--rcm-text-dim);
+      font-size:.65rem;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      padding:6px 10px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:600;
+      position:relative;
+      transition: var(--rcm-dur);
+    }
+    .rcm-theme-switch button[aria-pressed="true"] {
+      color:#fff;
+      background: linear-gradient(135deg,var(--rcm-accent-1), var(--rcm-accent-2));
+      box-shadow: 0 4px 16px -6px rgba(79,177,245,.6);
+    }
+    .rcm-theme-switch button:focus-visible {
+      outline:none;
+      box-shadow:0 0 0 3px rgba(79,177,245,.6);
+    }
+    .rcm-toggle {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:.7rem;
+      letter-spacing:.4px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: var(--rcm-card-glass);
+      border: var(--rcm-border-soft);
+      color: var(--rcm-text-dim);
+      cursor:pointer;
+      user-select:none;
+      font-weight:600;
+      position:relative;
+    }
+    .rcm-toggle input { display:none; }
+    .rcm-toggle span.indicator {
+      width:30px; height:16px; background:rgba(255,255,255,.15); border-radius:999px; position:relative;
+      transition: var(--rcm-dur);
+    }
+    .rcm-toggle span.indicator:after {
+      content:"";
+      position:absolute;
+      top:2px; left:2px;
+      width:12px; height:12px; background:#fff; border-radius:50%;
+      transition: var(--rcm-dur);
+      box-shadow:0 2px 6px -1px rgba(0,0,0,.55);
+    }
+    .rcm-toggle input:checked + span.indicator {
+      background: linear-gradient(135deg,var(--rcm-accent-1),var(--rcm-accent-2));
+    }
+    .rcm-toggle input:checked + span.indicator:after {
+      transform: translateX(14px);
+      background: #fff;
+    }
+
+    /* Configuration Panel */
+    .rcm-config {
+      margin-top:28px;
+      background: var(--rcm-card-glass);
+      border: var(--rcm-border-soft);
+      border-radius: var(--rcm-radius-lg);
+      padding: 20px 20px 18px;
+      position:relative;
+      box-shadow: var(--rcm-shadow-1);
+      overflow:hidden;
+    }
+    .rcm-config:before,
+    .rcm-config:after {
+      content:"";
+      position:absolute;
+      width:180px; height:180px;
+      background: radial-gradient(circle at center, rgba(79,177,245,.28), transparent 62%);
+      top:-70px; right:-60px;
+      opacity:.35;
+      transform:rotate(18deg);
+      pointer-events:none;
+    }
+    .rcm-config:after {
+      width:160px; height:160px;
+      background: radial-gradient(circle at center, rgba(16,185,129,.32), transparent 62%);
+      top:auto; bottom:-70px; left:-50px;
+      transform:rotate(-12deg);
+    }
+    .rcm-config h3 {
+      margin:0 0 14px;
+      font-size:1.05rem;
+      font-weight:600;
+      letter-spacing:.5px;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+    }
+    .rcm-field-grid {
+      display:grid;
+      gap:14px;
+      grid-template-columns:repeat(4,1fr);
+    }
+    @media (max-width:1100px){
+      .rcm-field-grid { grid-template-columns:repeat(3,1fr); }
+    }
+    @media (max-width:920px){
+      .rcm-field-grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:580px){
+      .rcm-field-grid { grid-template-columns:1fr; }
+    }
+    .rcm-field {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      position:relative;
+    }
+    .rcm-field label {
+      font-size:.58rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.65px;
+      color: var(--rcm-text-dim);
+    }
+    .rcm-field select,
+    .rcm-field input[type=date],
+    .rcm-field input[type=number],
+    .rcm-field input[type=text] {
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.20);
+      border-radius: var(--rcm-radius-sm);
+      background: rgba(255,255,255,.08);
+      color: var(--rcm-text);
+      font-size:.78rem;
+      outline:none;
+      transition: var(--rcm-dur);
+    }
+    .theme-light .rcm-field select,
+    .theme-light .rcm-field input[type=date],
+    .theme-light .rcm-field input[type=number],
+    .theme-light .rcm-field input[type=text] {
+      background:#fff;
+      border:1px solid #cdd8e2;
+      color:#0f172a;
+    }
+    .rcm-field select:focus,
+    .rcm-field input:focus {
+      border-color: var(--rcm-accent-1);
+      box-shadow:0 0 0 2px rgba(79,177,245,.45);
+    }
+    .rcm-inline {
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:14px;
+    }
+    .rcm-check {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:.72rem;
+      letter-spacing:.4px;
+      padding:6px 10px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--rcm-text-dim);
+      border-radius: 999px;
+      cursor:pointer;
+      user-select:none;
+      transition: var(--rcm-dur);
+    }
+    .rcm-check input { margin:0; }
+    .rcm-check:hover {
+      color:#fff;
+      border-color: var(--rcm-accent-2);
+    }
+    .theme-light .rcm-check {
+      background:#fff;
+      border:1px solid #d5e0e9;
+      color:#4a5a6b;
+    }
+    .theme-light .rcm-check:hover { border-color:#4fb1f5; color:#0f172a; }
+
+    .rcm-actions {
+      margin-top:16px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .rcm-btn {
+      background: linear-gradient(135deg,var(--rcm-accent-1), var(--rcm-accent-2));
+      color:#fff;
+      border:none;
+      padding:10px 18px;
+      font-size:.76rem;
+      font-weight:600;
+      border-radius: 12px;
+      cursor:pointer;
+      letter-spacing:.5px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      box-shadow:0 4px 18px -4px rgba(79,177,245,.55);
+      position:relative;
+      transition: var(--rcm-dur);
+    }
+    .rcm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow:0 10px 28px -6px rgba(79,177,245,.65);
+    }
+    .rcm-btn:active { transform: translateY(-1px); }
+    .rcm-btn.secondary {
+      background: rgba(255,255,255,.08);
+      box-shadow:none;
+      border:1px solid rgba(255,255,255,.15);
+      color: var(--rcm-text-dim);
+    }
+    .rcm-btn.secondary:hover {
+      background: rgba(255,255,255,.16);
+      color:#fff;
+      box-shadow:0 6px 20px -6px rgba(0,0,0,.5);
+    }
+    .theme-light .rcm-btn.secondary {
+      background:#fff;
+      border:1px solid #d4dee7;
+      color:#4a5a6b;
+      box-shadow:0 2px 6px -2px rgba(15,23,42,.25);
+    }
+    .theme-light .rcm-btn.secondary:hover {
+      background:#f4f9fc;
+      color:#0f172a;
+    }
+
+    /* Panels */
+    .rcm-panels {
+      display:flex;
+      gap:26px;
+      margin-top:34px;
+    }
+    @media (max-width:1100px){
+      .rcm-panels { flex-direction:column; }
+    }
+    .rcm-panel {
+      flex:1;
+      position:relative;
+      border-radius: var(--rcm-radius-lg);
+      padding:20px 22px 22px;
+      border: var(--rcm-border-soft);
+      background: var(--rcm-card-glass);
+      box-shadow: var(--rcm-shadow-1);
+      overflow:visible;
+      min-height:460px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: var(--rcm-dur);
+      background-size: 180% 180%;
+      animation: rcmPanelDrift 28s linear infinite;
+    }
+    @keyframes rcmPanelDrift {
+      0% { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+      100% { background-position:0% 50%; }
+    }
+    .theme-dual #legacyPanel {
+      background: var(--legacy-panel-tint, var(--rcm-card-glass));
+    }
+    .theme-dual #futurePanel {
+      background: var(--future-panel-tint, var(--rcm-card-glass));
+    }
+    .rcm-panel h4 {
+      margin:0 0 8px;
+      font-size:1rem;
+      font-weight:600;
+      letter-spacing:.4px;
+      color:#fff;
+    }
+    .theme-light .rcm-panel h4 { color:#0f172a; }
+    .rcm-label-strip {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:.55rem;
+      font-weight:700;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      position:relative;
+      margin-bottom:8px;
+    }
+    .legacy-tag {
+      background:rgba(227,185,60,.16);
+      color:#f7d58a;
+      border:1px solid rgba(227,185,60,.45);
+    }
+    .future-tag {
+      background: rgba(79,177,245,.22);
+      color:#d9f3ff;
+      border:1px solid rgba(79,177,245,.50);
+    }
+    .theme-light .legacy-tag {
+      background:#fff6e5; color:#92400e; border:1px solid #f3d9a9;
+    }
+    .theme-light .future-tag {
+      background:#dcfce7; color:#065f46; border:1px solid #b5f3cd;
+    }
+    .rcm-intro {
+      font-size:.72rem;
+      color: var(--rcm-text-dim);
+      line-height:1.35;
+      margin-bottom:14px;
+      max-width:560px;
+    }
+    .theme-light .rcm-intro { color:#475569; }
+
+    /* Legacy documents grid */
+    .legacy-grid {
+      display:grid;
+      gap:12px;
+      grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    }
+    .rcm.compact .legacy-grid { grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px; }
+    .doc-card {
+      background: var(--rcm-card-glass-strong);
+      border: var(--rcm-border-soft);
+      border-radius: 14px;
+      padding:10px 12px 11px;
+      position:relative;
+      cursor:pointer;
+      transition: var(--rcm-dur);
+      color:#fff;
+      overflow:hidden;
+    }
+    .doc-card:before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(130deg,rgba(255,255,255,.14),rgba(255,255,255,0));
+      opacity:0;
+      transition: var(--rcm-dur);
+    }
+    .doc-card:hover {
+      box-shadow: var(--rcm-shadow-2);
+      border-color: var(--rcm-accent-2);
+      transform: translateY(-5px) scale(1.018);
+    }
+    .doc-card:hover:before { opacity:.6; }
+    .theme-light .doc-card { background:#fff; border:1px solid #dbe3ea; color:#0f172a; }
+    .theme-light .doc-card:hover { border-color:#4fb1f5; }
+    .doc-title {
+      font-size:.66rem;
+      font-weight:700;
+      letter-spacing:.35px;
+      color:#fff;
+      display:flex;
+      justify-content:space-between;
+      gap:6px;
+      line-height:1.2;
+      flex-wrap:wrap;
+    }
+    .theme-light .doc-title { color:#0f172a; }
+    .doc-ref {
+      font-weight:600;
+      color:#b9dcf5;
+    }
+    .theme-light .doc-ref { color:#334155; }
+    .doc-meta {
+      margin-top:6px;
+      font-size:.62rem;
+      line-height:1.3;
+      color: var(--rcm-text-dim);
+    }
+    .theme-light .doc-meta { color:#64748b; }
+    .multi-badge {
+      font-size:.55rem;
+      font-weight:600;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+      padding:2px 6px;
+      border-radius:7px;
+      letter-spacing:.5px;
+      color:#d4e9f6;
+    }
+    .theme-light .multi-badge { background:#f1f5f9; color:#0f172a; border:1px solid #e2e8f0; }
+
+    .inventory-block { margin-top:6px; }
+    .inv-row {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:.58rem;
+      margin-top:4px;
+    }
+    .inv-bar {
+      flex:1;
+      height:6px;
+      background:rgba(255,255,255,.18);
+      border-radius:4px;
+      overflow:hidden;
+      position:relative;
+    }
+    .inv-fill {
+      height:100%;
+      background:linear-gradient(90deg,#e74a4a,#e3b93c);
+      width:72%;
+      transition: width 1.4s ease;
+    }
+    .theme-light .inv-bar { background:#eef2f7; }
+
+    /* Order panel */
+    .order-wrapper {
+      background: linear-gradient(140deg, rgba(16,185,129,.18), rgba(79,177,245,.18));
+      border:1px solid rgba(79,177,245,.35);
+      border-radius: 16px;
+      padding:16px 18px;
+      position:relative;
+    }
+    .theme-light .order-wrapper {
+      background:linear-gradient(130deg,#ffffff,#f0fdf7 70%);
+      border:1px solid #cce9dc;
+    }
+    .order-header {
+      display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+    }
+    .order-id {
+      font-size:1.18rem;
+      font-weight:700;
+      letter-spacing:.8px;
+      color:#5ee2b2;
+    }
+    .theme-light .order-id { color:#065f46; }
+    .order-finance { text-align:right; }
+    .order-total {
+      font-size:.8rem;
+      font-weight:700;
+      color:#4fb1f5;
+    }
+    .theme-light .order-total { color:#064e3b; }
+    .order-status {
+      font-size:.58rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#10b981,#0d8665);
+      color:#fff;
+      padding:5px 12px;
+      border-radius:999px;
+      letter-spacing:.6px;
+    }
+    .order-items {
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .order-line {
+      background: var(--rcm-card-glass-strong);
+      border: var(--rcm-border-soft);
+      border-radius:14px;
+      padding:10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      cursor:default;
+      position:relative;
+      transition: var(--rcm-dur);
+      overflow:hidden;
+    }
+    .order-line:before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,rgba(255,255,255,.18),rgba(255,255,255,0));
+      opacity:0;
+      transition: var(--rcm-dur);
+    }
+    .order-line:hover {
+      box-shadow: var(--rcm-shadow-2);
+      border-color: var(--rcm-accent-2);
+      transform: translateY(-4px) scale(1.015);
+    }
+    .order-line:hover:before { opacity:.55; }
+    .theme-light .order-line {
+      background:#ffffff;
+      border:1px solid #dce5ec;
+      color:#0f172a;
+    }
+    .theme-light .order-line:hover { border-color:#4fb1f5; }
+    .ol-main {
+      font-size:.7rem;
+      line-height:1.25;
+      color:#fff;
+      max-width: 72%;
+    }
+    .theme-light .ol-main { color:#0f172a; }
+    .ol-ref {
+      font-size:.56rem;
+      color: var(--rcm-text-dim);
+      margin-top:5px;
+    }
+    .theme-light .ol-ref { color:#64748b; }
+    .ol-price {
+      text-align:right;
+      font-size:.73rem;
+      font-weight:600;
+      color:#5ee2b2;
+    }
+    .theme-light .ol-price { color:#065f46; }
+
+    /* Advantages & lifecycle trace */
+    .key-advantages, .trace {
+      margin-top:16px;
+      background: var(--rcm-card-glass);
+      border: var(--rcm-border-soft);
+      padding:12px 14px;
+      border-radius: 14px;
+      color: var(--rcm-text-dim);
+      font-size:.64rem;
+      line-height:1.35;
+      position:relative;
+      overflow:hidden;
+    }
+    .key-advantages:before, .trace:before {
+      content:"";
+      position:absolute;
+      right:-30px; top:-30px;
+      width:140px; height:140px;
+      background: radial-gradient(circle at center, rgba(79,177,245,.40), transparent 60%);
+      opacity:.18;
+    }
+    .theme-light .key-advantages, .theme-light .trace { background:#f8fafc; border:1px solid #e2e8f0; color:#475569; }
+    .key-advantages h5 {
+      margin:0 0 8px;
+      font-size:.58rem;
+      font-weight:800;
+      letter-spacing:.65px;
+      text-transform:uppercase;
+      color:#b9dcf5;
+    }
+    .theme-light .key-advantages h5 { color:#334155; }
+    .key-advantages ul {
+      margin:0;
+      padding-left:18px;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:4px 18px;
+    }
+    .key-advantages li { margin:0; }
+
+    .trace strong { color:#fff; }
+    .theme-light .trace strong { color:#0f172a; }
+
+    /* Legend */
+    .legend {
+      position:absolute;
+      top:10px;
+      right:10px;
+      font-size:.58rem;
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      z-index:5;
+    }
+    .legend span {
+      background:rgba(255,255,255,.1);
+      padding:4px 8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.15);
+      font-weight:600;
+      letter-spacing:.4px;
+      color:#d4e9f6;
+    }
+    .theme-light .legend span { background:#f1f5f9; border-color:#e2e8f0; color:#0f172a; }
+
+    /* Tooltips */
+    .rcm-tooltip-anchor { position:relative; }
+    .rcm-tooltip {
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .16s ease, transform .25s;
+      position:absolute;
+      z-index:100;
+      background:rgba(30,48,70,.97);
+      color:#fff;
+      padding:10px 12px;
+      width:260px;
+      border-radius:12px;
+      font-size:.62rem;
+      line-height:1.35;
+      box-shadow:0 12px 36px -8px rgba(0,0,0,.65);
+      transform:translateY(-6px);
+    }
+    .rcm-tooltip-anchor:hover .rcm-tooltip,
+    .rcm-tooltip-anchor:focus-within .rcm-tooltip {
+      opacity:1;
+    }
+    .rcm-tooltip:before {
+      content:"";
+      position:absolute;
+      bottom:-6px;
+      left:22px;
+      width:12px;
+      height:12px;
+      background:rgba(30,48,70,.97);
+      transform:rotate(45deg);
+      box-shadow:0 0 0 1px rgba(30,48,70,.97);
+    }
+    .theme-light .rcm-tooltip {
+      background:#0f172a;
+    }
+    .theme-light .rcm-tooltip:before {
+      background:#0f172a;
+    }
+
+    /* Disclaimer */
+    .rcm-disclaimer {
+      margin-top:26px;
+      font-size:.64rem;
+      line-height:1.35;
+      background: var(--rcm-card-glass);
+      border: var(--rcm-border-soft);
+      padding:14px 16px 16px;
+      border-radius: 16px;
+      color: var(--rcm-text-dim);
+      position:relative;
+    }
+    .rcm-disclaimer strong { color:#fff; }
+    .theme-light .rcm-disclaimer { background:#fff; border:1px solid #e2e8f0; color:#475569; }
+    .theme-light .rcm-disclaimer strong { color:#0f172a; }
+
+    /* Flash highlight mapping */
+    @keyframes rcmFlashPulse {
+      0% {box-shadow:0 0 0 0 rgba(79,177,245,0);}
+      30% {box-shadow:0 0 0 8px rgba(79,177,245,.35);}
+      60% {box-shadow:0 0 0 2px rgba(79,177,245,.55);}
+      100% {box-shadow:0 0 0 0 rgba(79,177,245,0);}
+    }
+    .flash { animation: rcmFlashPulse 1.2s ease; }
+
+    /* Compact mode adjustments */
+    .rcm.compact .rcm-config { padding:16px 16px 14px; }
+    .rcm.compact .rcm-panel { padding:18px 18px 18px; }
+    .rcm.compact .order-line,
+    .rcm.compact .doc-card { padding:8px 10px; }
+
+    /* Focus rings */
+    .doc-card:focus-visible,
+    .order-line:focus-visible,
+    .rcm-btn:focus-visible,
+    .rcm-theme-switch button:focus-visible,
+    .rcm-toggle:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline:2px solid var(--rcm-accent-2);
+      outline-offset:2px;
+    }
+  </style>
+  <style> /* Ensure panels don’t clip */ #retailing-comparison-module .rcm-panel { overflow: visible !important; } /* Reset base stacking */ #retailing-comparison-module .legacy-grid, #retailing-comparison-module .order-items, #retailing-comparison-module .rcm-panel { position:relative; z-index:0; } /* Each card / line gets its own baseline */ #retailing-comparison-module .doc-card, #retailing-comparison-module .order-line { position:relative; z-index:1; /* (Important) force a 3d context removal if needed */ transform-style: flat; } /* Raise the hovered / focused one so its tooltip can sit over neighbors */ #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .doc-card:focus-within, #retailing-comparison-module .order-line:hover, #retailing-comparison-module .order-line:focus-within { z-index: 1200; } /* Tooltip on top of everything inside the module */ #retailing-comparison-module .rcm-tooltip { z-index: 1500; } /* If a card’s box-shadow pseudo element is covering the tooltip, push it behind */ #retailing-comparison-module .doc-card:before, #retailing-comparison-module .order-line:before { z-index: -1; } /* Make sure no unintended parent creates a new stacking context higher than 1500 */ #retailing-comparison-module { isolation:isolate; } /* (Optional) slightly higher z-index for panel backgrounds' pseudo elements if you added any */ #retailing-comparison-module .rcm-panel:before, #retailing-comparison-module .rcm-panel:after { z-index:0; } </style>
+<style> /* Allow tooltips to extend beyond card/line */ #retailing-comparison-module .doc-card, #retailing-comparison-module .order-line { overflow: visible !important; } /* Keep the decorative highlight pseudo element contained */ #retailing-comparison-module .doc-card:before, #retailing-comparison-module .order-line:before { border-radius: inherit; pointer-events: none; } /* Explicit positioning for tooltip so it appears below card and not “inside” text flow */ #retailing-comparison-module .rcm-tooltip { top: 100%; left: 0; margin-top: 8px; transform: none; width: 260px; } /* Lift hovered host above neighbors */ #retailing-comparison-module .doc-card:hover, #retailing-comparison-module .doc-card:focus-within, #retailing-comparison-module .order-line:hover, #retailing-comparison-module .order-line:focus-within { z-index: 1600; } /* Tooltip above everything within the module */ #retailing-comparison-module .rcm-tooltip { z-index: 1700; } /* (Optional) soften entry */ #retailing-comparison-module .rcm-tooltip { opacity: 0; transition: opacity .18s ease; } #retailing-comparison-module .rcm-tooltip-anchor:hover .rcm-tooltip, #retailing-comparison-module .rcm-tooltip-anchor:focus-within .rcm-tooltip { opacity: 1; } </style>
+  <!-- Top heading & controls -->
+  <div class="rcm-topbar">
+    <div>
+      <h2 class="rcm-heading">From Fragmented Records to Unified Orders</h2>
+      <p class="rcm-sub">
+        Configure a sample itinerary and ancillary set. Compare today’s multi‑document flow (PNR, e‑Ticket, multiple EMDs, separate non‑air references) versus a unified Offer & Order construct with cohesive Order Items and lifecycle events.
+      </p>
+    </div>
+    <div class="rcm-controls-bar" aria-label="Module display controls">
+      <div class="rcm-theme-switch" role="group" aria-label="Theme selection">
+        <button type="button" data-theme="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme="dark" aria-pressed="true">Dark</button>
+        <button type="button" data-theme="dual" aria-pressed="false">Dual</button>
+      </div>
+      <label class="rcm-toggle" aria-label="Toggle compact density">
+        <input type="checkbox" id="rcmCompactToggle">
+        <span class="indicator"></span>
+        Compact
+      </label>
+      <label class="rcm-toggle" aria-label="Toggle accent animation">
+        <input type="checkbox" id="rcmAccentToggle" checked>
+        <span class="indicator"></span>
+        Accents
+      </label>
+    </div>
+  </div>
+
+  <!-- CONFIGURATION -->
+  <div class="rcm-config" aria-label="Itinerary and ancillary configuration">
+    <h3>Configure Journey & Services</h3>
+    <div class="rcm-field-grid">
+      <div class="rcm-field">
+        <label for="origin">Origin</label>
+        <select id="origin">
+          <option value="JFK">JFK – New York (JFK)</option>
+          <option value="LHR">LHR – London Heathrow</option>
+          <option value="DXB">DXB – Dubai</option>
+          <option value="SIN">SIN – Singapore</option>
+          <option value="FRA">FRA – Frankfurt</option>
+          <option value="HKG">HKG – Hong Kong</option>
+        </select>
+      </div>
+      <div class="rcm-field">
+        <label for="connection">Connection</label>
+        <select id="connection">
+          <option value="">None</option>
+          <option value="LHR">LHR – London Heathrow</option>
+          <option value="DXB">DXB – Dubai</option>
+          <option value="FRA">FRA – Frankfurt</option>
+          <option value="SIN">SIN – Singapore</option>
+        </select>
+      </div>
+      <div class="rcm-field">
+        <label for="destination">Destination</label>
+        <select id="destination">
+          <option value="DXB">DXB – Dubai</option>
+          <option value="TRV" selected>TRV – Thiruvananthapuram</option>
+          <option value="LHR">LHR – London Heathrow</option>
+          <option value="SIN">SIN – Singapore</option>
+          <option value="FRA">FRA – Frankfurt</option>
+        </select>
+      </div>
+      <div class="rcm-field">
+        <label for="cabin">Cabin</label>
+        <select id="cabin">
+          <option value="Economy">Economy</option>
+          <option value="Premium Economy">Premium Economy</option>
+          <option value="Business" selected>Business</option>
+          <option value="First">First</option>
+        </select>
+      </div>
+      <div class="rcm-field">
+        <label for="departureDate">Departure Date</label>
+        <input type="date" id="departureDate">
+      </div>
+      <div class="rcm-field">
+        <label for="returnDate">Return Date</label>
+        <input type="date" id="returnDate">
+      </div>
+      <div class="rcm-field">
+        <label for="seatType">Seat Product</label>
+        <select id="seatType">
+          <option value="">None</option>
+          <option value="Extra Legroom" selected>Extra Legroom</option>
+          <option value="Front Row">Front Row</option>
+          <option value="Privacy Suite">Privacy Suite</option>
+        </select>
+      </div>
+      <div class="rcm-field">
+        <label for="baggage">Extra Bags</label>
+        <input type="number" id="baggage" min="0" max="5" value="1">
+      </div>
+    </div>
+    <div class="rcm-inline">
+      <label class="rcm-check"><input type="checkbox" id="champagne" checked> Champagne</label>
+      <label class="rcm-check"><input type="checkbox" id="hotel" checked> Hotel</label>
+      <label class="rcm-check"><input type="checkbox" id="taxi" checked> Taxi</label>
+    </div>
+    <div class="rcm-inline" id="hotelDatesWrap" style="margin-top:10px;">
+      <div class="rcm-field" style="min-width:160px;">
+        <label for="hotelCheckIn">Hotel Check‑in</label>
+        <input type="date" id="hotelCheckIn">
+      </div>
+      <div class="rcm-field" style="min-width:160px;">
+        <label for="hotelCheckOut">Hotel Check‑out</label>
+        <input type="date" id="hotelCheckOut">
+      </div>
+    </div>
+    <div class="rcm-actions">
+      <button class="rcm-btn" id="applyConfig">Apply / Rebuild</button>
+      <button class="rcm-btn secondary" id="randomize">Randomize Refs</button>
+      <button class="rcm-btn secondary" id="reset">Reset</button>
+    </div>
+  </div>
+
+  <!-- PANELS -->
+  <div class="rcm-panels">
+    <!-- LEGACY -->
+    <section class="rcm-panel" id="legacyPanel" aria-label="Current multi-document environment">
+      <div class="legend"><span>Legacy Documents</span></div>
+      <span class="rcm-label-strip legacy-tag">Current multi-record model</span>
+      <h4>Document & System Fragmentation</h4>
+      <div class="rcm-intro">
+        Separate reservation, ticketing and ancillary documents; non‑air items outside core airline systems. Each reference independently tracked for changes, disruption or refund.
+      </div>
+      <div id="legacyDocs" class="legacy-grid" aria-live="polite"></div>
+      <div class="trace" id="legacyTrace"></div>
+    </section>
+
+    <!-- FUTURE -->
+    <section class="rcm-panel" id="futurePanel" aria-label="Offer and One Order model">
+      <div class="legend"><span>Unified Order</span></div>
+      <span class="rcm-label-strip future-tag">Offer & One Order model</span>
+      <h4>Unified Order Structure</h4>
+      <div class="rcm-intro">
+        Accepted Offer crystallizes into a single Order with structured Order Items (transport + ancillary + non‑air) and centralized payment / servicing references.
+      </div>
+      <div class="order-wrapper" id="orderWrapper" aria-live="polite">
+        <div class="order-header">
+          <div>
+            <div class="order-id" id="orderId">ORD-</div>
+            <div style="font-size:.6rem; color:#5ee2b2; margin-top:2px;" id="offerContext">Offer accepted and normalized into Order.</div>
+          </div>
+          <div class="order-finance">
+            <div class="order-total" id="orderTotal">Total: —</div>
+            <div class="order-status" id="orderStatus">INITIAL</div>
+          </div>
+        </div>
+        <div class="order-items" id="orderItems"></div>
+      </div>
+      <div class="key-advantages">
+        <h5>Key Advantages</h5>
+        <ul>
+          <li>Single canonical Order ID for servicing & disruption</li>
+          <li>Order Items encapsulate delivery & pricing data</li>
+          <li>Less duplicated validation across layers</li>
+          <li>Consistent payment & settlement references</li>
+          <li>Order Change events vs. document re‑issue</li>
+          <li>Extendable to non‑air via product catalog</li>
+        </ul>
+      </div>
+      <div class="trace" id="futureTrace"></div>
+    </section>
+  </div>
+
+  <div class="rcm-disclaimer">
+    <strong>Disclaimer:</strong> Simplified conceptual visualization. Real implementations include interline & codeshare, revenue accounting, settlement, proration, payment orchestration, audit, disruption workflows, versioned Offers / Order Changes, regulatory artifacts, privacy & security measures not shown here. Terminology based on publicly available IATA Airline Retailing materials (PNR, e‑Ticket, EMD, Offer, Order, Order Item, Product Catalog).
+  </div>
+
+  <script>
+  (function(){
+    const root = document.getElementById('retailing-comparison-module');
+    const today = new Date();
+    function setDate(id, date){
+      const el = document.getElementById(id);
+      if(el) el.value = date.toISOString().split('T')[0];
+    }
+    // Default dates
+    const dep = new Date(today.getFullYear(), today.getMonth()+1, 1);
+    const ret = new Date(today.getFullYear(), today.getMonth()+1, 9);
+    setDate('departureDate', dep);
+    setDate('returnDate', ret);
+    setDate('hotelCheckIn', new Date(dep.getTime()+24*3600*1000));
+    setDate('hotelCheckOut', new Date(dep.getTime()+4*24*3600*1000));
+
+    const els = {
+      origin:      document.getElementById('origin'),
+      connection:  document.getElementById('connection'),
+      destination: document.getElementById('destination'),
+      cabin:       document.getElementById('cabin'),
+      departureDate: document.getElementById('departureDate'),
+      returnDate:    document.getElementById('returnDate'),
+      seatType:    document.getElementById('seatType'),
+      baggage:     document.getElementById('baggage'),
+      champagne:   document.getElementById('champagne'),
+      hotel:       document.getElementById('hotel'),
+      taxi:        document.getElementById('taxi'),
+      hotelCheckIn: document.getElementById('hotelCheckIn'),
+      hotelCheckOut:document.getElementById('hotelCheckOut'),
+      hotelDatesWrap: document.getElementById('hotelDatesWrap'),
+      legacyDocs:  document.getElementById('legacyDocs'),
+      legacyTrace: document.getElementById('legacyTrace'),
+      orderId:     document.getElementById('orderId'),
+      orderItems:  document.getElementById('orderItems'),
+      orderTotal:  document.getElementById('orderTotal'),
+      orderStatus: document.getElementById('orderStatus'),
+      futureTrace: document.getElementById('futureTrace'),
+      offerContext:document.getElementById('offerContext'),
+      applyConfig: document.getElementById('applyConfig'),
+      randomize:   document.getElementById('randomize'),
+      reset:       document.getElementById('reset'),
+      themeButtons: root.querySelectorAll('.rcm-theme-switch button'),
+      compactToggle: document.getElementById('rcmCompactToggle'),
+      accentToggle: document.getElementById('rcmAccentToggle')
+    };
+
+    const tooltips = {
+      PNR: "Passenger Name Record: reservation construct storing itinerary, traveler and service requests.",
+      ETKT: "Electronic Ticket: authoritative flight coupon document separate from the PNR's structure.",
+      EMD: "Electronic Miscellaneous Document: ancillary / optional service document (associated or standalone).",
+      HOTEL: "Hotel booking: non-air supplier system reference.",
+      TAXI: "Ground transfer: external vendor reservation reference.",
+      INVENTORY: "Booking class availability snapshot from inventory control.",
+      ORDER_ITEM: "Order Item: atomic product element within a unified Order (flight or ancillary) with pricing & delivery attributes."
+    };
+
+    let refState = {};
+    function randomDigits(n){ return Array.from({length:n},()=>Math.floor(Math.random()*10)).join(''); }
+    function regenRefs(){
+      refState = {
+        pnr: (Math.random().toString(36).slice(2,8)).toUpperCase(),
+        ticket: '250-' + randomDigits(10),
+        seatEmd: '176-' + randomDigits(10),
+        bagEmd: '176-' + randomDigits(10),
+        champEmd: '176-' + randomDigits(10),
+        hotelRef: 'HTL-' + randomDigits(6),
+        taxiRef: 'GND-' + randomDigits(5),
+        offerId: 'OF-' + (Math.random().toString(36).slice(2,7)).toUpperCase(),
+        orderId: 'ORD-' + (Math.random().toString(36).slice(2,10)).toUpperCase()
+      };
+    }
+    regenRefs();
+
+    function buildSegments(){
+      const o = els.origin.value;
+      const c = els.connection.value;
+      const d = els.destination.value;
+      const outbound = [];
+      const inbound = [];
+      if(c && c !== o && c !== d){
+        outbound.push([o,c],[c,d]);
+        inbound.push([d,c],[c,o]);
+      } else {
+        outbound.push([o,d]);
+        inbound.push([d,o]);
+      }
+      return { outbound, inbound };
+    }
+    function plural(n, label){ return n + ' ' + label + (n===1?'':'s'); }
+    function hotelNights(){
+      if(!els.hotel.checked) return 0;
+      const inD = new Date(els.hotelCheckIn.value);
+      const outD = new Date(els.hotelCheckOut.value);
+      return Math.max(1, Math.round((outD - inD)/(24*3600*1000)));
+    }
+    function gatherAncillaries(segmentCount){
+      return {
+        cabin: els.cabin.value,
+        seatType: els.seatType.value,
+        extraBags: parseInt(els.baggage.value || '0',10),
+        champagne: els.champagne.checked,
+        hotel: els.hotel.checked,
+        taxi: els.taxi.checked,
+        segmentCount
+      };
+    }
+    function computePricing(anc){
+      const basePerSegment = { 'Economy': 340, 'Premium Economy': 520, 'Business': 1380, 'First': 2100 };
+      const segs = anc.segmentCount;
+      let total = basePerSegment[anc.cabin] * segs;
+      const seat = anc.seatType ? 60 : 0;
+      const bags = anc.extraBags * 85;
+      const champagne = anc.champagne ? 45 : 0;
+      const hotel = anc.hotel ? 900 : 0;
+      const taxi = anc.taxi ? 40 : 0;
+      const breakdown = { base: total, seat, bags, champagne, hotel, taxi };
+      total += seat + bags + champagne + hotel + taxi;
+      return { total, breakdown };
+    }
+    function currencyFormat(v){ return 'USD ' + v.toLocaleString(undefined,{minimumFractionDigits:0}); }
+
+    function makeDocCard({title, ref, meta, type, mapTo}){
+      const div = document.createElement('div');
+      div.className = 'doc-card rcm-tooltip-anchor';
+      div.setAttribute('tabindex','0');
+      div.dataset.mapTo = mapTo || '';
+      div.innerHTML = `
+        <div class="doc-title">${title} <span class="doc-ref">${ref}</span></div>
+        <div class="doc-meta">${meta}</div>
+        <div class="rcm-tooltip">${tooltips[type]||''}</div>
+      `;
+      div.addEventListener('click', ()=>highlightMapped(mapTo));
+      return div;
+    }
+
+    function buildLegacy(){
+      els.legacyDocs.innerHTML = '';
+      const segData = buildSegments();
+      const segCount = segData.outbound.length + segData.inbound.length;
+      const anc = gatherAncillaries(segCount);
+
+      els.legacyDocs.appendChild(makeDocCard({
+        title:'PNR',
+        ref:refState.pnr,
+        meta:`Itinerary ${segCount} segs, cabin ${anc.cabin}.`,
+        type:'PNR',
+        mapTo:'orderId'
+      }));
+      els.legacyDocs.appendChild(makeDocCard({
+        title:'e-Ticket',
+        ref:refState.ticket,
+        meta:`Coupons: ${segCount}.`,
+        type:'ETKT',
+        mapTo:'flight-line'
+      }));
+      if(anc.seatType){
+        els.legacyDocs.appendChild(makeDocCard({
+          title:'EMD (Seat)',
+          ref:refState.seatEmd,
+            meta:`Seat: ${anc.seatType}.`,
+          type:'EMD',
+          mapTo:'seat-line'
+        }));
+      }
+      if(anc.extraBags>0){
+        els.legacyDocs.appendChild(makeDocCard({
+          title:'EMD (Baggage)',
+          ref:refState.bagEmd,
+          meta:`${plural(anc.extraBags,'extra bag')}.`,
+          type:'EMD',
+          mapTo:'bag-line'
+        }));
+      }
+      if(anc.champagne){
+        els.legacyDocs.appendChild(makeDocCard({
+          title:'EMD (F&B)',
+          ref:refState.champEmd,
+          meta:`Onboard beverage.`,
+          type:'EMD',
+          mapTo:'champ-line'
+        }));
+      }
+      if(anc.hotel){
+        els.legacyDocs.appendChild(makeDocCard({
+          title:'Hotel',
+          ref:refState.hotelRef,
+          meta:`${hotelNights()} night stay.`,
+          type:'HOTEL',
+          mapTo:'hotel-line'
+        }));
+      }
+      if(anc.taxi){
+        els.legacyDocs.appendChild(makeDocCard({
+          title:'Taxi',
+          ref:refState.taxiRef,
+          meta:`Airport transfer.`,
+          type:'TAXI',
+          mapTo:'taxi-line'
+        }));
+      }
+      // Inventory sample
+      const inv = document.createElement('div');
+      inv.className='doc-card rcm-tooltip-anchor';
+      const classes = ['Y','K','M','J','F'];
+      const invRows = classes.map(cls=>{
+        const pct = Math.max(8, Math.floor(Math.random()*90));
+        return `<div class="inv-row">
+            <span style="width:18px;font-weight:600;">${cls}</span>
+            <div class="inv-bar"><div class="inv-fill" style="width:${pct}%"></div></div>
+            <span style="font-size:.55rem; color:var(--rcm-text-dim);">${pct>=50?'A':'L'}</span>
+          </div>`;
+      }).join('');
+      inv.innerHTML = `
+        <div class="doc-title">Inventory <span class="multi-badge">Classes</span></div>
+        <div class="doc-meta">Availability snapshot.</div>
+        <div class="inventory-block">${invRows}</div>
+        <div class="rcm-tooltip">${tooltips.INVENTORY}</div>
+      `;
+      inv.dataset.mapTo='flight-line';
+      inv.addEventListener('click', ()=>highlightMapped('flight-line'));
+      els.legacyDocs.appendChild(inv);
+
+      els.legacyTrace.innerHTML = `<strong>Lifecycle (Legacy):</strong> Create PNR → Price & issue e‑Ticket → Issue separate EMD(s) per ancillary → Non‑air refs handled outside core → Monitor coupon + EMD statuses across systems for servicing/refund.`;
+    }
+
+    function routeLabel(segData){
+      const outbound = segData.outbound.map(s=>s.join('→')).join(' / ');
+      const inbound = segData.inbound.map(s=>s.join('→')).join(' / ');
+      return `Outbound: ${outbound} | Return: ${inbound}`;
+    }
+
+    function addOrderLine({id,label,detail,ref,price,tooltip}){
+      const li = document.createElement('div');
+      li.className='order-line rcm-tooltip-anchor';
+      li.id = id;
+      li.innerHTML = `
+        <div class="ol-main">
+          <strong>${label}</strong><br>
+          ${detail}
+          <div class="ol-ref">Ref: ${ref}</div>
+          <div class="rcm-tooltip">${tooltip || tooltips.ORDER_ITEM}</div>
+        </div>
+        <div class="ol-price">${currencyFormat(price)}</div>
+      `;
+      els.orderItems.appendChild(li);
+    }
+
+    function buildOrder(){
+      els.orderItems.innerHTML = '';
+      els.orderId.textContent = refState.orderId;
+      const segData = buildSegments();
+      const segCount = segData.outbound.length + segData.inbound.length;
+      const anc = gatherAncillaries(segCount);
+      const pricing = computePricing(anc);
+
+      addOrderLine({
+        id:'flight-line',
+        label:`Flight segments (${segCount})`,
+        detail:routeLabel(segData),
+        ref:'FL-01',
+        price:pricing.breakdown.base
+      });
+      if(anc.seatType){
+        addOrderLine({
+          id:'seat-line',
+          label:'Paid Seat',
+          detail:anc.seatType,
+          ref:'SEAT-02',
+          price:pricing.breakdown.seat
+        });
+      }
+      if(anc.extraBags>0){
+        addOrderLine({
+          id:'bag-line',
+          label:'Additional Baggage',
+          detail:plural(anc.extraBags,'piece'),
+          ref:'BAG-03',
+          price:pricing.breakdown.bags
+        });
+      }
+      if(anc.champagne){
+        addOrderLine({
+          id:'champ-line',
+          label:'Onboard Beverage',
+          detail:'Premium champagne',
+          ref:'FNB-04',
+          price:pricing.breakdown.champagne
+        });
+      }
+      if(anc.hotel){
+        addOrderLine({
+          id:'hotel-line',
+          label:'Hotel',
+          detail:`${hotelNights()} nights (${els.hotelCheckIn.value} → ${els.hotelCheckOut.value})`,
+          ref:'HTL-05',
+          price:pricing.breakdown.hotel
+        });
+      }
+      if(anc.taxi){
+        addOrderLine({
+          id:'taxi-line',
+          label:'Ground Transfer',
+          detail:'Airport taxi service',
+          ref:'GND-06',
+          price:pricing.breakdown.taxi
+        });
+      }
+
+      els.orderTotal.textContent = 'Total: ' + currencyFormat(pricing.total);
+      els.orderStatus.textContent = 'ORDERED';
+      els.futureTrace.innerHTML = `<strong>Lifecycle (Offer & Order):</strong> Priced Offer → Offer accepted → Single Order (ID & Items) → Ancillaries & non‑air as Order Items → Servicing via Order Change events (not multiple doc re‑issuances).`;
+      els.offerContext.textContent = `Offer ${refState.offerId} accepted; consolidated under Order ${refState.orderId}.`;
+    }
+
+    function highlightMapped(id){
+      if(!id) return;
+      const el = document.getElementById(id);
+      if(el){
+        el.classList.remove('flash');
+        void el.offsetWidth;
+        el.classList.add('flash');
+        el.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+    }
+
+    // Event handlers
+    els.hotel.addEventListener('change', () => {
+      els.hotelDatesWrap.style.display = els.hotel.checked ? 'flex' : 'none';
+    });
+    els.applyConfig.addEventListener('click', buildAll);
+    els.randomize.addEventListener('click', () => { regenRefs(); buildAll(); });
+    els.reset.addEventListener('click', () => {
+      els.origin.value='JFK';
+      els.connection.value='LHR';
+      els.destination.value='TRV';
+      els.cabin.value='Business';
+      els.seatType.value='Extra Legroom';
+      els.baggage.value='1';
+      els.champagne.checked=true;
+      els.hotel.checked=true;
+      els.taxi.checked=true;
+      els.hotelDatesWrap.style.display='flex';
+      regenRefs();
+      buildAll();
+    });
+
+    // Theme switching
+    els.themeButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        els.themeButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        root.classList.remove('theme-light','theme-dark','theme-dual');
+        root.classList.add('theme-'+btn.dataset.theme);
+      });
+    });
+
+    // Compact toggle
+    els.compactToggle.addEventListener('change', ()=>{
+      root.classList.toggle('compact', els.compactToggle.checked);
+    });
+
+    // Accent animation toggle
+    els.accentToggle.addEventListener('change', ()=>{
+      root.classList.toggle('accent-animated', els.accentToggle.checked);
+    });
+
+    function buildAll(){
+      buildLegacy();
+      buildOrder();
+    }
+    buildAll();
+  })();
+  </script>
+  
+</section>
+
+      
       <section id="dynamic-offers" class="section" aria-labelledby="dynamic-offers-heading" style="margin-top: 40px;">
     <div class="container">
       <h2 id="dynamic-offers-heading" class="title is-3">IATA Dynamic Offers Maturity Model</h2>
@@ -438,6 +1782,9 @@
       
     </div>
   </section>
+
+
+
 
   <section id="featured" class="section" aria-labelledby="latest-heading">
     <div class="container">
