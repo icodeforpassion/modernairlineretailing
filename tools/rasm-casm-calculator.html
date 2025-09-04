@@ -1,55 +1,898 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <title>RASM / CASM / Yield & Break-Even LF Calculator | Airline Metrics Tool</title> <meta name="viewport" content="width=device-width,initial-scale=1"> <meta name="description" content="Compute RASM, PRASM, CASM, Yield, break-even load factor, passenger revenue and contribution instantly from ASMs, RPMs, revenues and costs."> <link rel="canonical" href="https://your-domain.example/tools/rasm-casm-calculator.html"> <meta property="og:title" content="RASM / CASM / Yield Calculator"> <meta property="og:description" content="Instantly derive RASM, CASM, Yield & break-even load factor from your inputs."> <meta property="og:type" content="website"> <meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg"> <meta name="theme-color" content="#0d1b2a"> <style> /* Reuse style subset */ :root{--clr-bg:#0d1b2a;--clr-bg-alt:#132235;--clr-accent:#3298dc;--clr-accent-alt:#4fb1f5;--clr-text:#e8f0f7;--clr-text-dim:#9fb3c5;--radius:14px;--transition:.28s cubic-bezier(.4,.2,.2,1);--focus-ring:0 0 0 3px rgba(50,152,220,.55);} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:linear-gradient(to bottom,var(--clr-bg),var(--clr-bg-alt));color:var(--clr-text);} main{max-width:1200px;margin:0 auto;padding:6rem 1.2rem 4rem;} h1{font-size:clamp(2.1rem,5vw,3rem);margin:0 0 .7rem;font-weight:700;background:linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);-webkit-background-clip:text;color:transparent;} .lede{max-width:850px;font-size:1.05rem;color:var(--clr-text-dim);line-height:1.5;margin:0 0 2.1rem;} .grid{display:grid;grid-template-columns:380px 1fr;gap:2.2rem;} @media(max-width:1000px){.grid{grid-template-columns:1fr;}} .card{background:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);border-radius:var(--radius);padding:1.6rem 1.5rem 2rem;transition:var(--transition);} label{display:flex;justify-content:space-between;font-size:.68rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--clr-text-dim);margin-bottom:.4rem;} input[type=number]{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:.65rem .8rem;color:var(--clr-text);font-size:.9rem;transition:var(--transition);} input[type=number]:focus{outline:none;box-shadow:var(--focus-ring);border-color:var(--clr-accent-alt);background:rgba(255,255,255,.12);} .field{margin-bottom:1rem;} .metric-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:.5rem;} .metric{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);padding:.85rem .9rem .95rem;border-radius:12px;} .metric h3{margin:0 0 .35rem;font-size:.62rem;letter-spacing:.55px;text-transform:uppercase;font-weight:700;color:var(--clr-text-dim);} .metric .val{font-size:1.05rem;font-weight:600;letter-spacing:.4px;} small.note{display:block;font-size:.65rem;color:var(--clr-text-dim);margin-top:.3rem;line-height:1.3;} .status{font-size:.7rem;letter-spacing:.55px;text-transform:uppercase;font-weight:600;color:var(--clr-text-dim);min-height:1rem;margin-top:.2rem;} .share-btn{margin-top:.8rem;background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));border:none;border-radius:999px;padding:.5rem .9rem;font-size:.65rem;letter-spacing:.5px;font-weight:600;color:#fff;cursor:pointer;transition:var(--transition);} .share-btn:hover{transform:translateY(-3px);} .share-btn.copied{background:linear-gradient(135deg,#3bb273,#66d69b);} </style> </head> <body> <main> <h1>RASM / CASM / Yield Calculator</h1> <p class="lede">Quickly derive key airline unit metrics. Provide traffic and financial inputs to see RASM, PRASM, Yield, CASM, break-even load factor and operating margin.</p> <div class="grid"> <div class="card" id="inputs"> <div class="field"> <label for="asm">ASMs (000)</label> <input id="asm" type="number" value="850000"> </div> <div class="field"> <label for="rpm">RPMs (000)</label> <input id="rpm" type="number" value="680000"> </div> <div class="field"> <label for="paxRev">Passenger Revenue (USD 000)</label> <input id="paxRev" type="number" value="920000"> </div> <div class="field"> <label for="ancRev">Ancillary Revenue (000)</label> <input id="ancRev" type="number" value="110000"> </div> <div class="field"> <label for="cargoRev">Cargo + Other Revenue (000)</label> <input id="cargoRev" type="number" value="60000"> </div> <div class="field"> <label for="opCost">Operating Cost (USD 000)</label> <input id="opCost" type="number" value="920000"> </div> <div class="field"> <label for="taxes">Passenger Taxes (000, optional)</label> <input id="taxes" type="number" value="0"> </div> <div class="status" id="status" role="status">Ready.</div> <button id="shareBtn" type="button" class="share-btn">Share</button> <small class="note">ASMs / RPMs entered in thousands to keep numbers manageable. Break-even load factor = CASM / Yield.</small> </div> <div class="card"> <div class="metric-box"> <div class="metric"><h3>Load Factor</h3><div class="val" id="lfVal">—</div></div> <div class="metric"><h3>Yield</h3><div class="val" id="yieldVal">—</div><small class="note">Passenger revenue / RPM</small></div> <div class="metric"><h3>PRASM</h3><div class="val" id="prasmVal">—</div><small class="note">Passenger revenue / ASM</small></div> <div class="metric"><h3>RASM</h3><div class="val" id="rasmVal">—</div><small class="note">(Passenger + ancillary + cargo)/ASM</small></div> <div class="metric"><h3>CASM</h3><div class="val" id="casmVal">—</div><small class="note">Operating cost / ASM</small></div> <div class="metric"><h3>Break-Even LF</h3><div class="val" id="belfVal">—</div></div> <div class="metric"><h3>Operating Margin</h3><div class="val" id="marginVal">—</div></div> <div class="metric"><h3>Contribution (000)</h3><div class="val" id="contribVal">—</div></div> </div> </div> </div> </main> <script> (function(){ const ids=['asm','rpm','paxRev','ancRev','cargoRev','opCost','taxes']; const el={}; ids.forEach(i=>el[i]=document.getElementById(i)); const lfVal=doc('lfVal'),yieldVal=doc('yieldVal'),prasmVal=doc('prasmVal'),rasmVal=doc('rasmVal'),casmVal=doc('casmVal'),belfVal=doc('belfVal'),marginVal=doc('marginVal'),contribVal=doc('contribVal'); const statusEl=doc('status'); const shareBtn=doc('shareBtn');
-function doc(id){return document.getElementById(id);}
-function calc(){
-const ASM=num(el.asm.value);
-const RPM=num(el.rpm.value);
-const paxRev=num(el.paxRev.value);
-const ancRev=num(el.ancRev.value);
-const cargoRev=num(el.cargoRev.value);
-const opCost=num(el.opCost.value);
-const paxTaxes=num(el.taxes.value);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RASM / CASM / Yield & Break-Even LF Calculator | Airline Metrics Tool</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Compute RASM, PRASM, CASM, Yield, break-even load factor, passenger revenue and contribution instantly from ASMs, RPMs, revenues and costs. Scenario sliders, charts and multi-currency support.">
+<meta name="theme-color" content="#0d1b2a">
+<link rel="canonical" href="https://your-domain.example/tools/rasm-casm-calculator.html">
+<meta property="og:title" content="RASM / CASM / Yield Calculator">
+<meta property="og:description" content="Instantly derive RASM, CASM, Yield & break-even load factor from your inputs with scenario sliders & charts.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://your-domain.example/assets/og-banner.jpg">
+<style>
+:root{
+  --clr-bg:#0d1b2a;
+  --clr-bg-alt:#132235;
+  --clr-accent:#3298dc;
+  --clr-accent-alt:#4fb1f5;
+  --clr-text:#e8f0f7;
+  --clr-text-dim:#9fb3c5;
+  --radius:14px;
+  --transition:.28s cubic-bezier(.4,.2,.2,1);
+  --focus-ring:0 0 0 3px rgba(50,152,220,.55);
+  --danger:#e45050;
+  --success:#35b376;
+  --warn:#e6b34c;
+  --surface:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  --surface-strong:linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.02));
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:linear-gradient(to bottom,var(--clr-bg),var(--clr-bg-alt));
+  color:var(--clr-text);
+  min-height:100vh;
+}
+header.topbar{
+  position:fixed;
+  inset:0 0 auto 0;
+  background:rgba(13,27,42,.72);
+  backdrop-filter:blur(14px) saturate(1.3);
+  display:flex;
+  align-items:center;
+  gap:.9rem;
+  padding:.65rem 1rem;
+  z-index:100;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand{
+  font-weight:600;
+  letter-spacing:.6px;
+  font-size:.9rem;
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  text-decoration:none;
+  color:var(--clr-text);
+}
+.brand span.logo{
+  background:linear-gradient(135deg,#fff,#82bfe7);
+  -webkit-background-clip:text;
+  color:transparent;
+  font-weight:700;
+  font-size:1.05rem;
+}
+.currency-select{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.7rem;
+  color:var(--clr-text-dim);
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+.currency-select select{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.25);
+  color:var(--clr-text);
+  padding:.35rem .55rem;
+  border-radius:8px;
+  font-size:.75rem;
+  cursor:pointer;
+}
+.currency-select select:focus{outline:none;box-shadow:var(--focus-ring);}
+nav a.home-btn{
+  background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));
+  color:#fff;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  font-size:1.1rem;
+  font-weight:600;
+  box-shadow:0 6px 14px -4px rgba(0,0,0,.5);
+  transition:var(--transition);
+}
+nav a.home-btn:hover{transform:translateY(-3px);}
+nav a.home-btn:focus{outline:none;box-shadow:var(--focus-ring);}
+main{
+  max-width:1400px;
+  margin:0 auto;
+  padding:5.8rem 1.2rem 4rem;
+}
+h1{
+  font-size:clamp(2.1rem,5vw,3rem);
+  margin:0 0 .7rem;
+  font-weight:700;
+  background:linear-gradient(90deg,#fff,#c6d9e8 45%,#82bfe7);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.lede{
+  max-width:880px;
+  font-size:1.05rem;
+  color:var(--clr-text-dim);
+  line-height:1.5;
+  margin:0 0 2rem;
+}
+.notice-inline{
+  font-size:.63rem;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  font-weight:600;
+  background:rgba(255,255,255,.09);
+  padding:.4rem .65rem;
+  border-radius:999px;
+  display:inline-block;
+  margin-bottom:1.1rem;
+  color:var(--clr-text-dim);
+}
+.grid{
+  display:grid;
+  grid-template-columns:380px 1fr;
+  gap:2rem;
+  align-items:start;
+}
+@media(max-width:1250px){
+  .grid{grid-template-columns:340px 1fr;}
+}
+@media(max-width:1050px){
+  .grid{grid-template-columns:1fr;}
+}
+.card{
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  border-radius:var(--radius);
+  padding:1.4rem 1.3rem 1.6rem;
+  transition:var(--transition);
+  position:relative;
+}
+.card:hover{
+  border-color:rgba(255,255,255,.15);
+}
+.card h2{
+  margin:.1rem 0 1rem;
+  font-size:1rem;
+  font-weight:600;
+  letter-spacing:.4px;
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  color:#fff;
+}
+label{
+  display:flex;
+  justify-content:space-between;
+  font-size:.64rem;
+  font-weight:600;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+  color:var(--clr-text-dim);
+  margin-bottom:.35rem;
+}
+input[type=number]{
+  width:100%;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  padding:.65rem .8rem;
+  color:var(--clr-text);
+  font-size:.9rem;
+  transition:var(--transition);
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0;}
+input[type=number]:focus{
+  outline:none;
+  box-shadow:var(--focus-ring);
+  border-color:var(--clr-accent-alt);
+  background:rgba(255,255,255,.12);
+}
+.field{margin-bottom:.9rem;}
+.small-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:.8rem;
+  margin-top:.6rem;
+}
+.metric-box{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:.9rem;
+  margin-top:.5rem;
+}
+.metric{
+  background:var(--surface-strong);
+  border:1px solid rgba(255,255,255,.1);
+  padding:.85rem .9rem .95rem;
+  border-radius:12px;
+  position:relative;
+  overflow:hidden;
+  transition:var(--transition);
+}
+.metric:hover{
+  border-color:rgba(255,255,255,.2);
+}
+.metric h3{
+  margin:0 0 .35rem;
+  font-size:.58rem;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+  font-weight:700;
+  color:var(--clr-text-dim);
+}
+.metric .val{
+  font-size:1.05rem;
+  font-weight:600;
+  letter-spacing:.4px;
+  display:flex;
+  align-items:baseline;
+  gap:.35rem;
+  flex-wrap:wrap;
+}
+small.note{
+  display:block;
+  font-size:.6rem;
+  color:var(--clr-text-dim);
+  margin-top:.3rem;
+  line-height:1.25;
+}
+.status{
+  font-size:.65rem;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+  font-weight:600;
+  color:var(--clr-text-dim);
+  min-height:1rem;
+  margin-top:.2rem;
+}
+.share-btn{
+  margin-top:.8rem;
+  background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));
+  border:none;
+  border-radius:999px;
+  padding:.55rem .95rem;
+  font-size:.62rem;
+  letter-spacing:.55px;
+  font-weight:600;
+  color:#fff;
+  cursor:pointer;
+  transition:var(--transition);
+}
+.share-btn:hover{transform:translateY(-3px);}
+.share-btn:focus{outline:none;box-shadow:var(--focus-ring);}
+.share-btn.copied{background:linear-gradient(135deg,#3bb273,#66d69b);}
+.inline-vals{
+  font-size:.63rem;
+  font-weight:600;
+  letter-spacing:.5px;
+  display:flex;
+  justify-content:space-between;
+  margin:.25rem 0 .55rem;
+  color:var(--clr-text-dim);
+}
+.range-field{
+  margin-bottom:1.1rem;
+}
+.range-field:last-child{margin-bottom:.4rem;}
+.range-field label{
+  margin-bottom:.4rem;
+}
+input[type=range]{
+  width:100%;
+  appearance:none;
+  height:8px;
+  border-radius:6px;
+  background:linear-gradient(90deg,var(--clr-accent),var(--clr-accent-alt));
+  outline:none;
+  cursor:pointer;
+  opacity:.9;
+  transition:opacity .3s;
+}
+input[type=range]:hover{opacity:1;}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#fff;
+  border:3px solid var(--clr-accent);
+  box-shadow:0 2px 8px -2px rgba(0,0,0,.6);
+  transition:var(--transition);
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.1);}
+.slider-val{
+  font-weight:600;
+  color:#fff;
+  font-size:.7rem;
+  letter-spacing:.4px;
+  background:rgba(255,255,255,.12);
+  padding:.25rem .55rem;
+  border-radius:8px;
+}
+.divider{
+  height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.25),rgba(255,255,255,.05));
+  margin:1.2rem 0 1.1rem;
+  border:none;
+}
+.charts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1.2rem;
+  margin-top:.9rem;
+}
+.chart-box{
+  position:relative;
+  background:var(--surface-strong);
+  border:1px solid rgba(255,255,255,.1);
+  padding:.9rem .85rem 1rem;
+  border-radius:14px;
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+}
+.chart-box h3{
+  margin:0;
+  font-size:.62rem;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+  font-weight:700;
+  color:var(--clr-text-dim);
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
+canvas{
+  width:100% !important;
+  height:180px !important;
+}
+@media(max-width:750px){
+  canvas{height:200px !important;}
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  background:rgba(255,255,255,.08);
+  padding:.35rem .55rem;
+  border-radius:9px;
+  font-size:.55rem;
+  letter-spacing:.5px;
+  font-weight:600;
+  text-transform:uppercase;
+  color:var(--clr-text-dim);
+}
+.footer{
+  max-width:1400px;
+  margin:2.5rem auto 2rem;
+  padding:0 1.2rem;
+  font-size:.6rem;
+  letter-spacing:.4px;
+  color:var(--clr-text-dim);
+  line-height:1.4;
+}
+.footer a{color:var(--clr-accent-alt);text-decoration:none;}
+.footer a:hover{text-decoration:underline;}
+.fab-home{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));
+  color:#fff;
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.3rem;
+  text-decoration:none;
+  font-weight:700;
+  box-shadow:0 10px 28px -6px rgba(0,0,0,.55);
+  transition:var(--transition);
+  z-index:120;
+}
+.fab-home:hover{transform:translateY(-5px);}
+.fab-home:focus{outline:none;box-shadow:var(--focus-ring);}
+.inline-currency{
+  font-size:.55rem;
+  opacity:.8;
+  font-weight:600;
+  letter-spacing:.5px;
+}
+.tag-positive{color:var(--success);}
+.tag-negative{color:var(--danger);}
+.tag-neutral{color:var(--clr-text-dim);}
+.resp-scroll{
+  overflow-x:auto;
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav>
+    <a href="#top" class="home-btn" aria-label="Home">⌂</a>
+  </nav>
+  <a class="brand" href="#top"><span class="logo">AirMetrics</span> <span style="font-size:.65rem;color:var(--clr-text-dim);letter-spacing:.5px;">RASM/CASM Tool</span></a>
+  <div class="currency-select">
+    <label for="currencySel">Currency</label>
+    <select id="currencySel" aria-label="Select currency">
+      <option value="USD" selected>USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+      <option value="CAD">CAD</option>
+      <option value="AUD">AUD</option>
+      <option value="JPY">JPY</option>
+    </select>
+  </div>
+</header>
 
-if(ASM<=0||RPM<0){statusEl.textContent='Enter ASM & RPM.';return;}
-const lf = RPM/ASM;
-const yieldValNum = RPM>0? paxRev/RPM : 0;
-const prasm = paxRev/ASM;
-const rasm = (paxRev+ancRev+cargoRev)/ASM;
-const casm = opCost/ASM;
-const belf = yieldValNum>0? casm/yieldValNum : 0;
-const contribution = (paxRev+ancRev+cargoRev) - opCost - paxTaxes;
-const margin = (paxRev+ancRev+cargoRev)>0 ? contribution/(paxRev+ancRev+cargoRev) : 0;
+<main id="top">
+  <span class="notice-inline">Inputs assumed in thousands (000) of chosen currency unless stated.</span>
+  <h1>RASM / CASM / Yield Calculator</h1>
+  <p class="lede">Quickly derive key airline unit metrics. Provide traffic and financial inputs to see RASM, PRASM, Yield, CASM, break-even load factor, operating margin and contribution. Use scenario sliders to explore how changes in load factor, yield and unit cost shape performance. Interactive charts visualize unit economics, revenue mix and margin sensitivity.</p>
 
-lfVal.textContent=(lf*100).toFixed(1)+'%';
-yieldVal.textContent=(yieldValNum*100).toFixed(2)+'¢';
-prasmVal.textContent=(prasm*100).toFixed(2)+'¢';
-rasmVal.textContent=(rasm*100).toFixed(2)+'¢';
-casmVal.textContent=(casm*100).toFixed(2)+'¢';
-belfVal.textContent=(belf*100).toFixed(1)+'%';
-marginVal.textContent=(margin*100).toFixed(1)+'%';
-contribVal.textContent=fmt(contribution);
-statusEl.textContent='Updated.';
-}
-function fmt(x){return x.toFixed(0)}
-function num(v){return parseFloat(v)||0;}
-ids.forEach(i=>el[i].addEventListener('input',()=>{calc();updateURL();}));
-function updateURL(){
-const url=new URL(window.location.href);
-ids.forEach(i=>url.searchParams.set(i,el[i].value));
-history.replaceState({},'',url.toString());
-}
-function loadFromURL(){
-const p=new URLSearchParams(location.search);let change=false;
-ids.forEach(i=>{if(p.has(i)){el[i].value=p.get(i);change=true;}});
-if(change) calc();
-}
-shareBtn.addEventListener('click',()=>{
-navigator.clipboard.writeText(location.href).then(()=>{
-shareBtn.classList.add('copied');shareBtn.textContent='Copied!';
-setTimeout(()=>{shareBtn.classList.remove('copied');shareBtn.textContent='Share';},1500);
-});
-});
-loadFromURL(); calc();
+  <div class="grid">
+    <!-- INPUT CARD -->
+    <div class="card" id="inputs">
+      <h2>Base Inputs</h2>
+      <div class="field">
+        <label for="asm">ASMs (000)</label>
+        <input id="asm" type="number" value="850000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="rpm">RPMs (000)</label>
+        <input id="rpm" type="number" value="680000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="paxRev">Passenger Revenue (<span class="cur-code">USD</span> 000)</label>
+        <input id="paxRev" type="number" value="920000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="ancRev">Ancillary Revenue (000)</label>
+        <input id="ancRev" type="number" value="110000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="cargoRev">Cargo + Other Revenue (000)</label>
+        <input id="cargoRev" type="number" value="60000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="opCost">Operating Cost (000)</label>
+        <input id="opCost" type="number" value="920000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="taxes">Passenger Taxes (000, optional)</label>
+        <input id="taxes" type="number" value="0" min="0" step="500">
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite">Ready.</div>
+      <button id="shareBtn" type="button" class="share-btn">Share</button>
+      <small class="note">Break-even load factor ≈ CASM / Yield (if Yield &gt; 0). Per-unit metrics shown in <strong>cents of selected currency</strong> (or minor unit). All revenue & cost inputs are in thousands.</small>
+    </div>
+
+    <!-- METRICS + ADJUSTMENTS + CHARTS -->
+    <div class="card">
+      <h2>Calculated Metrics</h2>
+      <div class="metric-box">
+        <div class="metric"><h3>Load Factor</h3><div class="val" id="lfVal">—</div></div>
+        <div class="metric"><h3>Yield</h3><div class="val" id="yieldVal">—</div><small class="note">Passenger revenue / RPM</small></div>
+        <div class="metric"><h3>PRASM</h3><div class="val" id="prasmVal">—</div><small class="note">Passenger revenue / ASM</small></div>
+        <div class="metric"><h3>RASM</h3><div class="val" id="rasmVal">—</div><small class="note">(Passenger + ancillary + cargo)/ASM</small></div>
+        <div class="metric"><h3>CASM</h3><div class="val" id="casmVal">—</div><small class="note">Operating cost / ASM</small></div>
+        <div class="metric"><h3>Break-Even LF</h3><div class="val" id="belfVal">—</div></div>
+        <div class="metric"><h3>Operating Margin</h3><div class="val" id="marginVal">—</div></div>
+        <div class="metric"><h3>Contribution (000)</h3><div class="val" id="contribVal">—</div></div>
+      </div>
+
+      <hr class="divider">
+
+      <h2 style="margin-top:.2rem;">Scenario Sliders</h2>
+      <small class="note">Sliders override correlated fields (RPM, Passenger Revenue, Operating Cost). Adjust to explore impact; you can still manually edit base numbers afterward.</small>
+
+      <div class="range-field">
+        <label for="lfSlider">Load Factor (%) <span class="slider-val" id="lfSliderVal">—</span></label>
+        <input type="range" id="lfSlider" min="50" max="97" step="1">
+      </div>
+      <div class="range-field">
+        <label for="yieldSlider">Yield (¢ / RPM) <span class="slider-val" id="yieldSliderVal">—</span></label>
+        <input type="range" id="yieldSlider" min="5" max="30" step=".1">
+      </div>
+      <div class="range-field">
+        <label for="casmSlider">CASM (¢ / ASM) <span class="slider-val" id="casmSliderVal">—</span></label>
+        <input type="range" id="casmSlider" min="4" max="25" step=".1">
+      </div>
+      <div class="range-field">
+        <label for="ancSlider">Ancillary (¢ / ASM) <span class="slider-val" id="ancSliderVal">—</span></label>
+        <input type="range" id="ancSlider" min="0" max="10" step=".1">
+      </div>
+
+      <hr class="divider">
+
+      <h2 style="margin-top:.2rem;">Visualizations</h2>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <h3>Unit Revenue vs Cost</h3>
+          <canvas id="unitBarChart" aria-label="Bar chart RASM vs CASM vs PRASM"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Margin vs Load Factor</h3>
+          <canvas id="marginLineChart" aria-label="Line chart margin versus load factor"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Revenue Mix</h3>
+            <canvas id="revMixChart" aria-label="Pie chart revenue mix"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<a href="#top" class="fab-home" aria-label="Back to top/home">⌂</a>
+
+<div class="footer">
+  <strong>Notes:</strong> This tool is for educational modeling only. Exchange rates are approximate & static. Adjust ranges to align with your network, stage length and cost structure. Graph calculations assume cost per ASM stays constant across load factor scenarios (simplified).<br>
+  © <span id="year"></span> AirMetrics Demo.
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-cgJPIsu4CiZ5n0OjBvGvwnPjeG2HMdCwrKUtZHFwJ6MT0i5BMJq9+hhgHJ1N4iP6" crossorigin="anonymous"></script>
+
+<script>
+(function(){
+  const ids=['asm','rpm','paxRev','ancRev','cargoRev','opCost','taxes'];
+  const el={};
+  ids.forEach(i=>el[i]=document.getElementById(i));
+  const lfVal=g('lfVal'),yieldVal=g('yieldVal'),prasmVal=g('prasmVal'),rasmVal=g('rasmVal'),casmVal=g('casmVal'),belfVal=g('belfVal'),marginVal=g('marginVal'),contribVal=g('contribVal');
+  const statusEl=g('status'), shareBtn=g('shareBtn');
+  const currencySel=g('currencySel');
+  const curCodeEls=[...document.querySelectorAll('.cur-code')];
+  const yearEl=g('year'); yearEl.textContent=new Date().getFullYear();
+
+  // Scenario sliders
+  const lfSlider=g('lfSlider'),
+        yieldSlider=g('yieldSlider'),
+        casmSlider=g('casmSlider'),
+        ancSlider=g('ancSlider');
+  const lfSliderVal=g('lfSliderVal'),
+        yieldSliderVal=g('yieldSliderVal'),
+        casmSliderVal=g('casmSliderVal'),
+        ancSliderVal=g('ancSliderVal');
+
+  const currencyData={
+    USD:{rate:1,symbol:'$',minorLabel:'¢'},
+    EUR:{rate:0.92,symbol:'€',minorLabel:'c'},
+    GBP:{rate:0.78,symbol:'£',minorLabel:'p'},
+    CAD:{rate:1.36,symbol:'C$',minorLabel:'¢'},
+    AUD:{rate:1.50,symbol:'A$',minorLabel:'¢'},
+    JPY:{rate:146,symbol:'¥',minorLabel:'¥ (sen)'} // treat cents concept loosely
+  };
+  let currentCurrency='USD';
+
+  // Charts init
+  let unitBarChart, marginLineChart, revMixChart;
+
+  function g(id){return document.getElementById(id);}
+  function num(v){return parseFloat(v)||0;}
+  function fmt0(x){return x.toFixed(0);}
+  function clamp(v,min,max){return Math.min(Math.max(v,min),max);}
+
+  function calc(updateCharts=true){
+    const ASM=num(el.asm.value);
+    const RPM=num(el.rpm.value);
+    const paxRev=num(el.paxRev.value);
+    const ancRev=num(el.ancRev.value);
+    const cargoRev=num(el.cargoRev.value);
+    const opCost=num(el.opCost.value);
+    const paxTaxes=num(el.taxes.value);
+
+    if(ASM<=0 || RPM<0){
+      statusEl.textContent='Enter ASM & RPM.';
+      return;
+    }
+    const lf=RPM/ASM;
+    const yieldNum = RPM>0 ? paxRev/RPM : 0;
+    const prasm = paxRev/ASM;
+    const rasm = (paxRev+ancRev+cargoRev)/ASM;
+    const casm = opCost/ASM;
+    const belf = yieldNum>0 ? casm / yieldNum : 0;
+    const contribution = (paxRev+ancRev+cargoRev) - opCost - paxTaxes;
+    const margin = (paxRev+ancRev+cargoRev)>0 ? contribution/(paxRev+ancRev+cargoRev) : 0;
+
+    const minor = currencyData[currentCurrency].minorLabel.split(' ')[0]; // basic
+    lfVal.textContent=(lf*100).toFixed(1)+'%';
+    yieldVal.textContent=(yieldNum*100).toFixed(2)+' '+minor;
+    prasmVal.textContent=(prasm*100).toFixed(2)+' '+minor;
+    rasmVal.textContent=(rasm*100).toFixed(2)+' '+minor;
+    casmVal.textContent=(casm*100).toFixed(2)+' '+minor;
+    belfVal.textContent=(belf*100).toFixed(1)+'%';
+    marginVal.textContent=(margin*100).toFixed(1)+'%';
+    contribVal.textContent=fmt0(contribution);
+
+    // Qualitative color tags
+    marginVal.classList.remove('tag-positive','tag-negative','tag-neutral');
+    if(margin>0.15) marginVal.classList.add('tag-positive');
+    else if(margin<0) marginVal.classList.add('tag-negative');
+    else marginVal.classList.add('tag-neutral');
+
+    statusEl.textContent='Updated.';
+
+    if(updateCharts){
+      updateChartsData({lf,yieldNum,prasm,rasm,casm,belf,margin,ASM,RPM,paxRev,ancRev,cargoRev,opCost,paxTaxes});
+    }
+
+    // Sync sliders (if manual input changed)
+    syncSlidersFromNumbers();
+  }
+
+  function syncSlidersFromNumbers(){
+    const ASM=num(el.asm.value);
+    const RPM=num(el.rpm.value);
+    if(ASM>0){
+      const lfPerc = clamp((RPM/ASM)*100,lfSlider.min,lfSlider.max);
+      lfSlider.value=lfPerc;
+      lfSliderVal.textContent=lfPerc.toFixed(1)+'%';
+    }
+    const yieldCents = rpm()>0 ? (num(el.paxRev.value)/num(el.rpm.value))*100 : 0;
+    if(yieldCents>0){
+      yieldSlider.value = clamp(yieldCents,yieldSlider.min,yieldSlider.max);
+      yieldSliderVal.textContent=yieldSlider.value+'¢';
+    }
+    const casmCents = asm()>0 ? (num(el.opCost.value)/asm())*100 : 0;
+    casmSlider.value = clamp(casmCents,casmSlider.min,casmSlider.max);
+    casmSliderVal.textContent=casmSlider.value+'¢';
+
+    const ancCents = asm()>0 ? (num(el.ancRev.value)/asm())*100 : 0;
+    ancSlider.value = clamp(ancCents,ancSlider.min,ancSlider.max);
+    ancSliderVal.textContent=ancSlider.value+'¢';
+  }
+
+  function asm(){return num(el.asm.value);}
+  function rpm(){return num(el.rpm.value);}
+
+  // Slider listeners
+  lfSlider.addEventListener('input',()=>{
+    const ASM=asm();
+    const lfPerc=num(lfSlider.value);
+    lfSliderVal.textContent=lfPerc.toFixed(1)+'%';
+    if(ASM>0){
+      const RPM=ASM*(lfPerc/100);
+      el.rpm.value = Math.round(RPM);
+    }
+    calc(); updateURL();
+  });
+  yieldSlider.addEventListener('input',()=>{
+    const yC=num(yieldSlider.value); // cents per RPM
+    yieldSliderVal.textContent=yC.toFixed(1)+'¢';
+    if(rpm()>0){
+      const paxRev = (yC/100) * rpm();
+      el.paxRev.value = Math.round(paxRev);
+    }
+    calc(); updateURL();
+  });
+  casmSlider.addEventListener('input',()=>{
+    const cC=num(casmSlider.value);
+    casmSliderVal.textContent=cC.toFixed(1)+'¢';
+    if(asm()>0){
+      const opCost = (cC/100)*asm();
+      el.opCost.value = Math.round(opCost);
+    }
+    calc(); updateURL();
+  });
+  ancSlider.addEventListener('input',()=>{
+    const aC=num(ancSlider.value);
+    ancSliderVal.textContent=aC.toFixed(1)+'¢';
+    if(asm()>0){
+      const ancRev=(aC/100)*asm();
+      el.ancRev.value=Math.round(ancRev);
+    }
+    calc(); updateURL();
+  });
+
+  // Currency change
+  currencySel.addEventListener('change',()=>{
+    const newCur=currencySel.value;
+    if(newCur===currentCurrency) return;
+    convertCurrency(currentCurrency,newCur);
+    currentCurrency=newCur;
+    curCodeEls.forEach(elc=>elc.textContent=newCur);
+    calc();
+  });
+
+  function convertCurrency(from,to){
+    const fr=currencyData[from].rate;
+    const tr=currencyData[to].rate;
+    // Convert each monetary numeric field
+    ['paxRev','ancRev','cargoRev','opCost','taxes'].forEach(k=>{
+      const val=num(el[k].value);
+      const inUSD = val / fr;
+      const newVal = inUSD * tr;
+      el[k].value = Math.round(newVal);
+    });
+    updateURL();
+  }
+
+  // URL sync
+  function updateURL(){
+    const url=new URL(window.location.href);
+    ids.forEach(i=>url.searchParams.set(i,el[i].value));
+    url.searchParams.set('cur',currentCurrency);
+    url.searchParams.set('lfS',lfSlider.value);
+    url.searchParams.set('yS',yieldSlider.value);
+    url.searchParams.set('cS',casmSlider.value);
+    url.searchParams.set('aS',ancSlider.value);
+    history.replaceState({},'',url.toString());
+  }
+  function loadFromURL(){
+    const p=new URLSearchParams(location.search);
+    let changed=false;
+    ids.forEach(i=>{
+      if(p.has(i)){
+        el[i].value=p.get(i);
+        changed=true;
+      }
+    });
+    if(p.has('cur')){
+      const cur=p.get('cur');
+      if(currencyData[cur]){
+        currentCurrency=cur;
+        currencySel.value=cur;
+        curCodeEls.forEach(elc=>elc.textContent=cur);
+      }
+    }
+    ['lfS','yS','cS','aS'].forEach(k=>{
+      if(p.has(k)){
+        if(k==='lfS'){lfSlider.value=p.get(k);lfSliderVal.textContent=p.get(k)+'%';}
+        if(k==='yS'){yieldSlider.value=p.get(k);yieldSliderVal.textContent=p.get(k)+'¢';}
+        if(k==='cS'){casmSlider.value=p.get(k);casmSliderVal.textContent=p.get(k)+'¢';}
+        if(k==='aS'){ancSlider.value=p.get(k);ancSliderVal.textContent=p.get(k)+'¢';}
+      }
+    });
+    if(changed) calc(false);
+  }
+
+  ids.forEach(i=>el[i].addEventListener('input',()=>{calc();updateURL();}));
+
+  shareBtn.addEventListener('click',()=>{
+    navigator.clipboard.writeText(location.href).then(()=>{
+      shareBtn.classList.add('copied');
+      shareBtn.textContent='Copied!';
+      setTimeout(()=>{shareBtn.classList.remove('copied');shareBtn.textContent='Share';},1500);
+    });
+  });
+
+  // Charts
+  function initCharts(){
+    const barCtx=document.getElementById('unitBarChart');
+    const lineCtx=document.getElementById('marginLineChart');
+    const pieCtx=document.getElementById('revMixChart');
+
+    unitBarChart = new Chart(barCtx,{
+      type:'bar',
+      data:{
+        labels:['RASM','PRASM','CASM'],
+        datasets:[{
+          label:'Cents per ASM/RPM',
+          data:[0,0,0],
+          backgroundColor:[
+            'rgba(50,152,220,0.75)',
+            'rgba(110,205,255,0.75)',
+            'rgba(240,110,110,0.75)'
+          ],
+          borderRadius:8,
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>ctx.parsed.y.toFixed(2)+' '+currencyData[currentCurrency].minorLabel}}},
+        scales:{
+          y:{ticks:{color:'#9fb3c5'},beginAtZero:true,grid:{color:'rgba(255,255,255,.07)'},title:{display:true,text:'Cents ('+currencyData[currentCurrency].minorLabel+')',color:'#9fb3c5',font:{size:10}}},
+          x:{ticks:{color:'#9fb3c5'},grid:{display:false}}
+        }
+      }
+    });
+
+    marginLineChart = new Chart(lineCtx,{
+      type:'line',
+      data:{
+        labels:[],
+        datasets:[{
+          label:'Operating Margin %',
+            data:[],
+            fill:false,
+            tension:.25,
+            borderColor:'rgba(79,177,245,1)',
+            pointBackgroundColor:'rgba(79,177,245,1)',
+            pointRadius:3
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>ctx.parsed.y.toFixed(1)+'%'}}},
+        scales:{
+          y:{beginAtZero:true,suggestedMax:30,ticks:{color:'#9fb3c5',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.07)'}},
+          x:{ticks:{color:'#9fb3c5'},grid:{display:false},title:{display:true,text:'Load Factor %',color:'#9fb3c5',font:{size:10}}}
+        }
+      }
+    });
+
+    revMixChart = new Chart(pieCtx,{
+      type:'doughnut',
+      data:{
+        labels:['Passenger','Ancillary','Cargo/Other'],
+        datasets:[{
+          data:[0,0,0],
+          backgroundColor:[
+            'rgba(50,152,220,0.85)',
+            'rgba(53,179,118,0.85)',
+            'rgba(230,179,76,0.85)'
+          ],
+          borderWidth:0
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{
+          legend:{position:'bottom',labels:{color:'#9fb3c5',font:{size:10}}},
+          tooltip:{callbacks:{label:(ctx)=>ctx.label+': '+fmt0(ctx.parsed)+'k '+currentCurrency}}
+        },
+        cutout:'58%'
+      }
+    });
+  }
+
+  function updateChartsData(vals){
+    if(!unitBarChart){return;}
+    // Unit bar chart
+    const rasmC = vals.rasm*100;
+    const prasmC = vals.prasm*100;
+    const casmC = vals.casm*100;
+    unitBarChart.data.datasets[0].data=[rasmC,prasmC,casmC];
+    unitBarChart.options.scales.y.title.text='Cents ('+currencyData[currentCurrency].minorLabel+')';
+    unitBarChart.update('none');
+
+    // Margin sensitivity line chart (LF from 50 to 100)
+    const ASM=vals.ASM;
+    const yieldUSDperRPM = vals.yieldNum;
+    const curAnc= num(el.ancRev.value);
+    const curCargo = num(el.cargoRev.value);
+    const opCost = num(el.opCost.value);
+    const paxTaxes = num(el.taxes.value);
+    const lfSeries=[];
+    const marginSeries=[];
+    for(let lf=50; lf<=100; lf+=2){
+      const RPM = ASM*(lf/100);
+      const paxRev = yieldUSDperRPM*RPM;
+      const totalRev = paxRev + curAnc + curCargo;
+      const contrib = totalRev - opCost - paxTaxes;
+      const margin = totalRev>0 ? (contrib/totalRev)*100 : 0;
+      lfSeries.push(lf);
+      marginSeries.push(+margin.toFixed(2));
+    }
+    marginLineChart.data.labels=lfSeries;
+    marginLineChart.data.datasets[0].data=marginSeries;
+    marginLineChart.update('none');
+
+    // Revenue mix
+    revMixChart.data.datasets[0].data=[num(el.paxRev.value), num(el.ancRev.value), num(el.cargoRev.value)];
+    revMixChart.update('none');
+  }
+
+  // INITIALIZE
+  loadFromURL();
+  initCharts();
+  calc();
+
 })();
 </script>
-
-</body> </html>
+</body>
+</html>
