@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,12 +199,6 @@ input[type=number]:focus{
   background:rgba(255,255,255,.12);
 }
 .field{margin-bottom:.9rem;}
-.small-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:.8rem;
-  margin-top:.6rem;
-}
 .metric-box{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -219,9 +214,7 @@ input[type=number]:focus{
   overflow:hidden;
   transition:var(--transition);
 }
-.metric:hover{
-  border-color:rgba(255,255,255,.2);
-}
+.metric:hover{border-color:rgba(255,255,255,.2);}
 .metric h3{
   margin:0 0 .35rem;
   font-size:.58rem;
@@ -271,22 +264,8 @@ small.note{
 .share-btn:hover{transform:translateY(-3px);}
 .share-btn:focus{outline:none;box-shadow:var(--focus-ring);}
 .share-btn.copied{background:linear-gradient(135deg,#3bb273,#66d69b);}
-.inline-vals{
-  font-size:.63rem;
-  font-weight:600;
-  letter-spacing:.5px;
-  display:flex;
-  justify-content:space-between;
-  margin:.25rem 0 .55rem;
-  color:var(--clr-text-dim);
-}
-.range-field{
-  margin-bottom:1.1rem;
-}
-.range-field:last-child{margin-bottom:.4rem;}
-.range-field label{
-  margin-bottom:.4rem;
-}
+.range-field{margin-bottom:1.1rem;}
+.range-field label{margin-bottom:.4rem;}
 input[type=range]{
   width:100%;
   appearance:none;
@@ -340,6 +319,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.1);}
   display:flex;
   flex-direction:column;
   gap:.4rem;
+  min-height:250px;
 }
 .chart-box h3{
   margin:0;
@@ -352,26 +332,21 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.1);}
   align-items:center;
   gap:.4rem;
 }
-canvas{
-  width:100% !important;
-  height:180px !important;
-}
-@media(max-width:750px){
-  canvas{height:200px !important;}
-}
-.badge{
-  display:inline-flex;
+.chart-fallback{
+  position:absolute;
+  inset:0;
+  display:flex;
   align-items:center;
-  gap:.3rem;
-  background:rgba(255,255,255,.08);
-  padding:.35rem .55rem;
-  border-radius:9px;
-  font-size:.55rem;
-  letter-spacing:.5px;
-  font-weight:600;
-  text-transform:uppercase;
+  justify-content:center;
+  font-size:.65rem;
   color:var(--clr-text-dim);
+  padding:0 .8rem;
+  text-align:center;
+  pointer-events:none;
 }
+canvas{width:100% !important;height:180px !important;}
+@media(max-width:750px){canvas{height:200px !important;}}
+.badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.08);padding:.35rem .55rem;border-radius:9px;font-size:.55rem;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--clr-text-dim);}
 .footer{
   max-width:1400px;
   margin:2.5rem auto 2rem;
@@ -404,18 +379,9 @@ canvas{
 }
 .fab-home:hover{transform:translateY(-5px);}
 .fab-home:focus{outline:none;box-shadow:var(--focus-ring);}
-.inline-currency{
-  font-size:.55rem;
-  opacity:.8;
-  font-weight:600;
-  letter-spacing:.5px;
-}
 .tag-positive{color:var(--success);}
 .tag-negative{color:var(--danger);}
 .tag-neutral{color:var(--clr-text-dim);}
-.resp-scroll{
-  overflow-x:auto;
-}
 </style>
 </head>
 <body>
@@ -496,7 +462,7 @@ canvas{
       <hr class="divider">
 
       <h2 style="margin-top:.2rem;">Scenario Sliders</h2>
-      <small class="note">Sliders override correlated fields (RPM, Passenger Revenue, Operating Cost). Adjust to explore impact; you can still manually edit base numbers afterward.</small>
+      <small class="note">Sliders override correlated fields (RPM, Passenger Revenue, Operating Cost, Ancillary). Adjust to explore impact; you can still manually edit base numbers afterward.</small>
 
       <div class="range-field">
         <label for="lfSlider">Load Factor (%) <span class="slider-val" id="lfSliderVal">—</span></label>
@@ -521,15 +487,18 @@ canvas{
       <div class="charts-grid">
         <div class="chart-box">
           <h3>Unit Revenue vs Cost</h3>
+          <div class="chart-fallback" id="fb-unit">Loading chart…</div>
           <canvas id="unitBarChart" aria-label="Bar chart RASM vs CASM vs PRASM"></canvas>
         </div>
         <div class="chart-box">
           <h3>Margin vs Load Factor</h3>
+            <div class="chart-fallback" id="fb-margin">Loading chart…</div>
           <canvas id="marginLineChart" aria-label="Line chart margin versus load factor"></canvas>
         </div>
         <div class="chart-box">
           <h3>Revenue Mix</h3>
-            <canvas id="revMixChart" aria-label="Pie chart revenue mix"></canvas>
+            <div class="chart-fallback" id="fb-mix">Loading chart…</div>
+          <canvas id="revMixChart" aria-label="Pie chart revenue mix"></canvas>
         </div>
       </div>
 
@@ -544,51 +513,51 @@ canvas{
   © <span id="year"></span> AirMetrics Demo.
 </div>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-cgJPIsu4CiZ5n0OjBvGvwnPjeG2HMdCwrKUtZHFwJ6MT0i5BMJq9+hhgHJ1N4iP6" crossorigin="anonymous"></script>
+<!-- FIX: Removed integrity (was causing blocked load). Defer ensures it's parsed before onload code. -->
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
 (function(){
   const ids=['asm','rpm','paxRev','ancRev','cargoRev','opCost','taxes'];
-  const el={};
-  ids.forEach(i=>el[i]=document.getElementById(i));
-  const lfVal=g('lfVal'),yieldVal=g('yieldVal'),prasmVal=g('prasmVal'),rasmVal=g('rasmVal'),casmVal=g('casmVal'),belfVal=g('belfVal'),marginVal=g('marginVal'),contribVal=g('contribVal');
-  const statusEl=g('status'), shareBtn=g('shareBtn');
-  const currencySel=g('currencySel');
+  const el={}; ids.forEach(i=>el[i]=document.getElementById(i));
+
+  // Elements
+  const lfVal=$('lfVal'),yieldVal=$('yieldVal'),prasmVal=$('prasmVal'),rasmVal=$('rasmVal'),casmVal=$('casmVal'),belfVal=$('belfVal'),marginVal=$('marginVal'),contribVal=$('contribVal');
+  const statusEl=$('status'), shareBtn=$('shareBtn');
+  const currencySel=$('currencySel');
   const curCodeEls=[...document.querySelectorAll('.cur-code')];
-  const yearEl=g('year'); yearEl.textContent=new Date().getFullYear();
+  $('year').textContent=new Date().getFullYear();
 
-  // Scenario sliders
-  const lfSlider=g('lfSlider'),
-        yieldSlider=g('yieldSlider'),
-        casmSlider=g('casmSlider'),
-        ancSlider=g('ancSlider');
-  const lfSliderVal=g('lfSliderVal'),
-        yieldSliderVal=g('yieldSliderVal'),
-        casmSliderVal=g('casmSliderVal'),
-        ancSliderVal=g('ancSliderVal');
+  // Sliders
+  const lfSlider=$('lfSlider'),yieldSlider=$('yieldSlider'),casmSlider=$('casmSlider'),ancSlider=$('ancSlider');
+  const lfSliderVal=$('lfSliderVal'),yieldSliderVal=$('yieldSliderVal'),casmSliderVal=$('casmSliderVal'),ancSliderVal=$('ancSliderVal');
 
+  // Chart placeholders
+  const fbUnit=$('fb-unit'), fbMargin=$('fb-margin'), fbMix=$('fb-mix');
+
+  let unitBarChart, marginLineChart, revMixChart;
   const currencyData={
     USD:{rate:1,symbol:'$',minorLabel:'¢'},
     EUR:{rate:0.92,symbol:'€',minorLabel:'c'},
     GBP:{rate:0.78,symbol:'£',minorLabel:'p'},
     CAD:{rate:1.36,symbol:'C$',minorLabel:'¢'},
     AUD:{rate:1.50,symbol:'A$',minorLabel:'¢'},
-    JPY:{rate:146,symbol:'¥',minorLabel:'¥ (sen)'} // treat cents concept loosely
+    JPY:{rate:146,symbol:'¥',minorLabel:'¥'} // treat value as yen; per-unit "cents" concept simplified
   };
   let currentCurrency='USD';
+  let firstSyncDone=false;
 
-  // Charts init
-  let unitBarChart, marginLineChart, revMixChart;
-
-  function g(id){return document.getElementById(id);}
+  function $(id){return document.getElementById(id);}
   function num(v){return parseFloat(v)||0;}
   function fmt0(x){return x.toFixed(0);}
-  function clamp(v,min,max){return Math.min(Math.max(v,min),max);}
+  function clamp(v,a,b){return Math.min(Math.max(v,a),b);}
+
+  function asm(){return num(el.asm.value);}
+  function rpm(){return num(el.rpm.value);}
 
   function calc(updateCharts=true){
-    const ASM=num(el.asm.value);
-    const RPM=num(el.rpm.value);
+    const ASM=asm();
+    const RPM=rpm();
     const paxRev=num(el.paxRev.value);
     const ancRev=num(el.ancRev.value);
     const cargoRev=num(el.cargoRev.value);
@@ -599,16 +568,18 @@ canvas{
       statusEl.textContent='Enter ASM & RPM.';
       return;
     }
+
     const lf=RPM/ASM;
-    const yieldNum = RPM>0 ? paxRev/RPM : 0;
+    const yieldNum= RPM>0 ? paxRev/RPM : 0;
     const prasm = paxRev/ASM;
     const rasm = (paxRev+ancRev+cargoRev)/ASM;
     const casm = opCost/ASM;
     const belf = yieldNum>0 ? casm / yieldNum : 0;
-    const contribution = (paxRev+ancRev+cargoRev) - opCost - paxTaxes;
+    const contribution = (paxRev+ancRev+cargoRev)-opCost-paxTaxes;
     const margin = (paxRev+ancRev+cargoRev)>0 ? contribution/(paxRev+ancRev+cargoRev) : 0;
 
-    const minor = currencyData[currentCurrency].minorLabel.split(' ')[0]; // basic
+    const minor=currencyData[currentCurrency].minorLabel;
+
     lfVal.textContent=(lf*100).toFixed(1)+'%';
     yieldVal.textContent=(yieldNum*100).toFixed(2)+' '+minor;
     prasmVal.textContent=(prasm*100).toFixed(2)+' '+minor;
@@ -618,7 +589,6 @@ canvas{
     marginVal.textContent=(margin*100).toFixed(1)+'%';
     contribVal.textContent=fmt0(contribution);
 
-    // Qualitative color tags
     marginVal.classList.remove('tag-positive','tag-negative','tag-neutral');
     if(margin>0.15) marginVal.classList.add('tag-positive');
     else if(margin<0) marginVal.classList.add('tag-negative');
@@ -626,111 +596,101 @@ canvas{
 
     statusEl.textContent='Updated.';
 
-    if(updateCharts){
-      updateChartsData({lf,yieldNum,prasm,rasm,casm,belf,margin,ASM,RPM,paxRev,ancRev,cargoRev,opCost,paxTaxes});
+    if(!firstSyncDone){
+      syncSlidersFromNumbers();
+      firstSyncDone=true;
     }
 
-    // Sync sliders (if manual input changed)
-    syncSlidersFromNumbers();
+    if(updateCharts){
+      updateChartsData({rasm,prasm,casm,yieldNum,ASM,ancRev,cargoRev,opCost,paxTaxes});
+    }
   }
 
   function syncSlidersFromNumbers(){
-    const ASM=num(el.asm.value);
-    const RPM=num(el.rpm.value);
-    if(ASM>0){
-      const lfPerc = clamp((RPM/ASM)*100,lfSlider.min,lfSlider.max);
-      lfSlider.value=lfPerc;
-      lfSliderVal.textContent=lfPerc.toFixed(1)+'%';
+    if(asm()>0){
+      const lfPerc=(rpm()/asm())*100;
+      lfSlider.value=clamp(lfPerc,lfSlider.min,lfSlider.max);
+      lfSliderVal.textContent=lfSlider.value+'%';
+      const casmC=(num(el.opCost.value)/asm())*100;
+      casmSlider.value=clamp(casmC,casmSlider.min,casmSlider.max);
+      casmSliderVal.textContent=casmSlider.value+'¢';
+      const ancC=(num(el.ancRev.value)/asm())*100;
+      ancSlider.value=clamp(ancC,ancSlider.min,ancSlider.max);
+      ancSliderVal.textContent=ancSlider.value+'¢';
     }
-    const yieldCents = rpm()>0 ? (num(el.paxRev.value)/num(el.rpm.value))*100 : 0;
-    if(yieldCents>0){
-      yieldSlider.value = clamp(yieldCents,yieldSlider.min,yieldSlider.max);
+    if(rpm()>0){
+      const yC=(num(el.paxRev.value)/rpm())*100;
+      yieldSlider.value=clamp(yC,yieldSlider.min,yieldSlider.max);
       yieldSliderVal.textContent=yieldSlider.value+'¢';
     }
-    const casmCents = asm()>0 ? (num(el.opCost.value)/asm())*100 : 0;
-    casmSlider.value = clamp(casmCents,casmSlider.min,casmSlider.max);
-    casmSliderVal.textContent=casmSlider.value+'¢';
-
-    const ancCents = asm()>0 ? (num(el.ancRev.value)/asm())*100 : 0;
-    ancSlider.value = clamp(ancCents,ancSlider.min,ancSlider.max);
-    ancSliderVal.textContent=ancSlider.value+'¢';
   }
 
-  function asm(){return num(el.asm.value);}
-  function rpm(){return num(el.rpm.value);}
-
-  // Slider listeners
+  // Slider events
   lfSlider.addEventListener('input',()=>{
-    const ASM=asm();
-    const lfPerc=num(lfSlider.value);
-    lfSliderVal.textContent=lfPerc.toFixed(1)+'%';
-    if(ASM>0){
-      const RPM=ASM*(lfPerc/100);
-      el.rpm.value = Math.round(RPM);
+    if(asm()>0){
+      el.rpm.value=Math.round(asm()*(num(lfSlider.value)/100));
     }
-    calc(); updateURL();
+    lfSliderVal.textContent=lfSlider.value+'%';
+    calc();
+    updateURL();
   });
   yieldSlider.addEventListener('input',()=>{
-    const yC=num(yieldSlider.value); // cents per RPM
-    yieldSliderVal.textContent=yC.toFixed(1)+'¢';
     if(rpm()>0){
-      const paxRev = (yC/100) * rpm();
-      el.paxRev.value = Math.round(paxRev);
+      el.paxRev.value=Math.round((num(yieldSlider.value)/100)*rpm());
     }
-    calc(); updateURL();
+    yieldSliderVal.textContent=yieldSlider.value+'¢';
+    calc();
+    updateURL();
   });
   casmSlider.addEventListener('input',()=>{
-    const cC=num(casmSlider.value);
-    casmSliderVal.textContent=cC.toFixed(1)+'¢';
     if(asm()>0){
-      const opCost = (cC/100)*asm();
-      el.opCost.value = Math.round(opCost);
+      el.opCost.value=Math.round((num(casmSlider.value)/100)*asm());
     }
-    calc(); updateURL();
+    casmSliderVal.textContent=casmSlider.value+'¢';
+    calc();
+    updateURL();
   });
   ancSlider.addEventListener('input',()=>{
-    const aC=num(ancSlider.value);
-    ancSliderVal.textContent=aC.toFixed(1)+'¢';
     if(asm()>0){
-      const ancRev=(aC/100)*asm();
-      el.ancRev.value=Math.round(ancRev);
+      el.ancRev.value=Math.round((num(ancSlider.value)/100)*asm());
     }
-    calc(); updateURL();
+    ancSliderVal.textContent=ancSlider.value+'¢';
+    calc();
+    updateURL();
   });
 
-  // Currency change
+  // Currency
   currencySel.addEventListener('change',()=>{
     const newCur=currencySel.value;
-    if(newCur===currentCurrency) return;
-    convertCurrency(currentCurrency,newCur);
-    currentCurrency=newCur;
-    curCodeEls.forEach(elc=>elc.textContent=newCur);
-    calc();
+    if(newCur!==currentCurrency){
+      convertCurrency(currentCurrency,newCur);
+      currentCurrency=newCur;
+      curCodeEls.forEach(c=>c.textContent=newCur);
+      calc(); // will update charts with new minor label
+    }
   });
 
   function convertCurrency(from,to){
     const fr=currencyData[from].rate;
     const tr=currencyData[to].rate;
-    // Convert each monetary numeric field
     ['paxRev','ancRev','cargoRev','opCost','taxes'].forEach(k=>{
       const val=num(el[k].value);
-      const inUSD = val / fr;
-      const newVal = inUSD * tr;
-      el[k].value = Math.round(newVal);
+      const inUSD=val/fr;
+      el[k].value=Math.round(inUSD*tr);
     });
     updateURL();
   }
 
-  // URL sync
+  // URL state
   function updateURL(){
-    const url=new URL(window.location.href);
+    const url=new URL(location.href);
     ids.forEach(i=>url.searchParams.set(i,el[i].value));
     url.searchParams.set('cur',currentCurrency);
     url.searchParams.set('lfS',lfSlider.value);
     url.searchParams.set('yS',yieldSlider.value);
     url.searchParams.set('cS',casmSlider.value);
     url.searchParams.set('aS',ancSlider.value);
-    history.replaceState({},'',url.toString());
+    history.replaceState({},'',url);
   }
   function loadFromURL(){
     const p=new URLSearchParams(location.search);
@@ -741,26 +701,19 @@ canvas{
         changed=true;
       }
     });
-    if(p.has('cur')){
-      const cur=p.get('cur');
-      if(currencyData[cur]){
-        currentCurrency=cur;
-        currencySel.value=cur;
-        curCodeEls.forEach(elc=>elc.textContent=cur);
-      }
+    if(p.has('cur') && currencyData[p.get('cur')]){
+      currentCurrency=p.get('cur');
+      currencySel.value=currentCurrency;
+      curCodeEls.forEach(c=>c.textContent=currentCurrency);
     }
-    ['lfS','yS','cS','aS'].forEach(k=>{
-      if(p.has(k)){
-        if(k==='lfS'){lfSlider.value=p.get(k);lfSliderVal.textContent=p.get(k)+'%';}
-        if(k==='yS'){yieldSlider.value=p.get(k);yieldSliderVal.textContent=p.get(k)+'¢';}
-        if(k==='cS'){casmSlider.value=p.get(k);casmSliderVal.textContent=p.get(k)+'¢';}
-        if(k==='aS'){ancSlider.value=p.get(k);ancSliderVal.textContent=p.get(k)+'¢';}
-      }
-    });
+    if(p.has('lfS')){lfSlider.value=p.get('lfS');lfSliderVal.textContent=lfSlider.value+'%';}
+    if(p.has('yS')){yieldSlider.value=p.get('yS');yieldSliderVal.textContent=yieldSlider.value+'¢';}
+    if(p.has('cS')){casmSlider.value=p.get('cS');casmSliderVal.textContent=casmSlider.value+'¢';}
+    if(p.has('aS')){ancSlider.value=p.get('aS');ancSliderVal.textContent=ancSlider.value+'¢';}
     if(changed) calc(false);
   }
 
-  ids.forEach(i=>el[i].addEventListener('input',()=>{calc();updateURL();}));
+  ids.forEach(i=>el[i].addEventListener('input',()=>{firstSyncDone=false;calc();updateURL();}));
 
   shareBtn.addEventListener('click',()=>{
     navigator.clipboard.writeText(location.href).then(()=>{
@@ -770,127 +723,125 @@ canvas{
     });
   });
 
-  // Charts
-  function initCharts(){
-    const barCtx=document.getElementById('unitBarChart');
-    const lineCtx=document.getElementById('marginLineChart');
-    const pieCtx=document.getElementById('revMixChart');
+  // Chart init with retry if CDN not yet ready
+  function initChartsWhenReady(attempt=0){
+    if(typeof window.Chart==='undefined'){
+      if(attempt<15){
+        return setTimeout(()=>initChartsWhenReady(attempt+1),150); // retry
+      } else {
+        console.error('Chart.js failed to load after retries.');
+        fbUnit.textContent='Chart library not loaded.';
+        fbMargin.textContent='Chart library not loaded.';
+        fbMix.textContent='Chart library not loaded.';
+        return;
+      }
+    }
+    // Remove fallbacks
+    [fbUnit,fbMargin,fbMix].forEach(f=>f.remove());
 
-    unitBarChart = new Chart(barCtx,{
+    const barCtx=$('unitBarChart');
+    const lineCtx=$('marginLineChart');
+    const pieCtx=$('revMixChart');
+
+    unitBarChart=new Chart(barCtx,{
       type:'bar',
       data:{
         labels:['RASM','PRASM','CASM'],
         datasets:[{
-          label:'Cents per ASM/RPM',
           data:[0,0,0],
-          backgroundColor:[
-            'rgba(50,152,220,0.75)',
-            'rgba(110,205,255,0.75)',
-            'rgba(240,110,110,0.75)'
-          ],
-          borderRadius:8,
-        }]
-      },
-      options:{
-        responsive:true,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>ctx.parsed.y.toFixed(2)+' '+currencyData[currentCurrency].minorLabel}}},
-        scales:{
-          y:{ticks:{color:'#9fb3c5'},beginAtZero:true,grid:{color:'rgba(255,255,255,.07)'},title:{display:true,text:'Cents ('+currencyData[currentCurrency].minorLabel+')',color:'#9fb3c5',font:{size:10}}},
-          x:{ticks:{color:'#9fb3c5'},grid:{display:false}}
-        }
-      }
-    });
-
-    marginLineChart = new Chart(lineCtx,{
-      type:'line',
-      data:{
-        labels:[],
-        datasets:[{
-          label:'Operating Margin %',
-            data:[],
-            fill:false,
-            tension:.25,
-            borderColor:'rgba(79,177,245,1)',
-            pointBackgroundColor:'rgba(79,177,245,1)',
-            pointRadius:3
-        }]
-      },
-      options:{
-        responsive:true,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>ctx.parsed.y.toFixed(1)+'%'}}},
-        scales:{
-          y:{beginAtZero:true,suggestedMax:30,ticks:{color:'#9fb3c5',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.07)'}},
-          x:{ticks:{color:'#9fb3c5'},grid:{display:false},title:{display:true,text:'Load Factor %',color:'#9fb3c5',font:{size:10}}}
-        }
-      }
-    });
-
-    revMixChart = new Chart(pieCtx,{
-      type:'doughnut',
-      data:{
-        labels:['Passenger','Ancillary','Cargo/Other'],
-        datasets:[{
-          data:[0,0,0],
-          backgroundColor:[
-            'rgba(50,152,220,0.85)',
-            'rgba(53,179,118,0.85)',
-            'rgba(230,179,76,0.85)'
-          ],
-          borderWidth:0
+            backgroundColor:[
+              'rgba(50,152,220,0.75)',
+              'rgba(110,205,255,0.75)',
+              'rgba(240,110,110,0.75)'
+            ],
+            borderRadius:8
         }]
       },
       options:{
         responsive:true,
         plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toFixed(2)+' '+currencyData[currentCurrency].minorLabel}}
+        },
+        scales:{
+          y:{beginAtZero:true,grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#9fb3c5'},title:{display:true,text:'Cents ('+currencyData[currentCurrency].minorLabel+')',color:'#9fb3c5',font:{size:10}}},
+          x:{grid:{display:false},ticks:{color:'#9fb3c5'}}
+        }
+      }
+    });
+
+    marginLineChart=new Chart(lineCtx,{
+      type:'line',
+      data:{labels:[],datasets:[{label:'Operating Margin %',data:[],fill:false,tension:.25,borderColor:'rgba(79,177,245,1)',pointBackgroundColor:'rgba(79,177,245,1)',pointRadius:3}]},
+      options:{
+        responsive:true,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toFixed(1)+'%'}}},
+        scales:{
+          y:{beginAtZero:true,suggestedMax:30,grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#9fb3c5',callback:v=>v+'%'}},
+          x:{grid:{display:false},ticks:{color:'#9fb3c5'},title:{display:true,text:'Load Factor %',color:'#9fb3c5',font:{size:10}}}
+        }
+      }
+    });
+
+    revMixChart=new Chart(pieCtx,{
+      type:'doughnut',
+      data:{labels:['Passenger','Ancillary','Cargo/Other'],datasets:[{data:[0,0,0],backgroundColor:['rgba(50,152,220,0.85)','rgba(53,179,118,0.85)','rgba(230,179,76,0.85)'],borderWidth:0}]},
+      options:{
+        responsive:true,
+        plugins:{
           legend:{position:'bottom',labels:{color:'#9fb3c5',font:{size:10}}},
-          tooltip:{callbacks:{label:(ctx)=>ctx.label+': '+fmt0(ctx.parsed)+'k '+currentCurrency}}
+          tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt0(ctx.parsed)+'k '+currentCurrency}}
         },
         cutout:'58%'
       }
     });
+
+    calc(); // populate with real data now
   }
 
   function updateChartsData(vals){
-    if(!unitBarChart){return;}
-    // Unit bar chart
-    const rasmC = vals.rasm*100;
-    const prasmC = vals.prasm*100;
-    const casmC = vals.casm*100;
+    if(!unitBarChart) return;
+    const rasmC=vals.rasm*100;
+    const prasmC=vals.prasm*100;
+    const casmC=vals.casm*100;
     unitBarChart.data.datasets[0].data=[rasmC,prasmC,casmC];
     unitBarChart.options.scales.y.title.text='Cents ('+currencyData[currentCurrency].minorLabel+')';
-    unitBarChart.update('none');
+    unitBarChart.update();
 
-    // Margin sensitivity line chart (LF from 50 to 100)
+    // Margin sensitivity
     const ASM=vals.ASM;
-    const yieldUSDperRPM = vals.yieldNum;
-    const curAnc= num(el.ancRev.value);
-    const curCargo = num(el.cargoRev.value);
-    const opCost = num(el.opCost.value);
-    const paxTaxes = num(el.taxes.value);
-    const lfSeries=[];
+    const yieldPerRPM=vals.yieldNum;
+    const ancRev=num(el.ancRev.value);
+    const cargoRev=num(el.cargoRev.value);
+    const opCost=num(el.opCost.value);
+    const paxTaxes=num(el.taxes.value);
+    const lfLabels=[];
     const marginSeries=[];
     for(let lf=50; lf<=100; lf+=2){
-      const RPM = ASM*(lf/100);
-      const paxRev = yieldUSDperRPM*RPM;
-      const totalRev = paxRev + curAnc + curCargo;
-      const contrib = totalRev - opCost - paxTaxes;
-      const margin = totalRev>0 ? (contrib/totalRev)*100 : 0;
-      lfSeries.push(lf);
-      marginSeries.push(+margin.toFixed(2));
+      const RPM=ASM*(lf/100);
+      const paxRev=yieldPerRPM*RPM;
+      const totalRev=paxRev+ancRev+cargoRev;
+      const contrib=totalRev-opCost-paxTaxes;
+      const m= totalRev>0 ? (contrib/totalRev)*100 : 0;
+      lfLabels.push(lf);
+      marginSeries.push(+m.toFixed(2));
     }
-    marginLineChart.data.labels=lfSeries;
+    marginLineChart.data.labels=lfLabels;
     marginLineChart.data.datasets[0].data=marginSeries;
-    marginLineChart.update('none');
+    marginLineChart.update();
 
     // Revenue mix
     revMixChart.data.datasets[0].data=[num(el.paxRev.value), num(el.ancRev.value), num(el.cargoRev.value)];
-    revMixChart.update('none');
+    revMixChart.update();
   }
 
-  // INITIALIZE
+  // INIT
   loadFromURL();
-  initCharts();
-  calc();
+  // We delay chart init until DOM & (hopefully) script loaded
+  window.addEventListener('load', ()=> {
+    initChartsWhenReady();
+    calc();
+  });
 
 })();
 </script>
