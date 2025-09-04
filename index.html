@@ -64,7 +64,7 @@ html { scroll-behavior: smooth; background: var(--clr-bg); color: var(--clr-text
   overflow: visible !important;
 }
 
-    .hero.is-landing .title + .subtitle {
+.hero.is-landing .title + .subtitle {
 margin-top: 1rem;   /* or 1rem if you want more space */
 }
 /* Base heading: render real text normally (visible, non‑gradient) */
@@ -459,7 +459,17 @@ margin-top: 1rem;   /* or 1rem if you want more space */
   <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
-        <a class="navbar-item" href="/">Modern Airline Retailing</a>
+       <a class="navbar-item" href="/" style="padding-right:0.4rem;">
+  <span style="display:flex;align-items:center;gap:0.6rem;">
+    <!-- Globe Icon Start -->
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M16 2C10.48 2 6 6.48 6 12c0 5.52 10 18 10 18s10-12.48 10-18c0-5.52-4.48-10-10-10zm0 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="#3298dc" />
+</svg>
+
+    <span style="font-weight:700;letter-spacing:.5px;font-size:1.1em;">Modern Airline Retailing</span>
+  </span>
+</a>
+
         <button class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
           <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
         </button>
