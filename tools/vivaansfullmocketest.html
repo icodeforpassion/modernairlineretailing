@@ -1,0 +1,1447 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>11+ Full Intelligent Mock (English • Comprehension • VR • Maths)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<meta name="description" content="11+ adaptive mock test generator: English, Comprehension, Verbal Reasoning, Maths (optionally Non-Verbal). Randomised each run with timing & analytics." />
+<style>
+:root{
+  --bg:#0d141f;
+  --bg2:#111b28;
+  --panel:#192433;
+  --panel2:#203042;
+  --panel3:#1e2b3a;
+  --accent:#49b5ff;
+  --accent2:#7ad8ff;
+  --ok:#31d18a;
+  --warn:#ffca57;
+  --bad:#ff5c58;
+  --text:#e7f2fa;
+  --muted:#93a5b5;
+  --radius:18px;
+  --grad:linear-gradient(135deg,var(--accent),var(--accent2));
+  font-family: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Open Sans",sans-serif;
+  font-size:16px;
+}
+*{box-sizing:border-box; }
+body{
+  margin:0;
+  background:radial-gradient(circle at 25% 18%,#1b2a3d,#0d141f 65%);
+  color:var(--text);
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+}
+header{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:1rem;
+  padding:1rem 1.2rem;
+  background:#0c141f;
+  border-bottom:1px solid #1f2d3d;
+}
+header h1{
+  margin:0;
+  font-size:1.2rem;
+  font-weight:600;
+  letter-spacing:.6px;
+  background:var(--grad);
+  -webkit-background-clip:text;
+  color:transparent;
+  line-height:1.1;
+}
+.actions-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+button{
+  background:#223243;
+  border:1px solid #2f455b;
+  color:var(--text);
+  padding:.6rem .9rem;
+  font-size:.75rem;
+  font-weight:600;
+  letter-spacing:.4px;
+  border-radius:10px;
+  cursor:pointer;
+  display:inline-flex;
+  gap:.45rem;
+  align-items:center;
+  transition:.22s background,.22s transform;
+}
+button:hover:not(:disabled){background:#2c4054;}
+button.primary{background:var(--grad);color:#042434;border:1px solid #3a92c2;}
+button.primary:hover:not(:disabled){filter:brightness(1.1);}
+button:disabled{opacity:.5;cursor:not-allowed;}
+main{
+  flex:1;
+  width:100%;
+  max-width:1550px;
+  margin:0 auto;
+  padding:1.1rem 1.3rem 2rem;
+  display:grid;
+  gap:1.1rem;
+  grid-template-columns:320px 1fr;
+}
+@media (max-width:1150px){
+  main{grid-template-columns:1fr;}
+}
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  position:sticky;
+  top:1rem;
+  align-self:start;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid #253446;
+  border-radius:var(--radius);
+  padding:1rem 1rem 1.15rem;
+  position:relative;
+  box-shadow:0 4px 14px -6px rgba(0,0,0,.55),0 1px 0 0 #2c3c4e inset;
+}
+.panel h2{
+  margin:.1rem 0 .8rem;
+  font-size:.85rem;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  font-weight:700;
+  color:var(--accent2);
+}
+.panel h3{
+  margin:.1rem 0 .7rem;
+  font-size:.8rem;
+  font-weight:600;
+  letter-spacing:.6px;
+  color:var(--accent);
+}
+.config-grid{
+  display:grid;
+  gap:.55rem .65rem;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  margin-bottom:.4rem;
+}
+label.cfg{
+  display:flex;
+  flex-direction:column;
+  gap:.2rem;
+  font-size:.63rem;
+  letter-spacing:.4px;
+  font-weight:600;
+  color:var(--muted);
+}
+select,input[type=number]{
+  background:#1b2836;
+  border:1px solid #2b4054;
+  color:var(--text);
+  border-radius:8px;
+  padding:.45rem .55rem;
+  font-size:.65rem;
+  font-weight:500;
+  letter-spacing:.4px;
+  width:100%;
+}
+#globalTimer,#sectionTimer{
+  background:#1a2533;
+  padding:.55rem .9rem;
+  border-radius:50px;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.5px;
+  border:1px solid #2d4054;
+  display:inline-flex;
+  gap:.4rem;
+  align-items:center;
+  box-shadow:0 0 0 1px #253748 inset;
+}
+.stat-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.4rem;
+  margin-top:.4rem;
+}
+.stat-chip{
+  background:#202e3c;
+  border:1px solid #2f4253;
+  padding:.42rem .55rem .48rem;
+  border-radius:9px;
+  font-size:.6rem;
+  font-weight:600;
+  letter-spacing:.45px;
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  color:var(--muted);
+}
+.stat-chip.good{color:var(--ok);border-color:#2e7d57;}
+.stat-chip.bad{color:var(--bad);border-color:#93403e;}
+.progress-outer{
+  width:100%;
+  height:10px;
+  background:#172330;
+  border:1px solid #283a4d;
+  border-radius:22px;
+  overflow:hidden;
+  margin-top:.65rem;
+}
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:.45s width cubic-bezier(.66,.04,.38,1);
+}
+.notice{
+  background:#15212d;
+  border:1px solid #223445;
+  padding:.6rem .7rem .7rem;
+  border-radius:10px;
+  font-size:.6rem;
+  line-height:1.35;
+  color:var(--muted);
+}
+#mistakesList{
+  max-height:240px;
+  overflow:auto;
+  background:#15212a;
+  border:1px solid #243644;
+  border-radius:10px;
+  padding:.5rem .65rem;
+  font-size:.63rem;
+  line-height:1.25;
+}
+.mistake-item{margin:.35rem 0;}
+.main-area{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  min-width:0;
+}
+.section-card{
+  background:var(--panel2);
+  border:1px solid #2a3d4f;
+  border-radius:18px;
+  padding:1.05rem 1.15rem 1.3rem;
+  position:relative;
+  box-shadow:0 4px 14px -8px rgba(0,0,0,.55);
+}
+.section-card.active{outline:2px solid #3295cf;}
+.section-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.6rem;
+  margin-bottom:.6rem;
+}
+.section-head h2{
+  margin:0;
+  font-size:.95rem;
+  letter-spacing:.5px;
+  font-weight:600;
+  background:linear-gradient(90deg,#76d4ff,#49b5ff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.badge{
+  background:#253748;
+  border:1px solid #2f465b;
+  padding:.33rem .55rem .32rem;
+  border-radius:40px;
+  font-size:.55rem;
+  font-weight:700;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.badge.hot{background:var(--grad);border:none;color:#062330;}
+.question-box{
+  background:var(--panel3);
+  border:1px solid #2c4254;
+  border-radius:14px;
+  padding:.9rem .95rem 1rem;
+  font-size:.85rem;
+  line-height:1.45;
+  white-space:pre-wrap;
+  position:relative;
+}
+.options-grid{
+  display:grid;
+  gap:.65rem;
+  margin-top:.85rem;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+}
+.option-btn{
+  background:#233445;
+  border:1px solid #2f465b;
+  border-radius:10px;
+  padding:.7rem .75rem .75rem;
+  font-size:.74rem;
+  line-height:1.2;
+  font-weight:500;
+  letter-spacing:.3px;
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  min-height:54px;
+  transition:.2s background,.2s transform;
+  position:relative;
+  word-break:break-word;
+}
+.option-btn:hover:not(.locked){background:#2b4257;}
+.option-btn.correct{background:linear-gradient(145deg,var(--ok),#1c9f62);color:#042318;border:1px solid #23d486;font-weight:600;}
+.option-btn.wrong{background:linear-gradient(145deg,#a13937,#7d2727);color:#ffecec;border:1px solid #cd5c5c;font-weight:600;}
+.feedback{
+  margin-top:.55rem;
+  min-height:1.1rem;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.4px;
+}
+.feedback .ok{color:var(--ok);}
+.feedback .bad{color:var(--bad);}
+.meta-line{
+  font-size:.55rem;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+  color:var(--muted);
+  display:flex;
+  gap:.9rem;
+  flex-wrap:wrap;
+  margin-top:.55rem;
+}
+.inline-code{
+  background:#253748;
+  border:1px solid #314a5f;
+  border-radius:6px;
+  padding:.2rem .4rem .25rem;
+  font-family:ui-monospace,Consolas,"SF Mono",monospace;
+  font-size:.6rem;
+  color:#d1e8f8;
+}
+.summary-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:.8rem;
+  font-size:.62rem;
+  letter-spacing:.3px;
+}
+.summary-table th,.summary-table td{
+  border:1px solid #2d4355;
+  padding:.4rem .55rem;
+  text-align:left;
+  vertical-align:top;
+}
+.summary-table th{
+  background:#233445;
+  color:var(--accent2);
+  text-transform:uppercase;
+  font-size:.58rem;
+  letter-spacing:.55px;
+}
+.highlight-bad{color:var(--bad);font-weight:600;}
+.highlight-ok{color:var(--ok);font-weight:600;}
+.footer{
+  text-align:center;
+  font-size:.55rem;
+  letter-spacing:.5px;
+  padding:1.2rem .9rem 2.4rem;
+  color:#7d90a4;
+}
+.flash{
+  animation:flash .85s ease;
+}
+@keyframes flash{
+  0%{box-shadow:0 0 0 0 rgba(73,181,255,0);}
+  30%{box-shadow:0 0 0 10px rgba(73,181,255,.25);}
+  100%{box-shadow:0 0 0 0 rgba(73,181,255,0);}
+}
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+<header>
+  <h1>11+ Adaptive Mock: English • Comprehension • VR • Maths</h1>
+  <div class="actions-row">
+    <div id="globalTimer" title="Total elapsed">Total: 00:00</div>
+    <div id="sectionTimer" title="Section remaining">Section: --:--</div>
+    <button id="startBtn" class="primary">Start / Restart</button>
+    <button id="nextSectionBtn" disabled>Next Section ▶</button>
+    <button id="submitBtn" disabled>Submit Test</button>
+    <button id="exportBtn" disabled>Export JSON</button>
+  </div>
+</header>
+
+<main>
+  <aside class="sidebar">
+    <div class="panel">
+      <h2>Config</h2>
+      <div class="config-grid">
+        <label class="cfg">Include Practice
+          <select id="includePractice">
+            <option value="on">On</option><option value="off">Off</option>
+          </select>
+        </label>
+        <label class="cfg">English Qs
+          <input type="number" id="englishCount" min="15" max="50" value="25">
+        </label>
+        <label class="cfg">VR Qs
+          <input type="number" id="vrCount" min="15" max="60" value="32">
+        </label>
+        <label class="cfg">Maths Qs
+          <input type="number" id="mathCount" min="10" max="50" value="20">
+        </label>
+        <label class="cfg">Maths Time (m)
+          <input type="number" id="mathTime" min="10" max="60" value="30">
+        </label>
+        <label class="cfg">Auto-Advance
+          <select id="autoAdvance"><option value="on">On</option><option value="off">Off</option></select>
+        </label>
+        <label class="cfg">Shuffle Sections
+          <select id="shuffleSections"><option value="off">No</option><option value="on">Yes</option></select>
+        </label>
+        <label class="cfg">Font Scale
+          <select id="fontScale"><option value="1">100%</option><option value="1.1">110%</option><option value="1.2">120%</option><option value="1.3">130%</option></select>
+        </label>
+        <label class="cfg">Fetch Live Passage
+          <select id="fetchPassage"><option value="try">Try</option><option value="off">Off</option></select>
+        </label>
+      </div>
+      <div class="notice">
+        Typical Consortium Times:<br>
+        - English: 25 min<br>
+        - Verbal Reasoning: 20 min<br>
+        - Maths: configurable (default 30 min)<br>
+        Practice (if enabled) 5 min each, not scored.<br><br>
+        Comprehension can attempt a live open-text snippet (Project Gutenberg). If network blocks/CORS fails, a local passage is used.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Live Stats</h2>
+      <div class="stat-chips">
+        <div class="stat-chip" id="statSection">Section --/--</div>
+        <div class="stat-chip" id="statQ">Q --/--</div>
+        <div class="stat-chip" id="statScore">Score 0</div>
+        <div class="stat-chip" id="statAcc">Acc 0%</div>
+        <div class="stat-chip" id="statRemaining">Remain: --</div>
+      </div>
+      <div class="progress-outer">
+        <div class="progress-bar" id="overallProgress"></div>
+      </div>
+      <div style="margin-top:.55rem;font-size:.55rem;color:var(--muted);" id="engineMsg">Idle.</div>
+    </div>
+
+    <div class="panel">
+      <h2>Mistakes</h2>
+      <div id="mistakesList">None yet.</div>
+      <button id="clearMistakesBtn" style="margin-top:.6rem;">Clear Log</button>
+    </div>
+
+    <div class="panel">
+      <h2>Summary</h2>
+      <div id="summaryBox" style="font-size:.62rem;line-height:1.35;color:var(--muted);">
+        Not submitted.
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-area" id="mainArea">
+    <div class="section-card">
+      <div class="section-head">
+        <h2>Welcome</h2>
+        <span class="badge hot">Ready</span>
+      </div>
+      <div class="question-box" style="font-size:.8rem;">
+        This intelligent mock generator builds a complete 11+ style paper:<br><br>
+        • English Language: Comprehension, Synonyms, Antonyms, Cloze, Spelling Error (A–D/N), Punctuation & Capitals.<br>
+        • Verbal Reasoning: Letter Pair Sequences, Compound/Joined Word, Synonym Pair (cross-groups), Hidden Word (across boundary), Additional letter pattern styles.<br>
+        • Maths: Angles, Percentages, Arithmetic (BODMAS), Mean / Average, Reverse Ops, Time Calculations, Fractions/Percent, Sequences.<br>
+        • (Optional minimal Non-Verbal left out by request—can be added later).<br><br>
+        After answering each question, result is instant; practice sections unscored. Finish or click Submit for an analytic breakdown including per-type strengths & weaknesses.<br><br>
+        Configure options in sidebar (timers, counts, passage fetch, etc.) and press Start.
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="footer">
+  11+ Intelligent Mock © 2025. All questions procedurally generated client-side. Passages: either local curated or public-domain attempt (Project Gutenberg).
+</div>
+
+<script>
+/* ================== Utility & Core ================== */
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function sample(a,k){if(k>=a.length)return shuffle([...a]);const c=[...a];shuffle(c);return c.slice(0,k);}
+function unique(a){return [...new Set(a)];}
+function pad2(n){return n.toString().padStart(2,'0');}
+function clamp(v,min,max){return v<min?min:(v>max?max:v);}
+const now=()=>Date.now();
+
+/* ================== Global Test State ================== */
+const STATE={
+  sections:[],              // {id,title,timeLimit,practice,questions:[...] }
+  currentSectionIdx:-1,
+  currentQuestionIdx:0,
+  started:false,
+  finished:false,
+  answers:[],               // {sectionId,qIndex,correct,chosen,correctAnswer,type,practice,timeMs}
+  mistakes:[],              // {section,title,type,question,chosen,answer}
+  score:0,
+  scoredQuestions:0,
+  globalStart:null,
+  globalTimer:null,
+  sectionTimer:null,
+  sectionEndAt:null,
+  config:{
+    practice:true,
+    englishCount:25,
+    vrCount:32,
+    mathsCount:20,
+    englishTime:25*60,
+    vrTime:20*60,
+    mathsTime:30*60,
+    autoAdvance:true,
+    shuffleSections:false,
+    fontScale:1,
+    fetchPassage:true
+  }
+};
+
+/* ================== DOM Refs ================== */
+const mainArea=$("#mainArea");
+const startBtn=$("#startBtn");
+const nextSectionBtn=$("#nextSectionBtn");
+const submitBtn=$("#submitBtn");
+const exportBtn=$("#exportBtn");
+const globalTimer=$("#globalTimer");
+const sectionTimer=$("#sectionTimer");
+const statSection=$("#statSection");
+const statQ=$("#statQ");
+const statScore=$("#statScore");
+const statAcc=$("#statAcc");
+const statRemaining=$("#statRemaining");
+const overallProgress=$("#overallProgress");
+const mistakesList=$("#mistakesList");
+const summaryBox=$("#summaryBox");
+const engineMsg=$("#engineMsg");
+
+/* ================== Config Binding ================== */
+function loadConfigFromUI(){
+  STATE.config.practice = $("#includePractice").value==="on";
+  STATE.config.englishCount = parseInt($("#englishCount").value,10)||25;
+  STATE.config.vrCount = parseInt($("#vrCount").value,10)||32;
+  STATE.config.mathsCount = parseInt($("#mathCount").value,10)||20;
+  STATE.config.mathsTime = parseInt($("#mathTime").value,10)*60||1800;
+  STATE.config.autoAdvance = $("#autoAdvance").value==="on";
+  STATE.config.shuffleSections = $("#shuffleSections").value==="on";
+  STATE.config.fontScale = parseFloat($("#fontScale").value);
+  STATE.config.fetchPassage = $("#fetchPassage").value==="try";
+  document.documentElement.style.fontSize = (16*STATE.config.fontScale)+"px";
+}
+
+/* ============= Passage (Comprehension) Generation ============= */
+const LOCAL_PASSAGES=[
+`Night settled over the small estuary town with a softness that made even the chimneys appear gentle. Lantern light trembled across puddles left by the retreating tide. Somewhere beyond the dark marshes a curlew called, its voice a lonelier echo than the wind could manage.`,
+`A pale mist hovered above the moor, neither rising nor falling, as if uncertain whether the dawn had earned its arrival. Heather heads, still jewelled by rain, leaned in quiet congress. A distant train sighed, a brief ribbon of sound stitching the hills before silence knit it closed again.`,
+`Under the museum’s glass dome the air felt preserved, faintly cool. The restored astrolabe – all brass arcs and minute inscriptions – seemed almost restless on its plinth, a hand caught mid-gesture toward a star no longer watched so carefully.`];
+
+async function fetchPublicDomainSnippet(){
+  if(!STATE.config.fetchPassage) return null;
+  try{
+    // Lightweight attempt: fetch a small Gutenberg plain-text file (CORS sometimes allowed)
+    const sources=[
+      "https://www.gutenberg.org/cache/epub/2701/pg2701.txt", // Moby Dick
+      "https://www.gutenberg.org/cache/epub/1342/pg1342.txt", // Pride & Prejudice
+      "https://www.gutenberg.org/cache/epub/98/pg98.txt"      // Tale of Two Cities
+    ];
+    const url=pick(sources);
+    const r=await fetch(url,{method:"GET",mode:"cors"});
+    if(!r.ok) throw new Error("Fetch fail");
+    const txt=await r.text();
+    // Grab a random mid slice ~ 500 chars ending at sentence boundary
+    let start=Math.floor(Math.random()*(txt.length-40000))+20000; // skip headers
+    let chunk=txt.slice(start,start+700);
+    // Trim to sentence boundary
+    let endIdx=Math.max(chunk.lastIndexOf("."),chunk.lastIndexOf("!"),chunk.lastIndexOf("?"));
+    if(endIdx>150) chunk=chunk.slice(0,endIdx+1);
+    // Remove excessive whitespace
+    chunk=chunk.replace(/\s+/g," ").trim();
+    return chunk;
+  }catch(e){
+    console.warn("Passage fetch failed, fallback local:",e);
+    return null;
+  }
+}
+
+/* ===== Generate Comprehension Questions from Passage ===== 
+Simple heuristic types:
+  - Main Idea
+  - Vocabulary in Context (pick a mid-length noun/adjective)
+  - Detail Recall (pick a sentence fragment)
+  - Tone / Atmosphere
+*/
+function buildComprehensionSet(passage, needed=5){
+  const questions=[];
+  const sentences=passage.split(/(?<=[\.!?])\s+/).filter(s=>s.length>20);
+  const lower=passage.toLowerCase();
+
+  // Main Idea
+  questions.push({
+    kind:"Comprehension Main Idea",
+    text:`Read the passage:\n"${passage}"\n\nWhich option BEST summarizes the main idea?`,
+    answer:"It evokes a vivid atmosphere through descriptive imagery.",
+    options:shuffle([
+      "It evokes a vivid atmosphere through descriptive imagery.",
+      "It explains scientific principles in detail.",
+      "It argues for urgent political change.",
+      "It is a humorous list of unrelated facts.",
+      "It provides step-by-step instructions."
+    ])
+  });
+
+  // Tone / Mood
+  questions.push({
+    kind:"Comprehension Tone",
+    text:"What is the dominant mood or tone of the passage?",
+    answer:"Reflective and atmospheric",
+    options:shuffle([
+      "Reflective and atmospheric",
+      "Angry and accusatory",
+      "Playful and comedic",
+      "Strictly instructional",
+      "Chaotic and frantic"
+    ])
+  });
+
+  // Vocabulary in context
+  const tokens=passage.replace(/[^A-Za-z\s]/g,"").split(/\s+/);
+  const candidates=tokens.filter(w=>w.length>=5 && /^[a-z]+$/i.test(w));
+  let target=pick(candidates) || "mood";
+  target=target.replace(/^\W+|\W+$/g,"");
+  questions.push({
+    kind:"Comprehension Vocab",
+    text:`In the passage, which word is CLOSEST in meaning to "${target}" as used there?`,
+    answer:"(context dependent) similar nuance",
+    options:shuffle([
+      "(context dependent) similar nuance",
+      "opposite meaning",
+      "unrelated technical term",
+      "random adjective",
+      "literal object"
+    ])
+  });
+
+  // Detail (choose a sentence)
+  const det=pick(sentences);
+  questions.push({
+    kind:"Comprehension Detail",
+    text:`Which statement best matches a detail from this sentence:\n"${det}"`,
+    answer:"A correct paraphrase of that sentence",
+    options:shuffle([
+      "A correct paraphrase of that sentence",
+      "A contradiction of the sentence",
+      "An unrelated assumption",
+      "A future prediction",
+      "A numerical statistic not mentioned"
+    ])
+  });
+
+  // Inference
+  questions.push({
+    kind:"Comprehension Inference",
+    text:`What can be reasonably inferred from the passage?`,
+    answer:"The author focuses more on mood than on plot events.",
+    options:shuffle([
+      "The author focuses more on mood than on plot events.",
+      "The passage lists many character dialogues.",
+      "The passage contains complex mathematical data.",
+      "The author criticizes industrial policy.",
+      "The passage is a comedic farce."
+    ])
+  });
+
+  return questions.slice(0,needed);
+}
+
+/* ================== English Question Generators ================== */
+const SYNONYMS=[
+  {word:"serene",correct:"calm",distr:["quick","angry","broken","solid"]},
+  {word:"diligent",correct:"hardworking",distr:["careless","sleepy","rapid","fragile"]},
+  {word:"vivid",correct:"bright",distr:["dull","silent","rough","scarce"]},
+  {word:"abrupt",correct:"sudden",distr:["gradual","extended","gentle","lazy"]},
+  {word:"scarce",correct:"rare",distr:["plentiful","thick","warm","near"]}
+];
+const ANTONYMS=[
+  {word:"opaque",correct:"transparent",distr:["milky","clouded","solid","dense"]},
+  {word:"ancient",correct:"modern",distr:["historic","aged","old","antique"]},
+  {word:"expand",correct:"shrink",distr:["stretch","grow","increase","widen"]},
+  {word:"fragile",correct:"robust",distr:["delicate","brittle","flexible","weak"]},
+  {word:"scarce",correct:"plentiful",distr:["rare","thin","minimal","limited"]}
+];
+const CLOZE=[
+  {sentence:"Despite the sudden delay, the team remained ____ and finished the task.",answer:"resilient",distr:["careless","hollow","sullen","ancient"]},
+  {sentence:"Her explanation was so ____ that even the youngest pupils understood.",answer:"clear",distr:["opaque","stern","hasty","brisk"]},
+  {sentence:"The valley air was ____ with early spring fragrance.",answer:"rich",distr:["hostile","fractured","barren","metallic"]},
+  {sentence:"He gave a ____ glance that revealed quiet confidence.",answer:"steady",distr:["restless","fragile","vacant","timid"]},
+];
+const SPELLING=[
+  {correct:"accommodate",wrong:["accomodate","acommodate","accomdate"]},
+  {correct:"necessary",wrong:["neccesary","necessery","nessessary"]},
+  {correct:"separate",wrong:["seperate","separatte","seperete"]},
+  {correct:"questionnaire",wrong:["questionaire","questionnare","questionnair"]},
+  {correct:"rhythm",wrong:["rythm","rhythem","rhythmn"]}
+];
+const PUNCT=[
+  {parts:["Yesterday","my sister","visited paris","for a concert."],error:2,kind:"capitalization"},
+  {parts:["Please","bring your coat","its raining","outside now."],error:2,kind:"apostrophe"},
+  {parts:["She asked","Where are you going?","before leaving","the room."],error:1,kind:"quotation"},
+  {parts:["On Friday","we studied","maths, geography","and history."],error:-1,kind:"none"}
+];
+
+function genSynonym(){
+  const s=pick(SYNONYMS);
+  const opts=shuffle([s.correct,...sample(s.distr,4)]);
+  return {kind:"Synonym",text:`Choose the closest synonym of: ${s.word}`,options:opts,answer:s.correct};
+}
+function genAntonym(){
+  const a=pick(ANTONYMS);
+  const opts=shuffle([a.correct,...sample(a.distr,4)]);
+  return {kind:"Antonym",text:`Choose the word most opposite in meaning to: ${a.word}`,options:opts,answer:a.correct};
+}
+function genCloze(){
+  const c=pick(CLOZE);
+  const opts=shuffle([c.answer,...sample(c.distr,4)]);
+  return {kind:"Cloze",text:`${c.sentence.replace("____","_____")}\nSelect the best word.`,options:opts,answer:c.answer};
+}
+function genSpelling(){
+  const base=pick(SPELLING);
+  const useWrong=Math.random()<0.75;
+  const chosen=useWrong?pick(base.wrong):base.correct;
+  function chunk(w){
+    const len=w.length;
+    const seg=Math.floor(len/4)||1;
+    const arr=[];
+    let p=0;
+    for(let i=0;i<3;i++){arr.push(w.slice(p,p+seg));p+=seg;}
+    arr.push(w.slice(p));
+    return arr;
+  }
+  const parts=chunk(chosen);
+  let answer="N";
+  if(chosen!==base.correct){
+    const corrParts=chunk(base.correct);
+    let idx=0;
+    for(let i=0;i<4;i++){if(parts[i]!==corrParts[i]){idx=i;break;}}
+    answer=["A","B","C","D"][idx];
+  }
+  return {kind:"Spelling Error",text:`Identify the part containing a spelling mistake or 'N' if none:\nA: ${parts[0]}  B: ${parts[1]}  C: ${parts[2]}  D: ${parts[3]}`,options:["A","B","C","D","N"],answer};
+}
+function genPunctuation(){
+  const p=pick(PUNCT);
+  const answer=p.error===-1?"N":["A","B","C","D"][p.error];
+  const line=p.parts.map((seg,i)=>`${["A","B","C","D"][i]}: ${seg}`).join(" | ");
+  return {kind:"Punctuation",text:`Choose the segment with an error (capital/punctuation) or 'N' if none:\n${line}`,options:["A","B","C","D","N"],answer};
+}
+
+/* ================== Verbal Reasoning Generators ================== */
+function genV_LetterPairs(){
+  const alpha="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const start1=Math.floor(Math.random()*18);
+  const start2=Math.floor(Math.random()*10)+5;
+  const step1=pick([1,2,3]);
+  const step2=pick([1,2,3]);
+  let a1=start1,a2=start2;
+  const sequence=[];
+  for(let i=0;i<5;i++){
+    sequence.push(alpha[a1%26]+alpha[a2%26]);
+    a1+=step1; a2+=step2;
+  }
+  const answer=sequence.pop();
+  const question=`${sequence.join("   ")}   [ ? ]`;
+  const distract=new Set();
+  while(distract.size<4){
+    const d=alpha[(a1+Math.floor(Math.random()*5)-2+26)%26]+alpha[(a2+Math.floor(Math.random()*5)-2+26)%26];
+    if(d!==answer)distract.add(d);
+  }
+  const options=shuffle([answer,...distract]);
+  return {kind:"VR Letter Pair Sequence",text:question,options,answer};
+}
+function genV_Compound(){
+  const sets=[
+    {g1:["rain","moon","sun"],g2:["bow","rise","light"],ans:["rain","bow"]},
+    {g1:["some","any","every"],g2:["thing","where","one"],ans:["every","one"]},
+    {g1:["under","out","side"],g2:["line","side","fit"],ans:["out","side"]}
+  ];
+  const s=pick(sets);
+  const valid = s.ans[0]+" + "+s.ans[1];
+  const combos=new Set([valid]);
+  while(combos.size<5){
+    const c=s.g1[Math.floor(Math.random()*s.g1.length)]+" + "+s.g2[Math.floor(Math.random()*s.g2.length)];
+    combos.add(c);
+  }
+  return {kind:"VR Compound Word",text:`(${s.g1.join("   ")})\n(${s.g2.join("   ")})\nSelect the two (one from each line) forming a valid single word.`,options:shuffle([...combos]),answer:valid};
+}
+function genV_SynPair(){
+  const sets=[
+    {g1:["big","cold","rapid"],g2:["swift","tiny","large"],ans:["big","large"]},
+    {g1:["silent","angry","rough"],g2:["quiet","sharp","late"],ans:["silent","quiet"]},
+    {g1:["quick","mild","firm"],g2:["fast","loose","bent"],ans:["quick","fast"]}
+  ];
+  const s=pick(sets);
+  const valid=s.ans[0]+" + "+s.ans[1];
+  const combos=new Set([valid]);
+  while(combos.size<5){
+    const c=pick(s.g1)+" + "+pick(s.g2);
+    combos.add(c);
+  }
+  return {kind:"VR Synonym Pair",text:`(${s.g1.join("   ")})\n(${s.g2.join("   ")})\nSelect the two (one from each) most similar in meaning.`,options:shuffle([...combos]),answer:valid};
+}
+function genV_Hidden(){
+  const sentences=[
+    "The lantern softly brightened the archway.",
+    "A silent owl drifted overhead cautiously.",
+    "They scarcely noticed the evening lowering."
+  ];
+  const s=pick(sentences);
+  const words=s.replace(/[^\w\s]/g,"").split(/\s+/);
+  let hiddenWord=""; let pair="";
+  for(let i=0;i<words.length-1;i++){
+    const w1=words[i],w2=words[i+1];
+    for(let cut=1;cut<4;cut++){
+      const left=w1.slice(-cut), need=4-cut;
+      if(need>0 && w2.length>=need){
+        const cand = (left+w2.slice(0,need)).toLowerCase();
+        if(cand.length===4 && /^[a-z]+$/.test(cand)){
+          hiddenWord=cand;
+          pair=w1+" "+w2;
+          break;
+        }
+      }
+    }
+    if(hiddenWord)break;
+  }
+  if(!hiddenWord){pair=words[0]+" "+words[1]; hiddenWord="seed";}
+  const pairOpts=[];
+  for(let i=0;i<words.length-1;i++){pairOpts.push(words[i]+" "+words[i+1]);}
+  while(pairOpts.length<5) pairOpts.push(pairOpts[0]);
+  return {kind:"VR Hidden Word",text:`Find the pair hiding a 4-letter word across the boundary.\n${s}`,options:shuffle(pairOpts.slice(0,5)),answer:pair};
+}
+function genV_LetterArithmetic(){
+  // Example: advance both letters by pattern difference
+  const alpha="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let start= Math.floor(Math.random()*10);
+  let diff= pick([2,3,4,5]);
+  const seq=[];
+  for(let i=0;i<4;i++){
+    seq.push(alpha[(start+i*diff)%26]);
+  }
+  const next=alpha[(start+4*diff)%26];
+  const question=seq.join("  ")+"  [ ? ]";
+  const opts=new Set([next]);
+  while(opts.size<5){
+    const cand=alpha[(start+4*diff + (Math.floor(Math.random()*7)-3)+26)%26];
+    opts.add(cand);
+  }
+  return {kind:"VR Letter Progression",text:question,options:shuffle([...opts]),answer:next};
+}
+
+/* ================== Maths Generators ================== */
+function m_Percentage(){
+  const base = Math.floor(Math.random()*90)+10;
+  const pct = Math.floor(Math.random()*60)+10;
+  const answer = (base * pct /100).toFixed(2);
+  const opts=unique([answer,
+    (answer*1.05).toFixed(2),
+    (answer*0.95).toFixed(2),
+    (answer*1.1).toFixed(2),
+    (answer*0.9).toFixed(2)])
+    .slice(0,5);
+  return {kind:"Math Percentage",text:`Find ${pct}% of £${base}.`,options:shuffle(opts),answer};
+}
+function m_ReverseOp(){
+  const x = Math.floor(Math.random()*30)+5;
+  const mul=pick([2,3,4,5,6]);
+  const add=Math.floor(Math.random()*40)+10;
+  const result = x*mul + add;
+  const answer=x.toString();
+  const opts=shuffle([answer,(x+1)+"",(x-1)+"",(x+2)+"",(x+3)+""]);
+  return {kind:"Math Reverse Operation",text:`I think of a number, multiply by ${mul}, then add ${add}. Result: ${result}. What was my number?`,options:opts,answer};
+}
+function m_BODMAS(){
+  const a=Math.floor(Math.random()*9)+2;
+  const b=Math.floor(Math.random()*9)+2;
+  const c=Math.floor(Math.random()*9)+2;
+  const d=Math.floor(Math.random()*9)+2;
+  const expr=`(${a}+${b}) * ${c} - ${d}`;
+  const ans=( (a+b)*c - d );
+  const options=shuffle(unique([
+    ans,
+    ans+pick([-1,1,2,-2]),
+    (a+b)*c + d,
+    (a+b)*(c-d),
+    a+b*c-d
+  ].map(String)).slice(0,5));
+  return {kind:"Math BODMAS",text:`Evaluate: ${expr}`,options,answer:ans.toString()};
+}
+function m_Mean(){
+  const n=3+Math.floor(Math.random()*3);
+  const arr=Array.from({length:n},()=>Math.floor(Math.random()*40)+5);
+  const mean = (arr.reduce((a,b)=>a+b,0)/n).toFixed(2);
+  const opts=shuffle(unique([
+    mean,(mean*1.05).toFixed(2),(mean*0.95).toFixed(2),(mean*1.1).toFixed(2),(mean*0.9).toFixed(2)
+  ]));
+  return {kind:"Math Mean",text:`Find the mean of: ${arr.join(", ")}`,options:opts,answer:mean};
+}
+function m_AngleTriangle(){
+  const A=(Math.floor(Math.random()*6)+2)*10; // 20..80
+  const B=(Math.floor(Math.random()*6)+2)*10;
+  if(A+B>=170)return m_AngleTriangle();
+  const C=180-A-B;
+  const answer=C+"°";
+  const opts=shuffle(unique([answer,(C+10)+"°",(C-10>0?C-10:C+20)+"°",(C+20<=170?C+20:C-20)+"°",(C+15<=170?C+15:C-15)+"°"]));
+  return {kind:"Math Triangle Angle",text:`Two angles of a triangle are ${A}° and ${B}°. Find the third.`,options:opts,answer};
+}
+function m_TimeCalc(){
+  const hour = Math.floor(Math.random()*12);
+  const minute = Math.floor(Math.random()*60);
+  const addH = Math.floor(Math.random()*5)+1;
+  const addM = Math.floor(Math.random()*50)+5;
+  let total = hour*60+minute + addH*60 + addM;
+  total%=720;
+  const nh = Math.floor(total/60);
+  const nm = total%60;
+  const ampm = "am"; // using 12h simplified
+  const answer=`${((nh+11)%12)+1}:${pad2(nm)}${ampm}`;
+  const opts=new Set([answer]);
+  while(opts.size<5){
+    let rH=Math.floor(Math.random()*12);
+    let rM=Math.floor(Math.random()*60);
+    opts.add(`${((rH+11)%12)+1}:${pad2(rM)}am`);
+  }
+  return {kind:"Math Time",text:`Starting at ${((hour+11)%12)+1}:${pad2(minute)}am add ${addH} hours and ${addM} minutes. What time (12h am) is it?`,options:shuffle([...opts]),answer};
+}
+function m_Sequence(){
+  // arithmetic progression with a gap
+  const start=Math.floor(Math.random()*15)+2;
+  const diff=Math.floor(Math.random()*6)+2;
+  const arr=[];
+  for(let i=0;i<6;i++) arr.push(start+i*diff);
+  const missingIndex=Math.floor(Math.random()*4)+1;
+  const answer=arr[missingIndex];
+  arr[missingIndex]="?";
+  const opts=shuffle([answer,answer+diff,answer-diff,answer+2*diff,answer-diff*2].map(String));
+  return {kind:"Math Sequence",text:`Find the missing term: ${arr.join(", ")}`,options:opts,answer:answer.toString()};
+}
+function m_FractionPercent(){
+  const denom=pick([4,5,8,10,20,25,40,50]);
+  const num=Math.floor(Math.random()* (denom-1))+1;
+  const pct = +(num/denom*100).toFixed(2);
+  const answer=pct+"%";
+  const opts=shuffle(unique([
+    answer, (pct+5)+"%", (pct-5)+"%", (pct+10)+"%", (pct-10)+"%"
+  ].filter(x=>!x.includes("NaN"))));
+  return {kind:"Math Fraction→%",text:`${num}/${denom} equals what percent?`,options:opts,answer};
+}
+
+/* ================== Build Section Questions ================== */
+async function buildEnglishSection(count){
+  const out=[];
+  // Guarantee coverage of each core type at least once
+  const base=[genSynonym(),genAntonym(),genCloze(),genSpelling(),genPunctuation()];
+  base.forEach(b=>out.push(b));
+  while(out.length<count){
+    const r=Math.random();
+    if(r<0.22) out.push(genSynonym());
+    else if(r<0.44) out.push(genAntonym());
+    else if(r<0.64) out.push(genCloze());
+    else if(r<0.82) out.push(genSpelling());
+    else out.push(genPunctuation());
+  }
+  shuffle(out);
+  return out.slice(0,count);
+}
+function buildVRSection(count){
+  const out=[];
+  const base=[genV_LetterPairs(),genV_Compound(),genV_SynPair(),genV_Hidden(),genV_LetterArithmetic()];
+  base.forEach(b=>out.push(b));
+  const gens=[genV_LetterPairs,genV_Compound,genV_SynPair,genV_Hidden,genV_LetterArithmetic];
+  while(out.length<count){
+    out.push(pick(gens)());
+  }
+  shuffle(out);
+  return out.slice(0,count);
+}
+function buildMathSection(count){
+  const out=[];
+  const base=[m_Percentage(),m_ReverseOp(),m_BODMAS(),m_Mean(),m_AngleTriangle(),m_TimeCalc(),m_Sequence(),m_FractionPercent()];
+  base.forEach(b=>out.push(b));
+  const gens=[m_Percentage,m_ReverseOp,m_BODMAS,m_Mean,m_AngleTriangle,m_TimeCalc,m_Sequence,m_FractionPercent];
+  while(out.length<count){
+    out.push(pick(gens)());
+  }
+  shuffle(out);
+  return out.slice(0,count);
+}
+
+/* ================== Section Orchestration ================== */
+async function buildSections(){
+  loadConfigFromUI();
+  STATE.sections=[];
+  // Practice sections
+  if(STATE.config.practice){
+    STATE.sections.push({
+      id:"eng-practice",
+      title:"English Practice",
+      timeLimit:5*60,
+      practice:true,
+      questions: await buildEnglishSection(8)
+    });
+  }
+
+  // Comprehension (English) separate
+  let passage = await fetchPublicDomainSnippet();
+  if(!passage) passage=pick(LOCAL_PASSAGES);
+  const compQuestions=buildComprehensionSet(passage,5);
+  STATE.sections.push({
+    id:"english",
+    title:"English Test",
+    timeLimit:STATE.config.englishTime,
+    practice:false,
+    questions:[...compQuestions, ...(await buildEnglishSection(Math.max(STATE.config.englishCount- compQuestions.length, 10)))]
+      .slice(0,STATE.config.englishCount)
+  });
+
+  if(STATE.config.practice){
+    STATE.sections.push({
+      id:"vr-practice",
+      title:"Verbal Reasoning Practice",
+      timeLimit:5*60,
+      practice:true,
+      questions: buildVRSection(8)
+    });
+  }
+  STATE.sections.push({
+    id:"vr",
+    title:"Verbal Reasoning Test",
+    timeLimit:STATE.config.vrTime,
+    practice:false,
+    questions: buildVRSection(STATE.config.vrCount)
+  });
+
+  // Maths
+  if(STATE.config.practice){
+    STATE.sections.push({
+      id:"math-practice",
+      title:"Maths Practice",
+      timeLimit:5*60,
+      practice:true,
+      questions: buildMathSection(8)
+    });
+  }
+  STATE.sections.push({
+    id:"math",
+    title:"Maths Test",
+    timeLimit:STATE.config.mathsTime,
+    practice:false,
+    questions: buildMathSection(STATE.config.mathsCount)
+  });
+
+  if(STATE.config.shuffleSections){
+    // Keep relative order of practice->test pairs? We'll move practice before its test by weighting
+    const pr=[]; const te=[];
+    STATE.sections.forEach(s=> s.practice?pr.push(s):te.push(s));
+    shuffle(pr); shuffle(te);
+    STATE.sections=[...pr,...te];
+  }
+}
+
+/* ================== Rendering ================== */
+function clearMain(){
+  mainArea.innerHTML="";
+}
+function renderSectionsShell(){
+  clearMain();
+  STATE.sections.forEach(sec=>{
+    const div=document.createElement("div");
+    div.className="section-card";
+    div.id="sec-"+sec.id;
+    div.innerHTML=`
+      <div class="section-head">
+        <h2>${sec.title}</h2>
+        <span class="badge">${sec.practice?"Practice":"Test"}</span>
+        <span class="badge">${sec.questions.length} Qs</span>
+        <span class="badge">${Math.round(sec.timeLimit/60)} min</span>
+      </div>
+      <div class="question-box">
+        <div class="qtext" id="qtext-${sec.id}" style="white-space:pre-wrap;font-size:.82rem;"></div>
+        <div class="options-grid" id="opts-${sec.id}"></div>
+        <div class="feedback" id="feed-${sec.id}"></div>
+        <div class="meta-line" id="meta-${sec.id}"></div>
+      </div>
+    `;
+    mainArea.appendChild(div);
+  });
+}
+function updateStats(){
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  const totalQs=STATE.sections.reduce((a,s)=>a+s.questions.length,0);
+  const answered=STATE.answers.length;
+  overallProgress.style.width= (answered/totalQs*100).toFixed(1)+"%";
+  statSection.textContent=`Section ${STATE.currentSectionIdx+1}/${STATE.sections.length}`;
+  statQ.textContent=`Q ${STATE.currentQuestionIdx+1}/${sec.questions.length}`;
+  statScore.textContent=`Score ${STATE.score}`;
+  const acc = STATE.scoredQuestions? (STATE.score/STATE.scoredQuestions*100).toFixed(1):"0.0";
+  statAcc.textContent=`Acc ${acc}%`;
+  statRemaining.textContent=`Remain: ${totalQs-answered}`;
+}
+function renderQuestion(){
+  STATE.sections.forEach((s,i)=>{
+    const card=$("#sec-"+s.id);
+    if(card) card.classList.toggle("active", i===STATE.currentSectionIdx);
+  });
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  const q=sec.questions[STATE.currentQuestionIdx];
+  const qtext=$("#qtext-"+sec.id);
+  const optsCont=$("#opts-"+sec.id);
+  const feed=$("#feed-"+sec.id);
+  const meta=$("#meta-"+sec.id);
+  qtext.textContent=`[${q.kind}] \n${q.text}`;
+  optsCont.innerHTML="";
+  feed.textContent="";
+  meta.textContent="";
+  q.options.forEach(opt=>{
+    const btn=document.createElement("button");
+    btn.className="option-btn";
+    btn.textContent=opt;
+    btn.onclick=()=>handleAnswer(btn,opt);
+    optsCont.appendChild(btn);
+  });
+  updateStats();
+  scrollIntoViewIfNeeded("sec-"+sec.id);
+}
+function scrollIntoViewIfNeeded(id){
+  const el=$("#"+id);
+  if(el){
+    const rect=el.getBoundingClientRect();
+    if(rect.top<80 || rect.bottom>window.innerHeight-40){
+      el.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  }
+}
+
+/* ================== Answer Handling ================== */
+function handleAnswer(btn,opt){
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  const q=sec.questions[STATE.currentQuestionIdx];
+  const optsCont=$("#opts-"+sec.id);
+  if(btn.dataset.done) return;
+  const startTime=q._start || now();
+  btn.dataset.done="1";
+  const all=[...optsCont.querySelectorAll(".option-btn")];
+  all.forEach(b=>b.classList.add("locked"));
+  const correct = opt===q.answer;
+  all.forEach(b=>{
+    if(b.textContent===q.answer) b.classList.add("correct");
+  });
+  if(!correct){
+    btn.classList.add("wrong");
+    if(!sec.practice){
+      STATE.mistakes.push({
+        section:sec.title,
+        title:sec.title,
+        type:q.kind,
+        question:q.text.slice(0,160),
+        chosen:opt,
+        answer:q.answer
+      });
+    }
+  }
+  if(correct){
+    btn.classList.add("correct");
+    if(!sec.practice) STATE.score++;
+  }
+  if(!sec.practice) STATE.scoredQuestions++;
+  const feed=$("#feed-"+sec.id);
+  feed.innerHTML = correct? `<span class="ok">Correct</span>`:`<span class="bad">Incorrect</span> (Ans: ${q.answer})`;
+  STATE.answers.push({
+    sectionId:sec.id,
+    sectionTitle:sec.title,
+    qIndex:STATE.currentQuestionIdx,
+    chosen:opt,
+    correct,
+    correctAnswer:q.answer,
+    type:q.kind,
+    practice:sec.practice,
+    timeMs: now()-startTime
+  });
+  updateMistakesUI();
+  updateStats();
+  setTimeout(()=>{
+    advanceQuestion();
+  }, STATE.config.autoAdvance? 650:0);
+}
+function advanceQuestion(){
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  STATE.currentQuestionIdx++;
+  if(STATE.currentQuestionIdx>=sec.questions.length){
+    // section done
+    if(STATE.currentSectionIdx>=STATE.sections.length-1){
+      finishTest();
+      return;
+    }else{
+      STATE.currentSectionIdx++;
+      STATE.currentQuestionIdx=0;
+      startSectionTimer();
+      renderQuestion();
+    }
+  }else{
+    renderQuestion();
+  }
+}
+
+/* ================== Timers ================== */
+function startGlobalTimer(){
+  STATE.globalStart=now();
+  if(STATE.globalTimer) clearInterval(STATE.globalTimer);
+  STATE.globalTimer=setInterval(()=>{
+    const elapsed=Math.floor((now()-STATE.globalStart)/1000);
+    const m=Math.floor(elapsed/60), s=elapsed%60;
+    globalTimer.textContent=`Total: ${pad2(m)}:${pad2(s)}`;
+  },1000);
+}
+function startSectionTimer(){
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  STATE.sectionEndAt= now() + sec.timeLimit*1000;
+  if(STATE.sectionTimer) clearInterval(STATE.sectionTimer);
+  sectionTimer.textContent=`Section: ${pad2(Math.floor(sec.timeLimit/60))}:${pad2(sec.timeLimit%60)}`;
+  STATE.sectionTimer=setInterval(()=>{
+    const remain=Math.max(0, Math.floor((STATE.sectionEndAt - now())/1000));
+    sectionTimer.textContent=`Section: ${pad2(Math.floor(remain/60))}:${pad2(remain%60)}`;
+    if(remain<=0){
+      clearInterval(STATE.sectionTimer);
+      autoCompleteSectionTimeout();
+    }
+  },1000);
+}
+function autoCompleteSectionTimeout(){
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  // Mark remaining as unanswered (wrong if test)
+  for(let i=STATE.currentQuestionIdx;i<sec.questions.length;i++){
+    const q=sec.questions[i];
+    if(!sec.practice){
+      STATE.answers.push({
+        sectionId:sec.id,
+        sectionTitle:sec.title,
+        qIndex:i,
+        chosen:null,
+        correct:false,
+        correctAnswer:q.answer,
+        type:q.kind,
+        practice:false,
+        timeMs:0
+      });
+      STATE.scoredQuestions++;
+      STATE.mistakes.push({
+        section:sec.title,
+        title:sec.title,
+        type:q.kind,
+        question:q.text.slice(0,160),
+        chosen:"(blank)",
+        answer:q.answer
+      });
+    }
+  }
+  if(STATE.currentSectionIdx>=STATE.sections.length-1){
+    finishTest();
+  } else {
+    STATE.currentSectionIdx++;
+    STATE.currentQuestionIdx=0;
+    startSectionTimer();
+    renderQuestion();
+  }
+  updateMistakesUI();
+  updateStats();
+}
+
+/* ================== Mistakes & Summary ================== */
+function updateMistakesUI(){
+  if(!STATE.mistakes.length){
+    mistakesList.textContent="None yet.";
+    return;
+  }
+  mistakesList.innerHTML="";
+  STATE.mistakes.slice(-200).forEach(m=>{
+    const d=document.createElement("div");
+    d.className="mistake-item";
+    d.innerHTML=`<span class="highlight-bad">✖</span> <strong>${m.section}</strong> [${m.type}]<br><span style="color:var(--bad);">Your:</span> ${m.chosen} <span style="color:var(--ok);">Ans:</span> ${m.answer}`;
+    mistakesList.appendChild(d);
+  });
+}
+function buildSummary(){
+  const testSections=STATE.sections.filter(s=>!s.practice);
+  const perSection=testSections.map(sec=>{
+    const secAnswers=STATE.answers.filter(a=>a.sectionId===sec.id);
+    const correct=secAnswers.filter(a=>a.correct).length;
+    return {id:sec.id,title:sec.title,correct,total:sec.questions.length,percent: (correct/sec.questions.length*100).toFixed(1)};
+  });
+  const typeMap={};
+  STATE.answers.filter(a=>!a.practice).forEach(a=>{
+    if(!typeMap[a.type]) typeMap[a.type]={correct:0,total:0};
+    typeMap[a.type].total++;
+    if(a.correct) typeMap[a.type].correct++;
+  });
+  let html=`<div><strong>Score:</strong> <span class="highlight-ok">${STATE.score}</span> / ${STATE.scoredQuestions} (${(STATE.score/STATE.scoredQuestions*100).toFixed(1)}%)</div>`;
+  html+=`<table class="summary-table"><tr><th>Section</th><th>Score</th><th>%</th></tr>`;
+  perSection.forEach(s=>{
+    html+=`<tr><td>${s.title}</td><td>${s.correct}/${s.total}</td><td>${s.percent}%</td></tr>`;
+  });
+  html+=`</table>`;
+  html+=`<div style="margin-top:.7rem;font-weight:600;">By Question Type (focus lower %):</div>`;
+  html+=`<table class="summary-table"><tr><th>Type</th><th>Correct</th><th>%</th></tr>`;
+  Object.entries(typeMap).sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total)).forEach(([k,v])=>{
+    const pct=(v.correct/v.total*100).toFixed(1);
+    html+=`<tr><td>${k}</td><td>${v.correct}/${v.total}</td><td>${pct}%</td></tr>`;
+  });
+  html+=`</table>`;
+  if(STATE.mistakes.length){
+    html+=`<div style="margin-top:.75rem;font-weight:600;color:var(--bad);">Mistakes Review (Latest):</div>`;
+    html+=`<ul style="max-height:220px;overflow:auto;padding-left:1.05rem;">`;
+    STATE.mistakes.slice(-100).forEach(m=>{
+      html+=`<li style="margin:.25rem 0;">[${m.type}] ${m.question} <br><span style="color:var(--bad);">Your:</span> ${m.chosen} | <span style="color:var(--ok);">Ans:</span> ${m.answer}</li>`;
+    });
+    html+=`</ul>`;
+  } else {
+    html+=`<div style="margin-top:.75rem;color:var(--ok);font-weight:600;">Perfect! No mistakes recorded.</div>`;
+  }
+  summaryBox.innerHTML=html;
+}
+
+/* ================== Control Flow ================== */
+async function startTest(){
+  STATE.started=true;
+  STATE.finished=false;
+  STATE.answers=[];
+  STATE.mistakes=[];
+  STATE.score=0;
+  STATE.scoredQuestions=0;
+  summaryBox.textContent="In progress...";
+  mistakesList.textContent="None yet.";
+  engineMsg.textContent="Building sections...";
+  await buildSections();
+  renderSectionsShell();
+  STATE.currentSectionIdx=0;
+  STATE.currentQuestionIdx=0;
+  engineMsg.textContent="Test running.";
+  startGlobalTimer();
+  startSectionTimer();
+  // mark start times
+  STATE.sections.forEach(sec=> sec.questions.forEach(q=> q._start=now()));
+  renderQuestion();
+  nextSectionBtn.disabled=false;
+  submitBtn.disabled=false;
+  exportBtn.disabled=false;
+}
+function nextSectionManual(){
+  if(!STATE.started||STATE.finished) return;
+  const sec=STATE.sections[STATE.currentSectionIdx];
+  if(STATE.currentQuestionIdx<sec.questions.length-1){
+    if(!confirm("Section not finished. Unanswered become incorrect (test sections). Continue?")) return;
+    // mark remainder
+    for(let i=STATE.currentQuestionIdx;i<sec.questions.length;i++){
+      const q=sec.questions[i];
+      if(!sec.practice){
+        STATE.answers.push({
+          sectionId:sec.id,sectionTitle:sec.title,qIndex:i,chosen:null,
+          correct:false,correctAnswer:q.answer,type:q.kind,practice:false,timeMs:0
+        });
+        STATE.scoredQuestions++;
+        STATE.mistakes.push({
+          section:sec.title,title:sec.title,type:q.kind,question:q.text.slice(0,160),chosen:"(blank)",answer:q.answer
+        });
+      }
+    }
+  }
+  if(STATE.currentSectionIdx>=STATE.sections.length-1){
+    finishTest();
+    return;
+  }
+  STATE.currentSectionIdx++;
+  STATE.currentQuestionIdx=0;
+  startSectionTimer();
+  renderQuestion();
+  updateMistakesUI();
+  updateStats();
+}
+function finishTest(){
+  if(STATE.finished) return;
+  STATE.finished=true;
+  clearInterval(STATE.globalTimer);
+  clearInterval(STATE.sectionTimer);
+  engineMsg.textContent="Finished.";
+  buildSummary();
+  submitBtn.disabled=true;
+  nextSectionBtn.disabled=true;
+}
+function submitEarly(){
+  if(!STATE.started || STATE.finished) return;
+  if(!confirm("Submit test now?")) return;
+  finishTest();
+}
+function exportJSON(){
+  const data={
+    meta:{
+      generated:new Date().toISOString(),
+      score:STATE.score,
+      totalScored:STATE.scoredQuestions,
+      accuracy:STATE.scoredQuestions?STATE.score/STATE.scoredQuestions:0
+    },
+    sections:STATE.sections.map(s=>({id:s.id,title:s.title,practice:s.practice,timeLimit:s.timeLimit,count:s.questions.length})),
+    answers:STATE.answers
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="11plus_mock_session.json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},200);
+}
+
+/* ================== Events ================== */
+startBtn.addEventListener("click",()=>{
+  if(STATE.started && !STATE.finished){
+    if(!confirm("Restart? Current progress lost.")) return;
+  }
+  startTest();
+});
+nextSectionBtn.addEventListener("click",nextSectionManual);
+submitBtn.addEventListener("click",submitEarly);
+exportBtn.addEventListener("click",exportJSON);
+$("#clearMistakesBtn").addEventListener("click",()=>{
+  STATE.mistakes=[];
+  updateMistakesUI();
+});
+document.getElementById("fontScale").addEventListener("change",loadConfigFromUI);
+
+/* Keyboard shortcuts */
+document.addEventListener("keydown",e=>{
+  if(!STATE.started || STATE.finished) return;
+  if(e.key==="ArrowRight") nextSectionManual();
+  if(e.key==="Enter" && STATE.config.autoAdvance===false){
+    // Manual next when not auto-advance
+    advanceQuestion();
+  }
+});
+
+/* ================== Initial ================== */
+loadConfigFromUI();
+engineMsg.textContent="Ready. Configure & press Start.";
+</script>
+</body>
+</html>
