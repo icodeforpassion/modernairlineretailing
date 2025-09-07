@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vivaan Maths Practice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+    #timer {
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: normal;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #f0f0f0;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background: #e0e0e0;
+    }
+    .options button.correct {
+      background: #4CAF50;
+      color: white;
+    }
+    .options button.wrong {
+      background: #E74C3C;
+      color: white;
+    }
+    .mistakes-tab {
+      background: #fff8f8;
+      border: 1px solid #f5c6cb;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .mistakes-tab h3 {
+      margin-top: 0;
+      color: #c0392b;
+    }
+    .reset-btn {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .reset-btn:hover {
+      background: #357ab7;
+    }
+    
+    .floating-timer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #4a90e2;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 100;
+      transition: top 0.3s, left 0.3s;
+    }
+    .card {
+      position: relative; /* make this relative so the timer is positioned inside the card */
+    }
+  </style>
+</head>
+<body>
+
+<div id="timer" class="floating-timer">Time: 0s</div>
+
+  <header>
+    Vivaan's Maths Practice
+  </header>
+  <div class="container">
+
+    <!-- Section 1: Mean Average -->
+    <div class="card" id="mean-average-section">
+      <h2>Mean Average</h2>
+      <div class="question" id="mean-question"></div>
+      <div class="options" id="mean-options"></div>
+    </div>
+
+    <!-- Section 2: Bearings -->
+    <div class="card" id="bearings-section">
+      <h2>Bearings</h2>
+      <div class="question" id="bearings-question"></div>
+      <div class="options" id="bearings-options"></div>
+    </div>
+
+    <!-- Section 3: Time & Measurements -->
+    <div class="card" id="time-section">
+      <h2>Time & Measurements</h2>
+      <div class="question" id="time-question"></div>
+      <div class="options" id="time-options"></div>
+    </div>
+
+    <!-- Section 4: Ordering -->
+    <div class="card" id="ordering-section">
+      <h2>Ordering</h2>
+      <div class="question" id="ordering-question"></div>
+      <div class="options" id="ordering-options"></div>
+    </div>
+
+    <!-- Section 5: Larger Decimals Ordering -->
+    <div class="card" id="decimal-ordering-section">
+      <h2>Larger Decimals Ordering</h2>
+      <div class="question" id="decimal-ordering-question"></div>
+      <div class="options" id="decimal-ordering-options"></div>
+    </div>
+
+    <!-- Section 6: Percentage Discount -->
+    <div class="card" id="percentage-discount-section">
+      <h2>Percentage Discount</h2>
+      <div class="question" id="percentage-discount-question"></div>
+      <div class="options" id="percentage-discount-options"></div>
+    </div>
+
+    <!-- Section 7: Reverse Calculation -->
+    <div class="card" id="reverse-calc-section">
+      <h2>Reverse Calculation</h2>
+      <div class="question" id="reverse-calc-question"></div>
+      <div class="options" id="reverse-calc-options"></div>
+    </div>
+
+    <!-- Section 8: BODMAS -->
+    <div class="card" id="bodmas-section">
+      <h2>BODMAS / Arithmetic</h2>
+      <div class="question" id="bodmas-question"></div>
+      <div class="options" id="bodmas-options"></div>
+    </div>
+
+    <!-- Section 9: Percentage Calculations -->
+    <div class="card" id="percentage-section">
+      <h2>Percentage Calculations</h2>
+      <div class="question" id="percentage-question"></div>
+      <div class="options" id="percentage-options"></div>
+    </div>
+
+    <!-- Section 10: Percentage of Angles -->
+    <div class="card" id="angle-section">
+      <h2>Percentage of Angles</h2>
+      <div class="question" id="angle-question"></div>
+      <div class="options" id="angle-options"></div>
+    </div>
+
+    <!-- Section 11: Day of the Week -->
+    <div class="card" id="day-week-section">
+      <h2>Day of the Week</h2>
+      <div class="question" id="day-week-question"></div>
+      <div class="options" id="day-week-options"></div>
+    </div>
+
+    <!-- Section 12: Total Bill from Part & Percentage -->
+    <div class="card" id="total-bill-section">
+      <h2>Total Bill from Part & Percentage</h2>
+      <div class="question" id="total-bill-question"></div>
+      <div class="options" id="total-bill-options"></div>
+    </div>
+
+    <!-- Section 13: Temperature Sequence -->
+    <div class="card" id="temperature-section">
+      <h2>Temperature Sequence</h2>
+      <div class="question" id="temperature-question"></div>
+      <div class="options" id="temperature-options"></div>
+    </div>
+
+    <!-- Section 14: Number & Sequence -->
+    <div class="card" id="number-sequence-section">
+      <h2>Number & Sequence</h2>
+      <div class="question" id="number-sequence-question"></div>
+      <div class="options" id="number-sequence-options"></div>
+    </div>
+
+    <!-- Section 15: Discounts & Percentages -->
+    <div class="card" id="discount-section">
+      <h2>Discounts & Percentages</h2>
+      <div class="question" id="discount-question"></div>
+      <div class="options" id="discount-options"></div>
+    </div>
+
+    <!-- Section 16: Unknown Number -->
+    <div class="card" id="unknown-number-section">
+      <h2>Unknown Number</h2>
+      <div class="question" id="unknown-number-question"></div>
+      <div class="options" id="unknown-number-options"></div>
+    </div>
+
+    <!-- NEW SECTIONS FROM THE DOCUMENT -->
+    <!-- Section 17: Girls Savings -->
+    <div class="card" id="girls-savings-section">
+      <h2>Girls Savings</h2>
+      <div class="question" id="girls-savings-question"></div>
+      <div class="options" id="girls-savings-options"></div>
+    </div>
+
+    <!-- Section 18: Plums Sale -->
+    <div class="card" id="plums-section">
+      <h2>Plums Sale</h2>
+      <div class="question" id="plums-question"></div>
+      <div class="options" id="plums-options"></div>
+    </div>
+
+    <!-- Section 19: Onion Weight -->
+    <div class="card" id="onion-weight-section">
+      <h2>Onion Weight</h2>
+      <div class="question" id="onion-weight-question"></div>
+      <div class="options" id="onion-weight-options"></div>
+    </div>
+
+    <!-- Section 20: Sum from Average -->
+    <div class="card" id="sum-from-average-section">
+      <h2>Sum from Average</h2>
+      <div class="question" id="sum-from-average-question"></div>
+      <div class="options" id="sum-from-average-options"></div>
+    </div>
+
+    <!-- Section 21: Ribbon Length -->
+    <div class="card" id="ribbon-length-section">
+      <h2>Ribbon Length</h2>
+      <div class="question" id="ribbon-length-question"></div>
+      <div class="options" id="ribbon-length-options"></div>
+    </div>
+
+    <!-- Section 22: Player Points -->
+    <div class="card" id="player-points-section">
+      <h2>Player Points</h2>
+      <div class="question" id="player-points-question"></div>
+      <div class="options" id="player-points-options"></div>
+    </div>
+
+    <!-- Section 23: Rainfall Data -->
+    <div class="card" id="rainfall-section">
+      <h2>Rainfall Data</h2>
+      <div class="question" id="rainfall-question"></div>
+      <div class="options" id="rainfall-options"></div>
+    </div>
+
+    <!-- Section 24: Heights Data -->
+    <div class="card" id="heights-section">
+      <h2>Heights Data</h2>
+      <div class="question" id="heights-question"></div>
+      <div class="options" id="heights-options"></div>
+    </div>
+
+    <!-- Section 25: Mode and Median -->
+    <div class="card" id="mode-median-section">
+      <h2>Mode and Median</h2>
+      <div class="question" id="mode-median-question"></div>
+      <div class="options" id="mode-median-options"></div>
+    </div>
+
+    <!-- Section 26: Test Scores -->
+    <div class="card" id="test-scores-section">
+      <h2>Test Scores</h2>
+      <div class="question" id="test-scores-question"></div>
+      <div class="options" id="test-scores-options"></div>
+    </div>
+
+    <!-- Mistakes Tab -->
+    <div class="card mistakes-tab" id="mistakes-tab">
+      <h3>Mistakes</h3>
+      <ul id="mistakes-list"></ul>
+    </div>
+
+    <!-- Reset Button -->
+    <button class="reset-btn" onclick="resetAll()">Reset All</button>
+  </div>
+
+  <script>
+    // ----------------- Utilities -----------------
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function saveMistake(question, chosen, correct) {
+      let mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+      mistakes.push({question, chosen, correct});
+      sessionStorage.setItem("mistakes", JSON.stringify(mistakes));
+      renderMistakes();
+    }
+
+    function renderMistakes() {
+      let mistakes = JSON.parse(sessionStorage.getItem("mistakes") || "[]");
+      let list = document.getElementById("mistakes-list");
+      list.innerHTML = "";
+      mistakes.forEach(m => {
+        let li = document.createElement("li");
+        li.textContent = `Q: ${m.question} | Your Answer: ${m.chosen} | Correct: ${m.correct}`;
+        list.appendChild(li);
+      });
+    }
+
+    // ----------------- Render Options -----------------
+    function renderOptions(containerId, options, correctAnswer, questionText) {
+      let container = document.getElementById(containerId);
+      container.innerHTML = "";
+      options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if(opt == correctAnswer){
+            btn.classList.add("correct");
+          } else {
+            btn.classList.add("wrong");
+            saveMistake(questionText, opt, correctAnswer);
+          }
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    // ----------------- Section Functions -----------------
+
+    // Section 1: Mean Average
+    function loadMeanAverage() {
+      let nums = Array.from({length: 3 + Math.floor(Math.random()*3)}, () => Math.floor(Math.random() * 50) + 1);
+      let mean = (nums.reduce((a,b) => a+b,0)/nums.length).toFixed(2);
+      let options = shuffle([mean, (mean-1).toFixed(2), (parseFloat(mean)+1).toFixed(2), (mean*1.1).toFixed(2)]);
+      document.getElementById("mean-question").textContent = `Find the mean average of ${nums.join(", ")}`;
+      renderOptions("mean-options", options, mean, `Mean of ${nums.join(", ")}`);
+    }
+
+    // Section 2: Bearings
+    function loadBearings() {
+      const directions = ["North","North East","East","South East","South","South West","West","North West"];
+      const startIndex = Math.floor(Math.random()*directions.length);
+      const start = directions[startIndex];
+      const turns = [90,180,270];
+      const turn = turns[Math.floor(Math.random()*turns.length)];
+      const clockwise = Math.random()>0.5;
+      let newIndex = clockwise ? (startIndex + turn/45) : (startIndex - turn/45);
+      newIndex = (newIndex + directions.length) % directions.length;
+      const answer = directions[newIndex];
+      const q = `I am facing ${start}. I turn ${turn}° ${clockwise?"clockwise":"anticlockwise"}. In which direction am I now facing?`;
+      let opts = shuffle([answer,...shuffle(directions).slice(0,3)]);
+      document.getElementById("bearings-question").textContent = q;
+      renderOptions("bearings-options", opts, answer, q);
+    }
+
+    // Section 3: Time & Measurements
+    function loadTime() {
+      const baseTimes = [
+        { h: 0, m: 0, label: "midnight" },
+        { h: 12, m: 0, label: "noon" },
+        { h: 6, m: 45, label: "6:45am" },
+        { h: 15, m: 30, label: "3:30pm" }
+      ];
+      const base = baseTimes[Math.floor(Math.random() * baseTimes.length)];
+      const offsetH = Math.floor(Math.random() * 10) + 1;
+      const offsetM = Math.floor(Math.random() * 60);
+      const before = Math.random() > 0.5;
+      let totalMinutes = base.h * 60 + base.m + (before ? -1 : 1) * (offsetH * 60 + offsetM);
+      while (totalMinutes < 0) totalMinutes += 24 * 60;
+      totalMinutes = totalMinutes % (24 * 60);
+      const answerH = Math.floor(totalMinutes / 60);
+      const answerM = totalMinutes % 60;
+      const formattedAnswer = `${((answerH + 11) % 12 + 1)}:${answerM.toString().padStart(2,"0")}${answerH < 12 ? "am":"pm"}`;
+      const q = `What time is ${offsetH} hours and ${offsetM} minutes ${before?"before":"after"} ${base.label}?`;
+      let opts = [formattedAnswer];
+      while(opts.length<5){
+        let rand = `${((Math.floor(Math.random()*24)+11)%12+1)}:${Math.floor(Math.random()*60).toString().padStart(2,"0")}${Math.random()>0.5?"am":"pm"}`;
+        if(!opts.includes(rand)) opts.push(rand);
+      }
+      renderOptions("time-options", shuffle(opts), formattedAnswer, q);
+      document.getElementById("time-question").textContent = q;
+    }
+
+    // Section 4: Ordering (smaller numbers)
+    function loadOrdering() {
+      const numCount = 5;
+      const nums = [];
+      for (let i = 0; i < numCount; i++) {
+        const value = (Math.random() * 20 - 5).toFixed(Math.random()>0.5?2:3);
+        nums.push(parseFloat(value));
+      }
+      const middle = getMiddle(nums);
+      const q = `Order these numbers from smallest to largest: ${nums.join(", ")}. Which number is in the middle?`;
+      renderOptions("ordering-options", shuffle(nums.map(String)), middle.toString(), q);
+      document.getElementById("ordering-question").textContent = q;
+    }
+
+    // Section 5: Larger Decimals Ordering
+    function loadDecimalOrdering() {
+      const decimals = Array.from({length: 5}, () =>
+          (Math.random() * 10).toFixed(Math.floor(Math.random() * 3) + 5)
+      ).map(Number);
+      const questionText = "Look at these decimals: " + decimals.join(", ") +
+                           ". If you order them from smallest to largest, which number would be in the middle?";
+      const answer = getMiddle(decimals);
+      const options = shuffle(decimals.map(String));
+      document.getElementById("decimal-ordering-question").textContent = questionText;
+      renderOptions("decimal-ordering-options", options, answer.toString(), questionText);
+    }
+
+    // Section 6: Percentage Discount
+    function loadPercentageDiscount() {
+      // Random original price and discount
+      const originalPrice = (Math.random() * 90 + 10).toFixed(2); // £10 to £100
+      const discount = Math.floor(Math.random() * 46) + 5; // 5% to 50%
+      const salePrice = (originalPrice * (1 - discount / 100)).toFixed(2);
+
+      // Generate 3 random wrong options close to correct
+      const optionsSet = new Set();
+      optionsSet.add(salePrice);
+      while (optionsSet.size < 4) {
+          let variation = (salePrice * (1 + (Math.random() * 0.1 - 0.05))).toFixed(2); // ±5%
+          optionsSet.add(variation);
+      }
+      const options = shuffle(Array.from(optionsSet));
+
+      // Question text
+      const questionText = `There is ${discount}% off a jumper in the summer sale. It was originally £${originalPrice}. How much does it cost in the sale?`;
+
+      // Render question
+      document.getElementById("percentage-discount-question").textContent = questionText;
+      renderOptions("percentage-discount-options", options, salePrice, questionText);
+    }
+
+    // Section 7: Reverse Calculation
+    function loadReverseCalculation() {
+      // Random original number
+      const original = Math.floor(Math.random() * 20) + 5; // 5 to 24
+      // Random multiplier and divisor
+      const multiplier = [2, 4, 8, 16][Math.floor(Math.random() * 4)];
+      const divisor = [1, 2, 4, 8, 16][Math.floor(Math.random() * 5)];
+      // Random addition
+      const add = Math.floor(Math.random() * 50) + 10;
+      // Calculate final result
+      const result = ((original * multiplier) / divisor + add).toFixed(2);
+
+      // Correct answer is original
+      const correctAnswer = original.toString();
+
+      // Generate 3 distractors
+      const optionsSet = new Set();
+      optionsSet.add(correctAnswer);
+      while(optionsSet.size < 4){
+          let variation = original + Math.floor(Math.random()*5-2); // ±2
+          optionsSet.add(variation.toString());
+      }
+      const options = shuffle(Array.from(optionsSet));
+
+      // Question text
+      const questionText = `I think of a number, multiply it by ${multiplier}, then divide by ${divisor}. After adding ${add} to the result, I get ${result}. What number did I think of?`;
+
+      // Render question
+      document.getElementById("reverse-calc-question").textContent = questionText;
+      renderOptions("reverse-calc-options", options, correctAnswer, questionText);
+    }
+
+    // Section 8: BODMAS / Complex Arithmetic
+    function loadBODMASQuestion() {
+      // Random numbers for the expression
+      const nums = Array.from({length: 4 + Math.floor(Math.random()*2)}, () => Math.floor(Math.random()*50)+1);
+      
+      // Random operations
+      const ops = ['+', '-', '*', '÷'];
+      let expr = "" + nums[0];
+      for(let i=1; i<nums.length; i++){
+          expr += ` ${ops[Math.floor(Math.random()*ops.length)]} ${nums[i]}`;
+      }
+      
+      // Evaluate using JavaScript
+      let correctAnswer;
+      try {
+          // Replace ÷ with / for JS eval
+          correctAnswer = eval(expr.replace(/÷/g,'/')).toFixed(2);
+      } catch(e){
+          correctAnswer = "Error";
+      }
+
+      // Generate distractors: small perturbations or ignoring precedence
+      const distractors = new Set();
+      distractors.add(correctAnswer);
+      while(distractors.size < 4){
+          let perturb = (parseFloat(correctAnswer) + (Math.floor(Math.random()*5)-2)).toFixed(2);
+          distractors.add(perturb);
+      }
+      const options = shuffle(Array.from(distractors));
+
+      // Question text
+      const questionText = `Solve: ${expr}`;
+
+      // Render question
+      document.getElementById("bodmas-question").textContent = questionText;
+      renderOptions("bodmas-options", options, correctAnswer, questionText);
+    }
+
+    // Section 9: Percentage Calculations
+    function loadPercentageQuestion() {
+      // Generate random numbers
+      const total = Math.floor(Math.random()*90)+10;  // Total number (denominator)
+      const part = Math.floor(Math.random()*total);   // Part (numerator)
+
+      // Calculate correct percentage
+      const correctAnswer = Math.round((part / total) * 100);
+
+      // Generate distractors (close values)
+      const distractors = new Set();
+      distractors.add(correctAnswer);
+      while(distractors.size < 4){
+          let perturb = correctAnswer + (Math.floor(Math.random()*7)-3); // ±3 variation
+          distractors.add(perturb);
+      }
+      const options = shuffle(Array.from(distractors));
+
+      // Question text
+      const questionText = `${part} is _____% of ${total}`;
+
+      // Render question
+      document.getElementById("percentage-question").textContent = questionText;
+      renderOptions("percentage-options", options, correctAnswer, questionText);
+    }
+
+    // Section 10: Percentage of Angles
+    function loadAnglePercentageQuestion() {
+      // Generate random fraction of right angle and random percentage
+      const baseAngle = 90; // right angle
+      const percent = Math.floor(Math.random()*60) + 110; // 110% to 170%
+      const answer = Math.round(baseAngle * percent / 100);
+
+      // Generate distractors around the correct answer
+      const distractors = new Set();
+      distractors.add(answer);
+      while(distractors.size < 4){
+          let perturb = answer + (Math.floor(Math.random()*11)-5); // ±5 variation
+          distractors.add(perturb);
+      }
+
+      const options = shuffle(Array.from(distractors));
+      const questionText = `How many degrees are there in ${percent}% of a right angle?`;
+
+      // Render question
+      document.getElementById("angle-question").textContent = questionText;
+      renderOptions("angle-options", options, answer, questionText);
+    }
+
+    // Section 11: Day of the Week
+    function loadDayOfWeekQuestion() {
+      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      
+      // Random starting date
+      const startDayIndex = Math.floor(Math.random() * 7);
+      const startDate = Math.floor(Math.random() * 20) + 1; // 1–20
+      const startMonth = Math.floor(Math.random() * 12); // 0–11
+      const targetOffset = Math.floor(Math.random() * 20) + 1; // 1–20 days later
+      
+      const targetDateIndex = (startDayIndex + targetOffset) % 7;
+      
+      const questionText = `If the ${startDate}th of a month is a ${days[startDayIndex]}, what day will the ${startDate + targetOffset}th be?`;
+
+      // Generate options
+      const options = new Set();
+      options.add(days[targetDateIndex]);
+      while (options.size < 5) {
+          options.add(days[Math.floor(Math.random()*7)]);
+      }
+
+      // Render
+      document.getElementById("day-week-question").textContent = questionText;
+      renderOptions("day-week-options", shuffle(Array.from(options)), days[targetDateIndex], questionText);
+    }
+
+    // Section 12: Total Bill
+    function loadTotalBillQuestion() {
+      // Random part paid and percentage
+      const percentage = Math.floor(Math.random() * 30) + 20; // 20% to 50%
+      const total = Math.floor(Math.random() * 50 + 30); // total bill base
+      const part = (total * percentage / 100).toFixed(2);
+
+      const questionText = `I went to a café with my friend. I paid £${part} which was ${percentage}% of the bill. What was our total bill?`;
+
+      // Correct answer
+      const correctAnswer = (part / percentage * 100).toFixed(2);
+
+      // Generate fuzzy options
+      const options = new Set();
+      options.add(correctAnswer);
+      while (options.size < 5) {
+          const fuzz = (Math.random() * 10 - 5).toFixed(2); // ±5
+          options.add((parseFloat(correctAnswer) + parseFloat(fuzz)).toFixed(2));
+      }
+
+      // Render
+      document.getElementById("total-bill-question").textContent = questionText;
+      renderOptions("total-bill-options", shuffle(Array.from(options)), correctAnswer, questionText);
+    }
+
+    function loadTemperatureSequence() {
+      // Generate Monday temperature randomly between 10 and 20
+      const monday = Math.floor(Math.random() * 11) + 10; 
+
+      // Tuesday: 3-8°C colder than Monday
+      const tuesday = monday - (Math.floor(Math.random() * 6) + 3);
+
+      // Wednesday: 1.5x to 2x Tuesday
+      const wMultiplier = Math.random() * 0.5 + 1.5; 
+      const wednesday = Math.round(tuesday * wMultiplier);
+
+      // Thursday: 2-5°C colder than Wednesday
+      const thursday = wednesday - (Math.floor(Math.random() * 4) + 2);
+
+      const questionText = `The Science Club records temperatures at their school weather station:\n` +
+          `Monday: ${monday}°C\n` +
+          `Tuesday: ${monday - tuesday}°C colder than Monday\n` +
+          `Wednesday: Twice as warm as Tuesday\n` +
+          `Thursday: 3°C colder than Wednesday\n` +
+          `What was the temperature on Thursday?`;
+
+      // Generate 4 random options including correct answer
+      let options = [thursday];
+      while(options.length < 5){
+          let randOpt = thursday + (Math.floor(Math.random() * 7) - 3); // ±3 range
+          if(!options.includes(randOpt)) options.push(randOpt);
+      }
+
+      // Shuffle options
+      options = shuffle(options);
+
+      // Render
+      document.getElementById("temperature-section").style.display = "block"; // make sure section exists
+      document.getElementById("temperature-question").textContent = questionText;
+      renderOptions("temperature-options", options.map(opt => opt + "°C"), thursday + "°C", "Temperature sequence question");
+    }
+
+    function loadNumberSequenceQuestions() {
+      const questionTypes = [
+          // Tenths question
+          function() {
+              const options = shuffle(["10","100","1000","1","10000"]);
+              const q = "How many tenths are there in 100?";
+              const a = "1000";
+              return {q, options, a};
+          },
+          // 24-hour clock
+          function() {
+              const hour = Math.floor(Math.random()*12); // 0-11
+              const minute = Math.floor(Math.random()*60);
+              const ampm = Math.random()>0.5 ? "am":"pm";
+              const q = `Convert ${hour}:${minute.toString().padStart(2,"0")}${ampm} to 24-hour format.`;
+              const answerHour = ampm==="am" ? hour : (hour===12?12:hour+12);
+              const a = `${answerHour.toString().padStart(2,"0")}:${minute.toString().padStart(2,"0")}`;
+              let options = [a];
+              while(options.length<5){
+                  let randHour = Math.floor(Math.random()*24);
+                  let randMin = Math.floor(Math.random()*60);
+                  let randOpt = `${randHour.toString().padStart(2,"0")}:${randMin.toString().padStart(2,"0")}`;
+                  if(!options.includes(randOpt)) options.push(randOpt);
+              }
+              options = shuffle(options);
+              return {q, options, a};
+          },
+          // Square number question
+          function() {
+              const numbers = [33,19,26,14,81];
+              const a = "81";
+              const q = "Which of the numbers is a square number?";
+              const options = shuffle(numbers.map(String));
+              return {q, options, a};
+          },
+          // Missing numbers in sequence
+          function() {
+              const sequences = [
+                  {seq:"1, 6, ?, 19, 27, ? , 46", a:"11 and 35", options:["11 and 35","11 and 34","12 and 34","12 and 35","12 and 36"]}
+              ];
+              const s = sequences[Math.floor(Math.random()*sequences.length)];
+              return {q:`What are the missing numbers in this sequence?\n${s.seq}`, options:shuffle(s.options), a:s.a};
+          }
+      ];
+
+      const chosenFunc = questionTypes[Math.floor(Math.random()*questionTypes.length)];
+      const questionData = chosenFunc();
+
+      document.getElementById("number-sequence-section").style.display = "block"; // make sure section exists
+      document.getElementById("number-sequence-question").textContent = questionData.q;
+      renderOptions("number-sequence-options", questionData.options, questionData.a, questionData.q);
+    }
+
+    function loadDiscountQuestion() {
+        const original = Math.floor(Math.random()*80) + 20; // £20–£100
+        const discount = Math.floor(Math.random()*50) + 10; // 10–60%
+        const answer = (original * (1 - discount/100)).toFixed(2);
+        const q = `There is ${discount}% off a jumper in the sale. It was originally £${original}. How much does it cost now?`;
+        let options = [answer,
+                     (answer*0.99).toFixed(2),
+                     (answer*1.01).toFixed(2),
+                     (answer*0.95).toFixed(2)];
+        options = shuffle(options);
+        document.getElementById("discount-section").style.display = "block";
+        document.getElementById("discount-question").textContent = q;
+        renderOptions("discount-options", options, answer, q);
+    }
+
+/*
+  Enhanced loadAngleDiagramQuestion(index)
+  - Multi-instance safe (unique IDs)
+  - Pixel-perfect (HiDPI canvas scaling)
+  - Rich visuals (gradients, arcs, ticks, shadows)
+  - Stronger distractors & options UX
+  - Records BOTH correct & incorrect answers
+  - Inline feedback per question
+  - Responsive: draws with relative coordinates, all lines stay in-view
+
+  Usage:
+    for (let i = 0; i < 3; i++) loadAngleDiagramQuestion(i);
+
+  Optional hooks (called if present):
+    - window.saveMistake(questionText, chosen, correct)
+    - window.saveCorrect(questionText, chosen, correct)
+    - window.renderOptions(containerId, options, answer, question)
+*/
+(function(){
+  const THEME = {
+    bg: "#12181f",
+    panel: "#0d131a",
+    stroke: "#6ab2ff",
+    stroke2: "#ffaa44",
+    text: "#e6f1ff",
+    soft: "#9fd1ff",
+    grid: "#2c3844",
+    correct: "#19c37d",
+    wrong: "#ef4444"
+  };
+
+  // --- utils
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+  function unique(arr){ return [...new Set(arr)]; }
+  function degToRad(d){ return d*Math.PI/180; }
+
+  function ensureContainer(){ return document.querySelector('.container') || document.body; }
+
+  function ensureSection(index){
+    const container = ensureContainer();
+    let sec = document.getElementById(`angle-diagram-section-${index}`);
+    if(!sec){
+      sec = document.createElement('div');
+      sec.id = `angle-diagram-section-${index}`;
+      sec.className = 'card angle-card';
+      sec.style.background = THEME.panel;
+      sec.style.border = `1px solid ${THEME.grid}`;
+      sec.style.borderRadius = '12px';
+      sec.style.padding = '14px';
+      sec.style.margin = '16px 0';
+      sec.style.boxShadow = '0 4px 18px rgba(0,0,0,0.25)';
+      container.appendChild(sec);
+    }
+    let title = document.getElementById(`angle-diagram-title-${index}`);
+    if(!title){
+      title = document.createElement('div');
+      title.id = `angle-diagram-title-${index}`;
+      title.textContent = 'Angle Diagram';
+      title.style.color = THEME.soft;
+      title.style.font = '600 14px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto';
+      title.style.margin = '0 0 6px';
+      sec.appendChild(title);
+    }
+    let q = document.getElementById(`angle-diagram-question-${index}`);
+    if(!q){
+      q = document.createElement('div');
+      q.id = `angle-diagram-question-${index}`;
+      q.style.margin = '4px 0 10px';
+      q.style.color = THEME.text;
+      q.style.font = '500 16px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto';
+      sec.appendChild(q);
+    }
+    let feedback = document.getElementById(`angle-diagram-feedback-${index}`);
+    if(!feedback){
+      feedback = document.createElement('div');
+      feedback.id = `angle-diagram-feedback-${index}`;
+      feedback.style.margin = '0 0 10px';
+      feedback.style.padding = '8px 10px';
+      feedback.style.borderRadius = '8px';
+      feedback.style.display = 'none';
+      feedback.style.font = '500 14px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto';
+      sec.appendChild(feedback);
+    }
+    let canvas = document.getElementById(`angle-diagram-canvas-${index}`);
+    if(!canvas){
+      canvas = document.createElement('canvas');
+      canvas.id = `angle-diagram-canvas-${index}`;
+      // CSS size (responsive); backing store scaled in scaleCanvasHiDPI
+      canvas.style.width = '100%';
+      canvas.style.height = '320px';
+      canvas.style.maxWidth = '100%';
+      canvas.style.background = THEME.bg;
+      canvas.style.border = `1px solid ${THEME.grid}`;
+      canvas.style.borderRadius = '10px';
+      canvas.style.display = 'block';
+      canvas.style.margin = '0 0 12px';
+      // give default logical size to avoid 0 rect before first layout
+      canvas.width = 480; canvas.height = 320;
+      sec.appendChild(canvas);
+    }
+    let opts = document.getElementById(`angle-diagram-options-${index}`);
+    if(!opts){
+      opts = document.createElement('div');
+      opts.id = `angle-diagram-options-${index}`;
+      opts.style.display = 'grid';
+      opts.style.gap = '8px';
+      opts.style.gridTemplateColumns = 'repeat(auto-fill,minmax(120px,1fr))';
+      sec.appendChild(opts);
+    }
+    return { sec, q, canvas, opts, feedback, title };
+  }
+
+  function scaleCanvasHiDPI(canvas){
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const rect = canvas.getBoundingClientRect();
+    const cssW = rect.width || canvas.width;
+    const cssH = rect.height || canvas.height;
+    canvas.width  = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS pixels
+    return ctx;
+  }
+
+  function drawAngleArc(ctx, x, y, startDeg, endDeg, r, label){
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, r, degToRad(startDeg), degToRad(endDeg), false);
+    const grad = ctx.createLinearGradient(x-r,y-r,x+r,y+r);
+    grad.addColorStop(0, THEME.stroke);
+    grad.addColorStop(1, THEME.stroke2);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = grad;
+    ctx.stroke();
+
+    const mid = (startDeg+endDeg)/2;
+    const lx = x + (r+14)*Math.cos(degToRad(mid));
+    const ly = y + (r+14)*Math.sin(degToRad(mid));
+    ctx.fillStyle = THEME.text;
+    ctx.font = '600 15px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText(label, lx-10, ly+5);
+    ctx.restore();
+  }
+
+  function niceDistractors(correct, count=3){
+    const base = parseFloat(correct);
+    const set = new Set();
+    const steps = shuffle([5,7.5,10,12.5,15,20,25,30]);
+    for(const s of steps){
+      if(set.size>=count) break;
+      const delta = (Math.random()<0.5?-1:1)*s;
+      const v = Math.round((base+delta)*10)/10;
+      if(v>0 && v<360 && v!==base) set.add(v);
+    }
+    while(set.size<count){
+      const rand = (Math.floor(Math.random()*12)+3)*5; // 15..75
+      const v = Math.round((base + (Math.random()<0.5?-1:1)*rand)*10)/10;
+      if(v>0 && v<360 && v!==base) set.add(v);
+    }
+    return [...set].slice(0,count).map(v => (v%1===0 ? v.toFixed(0) : v.toFixed(1)) + '°');
+  }
+
+  function showFeedback(el, msg, ok){
+    el.style.display = 'block';
+    el.textContent = msg;
+    el.style.background = ok ? 'rgba(25,195,125,0.12)' : 'rgba(239,68,68,0.12)';
+    el.style.border = `1px solid ${ok?THEME.correct:THEME.wrong}`;
+    el.style.color = ok?THEME.correct:THEME.wrong;
+  }
+
+  function recordAnswer({question, chosen, correct, topic, isCorrect}){
+    try{
+      const key='angleDiagramResults';
+      const arr=JSON.parse(localStorage.getItem(key)||'[]');
+      arr.push({ts:Date.now(),question,chosen,correct,topic,isCorrect});
+      localStorage.setItem(key, JSON.stringify(arr));
+      if(isCorrect && typeof window.saveCorrect==='function') window.saveCorrect(question, chosen, correct);
+      if(!isCorrect && typeof window.saveMistake==='function') window.saveMistake(question, chosen, correct);
+    }catch(e){}
+  }
+
+  function renderLocalOptions(containerId, options, answer, question, topic, feedbackEl){
+    const wrap = document.getElementById(containerId);
+    
+  wrap.innerHTML = '';
+ 
+    options.forEach(opt=>{
+      const b=document.createElement('button');
+      b.textContent=opt;
+      b.className='option-btn';
+      b.style.padding='10px 12px';
+      b.style.borderRadius='10px';
+      b.style.border='1px solid '+THEME.grid;
+      b.style.background='#0b1219';
+      b.style.color=THEME.text;
+      b.style.cursor='pointer';
+      b.style.font='500 14px ui-sans-serif';
+      b.onmouseenter = ()=> b.style.filter='brightness(1.08)';
+      b.onmouseleave = ()=> b.style.filter='none';
+      b.onclick=()=>{
+        if(b.dataset.done) return;
+        [...wrap.children].forEach(ch=>ch.dataset.done='1');
+        const correct=(opt===answer);
+        if(correct){
+          b.style.borderColor=THEME.correct; b.style.background='rgba(25,195,125,0.15)';
+          showFeedback(feedbackEl, '✅ Correct!', true);
+        } else {
+          b.style.borderColor=THEME.wrong; b.style.background='rgba(239,68,68,0.15)';
+          [...wrap.children].forEach(ch=>{
+            if(ch.textContent===answer){
+              ch.style.borderColor=THEME.correct; ch.style.background='rgba(25,195,125,0.15)';
+            }
+          });
+          showFeedback(feedbackEl, '❌ Wrong. Correct: '+answer, false);
+        }
+        recordAnswer({question, chosen:opt, correct:answer, topic, isCorrect:correct});
+      };
+      wrap.appendChild(b);
+    });
+  }
+
+  // --- MAIN PUBLIC API
+  window.loadAngleDiagramQuestion = function(index){
+  
+  
+    const { q: qEl, canvas, opts: optWrap, feedback, title } = ensureSection(index);
+
+    // scale for HiDPI & get CSS pixels (ctx draws in CSS px after setTransform)
+    const ctx = scaleCanvasHiDPI(canvas);
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width || 480;
+    const H = rect.height || 320;
+
+    // clear & grid bg
+    ctx.clearRect(0,0,W,H);
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    (function grid(){
+      ctx.save();
+      ctx.strokeStyle=THEME.grid; ctx.lineWidth=1; ctx.globalAlpha=0.25;
+      const step = Math.max(20, Math.min(28, Math.round(Math.min(W,H)/12)));
+      for(let x=0;x<=W;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+      for(let y=0;y<=H;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+      ctx.restore();
+    })();
+
+    // ---- BLUEPRINTS (viewport-safe, relative coords) ----
+    const blueprints = {
+      triangleMissing(){
+        // A + B + C = 180; show A, B; find C = x
+        const A=(2+Math.floor(Math.random()*6))*10; // 20..80
+        const B=(2+Math.floor(Math.random()*6))*10;
+        if(A+B>150) return this.triangleMissing();
+        const C=180-A-B;
+
+        const marginX=W*0.12, marginY=H*0.12;
+        const ax=marginX, ay=H-marginY;
+        const bx=W-marginX, by=H-marginY;
+        const cx=W*0.5 + (Math.random()<0.5?-1:1)*(W*0.06), cy=marginY;
+
+        ctx.save(); ctx.strokeStyle=THEME.stroke; ctx.lineWidth=3; ctx.shadowColor='rgba(0,0,0,0.3)'; ctx.shadowBlur=8;
+        ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.lineTo(cx,cy); ctx.closePath(); ctx.stroke(); ctx.restore();
+
+        drawAngleArc(ctx, ax, ay, 350, 50, Math.min(W,H)*0.08, A+'°');
+        drawAngleArc(ctx, bx, by, 130, 230, Math.min(W,H)*0.08, B+'°');
+        drawAngleArc(ctx, cx, cy, 210, 330, Math.min(W,H)*0.07, 'x°');
+
+        const question='In the triangle shown, find x.';
+        const answer=C+'°';
+        const options=shuffle([answer,...niceDistractors(C,3)]).slice(0,4);
+        return {question, answer, options, topic:'Triangle Third Angle'};
+      },
+
+      isoscelesVertex(){
+        const baseAngle=(2+Math.floor(Math.random()*5))*10; // 20..70
+        const V=180-2*baseAngle; if(V<=0) return this.isoscelesVertex();
+
+        const ax=W*0.18, ay=H*0.84;
+        const bx=W*0.82, by=H*0.84;
+        const cx=W*0.5,  cy=H*0.18;
+
+        ctx.save(); ctx.strokeStyle=THEME.stroke; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(cx,cy); ctx.lineTo(bx,by); ctx.closePath(); ctx.stroke(); ctx.restore();
+
+        // equal side ticks
+        ctx.save(); ctx.strokeStyle=THEME.stroke2; ctx.lineWidth=3;
+        const tick = (sx,sy,tx,ty)=>{ ctx.beginPath(); ctx.moveTo(sx+(tx-sx)*0.5-6, sy+(ty-sy)*0.5-6); ctx.lineTo(sx+(tx-sx)*0.5+6, sy+(ty-sy)*0.5+6); ctx.stroke(); };
+        tick(ax,ay,cx,cy); tick(bx,by,cx,cy);
+        ctx.restore();
+
+        drawAngleArc(ctx, ax, ay, 350, 50, Math.min(W,H)*0.07, baseAngle+'°');
+        drawAngleArc(ctx, bx, by, 130, 230, Math.min(W,H)*0.07, baseAngle+'°');
+        drawAngleArc(ctx, cx, cy, 205, 335, Math.min(W,H)*0.06, 'x°');
+
+        const question='In the isosceles triangle, find the vertex angle x.';
+        const answer=V+'°';
+        const options=shuffle([answer,...niceDistractors(V,3)]).slice(0,4);
+        return {question, answer, options, topic:'Isosceles Vertex Angle'};
+      },
+
+      linearPair(){
+        // straight line + a ray; given one angle, find its supplement
+        const given=(3+Math.floor(Math.random()*7))*10; // 30..90
+        const other=180-given;
+        const cx=W/2, cy=H/2;
+        const L = Math.min(W,H)*0.44;
+
+        // baseline
+        ctx.save(); ctx.strokeStyle=THEME.stroke; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(cx-L,cy); ctx.lineTo(cx+L,cy); ctx.stroke(); ctx.restore();
+
+        // second ray at -60°
+        const theta=degToRad(-60);
+        ctx.save(); ctx.strokeStyle=THEME.stroke2; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+L*Math.cos(theta), cy+L*Math.sin(theta)); ctx.stroke(); ctx.restore();
+
+        drawAngleArc(ctx, cx, cy, 0, 180, Math.min(W,H)*0.12, given+'°'); // given on straight line
+        drawAngleArc(ctx, cx, cy, -60, 0, Math.min(W,H)*0.17, 'x°');
+
+        const question='Find x in the linear pair.';
+        const answer=other+'°';
+        const options=shuffle([answer,...niceDistractors(other,3)]).slice(0,4);
+        return {question, answer, options, topic:'Linear Pair'};
+      },
+
+      verticalOpposite(){
+        const acute=(2+Math.floor(Math.random()*5))*10; // 20..60
+        const cx=W/2, cy=H/2;
+        const L = Math.min(W,H)*0.56;
+
+        ctx.save(); ctx.strokeStyle=THEME.stroke; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(cx-L, cy-L*0.5); ctx.lineTo(cx+L, cy+L*0.5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx-L, cy+L*0.5); ctx.lineTo(cx+L, cy-L*0.5); ctx.stroke();
+        ctx.restore();
+
+        ctx.save(); ctx.fillStyle=THEME.soft; ctx.font='600 16px ui-monospace, SFMono-Regular, Menlo, monospace';
+        ctx.fillText(acute+'°', cx+Math.min(40,W*0.08), cy-8);
+        ctx.fillText('x°', cx-Math.min(48,W*0.1), cy-6);
+        ctx.restore();
+
+        const question='Lines intersect. Find x (vertical opposite to the given angle).';
+        const answer=acute+'°';
+        const options=shuffle([answer,...niceDistractors(acute,3)]).slice(0,4);
+        return {question, answer, options, topic:'Vertical Opposite Angles'};
+      },
+
+      parallelogramAdjacent(){
+        // show one interior angle A; adjacent is 180-A
+        const A=(3+Math.floor(Math.random()*7))*10; // 30..90 (skip 90 for nicer look)
+        if(A===90) return this.parallelogramAdjacent();
+        const B=180-A;
+
+        // top edge
+        const x0=W*0.2,  y0=H*0.28;
+        const x1=W*0.8,  y1=H*0.28;
+        // slant down-left
+        const offX=-W*0.18, offY=H*0.44;
+
+        ctx.save(); ctx.strokeStyle=THEME.stroke; ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.moveTo(x0,y0);
+        ctx.lineTo(x1,y1);
+        ctx.lineTo(x1+offX, y1+offY);
+        ctx.lineTo(x0+offX, y0+offY);
+        ctx.closePath();
+        ctx.stroke(); ctx.restore();
+
+        ctx.save(); ctx.fillStyle=THEME.soft; ctx.font='600 14px ui-monospace, SFMono-Regular, Menlo, monospace';
+        ctx.fillText(A+'°', x0+8, y0+22);
+        ctx.fillText('x°', x1-28, y1+24);
+        ctx.restore();
+
+        const question='In the parallelogram, find the adjacent angle x.';
+        const answer=B+'°';
+        const options=shuffle([answer,...niceDistractors(B,3)]).slice(0,4);
+        return {question, answer, options, topic:'Parallelogram Adjacent'};
+      },
+
+      clockAngle(){
+        const hour=Math.floor(Math.random()*12); // 0..11
+        const minuteChoices=[0,5,10,15,20,25,30,35,40,45,50,55];
+        const m=minuteChoices[Math.floor(Math.random()*minuteChoices.length)];
+        const hrAngle=30*hour + 0.5*m;
+        const minAngle=6*m;
+        let diff=Math.abs(hrAngle-minAngle); if(diff>180) diff=360-diff;
+
+        const cx=W/2, cy=H/2, R=Math.min(W,H)*0.36;
+
+        // face
+        ctx.save(); ctx.strokeStyle=THEME.stroke; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke(); ctx.restore();
+
+        // numbers
+        ctx.save(); ctx.font='600 12px ui-monospace, SFMono-Regular, Menlo, monospace'; ctx.fillStyle=THEME.text;
+        for(let h=1;h<=12;h++){
+          const ang=(h-3)*Math.PI/6;
+          const tx=cx+(R-18)*Math.cos(ang);
+          const ty=cy+(R-18)*Math.sin(ang)+4;
+          ctx.fillText(String(h), tx-6, ty);
+        }
+        ctx.restore();
+
+        // hands
+        function drawHand(angleDeg, length, color, width){
+          ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round';
+          ctx.beginPath(); ctx.moveTo(cx,cy);
+          const rad=degToRad(angleDeg-90);
+          ctx.lineTo(cx+length*Math.cos(rad), cy+length*Math.sin(rad));
+          ctx.stroke(); ctx.restore();
+        }
+        drawHand(hrAngle, R*0.55, THEME.stroke2, 5);
+        drawHand(minAngle, R*0.85, THEME.soft, 3);
+
+        // hub + time label (ensure stays in bounds)
+        ctx.save(); ctx.fillStyle=THEME.text; ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill(); ctx.restore();
+        const displayHour=(hour===0?12:hour);
+        const timeStr=`${displayHour}:${String(m).padStart(2,'0')}`;
+        ctx.save(); ctx.fillStyle=THEME.soft; ctx.font='600 15px ui-monospace, SFMono-Regular, Menlo, monospace';
+        const labelY = (cy+R+24 <= H-8) ? (cy+R+24) : (cy-R-12);
+        ctx.fillText(timeStr, cx-28, labelY);
+        ctx.restore();
+
+        const ansVal=parseFloat(diff.toFixed(1));
+        const answer=(ansVal%1===0?ansVal.toFixed(0):ansVal.toFixed(1))+'°';
+        const distractors=unique([
+          (ansVal+15<=180?ansVal+15:ansVal-15).toFixed(1)+'°',
+          Math.max(0,ansVal-12.5).toFixed(1)+'°',
+          (ansVal+7.5<=180?ansVal+7.5:ansVal-7.5).toFixed(1)+'°'
+        ]);
+        const options=shuffle(unique([answer,...distractors])).slice(0,4);
+        const question=`Find the smaller angle (in degrees) between the clock hands at ${timeStr}.`;
+        return {question, answer, options, topic:'Clock Angle'};
+      }
+    };
+
+    // pick one
+    const keys=Object.keys(blueprints);
+    const chosenKey=keys[Math.floor(Math.random()*keys.length)];
+    const data=blueprints[chosenKey]();
+
+    // set UI
+    qEl.textContent = data.question;
+    title.textContent = `Angle Diagram • ${data.topic}`;
+
+    // render options (global hook or local)
+    if(typeof window.renderOptions === 'function'){
+      window.renderOptions(`angle-diagram-options-${index}`, data.options, data.answer, data.question);
+    }else{
+      renderLocalOptions(`angle-diagram-options-${index}`, data.options, data.answer, data.question, data.topic, feedback);
+    }
+
+    return { type:'angle-diagram', template: chosenKey, ...data };
+  };
+
+  // --- single global, throttled resize redraw (prevents many handlers)
+  let __resizeQueued = false;
+window.addEventListener('resize', () => {
+  if (__resizeQueued) return;
+  __resizeQueued = true;
+  requestAnimationFrame(() => {
+    __resizeQueued = false;
+    document.querySelectorAll("[id^='angle-diagram-section-']").forEach(sec => {
+      const idx = parseInt(sec.id.split('-').pop(), 10);
+      if (!isNaN(idx)) {
+        // just redraw the question/diagram; don't reset feedback here
+        window.loadAngleDiagramQuestion(idx);
+      }
+    });
+  });
+});
+
+})();
+
+
+
+    function loadUnknownNumberQuestion() {
+        const x = Math.floor(Math.random()*20) + 5;
+        const multiplier = [2,3,4,5][Math.floor(Math.random()*4)];
+        const adder = Math.floor(Math.random()*20)+5;
+        const result = x*multiplier + adder;
+        const q = `I think of a number, multiply it by ${multiplier}, then add ${adder}. I get ${result}. What number did I think of?`;
+        const answer = x.toString();
+        let options = [answer,
+                     (x+1).toString(),
+                     (x-1).toString(),
+                     (x+2).toString()];
+        options = shuffle(options);
+        document.getElementById("unknown-number-section").style.display = "block";
+        document.getElementById("unknown-number-question").textContent = q;
+        renderOptions("unknown-number-options", options, answer, q);
+    }
+
+    // NEW FUNCTIONS FROM THE DOCUMENT
+    
+    // Function to load girls savings question
+    function loadGirlsSavingsQuestion() {
+        // Generate random savings for 4 girls
+        const names = ["Anna", "Emma", "Alex", "Zoey"];
+        const savings = names.map(() => Math.floor(Math.random() * 30) + 10); // £10 to £40
+        
+        // Calculate mean
+        const mean = Math.round(savings.reduce((a, b) => a + b, 0) / savings.length);
+        
+        // Generate options
+        const options = [mean, mean-1, mean+1, mean+2].map(String);
+        
+        // Create question text
+        let questionText = "This table shows the amount of money saved by 4 girls.\n";
+        for(let i = 0; i < names.length; i++) {
+            questionText += `${names[i]}: £${savings[i]}\n`;
+        }
+        questionText += "Find their average savings?";
+        
+        // Render question
+        document.getElementById("girls-savings-question").textContent = questionText;
+        renderOptions("girls-savings-options", shuffle(options), mean.toString(), questionText);
+    }
+
+    // Function to load plums sale question
+    function loadPlumsSaleQuestion() {
+        // Random total plums (divisible by 3 for clean average)
+        const plums = Math.floor(Math.random() * 30) * 3 + 210; // 210 to 297
+        const average = plums / 3;
+        
+        // Generate options
+        const options = [average, average-1, average+1, average+2].map(String);
+        
+        // Question text
+        const questionText = `From Monday to Wednesday, Anna sold ${plums} plums altogether. What was the average number of plums she sold per day?`;
+        
+        // Render question
+        document.getElementById("plums-question").textContent = questionText;
+        renderOptions("plums-options", shuffle(options), average.toString(), questionText);
+    }
+
+    // Function to load onion weight question
+    function loadOnionWeightQuestion() {
+        // Random total weight for 8 onions
+        const totalWeight = Math.floor(Math.random() * 40) * 8 + 640; // 640g to 960g
+        const average = totalWeight / 8;
+        
+        // Generate options
+        const options = [average, average-10, average+10, average+20].map(String);
+        
+        // Question text
+        const questionText = `The total weight of 8 onions is ${totalWeight}g. What is their average weight?`;
+        
+        // Render question
+        document.getElementById("onion-weight-question").textContent = questionText;
+        renderOptions("onion-weight-options", shuffle(options), average.toString(), questionText);
+    }
+
+    // Function to load sum from average question
+    function loadSumFromAverageQuestion() {
+        // Random average with decimal
+        const average = (Math.floor(Math.random() * 20) + 10) + (Math.random() > 0.5 ? 0.5 : 0);
+        const count = 3; // Number of items
+        const sum = average * count;
+        
+        // Generate options
+        const options = [sum, sum-1, sum+1, sum-2].map(String);
+        
+        // Question text
+        const questionText = `The average of ${count} numbers is ${average}. Find the sum of the numbers?`;
+        
+        // Render question
+        document.getElementById("sum-from-average-question").textContent = questionText;
+        renderOptions("sum-from-average-options", shuffle(options), sum.toString(), questionText);
+    }
+
+    // Function to load ribbon length question
+    function loadRibbonLengthQuestion() {
+        // Random average length with decimal
+        const average = (Math.floor(Math.random() * 20) + 20) + (Math.random() > 0.5 ? 0.5 : 0);
+        const count = 4; // Number of ribbons
+        const totalLength = average * count;
+        
+        // Generate options
+        const options = [totalLength, totalLength-2, totalLength+2, totalLength+4].map(String);
+        
+        // Question text
+        const questionText = `The average length of ${count} pieces of ribbon is ${average}cm. Find their total length?`;
+        
+        // Render question
+        document.getElementById("ribbon-length-question").textContent = questionText;
+        renderOptions("ribbon-length-options", shuffle(options), totalLength.toString(), questionText);
+    }
+
+    // Function to load player points question
+    function loadPlayerPointsQuestion() {
+        // Generate random game scores for players
+        const playerA = [14, 16, 10, 10];
+        const playerB = [0, 8, 6, 4];
+        const playerC = [8, 11, null, 13]; // null for "Did not play"
+        
+        // Calculate averages
+        const avgA = playerA.reduce((a, b) => a + b, 0) / playerA.length;
+        const avgB = playerB.reduce((a, b) => a + b, 0) / playerB.length;
+        const avgC = playerC.filter(score => score !== null).reduce((a, b) => a + b, 0) / 
+                     playerC.filter(score => score !== null).length;
+        
+        // Question text
+        let questionText = "Following table shows the points of each player scored in four games:\n";
+        questionText += "Player | Game 1 | Game 2 | Game 3 | Game 4\n";
+        questionText += `A      | ${playerA[0]}     | ${playerA[1]}     | ${playerA[2]}     | ${playerA[3]}\n`;
+        questionText += `B      | ${playerB[0]}      | ${playerB[1]}      | ${playerB[2]}      | ${playerB[3]}\n`;
+        questionText += `C      | ${playerC[0]}      | ${playerC[1]}     | Did not play | ${playerC[3]}\n`;
+        questionText += "Find the mean to determine A's average number of points scored per game?";
+        
+        // Options
+        const options = [avgA.toFixed(1), "4.5", "10.67", "All the same"];
+        
+        // Render question
+        document.getElementById("player-points-question").textContent = questionText;
+        renderOptions("player-points-options", options, avgA.toFixed(1), questionText);
+    }
+
+    // Function to load rainfall data question
+    function loadRainfallQuestion() {
+        // Rainfall data for a week
+        const rainfall = [0.0, 12.2, 2.1, 0.0, 20.5, 5.5, 1.0];
+        
+        // Calculate range
+        const range = Math.max(...rainfall) - Math.min(...rainfall);
+        
+        // Calculate mean
+        const mean = rainfall.reduce((a, b) => a + b, 0) / rainfall.length;
+        
+        // Count days with rainfall less than mean
+        const daysLessThanMean = rainfall.filter(r => r < mean).length;
+        
+        // Question text
+        let questionText = "The rainfall (in mm) in a city on 7 days of a certain week was recorded as follows:\n";
+        questionText += "Day | Rainfall (in mm)\n";
+        questionText += `Monday    | ${rainfall[0]}\n`;
+        questionText += `Tuesday   | ${rainfall[1]}\n`;
+        questionText += `Wednesday | ${rainfall[2]}\n`;
+        questionText += `Thursday  | ${rainfall[3]}\n`;
+        questionText += `Friday    | ${rainfall[4]}\n`;
+        questionText += `Saturday  | ${rainfall[5]}\n`;
+        questionText += `Sunday    | ${rainfall[6]}\n`;
+        questionText += "Find the range of the rainfall in the above data?";
+        
+        // Options for range
+        const rangeOptions = [range, range-1, range-2, range-3].map(String);
+        
+        // Render question
+        document.getElementById("rainfall-question").textContent = questionText;
+        renderOptions("rainfall-options", shuffle(rangeOptions), range.toString(), questionText);
+    }
+
+    // Function to load heights data question
+    function loadHeightsQuestion() {
+        // Heights data for 10 girls
+        const heights = [135, 150, 139, 128, 151, 132, 146, 149, 143, 141];
+        
+        // Calculate range
+        const range = Math.max(...heights) - Math.min(...heights);
+        
+        // Calculate mean
+        const mean = heights.reduce((a, b) => a + b, 0) / heights.length;
+        
+        // Count girls with height more than mean
+        const girlsMoreThanMean = heights.filter(h => h > mean).length;
+        
+        // Question text
+        let questionText = "The heights of 10 girls were measured in cm and the results are as follows:\n";
+        questionText += heights.join(", ") + "\n";
+        questionText += "What is the range of the data?";
+        
+        // Options for range
+        const rangeOptions = [range, range-1, range-2, range-3].map(String);
+        
+        // Render question
+        document.getElementById("heights-question").textContent = questionText;
+        renderOptions("heights-options", shuffle(rangeOptions), range.toString(), questionText);
+    }
+
+    // Function to load mode and median question
+    function loadModeMedianQuestion() {
+        // Data set
+        const data = [13, 16, 12, 14, 19, 12, 14, 13, 14];
+        
+        // Find mode (most frequent value)
+        const frequency = {};
+        data.forEach(val => {
+            frequency[val] = (frequency[val] || 0) + 1;
+        });
+        
+        let mode = null;
+        let maxFreq = 0;
+        for (const [val, freq] of Object.entries(frequency)) {
+            if (freq > maxFreq) {
+                maxFreq = freq;
+                mode = parseInt(val);
+            }
+        }
+        
+        // Find median (middle value when sorted)
+        const sorted = [...data].sort((a, b) => a - b);
+        const median = sorted[Math.floor(sorted.length / 2)];
+        
+        // Question text
+        const questionText = `Find the mode and median of the data: ${data.join(", ")}`;
+        
+        // Options
+        const options = [
+            "12, 13",
+            "13, 14",
+            `${mode}, ${median}`,
+            "14, 15"
+        ];
+        
+        // Render question
+        document.getElementById("mode-median-question").textContent = questionText;
+         // Render question
+        document.getElementById("mode-median-question").textContent = questionText;
+        renderOptions("mode-median-options", options, `${mode}, ${median}`, questionText);
+    }
+
+    // Function to load test scores question
+    function loadTestScoresQuestion() {
+        // Random scores for previous tests
+        const scores = [
+            Math.floor(Math.random() * 30) + 60,
+            Math.floor(Math.random() * 30) + 60,
+            Math.floor(Math.random() * 30) + 60
+        ];
+        
+        // Target average
+        const targetAverage = 80;
+        
+        // Calculate required score on fourth test
+        const totalNeeded = targetAverage * (scores.length + 1);
+        const currentTotal = scores.reduce((a, b) => a + b, 0);
+        const requiredScore = totalNeeded - currentTotal;
+        
+        // Question text
+        const questionText = `Joey's scores on three English tests were ${scores.join(", ")}. What score does he need on the fourth test to have a final average of ${targetAverage}?`;
+        
+        // Options
+        const options = [
+            requiredScore - 10,
+            requiredScore - 5,
+            requiredScore,
+            requiredScore + 5
+        ].map(String);
+        
+        // Render question
+        document.getElementById("test-scores-question").textContent = questionText;
+        renderOptions("test-scores-options", shuffle(options), requiredScore.toString(), questionText);
+    }
+
+    // ----------------- Timer -----------------
+    let seconds = 0;
+    let timerInterval;
+    function startTimer() {
+      clearInterval(timerInterval);
+      seconds = 0;
+      document.getElementById("timer").textContent = `Time: ${seconds}s`;
+      timerInterval = setInterval(()=>{
+        seconds++;
+        document.getElementById("timer").textContent = `Time: ${seconds}s`;
+      },1000);
+    }
+
+    // ----------------- Reset -----------------
+    function resetAll() {
+      sessionStorage.clear();
+      renderMistakes();
+      loadAll();
+      startTimer();
+    }
+    
+    let activeSection = null;
+
+    function attachTimerTo(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+        section.appendChild(document.getElementById("timer"));
+        activeSection = sectionId;
+    }
+
+
+
+
+
+
+
+
+
+    // ----------------- Load All -----------------
+    function loadAll() {
+      // Original functions
+            // Call angle diagram question last as it creates its own elements
+            for (let i = 0; i < 3; i++) loadAngleDiagramQuestion(i);
+
+
+      loadMeanAverage();
+      loadBearings();
+      loadTime();
+      loadOrdering();
+      loadDecimalOrdering();
+      loadPercentageDiscount();
+      loadReverseCalculation();
+      loadBODMASQuestion();
+      loadPercentageQuestion();
+      loadAnglePercentageQuestion();
+      loadDayOfWeekQuestion();
+      loadTotalBillQuestion();
+      loadTemperatureSequence();
+      loadNumberSequenceQuestions();
+      loadDiscountQuestion();
+      loadUnknownNumberQuestion();
+      
+      // New functions from the document
+      loadGirlsSavingsQuestion();
+      loadPlumsSaleQuestion();
+      loadOnionWeightQuestion();
+      loadSumFromAverageQuestion();
+      loadRibbonLengthQuestion();
+      loadPlayerPointsQuestion();
+      loadRainfallQuestion();
+      loadHeightsQuestion();
+      loadModeMedianQuestion();
+      loadTestScoresQuestion();
+      
+
+    }
+
+    // ----------------- Helper -----------------
+    function getMiddle(arr) {
+      const sorted = [...arr].sort((a, b) => a - b);
+      return sorted[Math.floor(sorted.length / 2)];
+    }
+
+    // ----------------- Initialize -----------------
+    loadAll();
+    renderMistakes();
+    startTimer();
+  </script>
+</body>
+</html>
