@@ -665,59 +665,149 @@
       document.getElementById("temperature-question").textContent = questionText;
       renderOptions("temperature-options", options.map(opt => opt + "°C"), thursday + "°C", "Temperature sequence question");
     }
+function loadNumberSequenceQuestions() {
+  const questionTypes = [
+    // --- Tenths / Place Value ---
+    function () {
+      const base = Math.pow(10, Math.floor(Math.random() * 3) + 1); // 10, 100, 1000
+      const q = `How many tenths are there in ${base * 10}?`;
+      const a = (base * 10).toString();
+      let options = [a];
+      while (options.length < 5) {
+        let fake = (base * (5 + Math.floor(Math.random() * 20))).toString();
+        if (!options.includes(fake)) options.push(fake);
+      }
+      return { q, options: shuffle(options), a };
+    },
 
-    function loadNumberSequenceQuestions() {
-      const questionTypes = [
-          // Tenths question
-          function() {
-              const options = shuffle(["10","100","1000","1","10000"]);
-              const q = "How many tenths are there in 100?";
-              const a = "1000";
-              return {q, options, a};
-          },
-          // 24-hour clock
-          function() {
-              const hour = Math.floor(Math.random()*12); // 0-11
-              const minute = Math.floor(Math.random()*60);
-              const ampm = Math.random()>0.5 ? "am":"pm";
-              const q = `Convert ${hour}:${minute.toString().padStart(2,"0")}${ampm} to 24-hour format.`;
-              const answerHour = ampm==="am" ? hour : (hour===12?12:hour+12);
-              const a = `${answerHour.toString().padStart(2,"0")}:${minute.toString().padStart(2,"0")}`;
-              let options = [a];
-              while(options.length<5){
-                  let randHour = Math.floor(Math.random()*24);
-                  let randMin = Math.floor(Math.random()*60);
-                  let randOpt = `${randHour.toString().padStart(2,"0")}:${randMin.toString().padStart(2,"0")}`;
-                  if(!options.includes(randOpt)) options.push(randOpt);
-              }
-              options = shuffle(options);
-              return {q, options, a};
-          },
-          // Square number question
-          function() {
-              const numbers = [33,19,26,14,81];
-              const a = "81";
-              const q = "Which of the numbers is a square number?";
-              const options = shuffle(numbers.map(String));
-              return {q, options, a};
-          },
-          // Missing numbers in sequence
-          function() {
-              const sequences = [
-                  {seq:"1, 6, ?, 19, 27, ? , 46", a:"11 and 35", options:["11 and 35","11 and 34","12 and 34","12 and 35","12 and 36"]}
-              ];
-              const s = sequences[Math.floor(Math.random()*sequences.length)];
-              return {q:`What are the missing numbers in this sequence?\n${s.seq}`, options:shuffle(s.options), a:s.a};
-          }
-      ];
+    // --- 24-hour clock ---
+    function () {
+      const hour = Math.floor(Math.random() * 12) || 12; // 1–12
+      const minute = Math.floor(Math.random() * 60);
+      const ampm = Math.random() > 0.5 ? "am" : "pm";
 
-      const chosenFunc = questionTypes[Math.floor(Math.random()*questionTypes.length)];
-      const questionData = chosenFunc();
+      const q = `Convert ${hour}:${minute.toString().padStart(2, "0")}${ampm} to 24-hour format.`;
 
-      document.getElementById("number-sequence-section").style.display = "block"; // make sure section exists
-      document.getElementById("number-sequence-question").textContent = questionData.q;
-      renderOptions("number-sequence-options", questionData.options, questionData.a, questionData.q);
-    }
+      let answerHour;
+      if (ampm === "am") {
+        answerHour = hour === 12 ? 0 : hour;
+      } else {
+        answerHour = hour === 12 ? 12 : hour + 12;
+      }
+      const a = `${answerHour.toString().padStart(2, "0")}:${minute
+        .toString()
+        .padStart(2, "0")}`;
+
+      let options = [a];
+      while (options.length < 5) {
+        const fakeHour = Math.floor(Math.random() * 24);
+        const fakeMin = Math.floor(Math.random() * 60);
+        const fakeOpt = `${fakeHour.toString().padStart(2, "0")}:${fakeMin
+          .toString()
+          .padStart(2, "0")}`;
+        if (!options.includes(fakeOpt)) options.push(fakeOpt);
+      }
+      return { q, options: shuffle(options), a };
+    },
+
+    // --- Square Number(s) ---
+    function () {
+      const squares = [4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196];
+      const nonSquares = [];
+      while (nonSquares.length < 12) {
+        const n = Math.floor(Math.random() * 200) + 10;
+        if (!squares.includes(n)) nonSquares.push(n);
+      }
+
+      const numSquares = Math.random() > 0.5 ? 1 : 2;
+      const chosenSquares = shuffle(squares).slice(0, numSquares);
+      const chosenNonSquares = shuffle(nonSquares).slice(0, 5 - numSquares);
+      const numbers = shuffle([...chosenSquares, ...chosenNonSquares]);
+
+      const q =
+        chosenSquares.length === 1
+          ? "Which of the following numbers is a perfect square?"
+          : "Which of the following numbers are perfect squares?";
+
+      const a = chosenSquares.map(String);
+      return { q, options: numbers.map(String), a };
+    },
+
+    // --- Missing numbers in sequence ---
+    function () {
+      const seqType = Math.floor(Math.random() * 3);
+
+      if (seqType === 0) {
+        // Arithmetic progression
+        const start = Math.floor(Math.random() * 10) + 1;
+        const diff = Math.floor(Math.random() * 5) + 2;
+        const seq = Array.from({ length: 7 }, (_, i) => start + i * diff);
+        const missingIndex = Math.floor(Math.random() * 5) + 1;
+        const answer = seq[missingIndex];
+        seq[missingIndex] = "?";
+        const q = `What number is missing in the sequence?\n${seq.join(", ")}`;
+        const options = shuffle([
+          answer,
+          answer + diff,
+          answer - diff,
+          answer + 1,
+          answer - 1,
+        ]).map(String);
+        return { q, options, a: answer.toString() };
+      }
+
+      if (seqType === 1) {
+        // Geometric progression
+        const start = Math.floor(Math.random() * 5) + 2;
+        const ratio = Math.floor(Math.random() * 3) + 2; // 2–4
+        const seq = Array.from({ length: 6 }, (_, i) => start * Math.pow(ratio, i));
+        const missingIndex = Math.floor(Math.random() * 4) + 1;
+        const answer = seq[missingIndex];
+        seq[missingIndex] = "?";
+        const q = `What number is missing in the geometric sequence?\n${seq.join(", ")}`;
+        const options = shuffle([
+          answer,
+          answer * ratio,
+          Math.floor(answer / ratio),
+          answer + 1,
+          answer - 1,
+        ]).map(String);
+        return { q, options, a: answer.toString() };
+      }
+
+      // Fibonacci-like
+      const a1 = Math.floor(Math.random() * 5) + 1;
+      const a2 = Math.floor(Math.random() * 5) + 1;
+      const seq = [a1, a2];
+      for (let i = 2; i < 7; i++) seq.push(seq[i - 1] + seq[i - 2]);
+      const missingIndex = Math.floor(Math.random() * 5) + 2;
+      const answer = seq[missingIndex];
+      seq[missingIndex] = "?";
+      const q = `What number is missing in the Fibonacci-like sequence?\n${seq.join(", ")}`;
+      const options = shuffle([
+        answer,
+        answer + seq[missingIndex - 1],
+        answer - seq[missingIndex - 1],
+        answer + 1,
+        answer - 1,
+      ]).map(String);
+      return { q, options, a: answer.toString() };
+    },
+  ];
+
+  const chosenFunc = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+  const questionData = chosenFunc();
+
+  document.getElementById("number-sequence-section").style.display = "block";
+  document.getElementById("number-sequence-question").textContent = questionData.q;
+
+  renderOptions(
+    "number-sequence-options",
+    questionData.options,
+    questionData.a,
+    questionData.q
+  );
+}
 
     function loadDiscountQuestion() {
         const original = Math.floor(Math.random()*80) + 20; // £20–£100
@@ -1322,67 +1412,173 @@ window.addEventListener('resize', () => {
     }
 
     // Function to load player points question
-    function loadPlayerPointsQuestion() {
-        // Generate random game scores for players
-        const playerA = [14, 16, 10, 10];
-        const playerB = [0, 8, 6, 4];
-        const playerC = [8, 11, null, 13]; // null for "Did not play"
-        
-        // Calculate averages
-        const avgA = playerA.reduce((a, b) => a + b, 0) / playerA.length;
-        const avgB = playerB.reduce((a, b) => a + b, 0) / playerB.length;
-        const avgC = playerC.filter(score => score !== null).reduce((a, b) => a + b, 0) / 
-                     playerC.filter(score => score !== null).length;
-        
-        // Question text
-        let questionText = "Following table shows the points of each player scored in four games:\n";
-        questionText += "Player | Game 1 | Game 2 | Game 3 | Game 4\n";
-        questionText += `A      | ${playerA[0]}     | ${playerA[1]}     | ${playerA[2]}     | ${playerA[3]}\n`;
-        questionText += `B      | ${playerB[0]}      | ${playerB[1]}      | ${playerB[2]}      | ${playerB[3]}\n`;
-        questionText += `C      | ${playerC[0]}      | ${playerC[1]}     | Did not play | ${playerC[3]}\n`;
-        questionText += "Find the mean to determine A's average number of points scored per game?";
-        
-        // Options
-        const options = [avgA.toFixed(1), "4.5", "10.67", "All the same"];
-        
-        // Render question
-        document.getElementById("player-points-question").textContent = questionText;
-        renderOptions("player-points-options", options, avgA.toFixed(1), questionText);
-    }
+   function loadPlayerPointsQuestion() {
+  // Utility to generate random integer in range
+  const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-    // Function to load rainfall data question
-    function loadRainfallQuestion() {
-        // Rainfall data for a week
-        const rainfall = [0.0, 12.2, 2.1, 0.0, 20.5, 5.5, 1.0];
-        
-        // Calculate range
-        const range = Math.max(...rainfall) - Math.min(...rainfall);
-        
-        // Calculate mean
-        const mean = rainfall.reduce((a, b) => a + b, 0) / rainfall.length;
-        
-        // Count days with rainfall less than mean
-        const daysLessThanMean = rainfall.filter(r => r < mean).length;
-        
-        // Question text
-        let questionText = "The rainfall (in mm) in a city on 7 days of a certain week was recorded as follows:\n";
-        questionText += "Day | Rainfall (in mm)\n";
-        questionText += `Monday    | ${rainfall[0]}\n`;
-        questionText += `Tuesday   | ${rainfall[1]}\n`;
-        questionText += `Wednesday | ${rainfall[2]}\n`;
-        questionText += `Thursday  | ${rainfall[3]}\n`;
-        questionText += `Friday    | ${rainfall[4]}\n`;
-        questionText += `Saturday  | ${rainfall[5]}\n`;
-        questionText += `Sunday    | ${rainfall[6]}\n`;
-        questionText += "Find the range of the rainfall in the above data?";
-        
-        // Options for range
-        const rangeOptions = [range, range-1, range-2, range-3].map(String);
-        
-        // Render question
-        document.getElementById("rainfall-question").textContent = questionText;
-        renderOptions("rainfall-options", shuffle(rangeOptions), range.toString(), questionText);
-    }
+  // Generate scores (4 games for each player)
+  const playerA = Array.from({ length: 4 }, () => randInt(5, 20));
+  const playerB = Array.from({ length: 4 }, () => randInt(0, 12));
+  const playerC = Array.from({ length: 4 }, () => randInt(5, 15));
+
+  // Randomly mark one of C’s scores as "Did not play"
+  const missingIndex = randInt(0, 3);
+  playerC[missingIndex] = null;
+
+  // Calculate A's average
+  const avgA = playerA.reduce((a, b) => a + b, 0) / playerA.length;
+
+  // --- Build question UI ---
+  const qWrap = document.getElementById("player-points-question");
+  qWrap.innerHTML = ""; // clear old content
+
+  const title = document.createElement("div");
+  title.textContent = "Player Points";
+  title.style.fontWeight = "600";
+  title.style.marginBottom = "8px";
+  qWrap.appendChild(title);
+
+  const intro = document.createElement("p");
+  intro.textContent = "Following table shows the points of each player scored in four games:";
+  intro.style.marginBottom = "8px";
+  qWrap.appendChild(intro);
+
+  // Create table
+  const table = document.createElement("table");
+  table.style.borderCollapse = "collapse";
+  table.style.marginBottom = "12px";
+  table.style.width = "100%";
+  table.style.maxWidth = "420px";
+  table.style.textAlign = "center";
+
+  function addRow(cells, isHeader = false) {
+    const tr = document.createElement("tr");
+    cells.forEach(text => {
+      const el = document.createElement(isHeader ? "th" : "td");
+      el.textContent = text === null ? "Did not play" : text;
+      el.style.border = "1px solid #ccc";
+      el.style.padding = "6px 10px";
+      tr.appendChild(el);
+    });
+    table.appendChild(tr);
+  }
+
+  addRow(["Player", "Game 1", "Game 2", "Game 3", "Game 4"], true);
+  addRow(["A", ...playerA]);
+  addRow(["B", ...playerB]);
+  addRow(["C", ...playerC]);
+
+  qWrap.appendChild(table);
+
+  const qText = document.createElement("p");
+  qText.textContent = "Find the mean to determine A's average number of points scored per game?";
+  qWrap.appendChild(qText);
+
+  // --- Options ---
+  const correct = avgA.toFixed(1);
+  const distractors = [
+    (avgA + 2).toFixed(1),
+    (avgA - 1.5).toFixed(2),
+    "All the same"
+  ];
+  const options = shuffle([correct, ...distractors]);
+
+  renderOptions("player-points-options", options, correct, qText.textContent);
+}
+
+function loadRainfallQuestion() {
+  // Days of week
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  // Generate random rainfall values (0–25 mm)
+  const rainfall = days.map(() => (Math.random() < 0.3 ? 0 : +(Math.random() * 25).toFixed(1)));
+
+  // Stats
+  const maxRain = Math.max(...rainfall);
+  const minRain = Math.min(...rainfall);
+  const range = +(maxRain - minRain).toFixed(1);
+  const mean = +(rainfall.reduce((a, b) => a + b, 0) / rainfall.length).toFixed(1);
+  const belowMean = rainfall.filter(r => r < mean).length;
+  const maxDay = days[rainfall.indexOf(maxRain)];
+
+  // Decide question type
+  const questionTypes = ["range", "mean", "belowMean", "maxDay"];
+  const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+
+  let questionText = "The rainfall (in mm) in a city on 7 days of a certain week was recorded as follows:";
+  const qWrap = document.getElementById("rainfall-question");
+  qWrap.innerHTML = ""; // clear old content
+
+  // Title
+  const title = document.createElement("div");
+  title.textContent = "Rainfall Data";
+  title.style.fontWeight = "600";
+  title.style.marginBottom = "8px";
+  qWrap.appendChild(title);
+
+  const intro = document.createElement("p");
+  intro.textContent = questionText;
+  intro.style.marginBottom = "8px";
+  qWrap.appendChild(intro);
+
+  // Build table
+  const table = document.createElement("table");
+  table.style.borderCollapse = "collapse";
+  table.style.marginBottom = "12px";
+  table.style.width = "100%";
+  table.style.maxWidth = "420px";
+  table.style.textAlign = "center";
+
+  function addRow(cells, isHeader = false) {
+    const tr = document.createElement("tr");
+    cells.forEach(text => {
+      const el = document.createElement(isHeader ? "th" : "td");
+      el.textContent = text;
+      el.style.border = "1px solid #ccc";
+      el.style.padding = "6px 10px";
+      tr.appendChild(el);
+    });
+    table.appendChild(tr);
+  }
+
+  addRow(["Day", "Rainfall (mm)"], true);
+  days.forEach((d, i) => addRow([d, rainfall[i]]));
+
+  qWrap.appendChild(table);
+
+  // Setup question + options
+  let qFinal, answer, options;
+
+  if (qType === "range") {
+    qFinal = "Find the range of the rainfall in the above data.";
+    answer = range.toFixed(1);
+    options = shuffle([answer, (range + 1).toFixed(1), (range - 1).toFixed(1), (range + 2).toFixed(1)]);
+  } 
+  else if (qType === "mean") {
+    qFinal = "Find the mean rainfall of the above data.";
+    answer = mean.toFixed(1);
+    options = shuffle([answer, (mean + 2).toFixed(1), (mean - 1.5).toFixed(1), (mean + 3).toFixed(1)]);
+  } 
+  else if (qType === "belowMean") {
+    qFinal = "How many days had rainfall less than the mean?";
+    answer = belowMean.toString();
+    options = shuffle([answer, belowMean + 1 + "", Math.max(0, belowMean - 1) + "", (belowMean + 2) + ""]);
+  } 
+  else if (qType === "maxDay") {
+    qFinal = "On which day was the maximum rainfall recorded?";
+    answer = maxDay;
+    const otherDays = shuffle(days.filter(d => d !== maxDay)).slice(0, 3);
+    options = shuffle([answer, ...otherDays]);
+  }
+
+  // Append question text
+  const qText = document.createElement("p");
+  qText.textContent = qFinal;
+  qWrap.appendChild(qText);
+
+  // Render options
+  renderOptions("rainfall-options", options, answer, qFinal);
+}
 
     // Function to load heights data question
     function loadHeightsQuestion() {
@@ -1412,46 +1608,110 @@ window.addEventListener('resize', () => {
     }
 
     // Function to load mode and median question
-    function loadModeMedianQuestion() {
-        // Data set
-        const data = [13, 16, 12, 14, 19, 12, 14, 13, 14];
-        
-        // Find mode (most frequent value)
-        const frequency = {};
-        data.forEach(val => {
-            frequency[val] = (frequency[val] || 0) + 1;
-        });
-        
-        let mode = null;
-        let maxFreq = 0;
-        for (const [val, freq] of Object.entries(frequency)) {
-            if (freq > maxFreq) {
-                maxFreq = freq;
-                mode = parseInt(val);
-            }
-        }
-        
-        // Find median (middle value when sorted)
-        const sorted = [...data].sort((a, b) => a - b);
-        const median = sorted[Math.floor(sorted.length / 2)];
-        
-        // Question text
-        const questionText = `Find the mode and median of the data: ${data.join(", ")}`;
-        
-        // Options
-        const options = [
-            "12, 13",
-            "13, 14",
-            `${mode}, ${median}`,
-            "14, 15"
-        ];
-        
-        // Render question
-        document.getElementById("mode-median-question").textContent = questionText;
-         // Render question
-        document.getElementById("mode-median-question").textContent = questionText;
-        renderOptions("mode-median-options", options, `${mode}, ${median}`, questionText);
-    }
+   function loadModeMedianQuestion() {
+ // Function to load a random statistics question (Mean, Median, Mode, Range)
+
+  const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  // Generate random dataset (values between 5–30, length 7–12)
+  const length = randInt(7, 12);
+  const data = Array.from({ length }, () => randInt(5, 30));
+
+  // --- Stats ---
+  // Mean
+  const mean = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
+
+  // Median
+  const sorted = [...data].sort((a, b) => a - b);
+  let median;
+  if (sorted.length % 2 === 1) {
+    median = sorted[Math.floor(sorted.length / 2)];
+  } else {
+    const mid1 = sorted[sorted.length / 2 - 1];
+    const mid2 = sorted[sorted.length / 2];
+    median = ((mid1 + mid2) / 2).toFixed(1);
+  }
+
+  // Mode
+  const freq = {};
+  data.forEach(v => (freq[v] = (freq[v] || 0) + 1));
+  const maxFreq = Math.max(...Object.values(freq));
+  const modes = Object.keys(freq)
+    .filter(v => freq[v] === maxFreq)
+    .map(Number);
+  const mode = modes.length === 1 ? modes[0] : Math.min(...modes); // pick one
+
+  // Range
+  const range = Math.max(...data) - Math.min(...data);
+
+  // --- Question Variants ---
+  const types = [
+    {
+      q: `Find the mean of the data: ${data.join(", ")}`,
+      correct: mean,
+      distractors: [
+        (+mean + 1).toFixed(1),
+        (+mean - 1).toFixed(1),
+        (Math.round(mean * 2) / 2).toFixed(1),
+      ],
+    },
+    {
+      q: `Find the median of the data: ${data.join(", ")}`,
+      correct: median.toString(),
+      distractors: [
+        (parseFloat(median) + 1).toString(),
+        (parseFloat(median) - 1).toString(),
+        mean.toString(),
+      ],
+    },
+    {
+      q: `Find the mode of the data: ${data.join(", ")}`,
+      correct: mode.toString(),
+      distractors: [
+        (mode + 1).toString(),
+        (mode - 1).toString(),
+        sorted[0].toString(),
+      ],
+    },
+    {
+      q: `Find the range of the data: ${data.join(", ")}`,
+      correct: range.toString(),
+      distractors: [
+        (range + 1).toString(),
+        (range - 1).toString(),
+        (range + 2).toString(),
+      ],
+    },
+    {
+      q: `Find the mean and median of the data: ${data.join(", ")}`,
+      correct: `${mean}, ${median}`,
+      distractors: [
+        `${(+mean + 1).toFixed(1)}, ${median}`,
+        `${mean}, ${parseFloat(median) + 1}`,
+        `${(+mean - 1).toFixed(1)}, ${median}`,
+      ],
+    },
+    {
+      q: `Find the mode and range of the data: ${data.join(", ")}`,
+      correct: `${mode}, ${range}`,
+      distractors: [
+        `${mode + 1}, ${range}`,
+        `${mode}, ${range + 1}`,
+        `${mode - 1}, ${range - 1}`,
+      ],
+    },
+  ];
+
+  // Pick one variant
+  const chosen = types[Math.floor(Math.random() * types.length)];
+  const allOptions = shuffle([chosen.correct, ...chosen.distractors]);
+
+  // Render
+  const qWrap = document.getElementById("mode-median-question");
+  qWrap.textContent = chosen.q;
+
+  renderOptions("mode-median-options", allOptions, chosen.correct, chosen.q);
+}
 
     // Function to load test scores question
     function loadTestScoresQuestion() {
