@@ -50038,3 +50038,250 @@ const airportsData = {
     "country": "AR",
     "lat": -43.2105,
     "lon": -65.27
+  }
+
+}
+
+
+  // ---- INLINE AIRPORT DATA ----
+// keep your existing airportsData object here (unchanged)
+
+// ---- Utility: radians/degrees ----
+const toRad = d => d * Math.PI / 180;
+const toDeg = r => r * 180 / Math.PI;
+
+// Earth radius
+const R = 6371.0088; // km (mean Earth radius)
+
+// ---- Great-circle calculations ----
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  const φ1 = toRad(lat1), φ2 = toRad(lat2);
+  const Δφ = toRad(lat2 - lat1);
+  const Δλ = toRad(lon2 - lon1);
+  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c; // km
+}
+
+function initialBearing(lat1, lon1, lat2, lon2) {
+  const φ1 = toRad(lat1), φ2 = toRad(lat2);
+  const λ1 = toRad(lon1), λ2 = toRad(lon2);
+  const y = Math.sin(λ2-λ1) * Math.cos(φ2);
+  const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+function finalBearing(lat1, lon1, lat2, lon2) {
+  // final bearing is inverse route’s initial bearing
+  const b = initialBearing(lat2, lon2, lat1, lon1);
+  return (b + 180) % 360;
+}
+
+function midpoint(lat1, lon1, lat2, lon2) {
+  const φ1 = toRad(lat1), λ1 = toRad(lon1);
+  const φ2 = toRad(lat2), λ2 = toRad(lon2);
+  const Bx = Math.cos(φ2) * Math.cos(λ2 - λ1);
+  const By = Math.cos(φ2) * Math.sin(λ2 - λ1);
+  const φ3 = Math.atan2(Math.sin(φ1)+Math.sin(φ2), Math.sqrt((Math.cos(φ1)+Bx)**2 + By**2));
+  const λ3 = λ1 + Math.atan2(By, Math.cos(φ1)+Bx);
+  return { lat: toDeg(φ3), lon: ((toDeg(λ3)+540)%360)-180 }; // normalize to [-180,180)
+}
+
+// ---- Simple flight time estimate ----
+function estimateFlightTimeHours(distanceKm, speedKmh = 900) { // default ~jet speed
+  if (!distanceKm || distanceKm <= 0) return 0;
+  return distanceKm / speedKmh;
+}
+
+function fmtTime(hours) {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  return `${h}h ${m}m`;
+}
+
+function fmtDistance(km) {
+  const nm = km * 0.539957; // nautical miles
+  const mi = km * 0.621371;
+  return `${km.toFixed(0)} km • ${mi.toFixed(0)} mi • ${nm.toFixed(0)} nm`;
+}
+
+function fmtBearing(b) {
+  return `${b.toFixed(0)}°`;
+}
+
+function fmtLatLon(lat, lon) {
+  const ns = lat >= 0 ? 'N' : 'S';
+  const ew = lon >= 0 ? 'E' : 'W';
+  return `${Math.abs(lat).toFixed(3)}°${ns}, ${Math.abs(lon).toFixed(3)}°${ew}`;
+}
+
+// ---- Matching and autocomplete ----
+function normalize(s) {
+  return String(s || '').trim().toLowerCase();
+}
+
+function airportMatches(q, ap) {
+  const n = normalize(q);
+  if (!n) return false;
+  return normalize(ap.code).includes(n)
+      || normalize(ap.city).includes(n)
+      || normalize(ap.name).includes(n);
+}
+
+function searchAirports(q, limit = 20) {
+  const n = normalize(q);
+  if (!n) return [];
+  const results = [];
+  for (const code in airportsData) {
+    const ap = airportsData[code];
+    if (airportMatches(n, ap)) {
+      results.push(ap);
+      if (results.length >= limit) break;
+    }
+  }
+  return results;
+}
+
+function findBestAirport(q) {
+  // Prefer exact IATA code match, else first search result
+  const n = normalize(q);
+  if (n.length === 3) {
+    const ap = airportsData[n.toUpperCase()];
+    if (ap) return ap;
+  }
+  const res = searchAirports(q, 1);
+  return res[0];
+}
+
+// ---- DOM refs ----
+const originInput = document.getElementById('origin');
+const destInput = document.getElementById('destination');
+const originList = document.getElementById('origin-autocomplete');
+const destList = document.getElementById('destination-autocomplete');
+const swapBtn = document.getElementById('swapBtn');
+const statusEl = document.getElementById('status');
+
+const resultsBox = document.getElementById('results');
+const distMain = document.getElementById('distMain');
+const bearInit = document.getElementById('bearInit');
+const bearFinal = document.getElementById('bearFinal');
+const midpointEl = document.getElementById('midpoint');
+const flightTimeEl = document.getElementById('flightTime');
+
+// ---- Autocomplete rendering ----
+function renderAutocomplete(listEl, items, onPick) {
+  if (!items.length) {
+    listEl.style.display = 'none';
+    listEl.innerHTML = '';
+    return;
+  }
+  listEl.innerHTML = items.map(ap =>
+    `<div class="autocomplete-item" data-code="${ap.code}">
+      <strong>${ap.code}</strong> — ${ap.city || ''} — ${ap.name || ''}
+    </div>`
+  ).join('');
+  listEl.style.display = 'block';
+  listEl.querySelectorAll('.autocomplete-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const code = item.getAttribute('data-code');
+      const ap = airportsData[code];
+      onPick(ap);
+    });
+  });
+}
+
+function setupAutocomplete(inputEl, listEl) {
+  let last = '';
+  inputEl.addEventListener('input', () => {
+    const q = inputEl.value;
+    if (q === last) return;
+    last = q;
+    const items = searchAirports(q, 12);
+    renderAutocomplete(listEl, items, ap => {
+      inputEl.value = `${ap.city || ap.name || ''} (${ap.code})`;
+      listEl.style.display = 'none';
+      computeAndRender();
+    });
+  });
+  inputEl.addEventListener('blur', () => {
+    setTimeout(() => { listEl.style.display = 'none'; }, 150);
+  });
+  inputEl.addEventListener('focus', () => {
+    const items = searchAirports(inputEl.value, 12);
+    renderAutocomplete(listEl, items, ap => {
+      inputEl.value = `${ap.city || ap.name || ''} (${ap.code})`;
+      listEl.style.display = 'none';
+      computeAndRender();
+    });
+  });
+}
+
+setupAutocomplete(originInput, originList);
+setupAutocomplete(destInput, destList);
+
+// ---- Swap ----
+swapBtn.addEventListener('click', () => {
+  const a = originInput.value;
+  originInput.value = destInput.value;
+  destInput.value = a;
+  computeAndRender();
+});
+
+// ---- Parse value to airport ----
+function parseInputToAirport(val) {
+  if (!val) return null;
+  // Try to find code in parentheses
+  const m = val.match(/\((\w{3})\)/);
+  if (m) {
+    const ap = airportsData[m[1].toUpperCase()];
+    if (ap) return ap;
+  }
+  return findBestAirport(val);
+}
+
+// ---- Compute and render ----
+function computeAndRender() {
+  const ap1 = parseInputToAirport(originInput.value);
+  const ap2 = parseInputToAirport(destInput.value);
+
+  if (!ap1 || !ap2) {
+    statusEl.textContent = 'Enter both origin and destination (city or airport).';
+    resultsBox.style.display = 'none';
+    return;
+  }
+  statusEl.textContent = `${ap1.city || ap1.name} (${ap1.code}) → ${ap2.city || ap2.name} (${ap2.code})`;
+
+  const dKm = haversineDistance(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
+  const b1 = initialBearing(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
+  const b2 = finalBearing(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
+  const mid = midpoint(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
+  const t = estimateFlightTimeHours(dKm);
+
+  distMain.textContent = fmtDistance(dKm);
+  bearInit.textContent = fmtBearing(b1);
+  bearFinal.textContent = fmtBearing(b2);
+  midpointEl.textContent = fmtLatLon(mid.lat, mid.lon);
+  flightTimeEl.textContent = fmtTime(t);
+
+  resultsBox.style.display = 'block';
+
+  // TODO: integrate a map library (Leaflet/Mapbox/Google Maps) to draw great-circle path
+  const mapEl = document.getElementById('map');
+  mapEl.innerHTML = '<div style="padding:1rem;color:#9fb3c5;">Map rendering not yet implemented.</div>';
+}
+
+// ---- URL params (?from=...&to=...) ----
+function initFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get('from');
+  const to = params.get('to');
+  if (from) originInput.value = from;
+  if (to) destInput.value = to;
+}
+
+initFromQuery();
+computeAndRender();
+</script>
+  
+
+  
