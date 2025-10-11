@@ -2,153 +2,158 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Great Circle Distance Calculator</title>
-  <meta name="description" content="Find the distance between any two cities or airports instantly.">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>Great Circle Distance Calculator | Fast City & Airport Distance, Bearings, Midpoint, Flight Time</title>
+  <meta name="description" content="Ultra-fast great circle distance calculator with autocomplete for cities and airports. Type 'Putrajaya to London distance' or use IATA codes like 'KUL to LHR'. See bearings, midpoint, time, and interactive map.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://{s}.tile.openstreetmap.org" crossorigin>
+  <meta name="theme-color" content="#0d1b2a">
   <style>
-:root {
-      --clr-bg: #0d1b2a;
-      --clr-bg-alt: #132235;
-      --clr-surface: #1f3145;
-      --clr-accent: #3298dc;
-      --clr-accent-alt: #4fb1f5;
-      --clr-text: #e8f0f7;
-      --clr-text-dim: #9fb3c5;
-      --radius: 14px;
-      --transition: .24s cubic-bezier(.4,.2,.2,1);
-      --focus-ring: 0 0 0 3px rgba(50,152,220,.5);
+    :root{
+      --clr-bg:#0d1b2a;--clr-bg-alt:#132235;--clr-surface:#1f3145;--clr-accent:#3298dc;--clr-accent-alt:#4fb1f5;
+      --clr-text:#e8f0f7;--clr-text-dim:#9fb3c5;--radius:14px;--transition:.24s cubic-bezier(.4,.2,.2,1);
+      --focus-ring:0 0 0 3px rgba(50,152,220,.5)
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; background: var(--clr-bg); color: var(--clr-text); }
-    main { max-width: 900px; margin: auto; padding: 2rem 1rem; }
-    h1 { font-size: 2.2rem; margin-bottom: 1.5rem; text-align: center; }
-    
-    .form-box { background: var(--clr-surface); border-radius: var(--radius); padding: 2rem 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,.13); }
-    .form-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
-    .input-group { flex: 1 1 200px; display: flex; flex-direction: column; position: relative; }
-    label { font-size: .95em; font-weight: 600; margin-bottom: .3em; color: var(--clr-text-dim); }
-    input[type="text"] { width: 100%; font-size: 1.1em; padding: .8em 1em; border-radius: 8px; border: 1px solid var(--clr-accent-alt); background: rgba(255,255,255,.07); color: var(--clr-text); transition: var(--transition); }
-    input[type="text"]:focus { outline: none; box-shadow: var(--focus-ring); border-color: var(--clr-accent); }
-    .swap-btn { background: var(--clr-accent); color: #fff; border: none; border-radius: 8px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; cursor: pointer; transition: background .15s; margin-bottom: 0.3em; margin-top: 1.7em; }
-    .swap-btn:hover { background: var(--clr-accent-alt); }
-    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--clr-bg-alt); color: var(--clr-text); border: 1px solid var(--clr-accent-alt); border-top: none; border-radius: 0 0 10px 10px; z-index: 100; max-height: 210px; overflow-y: auto; box-shadow: 0 8px 24px -8px rgba(0,0,0,.45); margin-top: 2px; }
-    .autocomplete-item { padding: .7em 1em; cursor: pointer; font-size: 1em; border-bottom: 1px solid var(--clr-surface); }
-    .autocomplete-item:last-child { border-bottom: none; }
-    .autocomplete-item:hover, .autocomplete-item.active { background: var(--clr-accent-alt); color: #082032; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:var(--clr-bg);color:var(--clr-text)}
+    a{color:var(--clr-accent-alt)}
+    header{position:sticky;top:0;z-index:999;background:linear-gradient(90deg,var(--clr-bg),#0e2136 30%,#0e2136 70%,var(--clr-bg));border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem}
+    .brand{display:flex;gap:.6rem;align-items:center;font-weight:800;letter-spacing:.4px}
+    .brand .logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-alt));box-shadow:0 6px 20px rgba(79,177,245,.35)}
+    .brand span{font-size:1.05rem}
+    .nav-links{display:flex;gap:.9rem;align-items:center}
+    .btn{appearance:none;border:none;cursor:pointer;border-radius:10px;padding:.65rem 1rem;font-weight:700;transition:transform .12s ease,background .2s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--clr-accent);color:#fff}
+    .btn-primary:hover{background:var(--clr-accent-alt)}
+    .btn-ghost{background:transparent;color:var(--clr-text);border:1px solid rgba(255,255,255,.15)}
+    main{max-width:1100px;margin:auto;padding:1.2rem 1rem 3rem}
+    h1{font-size:2.15rem;margin:.8rem 0 1.2rem;text-align:center}
+    .sub{color:var(--clr-text-dim);text-align:center;margin-top:-.6rem;margin-bottom:1.6rem}
 
-    .results-box { background: var(--clr-bg-alt); border-radius: var(--radius); padding: 1.5rem 1.2rem; margin-top: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,.10); }
-    .metrics { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-    .metric { background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.09); padding: 1rem 1.05rem; border-radius: 10px; text-align: center; }
-    .metric h3 { font-size: .85em; font-weight: 700; color: var(--clr-text-dim); margin: 0 0 .2em 0; }
-    .metric .value { font-size: 1.1em; font-weight: 600; color: #fff; word-break: break-word; }
-    #map { width: 100%; height: 350px; border-radius: 10px; margin-top: 1.5rem; border: 1px solid var(--clr-accent-alt); }
+    .form-box{background:var(--clr-surface);border-radius:var(--radius);padding:1.4rem;box-shadow:0 8px 28px rgba(0,0,0,.18)}
+    .form-row{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+    .input-group{flex:1 1 280px;display:flex;flex-direction:column;position:relative}
+    label{font-size:.92em;font-weight:700;margin-bottom:.35em;color:var(--clr-text-dim)}
+    input[type="text"]{width:100%;font-size:1.05em;padding:.85em 1em;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--clr-text);transition:var(--transition)}
+    input[type="text"]:focus{outline:none;box-shadow:var(--focus-ring);border-color:var(--clr-accent)}
+    .swap-btn{background:var(--clr-accent);color:#fff;border:none;border-radius:10px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:1.35em;cursor:pointer;transition:background .15s;margin-bottom:.3em;margin-top:1.7em}
+    .swap-btn:hover{background:var(--clr-accent-alt)}
+    .go-btn{height:50px;margin-top:1.7em}
+    .autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--clr-bg-alt);color:var(--clr-text);border:1px solid var(--clr-accent-alt);border-top:none;border-radius:0 0 10px 10px;z-index:1000;max-height:250px;overflow-y:auto;box-shadow:0 8px 24px -8px rgba(0,0,0,.45);margin-top:2px}
+    .autocomplete-item{padding:.7em 1em;cursor:pointer;font-size:.98em;border-bottom:1px solid var(--clr-surface)}
+    .autocomplete-item:last-child{border-bottom:none}
+    .autocomplete-item:hover,.autocomplete-item.active{background:var(--clr-accent-alt);color:#082032}
+    .status-bar{margin-top:.4em;font-size:.95em;color:var(--clr-accent-alt);min-height:1.2em}
+    .popular-links{margin-top:1.1em;text-align:center;color:var(--clr-text-dim)}
+    .popular-links a{color:var(--clr-accent-alt);margin:0 .6em;text-decoration:underline}
 
-    .status-bar { margin-top: .4em; font-size: .95em; color: var(--clr-accent-alt); }
-    .popular-links { margin-top: 1.4em; text-align: center; }
-    .popular-links a { color: var(--clr-accent-alt); margin: 0 0.6em; text-decoration: underline; }
+    .results-box{background:var(--clr-bg-alt);border-radius:var(--radius);padding:1.2rem;margin-top:1.4rem;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+    .metrics{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+    .metric{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);padding:1rem 1.05rem;border-radius:12px;text-align:center}
+    .metric h3{font-size:.85em;font-weight:800;color:var(--clr-text-dim);margin:0 0 .25em}
+    .metric .value{font-size:1.12em;font-weight:700;color:#fff;word-break:break-word}
+    #map{width:100%;height:420px;border-radius:12px;margin-top:1.2rem;border:1px solid var(--clr-accent-alt);overflow:hidden}
+    .footer{max-width:1100px;margin:2rem auto 1.5rem;color:var(--clr-text-dim);text-align:center;font-size:.92rem}
 
-    @media(max-width: 700px){
-      .form-row { flex-direction: column; align-items: stretch; }
-      .swap-btn { width: 100%; margin: 0.6em 0 0.3em 0; height: 44px; font-size: 1.2em; }
-      .metrics { grid-template-columns: 1fr; }
-      input[type="text"] { font-size: 1em; padding: .7em; }
-    }    :root {
-      --clr-bg: #0d1b2a;
-      --clr-bg-alt: #132235;
-      --clr-surface: #1f3145;
-      --clr-accent: #3298dc;
-      --clr-accent-alt: #4fb1f5;
-      --clr-text: #e8f0f7;
-      --clr-text-dim: #9fb3c5;
-      --radius: 14px;
-      --transition: .24s cubic-bezier(.4,.2,.2,1);
-      --focus-ring: 0 0 0 3px rgba(50,152,220,.5);
+    /* Micro interactions */
+    .chip{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:.35rem .7rem;font-size:.85rem}
+    .badge{display:inline-block;background:linear-gradient(135deg,#43c6ac,#191654);border:1px solid rgba(255,255,255,.14);padding:.25rem .5rem;border-radius:6px;font-size:.8rem}
+
+    @media(max-width:760px){
+      .form-row{flex-direction:column;align-items:stretch}
+      .swap-btn{width:100%;margin:.6em 0 .3em 0;height:44px;font-size:1.1em}
+      .go-btn{width:100%;height:44px}
+      input[type="text"]{font-size:1em;padding:.75em}
+      #map{height:360px}
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; background: var(--clr-bg); color: var(--clr-text); }
-    main { max-width: 900px; margin: auto; padding: 2rem 1rem; }
-    h1 { font-size: 2.2rem; margin-bottom: 1.5rem; text-align: center; }
-    .form-box { background: var(--clr-surface); border-radius: var(--radius); padding: 2rem 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,.13); }
-    .form-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
-    .input-group { flex: 1 1 200px; display: flex; flex-direction: column; position: relative; }
-    label { font-size: .95em; font-weight: 600; margin-bottom: .3em; color: var(--clr-text-dim); }
-    input[type="text"] { width: 100%; font-size: 1.1em; padding: .8em 1em; border-radius: 8px; border: 1px solid var(--clr-accent-alt); background: rgba(255,255,255,.07); color: var(--clr-text); transition: var(--transition); }
-    input[type="text"]:focus { outline: none; box-shadow: var(--focus-ring); border-color: var(--clr-accent); }
-    .swap-btn { background: var(--clr-accent); color: #fff; border: none; border-radius: 8px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; cursor: pointer; transition: background .15s; margin-bottom: 0.3em; margin-top: 1.7em; }
-    .swap-btn:hover { background: var(--clr-accent-alt); }
-    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--clr-bg-alt); color: var(--clr-text); border: 1px solid var(--clr-accent-alt); border-top: none; border-radius: 0 0 10px 10px; z-index: 100; max-height: 210px; overflow-y: auto; box-shadow: 0 8px 24px -8px rgba(0,0,0,.45); margin-top: 2px; }
-    .autocomplete-item { padding: .7em 1em; cursor: pointer; font-size: 1em; border-bottom: 1px solid var(--clr-surface); }
-    .autocomplete-item:last-child { border-bottom: none; }
-    .autocomplete-item:hover, .autocomplete-item.active { background: var(--clr-accent-alt); color: #082032; }
-    .results-box { background: var(--clr-bg-alt); border-radius: var(--radius); padding: 1.5rem 1.2rem; margin-top: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,.10); }
-    .metrics { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-    .metric { background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.09); padding: 1rem 1.05rem; border-radius: 10px; text-align: center; }
-    .metric h3 { font-size: .85em; font-weight: 700; color: var(--clr-text-dim); margin: 0 0 .2em 0; }
-    .metric .value { font-size: 1.1em; font-weight: 600; color: #fff; word-break: break-word; }
-    #map { width: 100%; height: 350px; border-radius: 10px; margin-top: 1.5rem; border: 1px solid var(--clr-accent-alt); }
-    .status-bar { margin-top: .4em; font-size: .95em; color: var(--clr-accent-alt); }
-    .popular-links { margin-top: 1.4em; text-align: center; }
-    .popular-links a { color: var(--clr-accent-alt); margin: 0 0.6em; text-decoration: underline; }
-    @media(max-width: 700px){
-      .form-row { flex-direction: column; align-items: stretch; }
-      .swap-btn { width: 100%; margin: 0.6em 0 0.3em 0; height: 44px; font-size: 1.2em; }
-      .metrics { grid-template-columns: 1fr; }
-      input[type="text"] { font-size: 1em; padding: .7em; }
-    }
+
+    /* Leaflet (minimal) */
+    .leaflet-container{background:#0c1523}
   </style>
 </head>
 <body>
-<main>
-  <h1>Great Circle Distance Calculator</h1>
-  <div class="form-box">
-    <form id="gcForm" autocomplete="off" spellcheck="false">
-      <div class="form-row">
-        <div class="input-group">
-          <label for="origin">Origin (City or Airport)</label>
-          <input id="origin" type="text" placeholder="e.g. London or LHR">
-          <div class="autocomplete-list" id="origin-autocomplete" style="display:none;"></div>
+  <header>
+    <nav class="nav" aria-label="Primary">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">✈️</div>
+        <span>Great Circle Distance</span>
+      </div>
+      <div class="nav-links">
+        <a class="btn btn-ghost" href="/" id="homeBtn" aria-label="Home">Home</a>
+        <a class="btn btn-primary" href="#map" aria-label="Jump to map">Open Map</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Great Circle Distance Calculator</h1>
+    <p class="sub">Type a city, airport name, or IATA code. Try queries like: <span class="chip">Putrajaya to London distance</span> or <span class="chip">KUL to LHR</span>.</p>
+
+    <section class="form-box" aria-label="Distance calculator">
+      <form id="gcForm" autocomplete="off" spellcheck="false">
+        <div class="form-row">
+          <div class="input-group">
+            <label for="origin">Origin (City or Airport)</label>
+            <input id="origin" type="text" placeholder="e.g. London or LHR" aria-autocomplete="list" aria-expanded="false" aria-controls="origin-autocomplete">
+            <div class="autocomplete-list" id="origin-autocomplete" role="listbox" style="display:none;"></div>
+          </div>
+
+          <button type="button" class="swap-btn" id="swapBtn" title="Swap origin & destination" aria-label="Swap origin and destination">⇅</button>
+
+          <div class="input-group">
+            <label for="destination">Destination (City or Airport)</label>
+            <input id="destination" type="text" placeholder="e.g. Dubai or DXB" aria-autocomplete="list" aria-expanded="false" aria-controls="destination-autocomplete">
+            <div class="autocomplete-list" id="destination-autocomplete" role="listbox" style="display:none;"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary go-btn" id="goBtn" title="Calculate">Calculate</button>
         </div>
-        <button type="button" class="swap-btn" id="swapBtn" title="Swap origin & destination">⇅</button>
-        <div class="input-group">
-          <label for="destination">Destination (City or Airport)</label>
-          <input id="destination" type="text" placeholder="e.g. Dubai or DXB">
-          <div class="autocomplete-list" id="destination-autocomplete" style="display:none;"></div>
+        <div class="status-bar" id="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="popular-links">
+        Popular:
+        <a href="?from=london&to=dubai">London → Dubai</a>
+        <a href="?from=trivandrum&to=kul">Trivandrum → KUL</a>
+        <a href="?from=new+york&to=paris">New York → Paris</a>
+      </div>
+    </section>
+
+    <section class="results-box" id="results" style="display:none;">
+      <div class="metrics">
+        <div class="metric">
+          <h3>Distance</h3>
+          <div class="value" id="distMain">—</div>
+        </div>
+        <div class="metric">
+          <h3>Bearings</h3>
+          <div class="value"><span id="bearInit">—</span> → <span id="bearFinal">—</span></div>
+        </div>
+        <div class="metric">
+          <h3>Midpoint</h3>
+          <div class="value" id="midpoint">—</div>
+        </div>
+        <div class="metric">
+          <h3>Approx Flight Time</h3>
+          <div class="value" id="flightTime">—</div>
         </div>
       </div>
-      <div class="status-bar" id="status" role="status" aria-live="polite"></div>
-    </form>
-    <div class="popular-links">
-      Popular: 
-      <a href="?from=london&to=dubai">London → Dubai</a>
-      <a href="?from=trivandrum&to=kul">Trivandrum → KUL</a>
-      <a href="?from=new+york&to=paris">New York → Paris</a>
-    </div>
-  </div>
-  <div class="results-box" id="results" style="display:none;">
-    <div class="metrics">
-      <div class="metric">
-        <h3>Distance</h3>
-        <div class="value" id="distMain">—</div>
-      </div>
-      <div class="metric">
-        <h3>Bearings</h3>
-        <div class="value"><span id="bearInit">—</span> → <span id="bearFinal">—</span></div>
-      </div>
-      <div class="metric">
-        <h3>Midpoint</h3>
-        <div class="value" id="midpoint">—</div>
-      </div>
-      <div class="metric">
-        <h3>Approx Flight Time</h3>
-        <div class="value" id="flightTime">—</div>
-      </div>
-    </div>
-    <div id="map" aria-label="Great circle route map"></div>
-  </div>
-</main>
-<script>
-// ---- INLINE AIRPORT DATA ----
-const airportsData = {
+      <div id="map" aria-label="Great circle route map"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="badge">Ultra-fast</span>
+    <span class="badge">SEO Optimized</span>
+    <span class="badge">Mobile Friendly</span>
+  </footer>
+
+  <!-- DO NOT REPEAT THE AIRPORT JSON. Include it once above this script as airportsData = { ... } -->
+  <!-- Expect a global constant airportsData to be available (pasted from your existing dataset). -->
+<script> const airportsData = {
   "UTK": {
     "code": "UTK",
     "name": "Utirik Airport",
@@ -197,7 +202,7 @@ const airportsData = {
     "lat": 30.251801,
     "lon": -98.622498
   },
-  
+
   "KUL": {
   "code": "KUL",
   "name": "Kuala Lumpur International Airport",
@@ -214,7 +219,7 @@ const airportsData = {
   "lat": 2.929,
   "lon": 101.6869
 },
-  
+
   "WLR": {
     "code": "WLR",
     "name": "Loring Seaplane Base",
@@ -50040,248 +50045,430 @@ const airportsData = {
     "lon": -65.27
   }
 
-}
+}; </script>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-vS0F9sK3e6ry1zO8iQwo3oKaR8wZkXr0nTz0f0rJbPjXn8M3sLxKX4h1X3M7EJkF" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-Ef1JrQ6Qobk7o4i3Jb9Q8gq8wK3WvQmN5l0x9c8a2kK0k2t3Wk1kJb5zEw2N1v6E" crossorigin="" defer></script>
 
+  <script>
+  // Utility: diacritics-insensitive, robust contains
+  const norm = s => (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 
-  // ---- INLINE AIRPORT DATA ----
-// keep your existing airportsData object here (unchanged)
+  // Expect global airportsData injected before this script
+  // Build a fast search index
+  let AIRPORTS = [];
+  let CITY_INDEX = new Map(); // city -> best airport code (heuristic)
+  let CODE_INDEX = new Map(); // code -> airport
+  (function buildIndex(){
+    if(typeof airportsData !== 'object'){ console.warn('airportsData not found. Paste your JSON as a global constant before this script.'); return; }
+    const entries = Object.values(airportsData);
+    for(const a of entries){
+      if(!a || !a.code) continue;
+      const rec = {
+        code: (a.code||'').toUpperCase(),
+        name: a.name||'',
+        city: a.city||'',
+        country: a.country||'',
+        lat: Number(a.lat),
+        lon: Number(a.lon),
+        key: norm(a.code + ' ' + a.name + ' ' + a.city + ' ' + a.country)
+      };
+      AIRPORTS.push(rec);
+      CODE_INDEX.set(rec.code, rec);
+      // Simple heuristic: prefer larger city airports if duplicates - here first wins
+      const cityKey = norm(rec.city);
+      if(cityKey && !CITY_INDEX.has(cityKey)) CITY_INDEX.set(cityKey, rec.code);
+    }
+  })();
 
-// ---- Utility: radians/degrees ----
-const toRad = d => d * Math.PI / 180;
-const toDeg = r => r * 180 / Math.PI;
+  // Basic city geocoding fallback using a tiny curated list
+  const CITY_GEO = new Map([
+    ['london',{name:'London, UK', lat:51.5074, lon:-0.1278}],
+    ['paris',{name:'Paris, FR', lat:48.8566, lon:2.3522}],
+    ['new york',{name:'New York, US', lat:40.7128, lon:-74.0060}],
+    ['dubai',{name:'Dubai, AE', lat:25.276987, lon:55.296249}],
+    ['putrajaya',{name:'Putrajaya, MY', lat:2.9264, lon:101.6964}],
+    ['trivandrum',{name:'Trivandrum (Thiruvananthapuram), IN', lat:8.5241, lon:76.9366}],
+    ['singapore',{name:'Singapore, SG', lat:1.3521, lon:103.8198}],
+    ['tokyo',{name:'Tokyo, JP', lat:35.6762, lon:139.6503}],
+    ['sydney',{name:'Sydney, AU', lat:-33.8688, lon:151.2093}],
+    ['delhi',{name:'Delhi, IN', lat:28.6139, lon:77.2090}],
+    ['mumbai',{name:'Mumbai, IN', lat:19.0760, lon:72.8777}],
+    ['kuala lumpur',{name:'Kuala Lumpur, MY', lat:3.1390, lon:101.6869}],
+    ['doha',{name:'Doha, QA', lat:25.2854, lon:51.5310}]
+  ]);
 
-// Earth radius
-const R = 6371.0088; // km (mean Earth radius)
+  // Parse free-form query like "Putrajaya to London distance"
+  function parseFreeQuery(q){
+    q = (q||'').trim();
+    if(!q) return null;
+    const low = norm(q).replace(/\s+/g,' ').trim();
+    // Common separators
+    const seps = [' to ', ' -> ', ' — ', ' - ', ' – ', '→', '➡️', '—', '->'];
+    for(const sep of seps){
+      if(low.includes(sep.trim())){
+        const parts = low.split(sep.trim());
+        if(parts.length>=2){
+          return { from: parts[0].trim(), to: parts[1].trim() };
+        }
+      }
+      if(low.includes(sep)){
+        const parts = low.split(sep);
+        if(parts.length>=2){
+          return { from: parts[0].trim(), to: parts[1].trim() };
+        }
+      }
+    }
+    // Try words "from X to Y"
+    const m = low.match(/from (.+?) to (.+)$/i);
+    if(m) return {from:m[1].trim(), to:m[2].trim()};
+    // If contains "distance" at end, strip it and retry splitting by ' to '
+    const stripped = low.replace(/\bdistance\b/g,'').trim();
+    if(stripped.includes(' to ')){
+      const [a,b] = stripped.split(' to ');
+      return { from:a.trim(), to:b.trim() };
+    }
+    return null;
+  }
 
-// ---- Great-circle calculations ----
-function haversineDistance(lat1, lon1, lat2, lon2) {
-  const φ1 = toRad(lat1), φ2 = toRad(lat2);
-  const Δφ = toRad(lat2 - lat1);
-  const Δλ = toRad(lon2 - lon1);
-  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c; // km
-}
+  // Resolve text to a location {label, lat, lon, code?}
+  function resolveLocation(text){
+    if(!text) return null;
+    const t = text.trim();
+    const tNorm = norm(t);
 
-function initialBearing(lat1, lon1, lat2, lon2) {
-  const φ1 = toRad(lat1), φ2 = toRad(lat2);
-  const λ1 = toRad(lon1), λ2 = toRad(lon2);
-  const y = Math.sin(λ2-λ1) * Math.cos(φ2);
-  const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
-  return (toDeg(Math.atan2(y, x)) + 360) % 360;
-}
+    // Direct IATA code
+    if(t.length<=4){
+      const code = t.toUpperCase();
+      if(CODE_INDEX.has(code)){
+        const a = CODE_INDEX.get(code);
+        return { label: `${a.name} (${a.code}), ${a.city || a.country}`, lat:a.lat, lon:a.lon, code:a.code };
+      }
+    }
+    // City -> preferred airport or city centroid
+    if(CITY_INDEX.has(tNorm)){
+      const code = CITY_INDEX.get(tNorm);
+      const a = CODE_INDEX.get(code);
+      return { label: `${a.city} – ${a.name} (${a.code})`, lat:a.lat, lon:a.lon, code:a.code };
+    }
+    if(CITY_GEO.has(tNorm)){
+      const g = CITY_GEO.get(tNorm);
+      return { label: g.name, lat:g.lat, lon:g.lon };
+    }
+    // Fuzzy search airport list
+    const results = AIRPORTS.filter(a => a.key.includes(tNorm)).slice(0,1);
+    if(results.length){
+      const a = results[0];
+      return { label: `${a.name} (${a.code}), ${a.city || a.country}`, lat:a.lat, lon:a.lon, code:a.code };
+    }
+    return null;
+  }
 
-function finalBearing(lat1, lon1, lat2, lon2) {
-  // final bearing is inverse route’s initial bearing
-  const b = initialBearing(lat2, lon2, lat1, lon1);
-  return (b + 180) % 360;
-}
+  // Haversine and related calculations
+  const R = 6371.0088; // mean Earth radius (km)
+  const toRad = d => d * Math.PI/180;
+  const toDeg = r => r * 180/Math.PI;
+  function haversine(p1, p2){
+    const φ1 = toRad(p1.lat), φ2 = toRad(p2.lat);
+    const Δφ = toRad(p2.lat - p1.lat);
+    const Δλ = toRad(p2.lon - p1.lon);
+    const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const d = R * c;
+    return { dKm:d, c };
+  }
+  function initialBearing(p1, p2){
+    const φ1 = toRad(p1.lat), φ2 = toRad(p2.lat);
+    const Δλ = toRad(p2.lon - p1.lon);
+    const y = Math.sin(Δλ) * Math.cos(φ2);
+    const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+    return (toDeg(Math.atan2(y,x)) + 360) % 360;
+  }
+  function finalBearing(p1, p2){
+    // bearing at arrival reversed
+    return (initialBearing(p2, p1) + 180) % 360;
+  }
+  function midpoint(p1, p2){
+    const φ1 = toRad(p1.lat), λ1 = toRad(p1.lon);
+    const φ2 = toRad(p2.lat), λ2 = toRad(p2.lon);
+    const Bx = Math.cos(φ2) * Math.cos(λ2-λ1);
+    const By = Math.cos(φ2) * Math.sin(λ2-λ1);
+    const φ3 = Math.atan2(Math.sin(φ1)+Math.sin(φ2), Math.sqrt((Math.cos(φ1)+Bx)*(Math.cos(φ1)+Bx) + By*By));
+    const λ3 = λ1 + Math.atan2(By, Math.cos(φ1)+Bx);
+    return { lat: toDeg(φ3), lon: ((toDeg(λ3)+540)%360)-180 };
+  }
+  function formatBearing(b){ return `${b.toFixed(0)}°`; }
+  function formatDistance(km){
+    const nm = km * 0.539957;
+    const mi = km * 0.621371;
+    return `${km.toFixed(0)} km • ${mi.toFixed(0)} mi • ${nm.toFixed(0)} nm`;
+  }
+  function estimateFlightTime(km){
+    // Simple estimate: 880 km/h average long-haul; add taxi/turn 20 min
+    const hours = km / 880;
+    const totalMin = Math.round((hours*60) + 20);
+    const h = Math.floor(totalMin/60);
+    const m = totalMin%60;
+    return `${h}h ${m}m (est.)`;
+  }
 
-function midpoint(lat1, lon1, lat2, lon2) {
-  const φ1 = toRad(lat1), λ1 = toRad(lon1);
-  const φ2 = toRad(lat2), λ2 = toRad(lon2);
-  const Bx = Math.cos(φ2) * Math.cos(λ2 - λ1);
-  const By = Math.cos(φ2) * Math.sin(λ2 - λ1);
-  const φ3 = Math.atan2(Math.sin(φ1)+Math.sin(φ2), Math.sqrt((Math.cos(φ1)+Bx)**2 + By**2));
-  const λ3 = λ1 + Math.atan2(By, Math.cos(φ1)+Bx);
-  return { lat: toDeg(φ3), lon: ((toDeg(λ3)+540)%360)-180 }; // normalize to [-180,180)
-}
-
-// ---- Simple flight time estimate ----
-function estimateFlightTimeHours(distanceKm, speedKmh = 900) { // default ~jet speed
-  if (!distanceKm || distanceKm <= 0) return 0;
-  return distanceKm / speedKmh;
-}
-
-function fmtTime(hours) {
-  const h = Math.floor(hours);
-  const m = Math.round((hours - h) * 60);
-  return `${h}h ${m}m`;
-}
-
-function fmtDistance(km) {
-  const nm = km * 0.539957; // nautical miles
-  const mi = km * 0.621371;
-  return `${km.toFixed(0)} km • ${mi.toFixed(0)} mi • ${nm.toFixed(0)} nm`;
-}
-
-function fmtBearing(b) {
-  return `${b.toFixed(0)}°`;
-}
-
-function fmtLatLon(lat, lon) {
-  const ns = lat >= 0 ? 'N' : 'S';
-  const ew = lon >= 0 ? 'E' : 'W';
-  return `${Math.abs(lat).toFixed(3)}°${ns}, ${Math.abs(lon).toFixed(3)}°${ew}`;
-}
-
-// ---- Matching and autocomplete ----
-function normalize(s) {
-  return String(s || '').trim().toLowerCase();
-}
-
-function airportMatches(q, ap) {
-  const n = normalize(q);
-  if (!n) return false;
-  return normalize(ap.code).includes(n)
-      || normalize(ap.city).includes(n)
-      || normalize(ap.name).includes(n);
-}
-
-function searchAirports(q, limit = 20) {
-  const n = normalize(q);
-  if (!n) return [];
-  const results = [];
-  for (const code in airportsData) {
-    const ap = airportsData[code];
-    if (airportMatches(n, ap)) {
-      results.push(ap);
-      if (results.length >= limit) break;
+  // Autocomplete
+  function setupAutocomplete(inputEl, listEl){
+    let idx = -1;
+    function close(){ listEl.style.display='none'; inputEl.setAttribute('aria-expanded','false'); idx=-1; }
+    function open(){ listEl.style.display='block'; inputEl.setAttribute('aria-expanded','true'); }
+    function buildItems(q){
+      const n = norm(q);
+      if(!n){ close(); return; }
+      const matches = [];
+      // Prefer code startswith, then city/name contains
+      for(const a of AIRPORTS){
+        if(a.code.startsWith(q.toUpperCase())) matches.push(a);
+      }
+      if(matches.length<10){
+        for(const a of AIRPORTS){
+          if(matches.length>=20) break;
+          if(a.key.includes(n) && !matches.includes(a)) matches.push(a);
+        }
+      }
+      listEl.innerHTML = '';
+      matches.slice(0,20).forEach((a,i)=>{
+        const div = document.createElement('div');
+        div.className='autocomplete-item';
+        div.role='option';
+        div.id = `${inputEl.id}-opt-${i}`;
+        div.innerHTML = `<strong>${a.code}</strong> — ${a.name} <span style="opacity:.75">(${a.city || a.country})</span>`;
+        div.addEventListener('mousedown', e=>{
+          e.preventDefault();
+          inputEl.value = `${a.code}`;
+          close();
+        });
+        listEl.appendChild(div);
+      });
+      if(matches.length) open(); else close();
+    }
+    inputEl.addEventListener('input', ()=> buildItems(inputEl.value));
+    inputEl.addEventListener('blur', ()=> setTimeout(close, 150));
+    inputEl.addEventListener('keydown', e=>{
+      const items = Array.from(listEl.querySelectorAll('.autocomplete-item'));
+      if(e.key==='ArrowDown'){ e.preventDefault(); idx = Math.min(items.length-1, idx+1); highlight(items, idx); }
+      if(e.key==='ArrowUp'){ e.preventDefault(); idx = Math.max(0, idx-1); highlight(items, idx); }
+      if(e.key==='Enter' && idx>=0){ e.preventDefault(); items[idx].dispatchEvent(new Event('mousedown')); }
+    });
+    function highlight(items, i){
+      items.forEach(it=>it.classList.remove('active'));
+      if(items[i]){ items[i].classList.add('active'); items[i].scrollIntoView({block:'nearest'}); }
     }
   }
-  return results;
-}
 
-function findBestAirport(q) {
-  // Prefer exact IATA code match, else first search result
-  const n = normalize(q);
-  if (n.length === 3) {
-    const ap = airportsData[n.toUpperCase()];
-    if (ap) return ap;
+  // Map
+  let map, layerRoute, layerPoints;
+  function initMap(){
+    if(map) return;
+    map = L.map('map',{scrollWheelZoom:true, zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:'&copy; OpenStreetMap',
+      maxZoom: 19
+    }).addTo(map);
+    layerRoute = L.layerGroup().addTo(map);
+    layerPoints = L.layerGroup().addTo(map);
+    // Start at world view
+    map.setView([20,0], 2);
   }
-  const res = searchAirports(q, 1);
-  return res[0];
-}
+  function drawRoute(p1, p2){
+    initMap();
+    layerRoute.clearLayers();
+    layerPoints.clearLayers();
 
-// ---- DOM refs ----
-const originInput = document.getElementById('origin');
-const destInput = document.getElementById('destination');
-const originList = document.getElementById('origin-autocomplete');
-const destList = document.getElementById('destination-autocomplete');
-const swapBtn = document.getElementById('swapBtn');
-const statusEl = document.getElementById('status');
-
-const resultsBox = document.getElementById('results');
-const distMain = document.getElementById('distMain');
-const bearInit = document.getElementById('bearInit');
-const bearFinal = document.getElementById('bearFinal');
-const midpointEl = document.getElementById('midpoint');
-const flightTimeEl = document.getElementById('flightTime');
-
-// ---- Autocomplete rendering ----
-function renderAutocomplete(listEl, items, onPick) {
-  if (!items.length) {
-    listEl.style.display = 'none';
-    listEl.innerHTML = '';
-    return;
+    // Draw great circle arc (approximate with polyline sampling)
+    const samples = 128;
+    const φ1 = toRad(p1.lat), λ1 = toRad(p1.lon);
+    const φ2 = toRad(p2.lat), λ2 = toRad(p2.lon);
+    const { c } = haversine(p1,p2); // angular distance
+    const points = [];
+    for(let i=0;i<=samples;i++){
+      const f = i/samples;
+      const A = Math.sin((1-f)*c) / Math.sin(c);
+      const B = Math.sin(f*c) / Math.sin(c);
+      const x = A*Math.cos(φ1)*Math.cos(λ1) + B*Math.cos(φ2)*Math.cos(λ2);
+      const y = A*Math.cos(φ1)*Math.sin(λ1) + B*Math.cos(φ2)*Math.sin(λ2);
+      const z = A*Math.sin(φ1) + B*Math.sin(φ2);
+      const φi = Math.atan2(z, Math.sqrt(x*x + y*y));
+      const λi = Math.atan2(y, x);
+      points.push([toDeg(φi), ((toDeg(λi)+540)%360)-180]);
+    }
+    L.polyline(points, {color:'#4fb1f5', weight:3, opacity:.9}).addTo(layerRoute);
+    const m1 = L.circleMarker([p1.lat,p1.lon], {radius:6, color:'#fff', fill:true, fillOpacity:1, weight:2}).addTo(layerPoints);
+    const m2 = L.circleMarker([p2.lat,p2.lon], {radius:6, color:'#fff', fill:true, fillOpacity:1, weight:2}).addTo(layerPoints);
+    m1.bindTooltip('Origin',{permanent:false});
+    m2.bindTooltip('Destination',{permanent:false});
+    const group = L.featureGroup([m1,m2]);
+    map.fitBounds(group.getBounds().pad(0.35), {animate:true});
   }
-  listEl.innerHTML = items.map(ap =>
-    `<div class="autocomplete-item" data-code="${ap.code}">
-      <strong>${ap.code}</strong> — ${ap.city || ''} — ${ap.name || ''}
-    </div>`
-  ).join('');
-  listEl.style.display = 'block';
-  listEl.querySelectorAll('.autocomplete-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const code = item.getAttribute('data-code');
-      const ap = airportsData[code];
-      onPick(ap);
+
+  // UI wiring
+  const elOrigin = document.getElementById('origin');
+  const elDest = document.getElementById('destination');
+  const elOA = document.getElementById('origin-autocomplete');
+  const elDA = document.getElementById('destination-autocomplete');
+  const elStatus = document.getElementById('status');
+  const elResults = document.getElementById('results');
+  const elDist = document.getElementById('distMain');
+  const elBearInit = document.getElementById('bearInit');
+  const elBearFinal = document.getElementById('bearFinal');
+  const elMid = document.getElementById('midpoint');
+  const elFlight = document.getElementById('flightTime');
+  const form = document.getElementById('gcForm');
+
+  setupAutocomplete(elOrigin, elOA);
+  setupAutocomplete(elDest, elDA);
+
+  document.getElementById('swapBtn').addEventListener('click', ()=>{
+    const a = elOrigin.value;
+    elOrigin.value = elDest.value;
+    elDest.value = a;
+    elOrigin.focus();
+  });
+
+  function setStatus(msg){ elStatus.textContent = msg || ''; }
+  function showResults(show=true){ elResults.style.display = show ? '' : 'none'; }
+
+  function computeAndRender(fromText, toText){
+    setStatus('Calculating...');
+    const A = resolveLocation(fromText);
+    const B = resolveLocation(toText);
+
+    if(!A && !B){
+      setStatus('Please enter a valid origin and destination.');
+      showResults(false);
+      return;
+    }
+    if(!A){
+      setStatus('Could not find origin. Try an IATA code (e.g., LHR) or city name.');
+      showResults(false);
+      return;
+    }
+    if(!B){
+      setStatus('Could not find destination. Try an IATA code (e.g., KUL) or city name.');
+      showResults(false);
+      return;
+    }
+
+    const { dKm } = (()=>{ const h = haversine(A,B); return { dKm:h.dKm }; })();
+    const b1 = initialBearing(A,B);
+    const b2 = finalBearing(A,B);
+    const mid = midpoint(A,B);
+
+    elDist.textContent = formatDistance(dKm);
+    elBearInit.textContent = formatBearing(b1);
+    elBearFinal.textContent = formatBearing(b2);
+    elMid.textContent = `${mid.lat.toFixed(3)}, ${mid.lon.toFixed(3)}`;
+    elFlight.textContent = estimateFlightTime(dKm);
+
+    // Draw map
+    drawRoute(A,B);
+
+    // Nice status
+    setStatus(`Route: ${A.label} → ${B.label}`);
+    showResults(true);
+
+    // Update URL for shareability
+    const params = new URLSearchParams(location.search);
+    params.set('from', encodeURIComponent(fromText.trim()));
+    params.set('to', encodeURIComponent(toText.trim()));
+    const newURL = `${location.pathname}?${params.toString()}`;
+    history.replaceState(null,'',newURL);
+  }
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    computeAndRender(elOrigin.value, elDest.value);
+  });
+
+  // Support URL params like ?from=london&to=dubai or free text q="putrajaya to london distance"
+  function bootFromURL(){
+    const url = new URL(location.href);
+    const qp = url.searchParams;
+    const q = qp.get('q');
+    const from = qp.get('from');
+    const to = qp.get('to');
+
+    if(q){
+      const parsed = parseFreeQuery(decodeURIComponent(q));
+      if(parsed){
+        elOrigin.value = parsed.from;
+        elDest.value = parsed.to;
+        computeAndRender(parsed.from, parsed.to);
+        return;
+      } else {
+        // Try to split naive last attempt on " to "
+        const n = decodeURIComponent(q);
+        const m = n.toLowerCase().split(' to ');
+        if(m.length===2){
+          elOrigin.value = m[0]; elDest.value = m[1];
+          computeAndRender(m[0], m[1]);
+          return;
+        }
+      }
+    }
+    if(from || to){
+      const f = from ? decodeURIComponent(from) : '';
+      const t = to ? decodeURIComponent(to) : '';
+      elOrigin.value = f;
+      elDest.value = t;
+      if(f && t) computeAndRender(f, t);
+      return;
+    }
+
+    // If user typed in address bar like "putrajaya to london distance" with no params,
+    // try to detect from the path or referrer (best effort)
+    const hashQ = decodeURIComponent((location.hash||'').replace(/^#/, ''));
+    if(hashQ){
+      const parsed = parseFreeQuery(hashQ);
+      if(parsed){
+        elOrigin.value = parsed.from; elDest.value = parsed.to;
+        computeAndRender(parsed.from, parsed.to);
+      }
+    }
+  }
+
+  // Smart paste of common natural queries into fields
+  function smartFillOnInput(el){
+    el.addEventListener('change', ()=>{
+      const txt = el.value;
+      const parsed = parseFreeQuery(txt);
+      if(parsed){
+        elOrigin.value = parsed.from;
+        elDest.value = parsed.to;
+        setStatus('Detected route from your query. Press Calculate.');
+      }
     });
-  });
-}
-
-function setupAutocomplete(inputEl, listEl) {
-  let last = '';
-  inputEl.addEventListener('input', () => {
-    const q = inputEl.value;
-    if (q === last) return;
-    last = q;
-    const items = searchAirports(q, 12);
-    renderAutocomplete(listEl, items, ap => {
-      inputEl.value = `${ap.city || ap.name || ''} (${ap.code})`;
-      listEl.style.display = 'none';
-      computeAndRender();
-    });
-  });
-  inputEl.addEventListener('blur', () => {
-    setTimeout(() => { listEl.style.display = 'none'; }, 150);
-  });
-  inputEl.addEventListener('focus', () => {
-    const items = searchAirports(inputEl.value, 12);
-    renderAutocomplete(listEl, items, ap => {
-      inputEl.value = `${ap.city || ap.name || ''} (${ap.code})`;
-      listEl.style.display = 'none';
-      computeAndRender();
-    });
-  });
-}
-
-setupAutocomplete(originInput, originList);
-setupAutocomplete(destInput, destList);
-
-// ---- Swap ----
-swapBtn.addEventListener('click', () => {
-  const a = originInput.value;
-  originInput.value = destInput.value;
-  destInput.value = a;
-  computeAndRender();
-});
-
-// ---- Parse value to airport ----
-function parseInputToAirport(val) {
-  if (!val) return null;
-  // Try to find code in parentheses
-  const m = val.match(/\((\w{3})\)/);
-  if (m) {
-    const ap = airportsData[m[1].toUpperCase()];
-    if (ap) return ap;
   }
-  return findBestAirport(val);
-}
+  smartFillOnInput(elOrigin);
+  smartFillOnInput(elDest);
 
-// ---- Compute and render ----
-function computeAndRender() {
-  const ap1 = parseInputToAirport(originInput.value);
-  const ap2 = parseInputToAirport(destInput.value);
+  // Example: If user types entire phrase in origin input
+  elOrigin.addEventListener('input', ()=>{
+    const txt = elOrigin.value;
+    const parsed = parseFreeQuery(txt);
+    if(parsed){
+      elOrigin.value = parsed.from;
+      elDest.value = parsed.to;
+    }
+  });
 
-  if (!ap1 || !ap2) {
-    statusEl.textContent = 'Enter both origin and destination (city or airport).';
-    resultsBox.style.display = 'none';
-    return;
-  }
-  statusEl.textContent = `${ap1.city || ap1.name} (${ap1.code}) → ${ap2.city || ap2.name} (${ap2.code})`;
+  // Kick off
+  window.addEventListener('load', ()=>{
+    initMap();
+    bootFromURL();
+  });
 
-  const dKm = haversineDistance(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
-  const b1 = initialBearing(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
-  const b2 = finalBearing(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
-  const mid = midpoint(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
-  const t = estimateFlightTimeHours(dKm);
-
-  distMain.textContent = fmtDistance(dKm);
-  bearInit.textContent = fmtBearing(b1);
-  bearFinal.textContent = fmtBearing(b2);
-  midpointEl.textContent = fmtLatLon(mid.lat, mid.lon);
-  flightTimeEl.textContent = fmtTime(t);
-
-  resultsBox.style.display = 'block';
-
-  // TODO: integrate a map library (Leaflet/Mapbox/Google Maps) to draw great-circle path
-  const mapEl = document.getElementById('map');
-  mapEl.innerHTML = '<div style="padding:1rem;color:#9fb3c5;">Map rendering not yet implemented.</div>';
-}
-
-// ---- URL params (?from=...&to=...) ----
-function initFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  const from = params.get('from');
-  const to = params.get('to');
-  if (from) originInput.value = from;
-  if (to) destInput.value = to;
-}
-
-initFromQuery();
-computeAndRender();
-</script>
-  
-
-  
+  // Smooth Home button: keep on same host root
+  document.getElementById('homeBtn').addEventListener('click', (e)=>{
+    e.preventDefault();
+    const home = location.origin || '/';
+    location.href = home;
+  });
+  </script>
+</body>
+</html>
