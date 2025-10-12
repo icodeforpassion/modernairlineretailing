@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,24 +22,210 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+
   <style>
-    .hero-banner { background: url('/blog/images/blog-3.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.78), rgba(13,27,42,.55)); }
+    :root {
+      /* Neutral scale */
+      --bg: #0b1220;           /* page background */
+      --bg-elev: #111a2b;      /* elevated surfaces */
+      --bg-soft: #15233a;      /* soft blocks */
+      --text: #eaf2fb;         /* primary text */
+      --text-dim: #c7d3e0;     /* secondary text */
+      --text-muted: #aab9c9;   /* muted text */
+      --link: #7cc3ff;         /* links */
+      --link-hover: #a8d8ff;   /* link hover */
+      --border: #2a3b56;       /* borders */
+      --accent: #4cc9f0;       /* accents / brand-ish */
+      --accent-strong: #2bb2e1;
+
+      /* Status colors with good contrast on dark */
+      --info: #246BCE;
+      --warning: #E9B949;
+      --warning-bg: #3b3007;
+      --success: #2FA36B;
+      --danger: #E66A6A;
+
+      /* Code */
+      --code-bg: #0e2033;
+      --code-inline-bg: #12304b;
+      --code-text: #e8f0f7;
+
+      /* Table */
+      --table-head-bg: #183454;
+      --table-row-alt: #10253c;
+
+      /* Hero overlay */
+      --hero-grad-top: rgba(5,10,20,0.88);
+      --hero-grad-bottom: rgba(5,10,20,0.72);
+
+      /* Focus outline */
+      --focus: #ffd166;
+
+      /* Typography */
+      --font-size-base: 18px;
+      --line-height-base: 1.75;
+      --max-width: 860px;
+      --radius: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-size: var(--font-size-base);
+    }
+
+    .container.content {
+      max-width: var(--max-width);
+    }
+
+    /* Links */
+    a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+    a:hover { color: var(--link-hover); }
+    a.button { text-decoration: none; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: #0c1727 url('/blog/images/blog-3.jpg') center/cover no-repeat;
+    }
+    .overlay {
+      background: linear-gradient(180deg, var(--hero-grad-top), var(--hero-grad-bottom));
+      backdrop-filter: saturate(1.1);
+    }
+    .hero .title, .hero .subtitle { color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+
+    /* Buttons */
     .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
-    .content pre { background:#0f2435; color:#e8f0f7; padding:1rem; overflow:auto; font-size:.9rem; border-radius:6px; }
-    .content code { background:#122c40; padding:.15rem .4rem; border-radius:4px; font-size:.85em; }
-    .toc-box { background:#102435; border:1px solid rgba(255,255,255,.08); padding:1rem 1.25rem; border-radius:10px; font-size:.95rem; }
-    .tag-badge { display:inline-block; background:#173146; color:#9fb3c5; padding:.25rem .55rem; margin:.15rem .25rem .15rem 0; border-radius:6px; font-size:.65rem; letter-spacing:.5px; text-transform:uppercase; }
-    table { font-size:.95rem; }
-    table thead { background:#132d44; }
-    table th, table td { border:1px solid #28415a; }
-    blockquote { border-left:4px solid #3298dc; background:#102b3f; padding:1rem 1.25rem; border-radius:6px; }
-    .callout { border:1px solid #2f4a63; background:#102c43; padding:1rem 1.25rem; border-radius:10px; margin:1.5rem 0; }
-    .callout.warning { border-color:#d89614; background:#3a2d01; }
-    .mini-caption { font-size:.7rem; text-transform:uppercase; letter-spacing:.6px; opacity:.7; margin-top:.3rem; }
-    .section-nav { margin-top:3rem; }
-    .sr-only { position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden; }
+    .button.is-light { background: #f5f9ff; color: #0b1220; border: 1px solid #d6e2f0; }
+    .button.is-light:hover { background: #ffffff; }
+    .button.is-link { background: var(--accent-strong); }
+    .button.is-link.is-light { color: var(--accent-strong); background: #e7f6ff; border: 1px solid #b9e5ff; }
+
+    /* Content defaults */
+    .content p { line-height: var(--line-height-base); color: var(--text-dim); }
+    .content h1, .content h2, .content h3 { color: var(--text); }
+    .section { background: var(--bg); }
+    .content ul li, .content ol li { margin-bottom: .35rem; }
+
+    /* TOC box */
+    .toc-box {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: .98rem;
+      color: var(--text-dim);
+    }
+    .toc-box strong { color: var(--text); }
+    .toc-box a { text-decoration: none; }
+    .toc-box a:hover { text-decoration: underline; }
+
+    /* Tags */
+    .tag-badge {
+      display: inline-block;
+      background: #1a2c46;
+      color: #cfe3f6;
+      padding: .3rem .6rem;
+      margin: .15rem .25rem .15rem 0;
+      border-radius: 999px;
+      font-size: .68rem;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      border: 1px solid #30527a;
+    }
+
+    /* Tables */
+    table { font-size: .97rem; }
+    table thead { background: var(--table-head-bg); color: #eaf2fb; }
+    table th, table td { border: 1px solid var(--border); }
+    table tr:nth-child(even) td { background: var(--table-row-alt); }
+    .table.is-hoverable tbody tr:hover td { background: #18334f; }
+
+    /* Code */
+    .content pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem;
+      overflow: auto;
+      font-size: .92rem;
+      border-radius: 8px;
+      border: 1px solid #1f3a55;
+    }
+    .content code {
+      background: var(--code-inline-bg);
+      color: var(--code-text);
+      padding: .15rem .4rem;
+      border-radius: 4px;
+      font-size: .9em;
+      border: 1px solid #1f3a55;
+    }
+
+    /* Blockquote */
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: var(--bg-soft);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      color: var(--text-dim);
+    }
+
+    /* Callouts */
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      margin: 1.5rem 0;
+      color: var(--text-dim);
+    }
+    .callout.warning {
+      border-color: #d8b014;
+      background: var(--warning-bg);
+      color: #ffe7a8;
+    }
+
+    .mini-caption {
+      font-size: .78rem;
+      letter-spacing: .4px;
+      opacity: .85;
+      margin-top: .3rem;
+      color: var(--text-muted);
+    }
+
+    .section-nav { margin-top: 3rem; }
+
+    /* Screen reader only fallback image */
+    .sr-only {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    /* Improve spacing for long read */
+    .content h2 { margin-top: 2.2rem; }
+    .content h3 { margin-top: 1.6rem; }
+    .content hr { background-color: var(--border); }
+    .level { align-items: center; }
+
+    /* Print basics */
+    @media print {
+      body { background: #fff; color: #000; }
+      .hero, .overlay { background: none !important; }
+      .hero .title, .hero .subtitle { color: #000; text-shadow: none; }
+      a { color: #000; text-decoration: none; }
+      .tag-badge, .toc-box, .callout { border-color: #ccc; background: #f7f7f7; color: #000; }
+      .content pre, .content code { background: #f2f5f9; color: #000; border-color: #d9e1ea; }
+      table thead { background: #e9eef6; color: #000; }
+      .button { display: none; }
+    }
   </style>
 
   <!-- Schema.org -->
@@ -64,8 +251,8 @@
     <div class="hero-body overlay">
       <div class="container">
         <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide</h1>
-        <p class="subtitle has-text-white">February 27, 2024 • ~18 min read</p>
+        <h1 class="title">ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide</h1>
+        <p class="subtitle">February 27, 2024 • ~18 min read</p>
         <div>
           <span class="tag-badge">Pricing</span>
           <span class="tag-badge">ATPCO</span>
@@ -78,8 +265,8 @@
 
   <section class="section">
     <div class="container content">
-      <div class="toc-box">
-        <strong>Contents</strong>
+      <div class="toc-box" aria-labelledby="toc-heading">
+        <strong id="toc-heading">Contents</strong>
         <ol style="margin-top:.6rem;">
           <li><a href="#why-it-matters">Why this still matters</a></li>
           <li><a href="#lifecycle">How fare data flows</a></li>
@@ -194,7 +381,7 @@
       <p><strong>Rounding:</strong> Obey currency and market rounding rules; keep unrounded audit values.</p>
 
       <h2 id="pricing-workflow">8) A realistic pricing workflow</h2>
-      <pre><code>Input: O&D, dates, pax types, cabin, corp codes, itinerary shape
+      <pre><code>Input: O&amp;D, dates, pax types, cabin, corp codes, itinerary shape
 
 1. Get availability (RBD per segment).
 2. Build candidate itineraries (time, connection, alliance constraints).
@@ -309,14 +496,14 @@ PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxe
       <p class="mini-caption">These are concept primers. For operational details, use your licensed documentation and data feeds.</p>
 
       <h2 id="disclaimer">19) Disclaimer</h2>
-      <div class="callout warning">
+      <div class="callout warning" role="note" aria-label="Disclaimer">
         This article is for product and engineering orientation. It does not reproduce proprietary ATPCO specifications or paid datasets. Always validate against your airline’s licensed ATPCO/IATA documentation, local regulations, and internal revenue accounting policies.
         <br/><br/>
         <strong>Transparency note:</strong> AI assistance was used to draft and edit this article; all facts and recommendations were reviewed for accuracy and relevance before publication.
       </div>
 
       <hr/>
-      <nav class="level section-nav">
+      <nav class="level section-nav" aria-label="Article navigation">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-02-05-from-tty-to-edifact-structuring-airline-messages.html">← Previous</a>
         </div>
