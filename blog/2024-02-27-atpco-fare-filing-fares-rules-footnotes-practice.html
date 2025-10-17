@@ -1,521 +1,453 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATPCO Fare Filing: Fares, Rules, Footnotes, Routing, Taxes — Deep-Dive Guide (2025)</title>
 
-  <!-- Meta -->
-  <meta name="description" content="A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together—and how to implement them reliably while modernizing toward Offers & Orders."/>
-  <link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html"/>
+  <!-- Primary SEO -->
+  <meta name="description" content="Deep, engineer-friendly guide to ATPCO fare filing: fares, rules categories, footnotes, routing vs MPM, Cat 12 vs YQ/YR, construction, HIP, taxes, modernization to Offers & Orders, and real-world pricing workflows with checklists and FAQs." />
+  <link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html" />
+  <meta name="author" content="Modern Airline Retailing" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="ATPCO Fare Filing: Fares & Rules—A Practitioner's Guide"/>
-  <meta property="og:description" content="How to make sense of ATPCO fare filing in real systems: fares, rules, footnotes, routing, YQ/YR, taxes, pricing checks, and modernization."/>
-  <meta property="og:type" content="article"/>
-  <meta property="og:image" content="https://www.modernairlineretailing.com/blog/images/blog-3.jpg"/>
-  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html"/>
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="ATPCO Fare Filing: The Deep-Dive Guide" />
+  <meta property="og:description" content="Everything engineers and product folks need to ship reliable pricing: fares, rules, footnotes, routing/MPM, surcharges, taxes, HIP, construction, and bridges to Offers & Orders." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html" />
+  <meta property="og:image" content="https://www.modernairlineretailing.com/blog/images/atpco-fare-filing-hero.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image"/>
+  <!-- Bulma for clean, bright UI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-
-  <style>
-    :root {
-      /* Neutral scale */
-      --bg: #0b1220;           /* page background */
-      --bg-elev: #111a2b;      /* elevated surfaces */
-      --bg-soft: #15233a;      /* soft blocks */
-      --text: #eaf2fb;         /* primary text */
-      --text-dim: #c7d3e0;     /* secondary text */
-      --text-muted: #aab9c9;   /* muted text */
-      --link: #7cc3ff;         /* links */
-      --link-hover: #a8d8ff;   /* link hover */
-      --border: #2a3b56;       /* borders */
-      --accent: #4cc9f0;       /* accents / brand-ish */
-      --accent-strong: #2bb2e1;
-
-      /* Status colors with good contrast on dark */
-      --info: #246BCE;
-      --warning: #E9B949;
-      --warning-bg: #3b3007;
-      --success: #2FA36B;
-      --danger: #E66A6A;
-
-      /* Code */
-      --code-bg: #0e2033;
-      --code-inline-bg: #12304b;
-      --code-text: #e8f0f7;
-
-      /* Table */
-      --table-head-bg: #183454;
-      --table-row-alt: #10253c;
-
-      /* Hero overlay */
-      --hero-grad-top: rgba(5,10,20,0.88);
-      --hero-grad-bottom: rgba(5,10,20,0.72);
-
-      /* Focus outline */
-      --focus: #ffd166;
-
-      /* Typography */
-      --font-size-base: 18px;
-      --line-height-base: 1.75;
-      --max-width: 860px;
-      --radius: 10px;
-    }
-
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-size: var(--font-size-base);
-    }
-
-    .container.content {
-      max-width: var(--max-width);
-    }
-
-    /* Links */
-    a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
-    a:hover { color: var(--link-hover); }
-    a.button { text-decoration: none; }
-    a:focus-visible, button:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 2px;
-      border-radius: 6px;
-    }
-
-    /* Hero */
-    .hero-banner {
-      background: #0c1727 url('/blog/images/blog-3.jpg') center/cover no-repeat;
-    }
-    .overlay {
-      background: linear-gradient(180deg, var(--hero-grad-top), var(--hero-grad-bottom));
-      backdrop-filter: saturate(1.1);
-    }
-    .hero .title, .hero .subtitle { color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
-
-    /* Buttons */
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .button.is-light { background: #f5f9ff; color: #0b1220; border: 1px solid #d6e2f0; }
-    .button.is-light:hover { background: #ffffff; }
-    .button.is-link { background: var(--accent-strong); }
-    .button.is-link.is-light { color: var(--accent-strong); background: #e7f6ff; border: 1px solid #b9e5ff; }
-
-    /* Content defaults */
-    .content p { line-height: var(--line-height-base); color: var(--text-dim); }
-    .content h1, .content h2, .content h3 { color: var(--text); }
-    .section { background: var(--bg); }
-    .content ul li, .content ol li { margin-bottom: .35rem; }
-
-    /* TOC box */
-    .toc-box {
-      background: var(--bg-elev);
-      border: 1px solid var(--border);
-      padding: 1rem 1.25rem;
-      border-radius: var(--radius);
-      font-size: .98rem;
-      color: var(--text-dim);
-    }
-    .toc-box strong { color: var(--text); }
-    .toc-box a { text-decoration: none; }
-    .toc-box a:hover { text-decoration: underline; }
-
-    /* Tags */
-    .tag-badge {
-      display: inline-block;
-      background: #1a2c46;
-      color: #cfe3f6;
-      padding: .3rem .6rem;
-      margin: .15rem .25rem .15rem 0;
-      border-radius: 999px;
-      font-size: .68rem;
-      letter-spacing: .5px;
-      text-transform: uppercase;
-      border: 1px solid #30527a;
-    }
-
-    /* Tables */
-    table { font-size: .97rem; }
-    table thead { background: var(--table-head-bg); color: #eaf2fb; }
-    table th, table td { border: 1px solid var(--border); }
-    table tr:nth-child(even) td { background: var(--table-row-alt); }
-    .table.is-hoverable tbody tr:hover td { background: #18334f; }
-
-    /* Code */
-    .content pre {
-      background: var(--code-bg);
-      color: var(--code-text);
-      padding: 1rem;
-      overflow: auto;
-      font-size: .92rem;
-      border-radius: 8px;
-      border: 1px solid #1f3a55;
-    }
-    .content code {
-      background: var(--code-inline-bg);
-      color: var(--code-text);
-      padding: .15rem .4rem;
-      border-radius: 4px;
-      font-size: .9em;
-      border: 1px solid #1f3a55;
-    }
-
-    /* Blockquote */
-    blockquote {
-      border-left: 4px solid var(--accent);
-      background: var(--bg-soft);
-      padding: 1rem 1.25rem;
-      border-radius: 8px;
-      color: var(--text-dim);
-    }
-
-    /* Callouts */
-    .callout {
-      border: 1px solid var(--border);
-      background: var(--bg-soft);
-      padding: 1rem 1.25rem;
-      border-radius: var(--radius);
-      margin: 1.5rem 0;
-      color: var(--text-dim);
-    }
-    .callout.warning {
-      border-color: #d8b014;
-      background: var(--warning-bg);
-      color: #ffe7a8;
-    }
-
-    .mini-caption {
-      font-size: .78rem;
-      letter-spacing: .4px;
-      opacity: .85;
-      margin-top: .3rem;
-      color: var(--text-muted);
-    }
-
-    .section-nav { margin-top: 3rem; }
-
-    /* Screen reader only fallback image */
-    .sr-only {
-      position: absolute;
-      left: -9999px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-
-    /* Improve spacing for long read */
-    .content h2 { margin-top: 2.2rem; }
-    .content h3 { margin-top: 1.6rem; }
-    .content hr { background-color: var(--border); }
-    .level { align-items: center; }
-
-    /* Print basics */
-    @media print {
-      body { background: #fff; color: #000; }
-      .hero, .overlay { background: none !important; }
-      .hero .title, .hero .subtitle { color: #000; text-shadow: none; }
-      a { color: #000; text-decoration: none; }
-      .tag-badge, .toc-box, .callout { border-color: #ccc; background: #f7f7f7; color: #000; }
-      .content pre, .content code { background: #f2f5f9; color: #000; border-color: #d9e1ea; }
-      table thead { background: #e9eef6; color: #000; }
-      .button { display: none; }
-    }
-  </style>
-
-  <!-- Schema.org -->
+  <!-- Article Schema & FAQ Schema -->
   <script type="application/ld+json">
   {
-    "@context":"https://schema.org",
-    "@type":"Article",
-    "headline":"ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide",
-    "description":"A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together—and how to implement them reliably while modernizing toward Offers & Orders.",
-    "datePublished":"2024-02-27",
-    "dateModified":"2024-02-27",
-    "author":{"@type":"Person","name":"Modern Airline Retailing"},
-    "image":"https://www.modernairlineretailing.com/blog/images/blog-3.jpg",
-    "publisher":{"@type":"Organization","name":"Modern Airline Retailing"},
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html"},
-    "articleSection":"Airline Pricing",
-    "keywords":"ATPCO,fare filing,fare rules,footnotes,routing,MPM,HIP,YQ,YR,taxes,airline pricing,offers & orders"
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "ATPCO Fare Filing: Fares, Rules & Footnotes — Deep-Dive Guide",
+    "author": {"@type": "Person", "name": "Modern Airline Retailing"},
+    "publisher": {"@type": "Organization", "name": "Modern Airline Retailing"},
+    "datePublished": "2024-02-27",
+    "dateModified": "2025-10-17",
+    "image": "https://www.modernairlineretailing.com/blog/images/atpco-fare-filing-hero.jpg",
+    "keywords": [
+      "ATPCO", "fare filing", "fare rules", "footnotes", "routing", "MPM", "YQ", "YR", "taxes",
+      "airline pricing", "fare construction", "Cat 31", "Cat 33", "Cat 10", "Cat 25", "Cat 35",
+      "HIP", "continuous pricing", "Offers & Orders"
+    ]
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the difference between YQ/YR and Category 12 surcharges?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "YQ/YR are carrier-imposed surcharges filed in a separate dataset and applied by market/cabin. Category 12 are rule-level surcharges tied to a fare's rule evaluation (e.g., day-of-week, stopover charges). Both are pre-tax but sourced/evaluated differently."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do footnotes interact with base rules?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Footnotes scope additional rule rows to a fare. Engines merge base rule content with all referenced footnote rows before category evaluation, yielding an effective rule for that fare."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When should I use routing vs MPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Routing numbers strictly constrain via points/carriers; MPM validates mileage against a cap. Use the one referenced by the fare. Some markets publish both; follow fare references and apply construction/routing checks accordingly."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root{
+      --brand:#2563eb; /* bright blue */
+      --brand-2:#0ea5e9; /* cyan accent */
+      --ink:#0b132b; /* text */
+      --muted:#4b5563; /* secondary text */
+      --bg:#ffffff; /* light */
+      --bg-elev:#f8fafc; /* cards */
+      --border:#e5e7eb; /* borders */
+      --radius:14px;
+      --maxw:980px;
+    }
+    body{background:var(--bg); color:var(--ink);}    
+    .container.read{max-width:var(--maxw);}
+
+    /* Progress bar */
+    #progress{position:fixed; top:0; left:0; height:4px; width:0; background:linear-gradient(90deg,var(--brand),var(--brand-2)); z-index:9999;}
+
+    .hero.is-info{background:linear-gradient(120deg,#e6f2ff,#f0fbff);} 
+    .hero .title{color:#0b132b}
+    .hero .subtitle{color:#334155}
+
+    .article-card{background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);}
+    .toc{position:sticky; top:90px; max-height:70vh; overflow:auto; border:1px solid var(--border); border-radius:var(--radius); padding:1rem;}
+    .toc a{color:#1f2937; text-decoration:none}
+    .toc a:hover{text-decoration:underline}
+    .tag-badge{background:#e7efff; color:#1e40af; border:1px solid #c7dbff; border-radius:999px; padding:.25rem .6rem; font-size:.75rem; margin-right:.3rem}
+
+    /* Tables */
+    table.table th, table.table td{border-color:var(--border)}
+    table.table thead{background:#eff6ff}
+    table.table tr:nth-child(even) td{background:#fafcff}
+
+    /* Code blocks */
+    pre{background:#0f172a; color:#e5e7eb; border-radius:10px; padding:1rem; overflow:auto}
+    code{background:#f1f5f9; padding:.2rem .35rem; border-radius:6px}
+
+    /* Utilities */
+    .mini{font-size:.9rem; color:var(--muted)}
+    .callout{background:#fff8e1; border:1px solid #fde68a; border-radius:var(--radius); padding:1rem}
+    .share a{margin-right:.5rem}
+
+    /* Copy button for code */
+    .copy-btn{position:absolute; right:10px; top:10px}
+    .code-wrap{position:relative}
+
+    /* Footer */
+    footer{border-top:1px solid var(--border); background:#f9fafb}
+  </style>
 </head>
 <body>
-  <section class="hero is-medium hero-banner" role="img" aria-label="ATPCO fare filing illustration">
-    <div class="hero-body overlay">
+  <div id="progress" aria-hidden="true"></div>
+
+  <!-- NAV / Breadcrumb -->
+  <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/index.html" aria-label="Home">
+          <strong>Modern Airline Retailing</strong>
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/blog/index.html">Blog</a>
+          <a class="navbar-item" href="/tools/index.html">Tools</a>
+          <a class="navbar-item" href="/about.html">About</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero is-info is-medium">
+    <div class="hero-body">
       <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title">ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide</h1>
-        <p class="subtitle">February 27, 2024 • ~18 min read</p>
-        <div>
-          <span class="tag-badge">Pricing</span>
-          <span class="tag-badge">ATPCO</span>
-          <span class="tag-badge">Fare Rules</span>
-          <span class="tag-badge">Implementation</span>
+        <div class="columns is-vcentered">
+          <div class="column is-7">
+            <p class="tag-badge">Pricing</p>
+            <p class="tag-badge">ATPCO</p>
+            <p class="tag-badge">Implementation</p>
+            <h1 class="title is-2">ATPCO Fare Filing: Fares, Rules & Footnotes — The Deep-Dive Guide</h1>
+            <p class="subtitle is-5">Everything you need to build reliable pricing today and bridge to Offers & Orders tomorrow.</p>
+            <p class="mini">Updated <time datetime="2025-10-17">Oct 17, 2025</time> • <span id="readTime">~18</span> min read • Reviewed for accuracy</p>
+          </div>
+          <div class="column is-5">
+            <!-- Replace the src below with your final hero image path -->
+            <figure class="image is-3by2 article-card" style="overflow:hidden">
+              <img src="/blog/images/atpco-fare-filing-hero.jpg" alt="Illustration of fare filing data flowing from ATPCO to pricing engines, taxes and ticketing" loading="eager" />
+            </figure>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container content">
-      <div class="toc-box" aria-labelledby="toc-heading">
-        <strong id="toc-heading">Contents</strong>
-        <ol style="margin-top:.6rem;">
-          <li><a href="#why-it-matters">Why this still matters</a></li>
-          <li><a href="#lifecycle">How fare data flows</a></li>
-          <li><a href="#data-building-blocks">The core building blocks</a></li>
-          <li><a href="#rule-categories">Rule categories (plain English)</a></li>
-          <li><a href="#footnotes">Footnotes, without the mystery</a></li>
-          <li><a href="#routing">Routing vs MPM (and construction)</a></li>
-          <li><a href="#surcharges-taxes">YQ/YR, Cat 12, and taxes</a></li>
-          <li><a href="#pricing-workflow">A realistic pricing workflow</a></li>
-          <li><a href="#integrity-checks">Keeping prices honest</a></li>
-          <li><a href="#caching-distribution">Caching what actually helps</a></li>
-          <li><a href="#common-failures">Frequent failure modes</a></li>
-          <li><a href="#engineering-patterns">Engineering patterns that work</a></li>
-          <li><a href="#modernization">Bridging to Offers & Orders</a></li>
-          <li><a href="#continuous-pricing">Where continuous pricing fits</a></li>
-          <li><a href="#monitoring">What to monitor</a></li>
-          <li><a href="#checklist">A short implementation checklist</a></li>
-          <li><a href="#glossary">Mini glossary</a></li>
-          <li><a href="#sources">Sources & further reading</a></li>
-          <li><a href="#disclaimer">Disclaimer</a></li>
-        </ol>
-      </div>
+  <main class="section">
+    <div class="container read">
+      <div class="columns is-variable is-6">
+        <!-- CONTENT -->
+        <article class="column is-8 content">
 
-      <p>
-        If you build airline retail or pricing systems, ATPCO fare filing isn’t “legacy noise”—it’s the rulebook most
-        of the ecosystem still plays by. Even if you’re racing toward dynamic Offers & Orders, the filed world powers
-        interline, agency distribution, and servicing. Understanding it well makes modernization safer and faster.
-      </p>
+          <p class="mini">Quick jump: <a href="#lifecycle">Lifecycle</a> • <a href="#data-building-blocks">Building blocks</a> • <a href="#rule-categories">Rule categories</a> • <a href="#routing">Routing/MPM</a> • <a href="#surcharges-taxes">Surcharges & taxes</a> • <a href="#pricing-workflow">Workflow</a> • <a href="#monitoring">Monitoring</a> • <a href="#faq">FAQ</a></p>
 
-      <h2 id="why-it-matters">1) Why this still matters</h2>
-      <ul>
-        <li><strong>It encodes policy, not just prices.</strong> Advance purchase, seasonality, who can buy, how you can combine—filed data describes the product you intend to sell, consistently, in every channel.</li>
-        <li><strong>It keeps you interoperable.</strong> GDSs, pricers, and settlement rely on shared semantics; filed fares are the lingua franca across carriers.</li>
-        <li><strong>It protects servicing and compliance.</strong> Refunds, changes, taxes, and disclosures lean on what you filed. Skip it, and you invite ADMs and disputes.</li>
-      </ul>
-      <blockquote>
-        Modern pitfall: jumping straight to dynamic pricing without a bridge to filed fares. You’ll ship faster—and break more—than you expect.
-      </blockquote>
+          <h2 id="why-it-matters">1) Why this still matters</h2>
+          <ul>
+            <li><strong>Filed ≠ legacy.</strong> Filed data is still the contract many partners rely on. Interline, GDS distribution, settlement and servicing lean on it.</li>
+            <li><strong>Policy, not just price.</strong> Advance purchase, eligibility, seasonality, combinability, penalties — the rules express your product.</li>
+            <li><strong>Modernization path.</strong> The safest route to dynamic Offers & Orders is a <em>bridge</em> that honors filed semantics with auditable adjustments.</li>
+          </ul>
 
-      <h2 id="lifecycle">2) How fare data flows</h2>
-      <ol>
-        <li><strong>Authoring.</strong> Pricing/RM define base fares, attach rules and footnotes, and prepare batches.</li>
-        <li><strong>ATPCO processing & distribution.</strong> Validation, normalization, and distribution to subscribed systems (GDS, pricing engines, tax engines, data lakes). This is a source of timing/latency mismatch.</li>
-        <li><strong>Shopping & pricing.</strong> Engines combine itinerary + inventory (RBD) + your filed data to form priceable candidates.</li>
-        <li><strong>Ticketing & settlement.</strong> Fare basis, endorsements, amounts, and references make it onto the ticket/EMD and drive reissues, refunds, proration, and clearing.</li>
-      </ol>
-      <p><strong>Reality check:</strong> Every hop (authoring → ATPCO → cache → seller) is a chance for your price to drift from host inventory. Design for it.</p>
+          <h2 id="lifecycle">2) How fare data flows</h2>
+          <ol>
+            <li><strong>Authoring:</strong> Pricing/RM set base fares, attach rules & footnotes, prep batches.</li>
+            <li><strong>ATPCO processing:</strong> Validate, normalize, distribute to subscribers (GDS, pricers, tax engines, data lakes).</li>
+            <li><strong>Shopping & pricing:</strong> Itinerary + RBD + rules produce priceable candidates.</li>
+            <li><strong>Ticketing & settlement:</strong> Fare basis, endorsements and amounts hit the ticket/EMD and drive reissues, refunds and proration.</li>
+          </ol>
+          <div class="callout"><strong>Reality check:</strong> Every hop (authoring → ATPCO → cache → seller) can drift from host inventory. Version your datasets and reprice at commit.</div>
 
-      <h2 id="data-building-blocks">3) The core building blocks</h2>
-      <ul>
-        <li><strong>Fare record (base fare).</strong> Market, direction (OW/RT), currency, tariff, rule number, footnotes, dates, public/private flag, etc.</li>
-        <li><strong>Fare basis code.</strong> Short-hand label customers never see fully; the rules clarify its meaning.</li>
-        <li><strong>Rule number.</strong> Points to reusable rule content (categories).</li>
-        <li><strong>Footnotes.</strong> A way to share or scope conditions across multiple fares without duplicating data.</li>
-        <li><strong>RBD mapping.</strong> The inventory class a fare requires (e.g., Y, M, J). If the bucket closes, the fare isn’t usable.</li>
-        <li><strong>Optional Services & Branded Fares.</strong> Filed separately; used to define brand attributes and ancillaries in a standard way.</li>
-        <li><strong>Constructed, Cat 25/Cat 35.</strong> Build fares from parts (add-ons), transform bases, or carry negotiated/private amounts.</li>
-      </ul>
+          <h2 id="data-building-blocks">3) The core building blocks</h2>
+          <ul>
+            <li><strong>Fare record:</strong> Market, direction (OW/RT), ccy, tariff, rule #, footnotes, dates, public/private.</li>
+            <li><strong>Fare basis code:</strong> Human shorthand; rules provide the meaning.</li>
+            <li><strong>Rule number & categories:</strong> Re-usable logic chunks (see table below).</li>
+            <li><strong>Footnotes:</strong> Scoped rows merged into the effective rule for a fare.</li>
+            <li><strong>RBD mapping:</strong> Required inventory bucket per segment (Y, M, J…).</li>
+            <li><strong>Optional Services & Brands:</strong> Standardized ancillaries/brand attributes.</li>
+            <li><strong>Construction (Cat 25/35):</strong> Build/transform bases; negotiated/private access.</li>
+          </ul>
 
-      <h2 id="rule-categories">4) Rule categories (plain English)</h2>
-      <p>Categories are just named chunks of logic. Here are the heavy hitters you’ll actually implement:</p>
-      <table class="table is-fullwidth is-striped is-hoverable">
-        <thead>
-          <tr><th>Cat</th><th>What it’s about</th><th>What to watch for</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>1</td><td>Eligibility</td><td>PAX type, residency, corporate ID. Quick early filter.</td></tr>
-          <tr><td>2</td><td>Day/Time</td><td>Local time windows; time zones matter.</td></tr>
-          <tr><td>3</td><td>Seasonality</td><td>Travel start windows; normalize to intervals.</td></tr>
-          <tr><td>4</td><td>Flight Application</td><td>Specific flights/equipment; match to schedules.</td></tr>
-          <tr><td>5</td><td>Advance Purchase</td><td>Book-by dates; evaluate at quote and at ticketing.</td></tr>
-          <tr><td>6</td><td>Minimum Stay</td><td>Often “Sat night” or X days.</td></tr>
-          <tr><td>7</td><td>Maximum Stay</td><td>Return time limits.</td></tr>
-          <tr><td>8</td><td>Stopovers</td><td>Count/charges; interacts with Cat 12 surcharges.</td></tr>
-          <tr><td>9</td><td>Transfers</td><td>Connection limits; prunes awkward itineraries.</td></tr>
-          <tr><td>10</td><td>Combinability</td><td>Half-round-trip and end-on-end logic; core to multi-fare trips.</td></tr>
-          <tr><td>12</td><td>Surcharges</td><td>Rule-level fees (distinct from YQ/YR).</td></tr>
-          <tr><td>14</td><td>Travel Restrictions</td><td>Blackouts, directional sequences.</td></tr>
-          <tr><td>15</td><td>Sales Restrictions</td><td>POS/POT; channel gating.</td></tr>
-          <tr><td>16</td><td>Penalties</td><td>Change/refund conditions (free text if not using 31/33).</td></tr>
-          <tr><td>17</td><td>HIP/Mileage Exceptions</td><td>Overrides to higher-intermediate-point checks.</td></tr>
-          <tr><td>31</td><td>Voluntary Changes</td><td>Structured change rules; newer, machine-friendly.</td></tr>
-          <tr><td>33</td><td>Voluntary Refunds</td><td>Structured refund rules; automates refunds.</td></tr>
-          <tr><td>25</td><td>Fare By Rule</td><td>Programmatic transforms—discount/markup off bases.</td></tr>
-          <tr><td>35</td><td>Negotiated</td><td>Private/net fares with access controls.</td></tr>
-        </tbody>
-      </table>
+          <h2 id="rule-categories">4) Rule categories (plain English)</h2>
+          <p>Categories are named logic blocks. These are the ones you’ll implement most:</p>
+          <table class="table is-fullwidth is-hoverable">
+            <thead>
+              <tr><th>Cat</th><th>What it’s about</th><th>What to watch for</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Eligibility</td><td>PAX type, residency, corp ID — fast early filter</td></tr>
+              <tr><td>2</td><td>Day/Time</td><td>Local time windows; time zones</td></tr>
+              <tr><td>3</td><td>Seasonality</td><td>Travel start windows; normalize to intervals</td></tr>
+              <tr><td>4</td><td>Flight Application</td><td>Specific flights/equipment; match schedules</td></tr>
+              <tr><td>5</td><td>Advance Purchase</td><td>Book-by timing; evaluate at quote & ticketing</td></tr>
+              <tr><td>6</td><td>Minimum Stay</td><td>Sat night or X days</td></tr>
+              <tr><td>7</td><td>Maximum Stay</td><td>Return time limits</td></tr>
+              <tr><td>8</td><td>Stopovers</td><td>Counts/charges; interacts with Cat 12</td></tr>
+              <tr><td>9</td><td>Transfers</td><td>Connection limits; itinerary pruning</td></tr>
+              <tr><td>10</td><td>Combinability</td><td>Half-round/end-on-end; multi-fare trips</td></tr>
+              <tr><td>12</td><td>Surcharges</td><td>Rule-level fees (not YQ/YR)</td></tr>
+              <tr><td>14</td><td>Travel Restrictions</td><td>Blackouts; directional sequences</td></tr>
+              <tr><td>15</td><td>Sales Restrictions</td><td>POS/POT; channel gating</td></tr>
+              <tr><td>16</td><td>Penalties</td><td>Change/refund conditions (free text if not 31/33)</td></tr>
+              <tr><td>17</td><td>HIP/Mileage Exceptions</td><td>Overrides to HIP checks</td></tr>
+              <tr><td>31</td><td>Voluntary Changes</td><td>Structured change rules; machine-friendly</td></tr>
+              <tr><td>33</td><td>Voluntary Refunds</td><td>Structured refund rules; automation-ready</td></tr>
+              <tr><td>25</td><td>Fare by Rule</td><td>Programmatic transforms; discount/markup</td></tr>
+              <tr><td>35</td><td>Negotiated</td><td>Private/net with access controls</td></tr>
+            </tbody>
+          </table>
 
-      <h2 id="footnotes">5) Footnotes, without the mystery</h2>
-      <p>
-        Footnotes are a scoping tool. A fare references a footnote code; that code maps to rows of category data that
-        apply only when that footnote is present. The engine merges “base rule” + “footnote rows” before evaluation.
-      </p>
-      <p class="mini-caption">Tip: cache a compiled rule keyed by <code>hash(ruleNumber + sortedFootnotes)</code> to avoid re-merging on every quote.</p>
+          <h2 id="footnotes">5) Footnotes, without the mystery</h2>
+          <p>Footnotes scope additional rule rows to fares that reference them. Build a compiled rule keyed by <code>hash(ruleNumber + sortedFootnotes)</code> and cache it to avoid re-merging on every quote.</p>
 
-      <h2 id="routing">6) Routing vs MPM (and construction)</h2>
-      <ul>
-        <li><strong>Routing numbers.</strong> A fare can point to a routing that spells out allowable paths (via cities, carriers, sometimes equipment). Think of it as a tiny grammar the itinerary must match.</li>
-        <li><strong>Maximum Permitted Mileage (MPM).</strong> Mileage-based validity: you’re good if the flown (with allowed tolerance) fits within the published cap for that market.</li>
-      </ul>
-      <p>
-        Constructed pricing stitches fare halves (e.g., domestic add-on + international half). After construction, run
-        HIP (Higher Intermediate Point) and circle trip checks so you don’t under-collect versus an intermediate city.
-      </p>
+          <h2 id="routing">6) Routing vs MPM (and construction)</h2>
+          <ul>
+            <li><strong>Routing numbers</strong> define allowed paths (via cities, carriers, sometimes equipment) — think tiny grammars.</li>
+            <li><strong>MPM</strong> caps mileage with tolerance for a market. After construction, run HIP/circle-trip to prevent under-collection.</li>
+          </ul>
 
-      <h2 id="surcharges-taxes">7) YQ/YR, Cat 12, and taxes</h2>
-      <ul>
-        <li><strong>Carrier-imposed surcharges (YQ/YR).</strong> Filed separately and applied under conditions (market, cabin, etc.). They’re not the base fare but commonly shown with it.</li>
-        <li><strong>Category 12 surcharges.</strong> Rule-driven fees (e.g., specific DOW/season) that get applied before tax.</li>
-        <li><strong>Taxes.</strong> Driven by tax points and jurisdiction rules; accuracy matters for settlement. Use an authoritative tax feed/engine; don’t home-roll.</li>
-      </ul>
-      <p><strong>Rounding:</strong> Obey currency and market rounding rules; keep unrounded audit values.</p>
+          <h2 id="surcharges-taxes">7) YQ/YR, Cat 12, and taxes</h2>
+          <ul>
+            <li><strong>YQ/YR:</strong> Carrier-imposed surcharges filed separately, applied by market/cabin.</li>
+            <li><strong>Cat 12:</strong> Rule-level surcharges evaluated with the fare (e.g., stopover, DOW).</li>
+            <li><strong>Taxes:</strong> Use an authoritative tax engine; keep unrounded audit amounts and obey currency/market rounding.</li>
+          </ul>
 
-      <h2 id="pricing-workflow">8) A realistic pricing workflow</h2>
-      <pre><code>Input: O&amp;D, dates, pax types, cabin, corp codes, itinerary shape
+          <h2 id="pricing-workflow">8) A realistic pricing workflow</h2>
+          <div class="code-wrap">
+            <button class="button is-small copy-btn" data-copy="#wf">Copy</button>
+            <pre id="wf"><code>Input: O&amp;D, dates, pax, cabin, corp codes, itinerary shape
 
-1. Get availability (RBD per segment).
-2. Build candidate itineraries (time, connection, alliance constraints).
-3. Fetch fare candidates by market/cabin/effective dates/POS.
-4. Compile rules (base + footnotes) into a fast structure.
-5. Fast filters: Cat 2/3/5/15 to shrink the set early.
-6. Map itinerary to fare components; validate routing or MPM.
-7. Deep checks: Cat 6/7, Cat 8/9, Cat 10, HIP/circle trip.
-8. Add Cat 12 surcharges, then YQ/YR, then taxes via tax engine.
-9. Normalize currency & rounding; emit a detailed pricing trace.</code></pre>
+1. Query availability (RBD per segment)
+2. Build itinerary candidates (time/connection constraints)
+3. Fetch fare candidates by market/cabin/effective/POS
+4. Compile rules (base + footnotes) → fast structure
+5. Early filters: Cat 2/3/5/15
+6. Map itinerary to components; validate routing/MPM
+7. Deep checks: Cat 6/7/8/9/10 + HIP/circle
+8. Add Cat 12 → YQ/YR → taxes via tax engine
+9. Currency + rounding; emit pricing trace with dataset hashes</code></pre>
+          </div>
 
-      <h2 id="integrity-checks">9) Keeping prices honest</h2>
-      <ul>
-        <li><strong>Determinism.</strong> Same dataset + same itinerary → same price. Hash the compiled rule set and surface it.</li>
-        <li><strong>Availability vs price drift.</strong> Detect when required RBD shut after quote; reprice on commit and flag staleness.</li>
-        <li><strong>HIP under-collection.</strong> Regression tests for multi-city and constructed scenarios.</li>
-        <li><strong>Tax drift.</strong> Daily diffs against the authoritative tax engine; alert on variance beyond tolerance.</li>
-      </ul>
+          <h2 id="integrity-checks">9) Keeping prices honest</h2>
+          <ul>
+            <li><strong>Determinism:</strong> Same dataset + itinerary → same price. Surface rule-set hashes.</li>
+            <li><strong>Availability drift:</strong> Reprice at commit; expose quote staleness.</li>
+            <li><strong>HIP coverage:</strong> Regression tests for multi-city and construction.</li>
+            <li><strong>Tax diffs:</strong> Daily comparisons against the authoritative engine.</li>
+          </ul>
 
-      <h2 id="caching-distribution">10) Caching what actually helps</h2>
-      <p>Cache compiled rules and light metadata, not whole priced itineraries. Invalidate by ATPCO deltas, expose dataset timestamps, and publish a “staleness” metric with each response.</p>
+          <h2 id="caching-distribution">10) Caching that helps</h2>
+          <p>Cache compiled rules and light metadata, not entire priced itineraries. Invalidate by ATPCO deltas and show a staleness metric with each response.</p>
 
-      <h2 id="common-failures">11) Frequent failure modes</h2>
-      <table class="table is-fullwidth">
-        <thead><tr><th>What goes wrong</th><th>Why it happens</th><th>How to prevent it</th></tr></thead>
-        <tbody>
-          <tr><td>Quote ≠ ticket</td><td>Stale Cat 5 or closed RBD between steps</td><td>Short quote validity; reprice at commit; verify dataset version</td></tr>
-          <tr><td>Penalty confusion</td><td>Cat 16 free-text; partial Cat 31/33 adoption</td><td>Prefer structured rules; clear customer copy if parsed text is ambiguous</td></tr>
-          <tr><td>Under-collection on circles</td><td>Skipped HIP/circle trip logic</td><td>Automate tests on known tricky markets</td></tr>
-          <tr><td>Wrong taxes on edges</td><td>Outdated tax tables or stopover detection bugs</td><td>Automated diffs; timezone-aware stopover logic</td></tr>
-          <tr><td>Reload latency spikes</td><td>Mass recompiles in the hot path</td><td>JIT compile + LRU cache; pre-warm popular composites</td></tr>
-        </tbody>
-      </table>
-
-      <h2 id="engineering-patterns">12) Engineering patterns that work</h2>
-      <h3>12.1 Normalize your internal model</h3>
-      <pre><code>Fare { id, O, D, dir, fareBasis, primaryRBD, tariff, ruleNumber,
+          <h2 id="engineering-patterns">11) Engineering patterns that work</h2>
+          <h3>11.1 Normalize your internal model</h3>
+          <pre><code>Fare { id, O, D, dir, fareBasis, primaryRBD, tariff, ruleNumber,
        effective, expire, travelStart[], travelEnd[], private, ccy, amount, ptcs[], footnotes[] }
 
 CompiledRule { key, ruleNumber, footnoteSet[], categories{...}, provenance{versions...} }
 
-Availability { segmentKey -> { RBD: seats, updatedAt } }
+Availability { segmentKey -&gt; { RBD: seats, updatedAt } }
 
-PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxes[], datasetVersion }</code></pre>
+PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxes[], datasetVersion }
+</code></pre>
+          <h3>11.2 Evaluation strategy</h3>
+          <ul>
+            <li><strong>Cheap first:</strong> Cat 2/3/5/15.</li>
+            <li><strong>Then shape:</strong> Routing/MPM once itinerary known.</li>
+            <li><strong>Then cross-fare:</strong> Combinability, HIP, circles.</li>
+            <li><strong>Service late:</strong> Re-evaluate 31/33 at reissue with original snapshot.</li>
+          </ul>
 
-      <h3>12.2 Evaluation strategy</h3>
-      <ul>
-        <li><strong>Cheap first.</strong> Cat 2/3/5/15 as early filters.</li>
-        <li><strong>Then shape.</strong> Apply routing/MPM once the itinerary is known.</li>
-        <li><strong>Then cross-fare.</strong> Combinability, HIP, circles after components are built.</li>
-        <li><strong>Service again later.</strong> Re-evaluate penalties/refunds at reissue time; keep the original snapshot.</li>
-      </ul>
+          <h2 id="modernization">12) Bridging to Offers & Orders</h2>
+          <ul>
+            <li><strong>Unified offer schema:</strong> Filed or dynamic, but with clear lineage.</li>
+            <li><strong>Explainability:</strong> Store base + delta for continuous pricing.</li>
+            <li><strong>Interline reality:</strong> Carry filed attributes until the network moves.</li>
+          </ul>
 
-      <h2 id="modernization">13) Bridging to Offers & Orders</h2>
-      <ul>
-        <li><strong>Bridge service.</strong> Produce an Offer that either references a filed fare basis or a true dynamic bundle, but returns a unified schema.</li>
-        <li><strong>Lineage.</strong> For filed offers include <code>fareBasis</code>, <code>ruleRefs</code>, and dataset version; for dynamic include algorithm ID/inputs.</li>
-        <li><strong>Interline reality.</strong> Partners often still expect filed attributes—carry a dual representation until the network moves.</li>
-        <li><strong>Explainability.</strong> If you “nudge” a filed ladder with continuous pricing, store the base and the delta, clearly.</li>
-      </ul>
+          <h2 id="monitoring">13) What to monitor</h2>
+          <ul>
+            <li>ATPCO load freshness, delta lag, compile backlog</li>
+            <li>Discrepancy sampling: priced vs host</li>
+            <li>Category pass/fail distributions</li>
+            <li>Stage timings and cache hit ratio</li>
+            <li>Servicing automation success vs manual fallback</li>
+          </ul>
 
-      <h2 id="continuous-pricing">14) Where continuous pricing fits</h2>
-      <ul>
-        <li>Use the filed fare as an <em>anchor</em>; apply a controlled, auditable adjustment.</li>
-        <li>Respect tax computation rules and re-calculate accordingly.</li>
-        <li>Set guardrails per market; on uncertainty, fall back to filed.</li>
-      </ul>
+          <h2 id="checklist">14) Short implementation checklist</h2>
+          <ul>
+            <li>Map lineage: fare → rule(s) → footnote(s) → compiled categories</li>
+            <li>Itinerary signature (airports + flights + date + cabin)</li>
+            <li>Hash compiled rules for reproducibility</li>
+            <li>Separate cheap filters from routing/HIP/Cat 10 work</li>
+            <li>Emit a human+machine pricing trace</li>
+            <li>Regression tests: HIP/circles and constructed cases</li>
+            <li>Detect availability drift and stale datasets</li>
+            <li>Define guardrails for continuous pricing deltas</li>
+            <li>Automate tax-engine updates with diffs</li>
+          </ul>
 
-      <h2 id="monitoring">15) What to monitor</h2>
-      <ul>
-        <li><strong>Data freshness.</strong> Last ATPCO load, delta lag, compile backlog.</li>
-        <li><strong>Discrepancy sampling.</strong> Spot-check priced vs host.</li>
-        <li><strong>Category pass/fail rates.</strong> Spikes reveal data regressions.</li>
-        <li><strong>Latency budget.</strong> Stage-by-stage timings and cache hit ratio.</li>
-        <li><strong>Servicing success.</strong> How often change/refund automation works vs manual fallback.</li>
-      </ul>
+          <h2 id="faq">15) FAQs</h2>
+          <details>
+            <summary><strong>Is Cat 31/33 mandatory if Cat 16 exists?</strong></summary>
+            <p>Not mandatory, but Cat 31 (changes) and Cat 33 (refunds) enable automation and reduce ambiguity. If you only file Cat 16 free text, expect more manual handling and customer confusion.</p>
+          </details>
+          <details>
+            <summary><strong>Do I still need HIP if I use continuous pricing?</strong></summary>
+            <p>Yes. HIP is a protection against under-collection versus intermediate points. Continuous pricing should anchor to filed ladders and still honor HIP/circle rules.</p>
+          </details>
+          <details>
+            <summary><strong>Where do brand benefits live — rules or Optional Services?</strong></summary>
+            <p>Use Branded Fares and Optional Services to define consistent brand attributes (bags, seats, priority). Rules handle purchase/usage constraints; brands/OS handle product content.</p>
+          </details>
 
-      <h2 id="checklist">16) A short implementation checklist</h2>
-      <ul>
-        <li>Map lineage: fare → rule(s) → footnote(s) → compiled categories.</li>
-        <li>Define an itinerary signature (airport + flight + date + cabin).</li>
-        <li>Hash compiled rules into the response for reproducibility.</li>
-        <li>Separate cheap filters from routing/HIP/Cat 10 work.</li>
-        <li>Emit a human+machine pricing trace.</li>
-        <li>Regression test HIP/circles and constructed cases.</li>
-        <li>Detect availability drift and stale datasets.</li>
-        <li>Keep a rollback plan for bad loads.</li>
-        <li>Set allowed deviation from the filed ladder for continuous pricing.</li>
-        <li>Automate tax-engine updates with comparisons.</li>
-        <li>Expose an error taxonomy (e.g., <code>ROUTING_FAIL</code>, <code>ADV_PURCHASE_FAIL</code>, <code>TAX_ENGINE_ERROR</code>).</li>
-      </ul>
+          <hr />
+          <p class="mini">Have a correction or a field tip? <a href="/contact.html">Send a note</a>. We keep this page updated as industry practices evolve.</p>
+        </article>
 
-      <h2 id="glossary">17) Mini glossary</h2>
-      <ul>
-        <li><strong>ATPCO:</strong> Industry platform distributing fares, rules, taxes, optional services to subscribed systems.</li>
-        <li><strong>Fare basis code:</strong> Encodes fare family and conditions; rules provide the full meaning.</li>
-        <li><strong>RBD:</strong> Inventory booking class (Y, M, J…); required seat bucket for a fare.</li>
-        <li><strong>HIP:</strong> Higher Intermediate Point—prevents charging less than an intermediate fare on the path.</li>
-        <li><strong>MPM:</strong> Maximum Permitted Mileage—cap on mileage for a market used in fare construction/validation.</li>
-        <li><strong>YQ/YR:</strong> Carrier-imposed surcharges (distinct from government taxes).</li>
-        <li><strong>Cat 25 / Cat 35:</strong> Fare-by-Rule transformations; negotiated/private fares.</li>
-      </ul>
-
-      <h2 id="sources">18) Sources & further reading</h2>
-      <ul>
-        <li>ATPCO: <em>What are ATPCO fare rules categories?</em></li>
-        <li>ATPCO: Branded Fares & Optional Services overviews.</li>
-        <li>IATA: Maximum Permitted Mileage (MPM) manual and mileage suite.</li>
-        <li>Travelport & Amadeus support docs on Cat 25, YQ/YR, mileage, and HIP.</li>
-        <li>Industry primers on HIP and fare construction logic.</li>
-      </ul>
-      <p class="mini-caption">These are concept primers. For operational details, use your licensed documentation and data feeds.</p>
-
-      <h2 id="disclaimer">19) Disclaimer</h2>
-      <div class="callout warning" role="note" aria-label="Disclaimer">
-        This article is for product and engineering orientation. It does not reproduce proprietary ATPCO specifications or paid datasets. Always validate against your airline’s licensed ATPCO/IATA documentation, local regulations, and internal revenue accounting policies.
-        <br/><br/>
-        <strong>Transparency note:</strong> AI assistance was used to draft and edit this article; all facts and recommendations were reviewed for accuracy and relevance before publication.
+        <!-- TOC / SIDE -->
+        <aside class="column is-4">
+          <div class="toc" aria-labelledby="toc-title">
+            <p id="toc-title" class="has-text-weight-semibold">On this page</p>
+            <ul id="tocList"></ul>
+            <hr>
+            <div class="share">
+              <p class="mini">Share</p>
+              <a aria-label="Share on X" href="https://twitter.com/intent/tweet?text=ATPCO%20Fare%20Filing%20Deep%20Dive&url=https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html">X</a>
+              <a aria-label="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html">LinkedIn</a>
+              <a aria-label="Copy link" href="#" id="copyLinkBtn">Copy link</a>
+            </div>
+          </div>
+        </aside>
       </div>
-
-      <hr/>
-      <nav class="level section-nav" aria-label="Article navigation">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2024-02-05-from-tty-to-edifact-structuring-airline-messages.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          <a class="button is-link" href="/blog/2024-03-20-availability-controls-oandd-nesting-and-married-segments.html">Next →</a>
-        </div>
-      </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
-
-      <!-- Hidden image (for accessibility crawlers if you keep the background) -->
-      <img class="sr-only" src="/blog/images/blog-3.jpg" alt="ATPCO fare filing illustration"/>
     </div>
-  </section>
+  </main>
+
+  <footer class="section">
+    <div class="container read">
+      <p class="mini">© Modern Airline Retailing. Educational content; validate against your licensed ATPCO/IATA documentation and local regulations.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Burger
+    (function(){
+      const $burger = document.querySelector('.navbar-burger');
+      const $menu = document.getElementById('navMenu');
+      if($burger && $menu){
+        $burger.addEventListener('click', ()=>{
+          $burger.classList.toggle('is-active');
+          $menu.classList.toggle('is-active');
+        });
+      }
+    })();
+
+    // Scroll progress
+    const progress = document.getElementById('progress');
+    const docHeight = () => document.documentElement.scrollHeight - window.innerHeight;
+    const setProgress = () => {
+      const scrolled = window.scrollY || document.documentElement.scrollTop;
+      const width = (scrolled / docHeight()) * 100;
+      progress.style.width = Math.min(100, Math.max(0, width)) + '%';
+    };
+    window.addEventListener('scroll', setProgress, {passive:true});
+    window.addEventListener('resize', setProgress);
+    setProgress();
+
+    // Build TOC from h2/h3
+    (function(){
+      const headings = document.querySelectorAll('article h2, article h3');
+      const list = document.getElementById('tocList');
+      headings.forEach(h =>{
+        if(!h.id){ h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-'); }
+        const li = document.createElement('li');
+        if(h.tagName === 'H3'){ li.style.marginLeft = '0.8rem'; li.style.fontSize = '.95rem'; }
+        const a = document.createElement('a');
+        a.href = '#' + h.id;
+        a.textContent = h.textContent;
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+    })();
+
+    // Reading time (approx 220 wpm)
+    (function(){
+      const text = document.querySelector('article').innerText || '';
+      const words = text.trim().split(/\s+/).length;
+      const minutes = Math.max(5, Math.round(words / 220));
+      const el = document.getElementById('readTime');
+      if(el) el.textContent = '~' + minutes;
+    })();
+
+    // Copy code buttons
+    document.querySelectorAll('.copy-btn').forEach(btn =>{
+      btn.addEventListener('click', ()=>{
+        const sel = btn.getAttribute('data-copy');
+        const el = sel ? document.querySelector(sel) : btn.nextElementSibling;
+        if(!el) return;
+        const text = el.innerText;
+        navigator.clipboard.writeText(text).then(()=>{
+          btn.textContent = 'Copied!';
+          setTimeout(()=> btn.textContent = 'Copy', 1500);
+        });
+      });
+    });
+
+    // Copy page link
+    (function(){
+      const btn = document.getElementById('copyLinkBtn');
+      if(btn){
+        btn.addEventListener('click', e =>{
+          e.preventDefault();
+          navigator.clipboard.writeText(window.location.href).then(()=>{
+            btn.textContent = 'Copied';
+            setTimeout(()=> btn.textContent = 'Copy link', 1200);
+          });
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
