@@ -3,206 +3,2183 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Modern Airline Retailing – Offer & Order architecture, tooling and strategy</title>
-  <meta name="description" content="Practical guidance for airline product, tech and commercial teams moving to Offer & Order. Deep dives on NDC, merchandising, availability, migration paths and tools to make decisions stick."/>
+  <title>Airline Retailing Insights – Offer & Order, NDC, Inventory & Modern Practices</title>
+  <meta name="description" content="Airline retailing made clear. Explore Offer & Order, NDC, inventory to stock, and engineering practices with practical tools and expert insights."/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/assets/site.css"/>
-  <link rel="stylesheet" href="/assets/home.css"/>
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <style>
+    :root {
+      --clr-bg: #0d1b2a;
+      --clr-bg-alt: #132235;
+      --clr-surface: #1f3145;
+      --clr-surface-glass: rgba(31,49,69,0.55);
+      --clr-border: #2f4a63;
+      --clr-accent: #3298dc;
+      --clr-accent-alt: #4fb1f5;
+      --clr-text: #e8f0f7;
+      --clr-text-dim: #9fb3c5;
+      --radius: 14px;
+      --transition: .28s cubic-bezier(.4,.2,.2,1);
+      --shadow-1: 0 2px 6px -1px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.02) inset;
+      --shadow-2: 0 8px 26px -6px rgba(0,0,0,.55);
+      --gradient-hero: linear-gradient(160deg, rgba(13,27,42,.9), rgba(13,27,42,.55) 55%, rgba(30,55,80,.65));
+      --focus-ring: 0 0 0 3px rgba(50,152,220,.5);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--clr-bg);
+      color: var(--clr-text);
+    }
+
+    body {
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      font-feature-settings: "liga" 1, "kern" 1;
+    }
+
+    .navbar.is-dark {
+      background: linear-gradient(to right, #0d1b2a, #142a40);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .navbar a.navbar-item,
+    .navbar a.navbar-link {
+      color: var(--clr-text-dim);
+    }
+    .navbar a.navbar-item:hover,
+    .navbar a.navbar-link:hover {
+      color: var(--clr-text);
+      background: transparent;
+    }
+    .navbar.is-dark .navbar-dropdown {
+      background: linear-gradient(to right, #142a40 80%, #0d1b2a 100%);
+      border: 1px solid var(--clr-border);
+    }
+    .navbar.is-dark .navbar-dropdown .navbar-item {
+      color: var(--clr-text-dim);
+    }
+    .navbar.is-dark .navbar-dropdown .navbar-item:hover {
+      color: var(--clr-text);
+      background: var(--clr-accent);
+    }
+    .navbar.is-dark .navbar-dropdown .navbar-item:focus-visible {
+      background: var(--clr-accent-alt);
+      color: #fff;
+    }
+
+    .hero.is-landing,
+    .hero.is-landing .hero-body,
+    .hero.is-landing .container {
+      overflow: visible !important;
+    }
+
+    .hero.is-landing .title + .subtitle {
+      margin-top: 1rem;
+    }
+
+    .hero.is-landing .title.is-1 {
+      position: relative;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      line-height: 1.08;
+      font-size: clamp(2.2rem, 7.5vw, 3rem);
+      background: linear-gradient(95deg,#82e0ff 0%,#b388ff 28%,#ff6ec7 55%,#ffcf5d 85%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 72% 30%, rgba(79,177,245,.15), transparent 60%),
+        radial-gradient(circle at 20% 70%, rgba(50,152,220,.18), transparent 65%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .hero .container {
+      max-width: 960px;
+    }
+
+    .hero-cta {
+      margin-top: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
+      color: #fff !important;
+      font-weight: 600;
+      border: none;
+      padding: .9rem 1.35rem;
+      font-size: 1.05rem;
+      border-radius: 999px;
+      box-shadow: 0 6px 18px -4px rgba(50,152,220,.55), 0 2px 3px -1px rgba(0,0,0,.5);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      isolation: isolate;
+      text-decoration: none;
+    }
+    .hero-cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,0));
+      opacity: .6;
+      pointer-events: none;
+    }
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px -6px rgba(50,152,220,.6), 0 3px 5px -2px rgba(0,0,0,.55);
+    }
+    .hero-cta:active {
+      transform: translateY(-1px);
+    }
+    .hero-cta:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .section {
+      background: linear-gradient(to bottom, var(--clr-bg), var(--clr-bg-alt));
+      padding-top: 4rem;
+      padding-bottom: 4.5rem;
+    }
+
+    #featured {
+      scroll-margin-top: 90px;
+    }
+
+    h2.title {
+      background: linear-gradient(90deg, #fff, #c6d9e8 40%, #82bfe7);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: 600;
+      letter-spacing: .3px;
+    }
+
+    #featured-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem 1.5rem;
+    }
+
+    .post-card {
+      flex: 1 1 300px;
+      max-width: 340px;
+      background: linear-gradient(165deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 410px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      transform: translateY(24px) scale(.97);
+      transition: var(--transition);
+    }
+
+    .post-card.reveal {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .post-card:hover {
+      box-shadow: var(--shadow-2);
+      transform: translateY(-6px) scale(1.015);
+      border-color: var(--clr-accent-alt);
+    }
+    .post-card a {
+      color: inherit;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .post-media {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+      background: linear-gradient(135deg,#1e354b,#244b66);
+    }
+    .post-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(105%) contrast(104%);
+      transition: transform 1.4s ease, filter .6s ease;
+    }
+    .post-card:hover img {
+      transform: scale(1.08);
+      filter: saturate(118%) contrast(110%);
+    }
+
+    .post-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(13,27,42,.8), rgba(13,27,42,.05));
+    }
+
+    .badge-date {
+      position: absolute;
+      top: .75rem;
+      left: .75rem;
+      background: rgba(13,27,42,.75);
+      color: #fff;
+      padding: .35rem .6rem;
+      border-radius: .5rem;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.15);
+    }
+
+    .img-badge {
+      position: absolute;
+      top: .75rem;
+      right: .75rem;
+      background: rgba(13,27,42,.7);
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      padding: .35rem .55rem;
+      border-radius: .55rem;
+      border: 1px solid rgba(255,255,255,.18);
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+    }
+
+    .post-body {
+      padding: 1.15rem 1.2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    .post-title {
+      font-size: 1.05rem;
+      line-height: 1.25;
+      font-weight: 600;
+      color: #fff;
+      margin: 0;
+    }
+
+    .post-excerpt {
+      font-size: .83rem;
+      line-height: 1.35;
+      color: var(--clr-text-dim);
+      flex-grow: 1;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .65rem;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      color: var(--clr-text-dim);
+      margin-top: .2rem;
+    }
+
+    .btn-inline {
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .45rem .8rem;
+      border-radius: .55rem;
+      background: rgba(79,177,245,.13);
+      color: #cfeafe;
+      border: 1px solid rgba(79,177,245,.3);
+      transition: var(--transition);
+    }
+    .btn-inline:hover {
+      background: var(--clr-accent-alt);
+      color: #082032;
+      border-color: var(--clr-accent-alt);
+      box-shadow: 0 4px 14px -4px rgba(79,177,245,.6);
+    }
+
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, #1e3044 0%, #263d55 45%, #1e3044 90%);
+      background-size: 200% 100%;
+      animation: shimmer 2.4s linear infinite;
+      border-radius: .4rem;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-thumb {
+      height: 180px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .skeleton-line {
+      height: 12px;
+      margin: 12px 16px;
+      width: calc(90% - 32px);
+    }
+    .skeleton-line.short {
+      width: 50%;
+    }
+
+    footer.footer {
+      background: #0d1b2a;
+      border-top: 1px solid var(--clr-border);
+      padding: 3rem 1.5rem 4rem;
+      color: var(--clr-text-dim);
+    }
+    footer a {
+      color: var(--clr-accent-alt);
+    }
+    footer a:hover {
+      color: #fff;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    #dynamic-offers.section {
+      padding-top: 3.5rem;
+      padding-bottom: 4rem;
+      background: linear-gradient(to bottom, var(--clr-bg-alt), var(--clr-bg));
+      position: relative;
+    }
+    .maturity-headline {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+      font-size: 1.02rem;
+      line-height: 1.5;
+      color: var(--clr-text-dim);
+    }
+    .dynamic-matrix-wrapper {
+      overflow-x: auto;
+      max-width: 100%;
+      position: relative;
+    }
+    .dynamic-matrix {
+      border-collapse: collapse;
+      min-width: 860px;
+      width: 100%;
+      background: linear-gradient(135deg,#1c2d40,#1a2a3b);
+      color: #e8f0f7;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .dynamic-matrix th,
+    .dynamic-matrix td {
+      border: 1px solid rgba(255,255,255,.08);
+      text-align: center;
+      position: relative;
+      padding: 1rem;
+    }
+    .dynamic-matrix td {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .dynamic-matrix td[data-detail]:hover {
+      transform: scale(1.02);
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      filter: brightness(1.09);
+    }
+    .dynamic-matrix td:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px #4fb1f5;
+      z-index: 2;
+    }
+    .dynamic-matrix .traditional {
+      background: #2953a7;
+      font-weight: 600;
+    }
+    .dynamic-matrix .adjustment {
+      background: #e3b93c;
+      color: #222;
+      font-weight: 600;
+    }
+    .dynamic-matrix .dynamic {
+      background: #e74a4a;
+      font-weight: 600;
+    }
+    .dynamic-matrix .empty {
+      background: #cccccc;
+      color: #333;
+      font-weight: 600;
+    }
+    @media (max-width: 700px) {
+      .dynamic-matrix {
+        font-size: .92em;
+      }
+      .dynamic-matrix td,
+      .dynamic-matrix th {
+        padding: .7rem;
+      }
+    }
+
+    #matrix-tooltip {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      max-width: 380px;
+      background: rgba(30,48,70,.98);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1.1em 1.2em;
+      box-shadow: 0 6px 32px -4px #000;
+      font-size: .97em;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+    #matrix-tooltip::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -8px;
+      border-width: 0 8px 8px 8px;
+      border-style: solid;
+      border-color: transparent transparent rgba(30,48,70,.98) transparent;
+    }
+
+    @media (max-width: 920px) {
+      #retailing-comparison-module {
+        max-width: 100vw !important;
+        width: 100% !important;
+        overflow-x: clip;
+      }
+      #retailing-comparison-module .rcm-panels {
+        flex-direction: column !important;
+        display: flex !important;
+        gap: 20px !important;
+      }
+      #retailing-comparison-module .rcm-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+    }
+    @media (max-width: 560px) {
+      #retailing-comparison-module .legacy-grid {
+        grid-template-columns: repeat(auto-fill,minmax(150px,1fr)) !important;
+      }
+    }
+    #retailing-comparison-module.rcm-force-narrow {
+      max-width: 100vw !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    #retailing-comparison-module.rcm-force-narrow .rcm-panels {
+      display: block !important;
+    }
+    #retailing-comparison-module.rcm-force-narrow .rcm-panel {
+      display: block !important;
+      width: 100% !important;
+    }
+    #retailing-comparison-module .rcm-panel { overflow: visible !important; }
+    #retailing-comparison-module .legacy-grid,
+    #retailing-comparison-module .order-items,
+    #retailing-comparison-module .rcm-panel {
+      position: relative;
+      z-index: 0;
+    }
+    #retailing-comparison-module .doc-card,
+    #retailing-comparison-module .order-line {
+      position: relative;
+      z-index: 1;
+      transform-style: flat;
+      overflow: visible !important;
+    }
+    #retailing-comparison-module .doc-card:hover,
+    #retailing-comparison-module .doc-card:focus-within,
+    #retailing-comparison-module .order-line:hover,
+    #retailing-comparison-module .order-line:focus-within {
+      z-index: 1600;
+    }
+    #retailing-comparison-module .rcm-tooltip {
+      z-index: 1700;
+      top: 100%;
+      left: 0;
+      margin-top: 8px;
+      transform: none;
+      width: 260px;
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+    #retailing-comparison-module .rcm-tooltip-anchor:hover .rcm-tooltip,
+    #retailing-comparison-module .rcm-tooltip-anchor:focus-within .rcm-tooltip {
+      opacity: 1;
+    }
+    @media (max-width: 640px) {
+      #retailing-comparison-module {
+        margin: 48px auto 34px;
+        padding: 0 14px 8px;
+      }
+      #retailing-comparison-module h2.rcm-heading {
+        font-size: 1.55rem;
+        padding-bottom: 10px;
+      }
+      #retailing-comparison-module .rcm-sub {
+        font-size: .78rem;
+        margin-top: 10px;
+      }
+      #retailing-comparison-module .rcm-config::before,
+      #retailing-comparison-module .rcm-config::after {
+        opacity: .22;
+        width: 120px;
+        height: 120px;
+      }
+      #retailing-comparison-module .key-advantages ul {
+        grid-template-columns: 1fr !important;
+        gap: 4px 10px;
+      }
+    }
+    @media (max-width: 560px) {
+      #retailing-comparison-module .rcm-panel {
+        min-height: auto;
+        padding: 16px 16px 18px;
+      }
+      #retailing-comparison-module .rcm-field select,
+      #retailing-comparison-module .rcm-field input[type=date],
+      #retailing-comparison-module .rcm-field input[type=number],
+      #retailing-comparison-module .rcm-field input[type=text] {
+        font-size: 16px;
+        line-height: 1.2;
+        padding: 10px 12px;
+      }
+      #retailing-comparison-module .rcm-config {
+        padding: 16px 14px 14px;
+      }
+      #retailing-comparison-module .rcm-field-grid {
+        gap: 10px;
+      }
+      #retailing-comparison-module .order-line .ol-main {
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 520px) {
+      #retailing-comparison-module .rcm-controls-bar {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      #retailing-comparison-module .rcm-theme-switch button {
+        padding: 6px 8px;
+        font-size: .58rem;
+      }
+    }
+    @media (max-width: 480px) {
+      #retailing-comparison-module .rcm-tooltip {
+        left: 50% !important;
+        top: 100% !important;
+        transform: translateX(-50%) !important;
+        width: calc(100vw - 34px);
+        max-width: 360px;
+      }
+      #retailing-comparison-module .rcm-tooltip:before {
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+      }
+    }
+    @media (max-width: 400px) {
+      #retailing-comparison-module .order-status {
+        font-size: .52rem;
+        padding: 4px 10px;
+      }
+      #retailing-comparison-module .order-id {
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <script>
+    (function(){
+      function enforceRCMWidth(){
+        var module = document.getElementById('retailing-comparison-module');
+        if (!module) return;
+        var vw = window.innerWidth;
+        if (module.getBoundingClientRect().width > vw + 2) {
+          module.classList.add('rcm-force-narrow');
+        }
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', enforceRCMWidth);
+      } else {
+        enforceRCMWidth();
+      }
+      window.addEventListener('resize', enforceRCMWidth);
+    })();
+  </script>
 </head>
 <body>
-  <header class="site-header"></header>
-  <main class="page-content">
-    <section class="hero-home">
-      <div class="container hero-inner">
-        <div>
-          <div class="hero-badges">Offer &amp; Order · Airline Architecture · Product Ops</div>
-          <h1 class="hero-title">Modern Airline Retailing for builders and operators</h1>
-          <p class="hero-lede">Guides, frameworks and tooling for airline teams navigating Offer &amp; Order, NDC, merchandising and the data plumbing that makes modern retailing work.</p>
-          <div class="hero-actions">
-            <a class="button-primary" href="/blog/index.html">Read the latest analysis</a>
-            <a class="button-secondary" href="/about.html">About the author</a>
+  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/" style="padding-right:0.4rem;">
+          <span style="display:flex;align-items:center;gap:0.6rem;">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <path d="M16 2C10.48 2 6 6.48 6 12c0 5.52 10 18 10 18s10-12.48 10-18c0-5.52-4.48-10-10-10zm0 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="#3298dc" />
+            </svg>
+            <span style="font-weight:700;letter-spacing:.5px;font-size:1.1em;">Modern Airline Retailing</span>
+          </span>
+        </a>
+        <button class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item is-active" href="/index.html">Home</a>
+          <a class="navbar-item" href="/blog/index.html">Blog</a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link" href="/tools/index.html">Tools</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/tools/xml-viewer.html">Online XML Viewer</a>
+              <a class="navbar-item" href="/tools/great-circle.html">Great Circle Distance</a>
+              <a class="navbar-item" href="/tools/airport-lookup.html">Airport / City Lookup</a>
+              <a class="navbar-item" href="/tools/break-even-load-factor.html">Break Even Load Factor Analyser</a>
+              <a class="navbar-item" href="/tools/fare-bucket-allocation.html">Fare Bucket Allocation</a>
+              <a class="navbar-item" href="/tools/overbooking-optimizer.html">Overbooking Optimiser</a>
+              <a class="navbar-item" href="/tools/rasm-casm-calculator.html">Rasm Casm Calculator</a>
+            </div>
           </div>
-          <div class="showcase-grid">
-            <div class="showcase-chip">Offer &amp; Order architecture</div>
-            <div class="showcase-chip">Inventory, stock &amp; control</div>
-            <div class="showcase-chip">Merchandising &amp; ancillaries</div>
-            <div class="showcase-chip">Continuous pricing &amp; RM</div>
+          <a class="navbar-item" href="/about.html">About Me</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero is-landing">
+    <div class="hero-body">
+      <div class="container has-text-centered">
+        <h1 class="title is-1">Modern Airline Retailing</h1>
+        <p class="subtitle is-4">Tools, insights and real-world stories from the airline tech stack.</p>
+        <a href="#featured" class="hero-cta" id="scrollLatest">
+          Read Latest Blogs <span aria-hidden="true" style="font-size:1.1em;">↘</span>
+        </a>
+      </div>
+
+      <section id="retailing-comparison-module" class="rcm theme-dark accent-animated" aria-label="Airline Retailing Transformation Illustration">
+        <style>
+          #retailing-comparison-module {
+            --rcm-font-stack: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            --rcm-radius-sm: 8px;
+            --rcm-radius: 14px;
+            --rcm-radius-lg: 18px;
+            --rcm-dur: .28s cubic-bezier(.4,.2,.2,1);
+            --rcm-accent-1: #3298dc;
+            --rcm-accent-2: #4fb1f5;
+            --rcm-accent-alt: #10b981;
+            --rcm-warn: #e3b93c;
+            --rcm-legacy-hue: 38;
+            --rcm-future-hue: 168;
+            --rcm-shadow-1: 0 2px 6px -1px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.02) inset;
+            --rcm-shadow-2: 0 10px 32px -10px rgba(0,0,0,.55);
+            --rcm-border-soft: 1px solid rgba(255,255,255,.10);
+            --rcm-border-strong: 1px solid rgba(255,255,255,.25);
+            --rcm-bg-base: #0d1b2a;
+            --rcm-bg-alt: #132235;
+            --rcm-bg-surface: #1f3145;
+            --rcm-text: #e8f0f7;
+            --rcm-text-dim: #9fb3c5;
+            --rcm-text-faint: #6f8294;
+            --rcm-card-glass: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+            --rcm-card-glass-strong: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+            font-family: var(--rcm-font-stack);
+            max-width: 1320px;
+            margin: 70px auto 40px;
+            padding: 0 18px 8px;
+            position: relative;
+            color: var(--rcm-text);
+            line-height: 1.4;
+            isolation: isolate;
+            overflow-x: clip;
+            box-sizing: border-box;
+          }
+          #retailing-comparison-module:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+              radial-gradient(circle at 72% 20%, rgba(79,177,245,.18), transparent 60%),
+              radial-gradient(circle at 16% 72%, rgba(16,185,129,.16), transparent 62%);
+            opacity: .6;
+            pointer-events: none;
+            mix-blend-mode: screen;
+          }
+          #retailing-comparison-module .rcm-topbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: flex-end;
+            justify-content: space-between;
+          }
+          #retailing-comparison-module h2.rcm-heading {
+            margin: 0;
+            font-size: clamp(1.9rem, 1.5rem + 1.4vw, 2.55rem);
+            font-weight: 700;
+            letter-spacing: .5px;
+            background: linear-gradient(95deg,#ffffff,#b9dcf5 45%,#4fb1f5 70%, #10b981 92%);
+            -webkit-background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 14px;
+          }
+          #retailing-comparison-module.accent-animated h2.rcm-heading:after {
+            content: "";
+            position: absolute;
+            left: 2px;
+            bottom: 0;
+            height: 4px;
+            width: 170px;
+            border-radius: 5px;
+            background: linear-gradient(90deg,var(--rcm-accent-1),var(--rcm-accent-2),var(--rcm-accent-alt));
+            background-size: 200% 100%;
+            animation: rcmAccentMove 6.5s linear infinite;
+            box-shadow: 0 0 14px -2px rgba(79,177,245,.85), 0 0 24px -4px rgba(16,185,129,.75);
+          }
+          @keyframes rcmAccentMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          #retailing-comparison-module .rcm-sub {
+            font-size: .95rem;
+            max-width: 980px;
+            margin: 16px 0 10px;
+            color: var(--rcm-text-dim);
+          }
+          .rcm-controls-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 6px;
+          }
+          .rcm-theme-switch {
+            display: inline-flex;
+            gap: 4px;
+            background: var(--rcm-card-glass);
+            border: var(--rcm-border-soft);
+            padding: 4px 6px;
+            border-radius: 999px;
+            position: relative;
+            box-shadow: var(--rcm-shadow-1);
+          }
+          .rcm-theme-switch button {
+            background: transparent;
+            border: none;
+            color: var(--rcm-text-dim);
+            font-size: .65rem;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            position: relative;
+            transition: var(--rcm-dur);
+          }
+          .rcm-theme-switch button[aria-pressed="true"] {
+            color: #fff;
+            background: linear-gradient(135deg,var(--rcm-accent-1), var(--rcm-accent-2));
+            box-shadow: 0 4px 16px -6px rgba(79,177,245,.6);
+          }
+          .rcm-theme-switch button:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79,177,245,.6);
+          }
+          .rcm-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .7rem;
+            letter-spacing: .4px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--rcm-card-glass);
+            border: var(--rcm-border-soft);
+            color: var(--rcm-text-dim);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            position: relative;
+          }
+          .rcm-toggle input { display: none; }
+          .rcm-toggle span.indicator {
+            width: 30px;
+            height: 16px;
+            background: rgba(255,255,255,.15);
+            border-radius: 999px;
+            position: relative;
+            transition: var(--rcm-dur);
+          }
+          .rcm-toggle span.indicator:after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            transition: var(--rcm-dur);
+            box-shadow: 0 2px 6px -1px rgba(0,0,0,.55);
+          }
+          .rcm-toggle input:checked + span.indicator {
+            background: linear-gradient(135deg,var(--rcm-accent-1),var(--rcm-accent-2));
+          }
+          .rcm-toggle input:checked + span.indicator:after {
+            transform: translateX(14px);
+          }
+          .rcm-config {
+            margin-top: 28px;
+            background: var(--rcm-card-glass);
+            border: var(--rcm-border-soft);
+            border-radius: var(--rcm-radius-lg);
+            padding: 20px 20px 18px;
+            position: relative;
+            box-shadow: var(--rcm-shadow-1);
+            overflow: hidden;
+          }
+          .rcm-config:before,
+          .rcm-config:after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at center, rgba(79,177,245,.28), transparent 62%);
+            top: -70px;
+            right: -60px;
+            opacity: .35;
+            transform: rotate(18deg);
+            pointer-events: none;
+          }
+          .rcm-config:after {
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle at center, rgba(16,185,129,.32), transparent 62%);
+            top: auto;
+            bottom: -70px;
+            left: -50px;
+            transform: rotate(-12deg);
+          }
+          .rcm-config h3 {
+            margin: 0 0 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: .5px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+          }
+          .rcm-field-grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(4,1fr);
+          }
+          @media (max-width:1100px) {
+            .rcm-field-grid { grid-template-columns: repeat(3,1fr); }
+          }
+          @media (max-width:920px) {
+            .rcm-field-grid { grid-template-columns: repeat(2,1fr); }
+          }
+          @media (max-width:580px) {
+            .rcm-field-grid { grid-template-columns: 1fr; }
+          }
+          .rcm-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+          }
+          .rcm-field label {
+            font-size: .58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .65px;
+            color: var(--rcm-text-dim);
+          }
+          .rcm-field select,
+          .rcm-field input[type=date],
+          .rcm-field input[type=number],
+          .rcm-field input[type=text] {
+            padding: 8px 10px;
+            border: 1px solid rgba(255,255,255,.20);
+            border-radius: var(--rcm-radius-sm);
+            background: rgba(255,255,255,.08);
+            color: var(--rcm-text);
+            font-size: .78rem;
+            outline: none;
+            transition: var(--rcm-dur);
+          }
+          .rcm-field select:focus,
+          .rcm-field input:focus {
+            border-color: var(--rcm-accent-1);
+            box-shadow: 0 0 0 2px rgba(79,177,245,.45);
+          }
+          .rcm-inline {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 14px;
+          }
+          .rcm-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .72rem;
+            letter-spacing: .4px;
+            padding: 6px 10px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.14);
+            color: var(--rcm-text-dim);
+            border-radius: 999px;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--rcm-dur);
+          }
+          .rcm-check input { margin: 0; }
+          .rcm-check:hover {
+            color: #fff;
+            border-color: var(--rcm-accent-2);
+          }
+          .rcm-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+          }
+          .rcm-btn {
+            background: linear-gradient(135deg,var(--rcm-accent-1), var(--rcm-accent-2));
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            font-size: .76rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            letter-spacing: .5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 18px -4px rgba(79,177,245,.55);
+            position: relative;
+            transition: var(--rcm-dur);
+          }
+          .rcm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px -6px rgba(79,177,245,.65);
+          }
+          .rcm-btn:active { transform: translateY(-1px); }
+          .rcm-btn.secondary {
+            background: rgba(255,255,255,.08);
+            box-shadow: none;
+            border: 1px solid rgba(255,255,255,.15);
+            color: var(--rcm-text-dim);
+          }
+          .rcm-btn.secondary:hover {
+            background: rgba(255,255,255,.16);
+            color: #fff;
+            box-shadow: 0 6px 20px -6px rgba(0,0,0,.5);
+          }
+          .rcm-panels {
+            display: flex;
+            gap: 26px;
+            margin-top: 34px;
+          }
+          @media (max-width:1100px) {
+            .rcm-panels { flex-direction: column; }
+          }
+          .rcm-panel {
+            flex: 1;
+            position: relative;
+            border-radius: var(--rcm-radius-lg);
+            padding: 20px 22px 22px;
+            border: var(--rcm-border-soft);
+            background: var(--rcm-card-glass);
+            box-shadow: var(--rcm-shadow-1);
+            overflow: visible;
+            min-height: 460px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: var(--rcm-dur);
+            background-size: 180% 180%;
+            animation: rcmPanelDrift 28s linear infinite;
+          }
+          @keyframes rcmPanelDrift {
+            0% { background-position:0% 50%; }
+            50% { background-position:100% 50%; }
+            100% { background-position:0% 50%; }
+          }
+          .theme-dual #legacyPanel {
+            background: linear-gradient(175deg, hsla(var(--rcm-legacy-hue) 72% 48% / .28), rgba(13,27,42,.9) 55%);
+          }
+          .theme-dual #futurePanel {
+            background: linear-gradient(175deg, hsla(var(--rcm-future-hue) 65% 42% / .30), rgba(13,27,42,.9) 55%);
+          }
+          .rcm-panel h4 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: .4px;
+            color: #fff;
+          }
+          .rcm-label-strip {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: .55rem;
+            font-weight: 700;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            position: relative;
+            margin-bottom: 8px;
+          }
+          .legacy-tag {
+            background: rgba(227,185,60,.16);
+            color: #f7d58a;
+            border: 1px solid rgba(227,185,60,.45);
+          }
+          .future-tag {
+            background: rgba(79,177,245,.22);
+            color: #d9f3ff;
+            border: 1px solid rgba(79,177,245,.50);
+          }
+          .rcm-intro {
+            font-size: .72rem;
+            color: var(--rcm-text-dim);
+            line-height: 1.35;
+            margin-bottom: 14px;
+            max-width: 560px;
+          }
+          .legacy-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fill,minmax(190px,1fr));
+          }
+          .doc-card {
+            background: var(--rcm-card-glass-strong);
+            border: var(--rcm-border-soft);
+            border-radius: 14px;
+            padding: 10px 12px 11px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--rcm-dur);
+            color: #fff;
+          }
+          .doc-card:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(130deg,rgba(255,255,255,.14),rgba(255,255,255,0));
+            opacity: 0;
+            transition: var(--rcm-dur);
+          }
+          .doc-card:hover {
+            box-shadow: var(--rcm-shadow-2);
+            border-color: var(--rcm-accent-2);
+            transform: translateY(-5px) scale(1.018);
+          }
+          .doc-card:hover:before { opacity: .6; }
+          .doc-title {
+            font-size: .66rem;
+            font-weight: 700;
+            letter-spacing: .35px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            line-height: 1.2;
+            flex-wrap: wrap;
+          }
+          .doc-ref {
+            font-weight: 600;
+            color: #b9dcf5;
+          }
+          .doc-meta {
+            margin-top: 6px;
+            font-size: .62rem;
+            line-height: 1.3;
+            color: var(--rcm-text-dim);
+          }
+          .multi-badge {
+            font-size: .55rem;
+            font-weight: 600;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.18);
+            padding: 2px 6px;
+            border-radius: 7px;
+            letter-spacing: .5px;
+            color: #d4e9f6;
+          }
+          .inventory-block { margin-top: 6px; }
+          .inv-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .58rem;
+            margin-top: 4px;
+          }
+          .inv-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,.18);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+          }
+          .inv-fill {
+            height: 100%;
+            background: linear-gradient(90deg,#e74a4a,#e3b93c);
+            width: 72%;
+            transition: width 1.4s ease;
+          }
+          .order-wrapper {
+            background: linear-gradient(140deg, rgba(16,185,129,.18), rgba(79,177,245,.18));
+            border: 1px solid rgba(79,177,245,.35);
+            border-radius: 16px;
+            padding: 16px 18px;
+            position: relative;
+          }
+          .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+          }
+          .order-id {
+            font-size: 1.18rem;
+            font-weight: 700;
+            letter-spacing: .8px;
+            color: #5ee2b2;
+          }
+          .order-finance { text-align: right; }
+          .order-total {
+            font-size: .8rem;
+            font-weight: 700;
+            color: #4fb1f5;
+          }
+          .order-status {
+            font-size: .58rem;
+            font-weight: 700;
+            background: linear-gradient(135deg,#10b981,#0d8665);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 999px;
+            letter-spacing: .6px;
+          }
+          .order-items {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          }
+          .order-line {
+            background: var(--rcm-card-glass-strong);
+            border: var(--rcm-border-soft);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            cursor: default;
+            position: relative;
+            transition: var(--rcm-dur);
+          }
+          .order-line:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg,rgba(255,255,255,.18),rgba(255,255,255,0));
+            opacity: 0;
+            transition: var(--rcm-dur);
+          }
+          .order-line:hover {
+            box-shadow: var(--rcm-shadow-2);
+            border-color: var(--rcm-accent-2);
+            transform: translateY(-4px) scale(1.015);
+          }
+          .order-line:hover:before { opacity: .55; }
+          .ol-main {
+            font-size: .7rem;
+            line-height: 1.25;
+            color: #fff;
+            max-width: 72%;
+          }
+          .ol-ref {
+            font-size: .56rem;
+            color: var(--rcm-text-dim);
+            margin-top: 5px;
+          }
+          .ol-price {
+            text-align: right;
+            font-size: .73rem;
+            font-weight: 600;
+            color: #5ee2b2;
+          }
+          .key-advantages,
+          .trace {
+            margin-top: 16px;
+            background: var(--rcm-card-glass);
+            border: var(--rcm-border-soft);
+            padding: 12px 14px;
+            border-radius: 14px;
+            color: var(--rcm-text-dim);
+            font-size: .64rem;
+            line-height: 1.35;
+            position: relative;
+            overflow: hidden;
+          }
+          .key-advantages h5 {
+            margin: 0 0 8px;
+            font-size: .58rem;
+            font-weight: 800;
+            letter-spacing: .65px;
+            text-transform: uppercase;
+            color: #b9dcf5;
+          }
+          .key-advantages ul {
+            margin: 0;
+            padding-left: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+            gap: 4px 18px;
+          }
+          .legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: .58rem;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            z-index: 5;
+          }
+          .legend span {
+            background: rgba(255,255,255,.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,.15);
+            font-weight: 600;
+            letter-spacing: .4px;
+            color: #d4e9f6;
+          }
+          .rcm-tooltip-anchor { position: relative; }
+          .rcm-tooltip {
+            pointer-events: none;
+            position: absolute;
+            z-index: 1700;
+            background: rgba(30,48,70,.97);
+            color: #fff;
+            padding: 10px 12px;
+            width: 260px;
+            border-radius: 12px;
+            font-size: .62rem;
+            line-height: 1.35;
+            box-shadow: 0 12px 36px -8px rgba(0,0,0,.65);
+          }
+          .rcm-tooltip:before {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 22px;
+            width: 12px;
+            height: 12px;
+            background: rgba(30,48,70,.97);
+            transform: rotate(45deg);
+            box-shadow: 0 0 0 1px rgba(30,48,70,.97);
+          }
+          .rcm-disclaimer {
+            margin-top: 26px;
+            font-size: .64rem;
+            line-height: 1.35;
+            background: var(--rcm-card-glass);
+            border: var(--rcm-border-soft);
+            padding: 14px 16px 16px;
+            border-radius: 16px;
+            color: var(--rcm-text-dim);
+            position: relative;
+          }
+          .flash {
+            animation: rcmFlashPulse 1.2s ease;
+          }
+          @keyframes rcmFlashPulse {
+            0% { box-shadow: 0 0 0 0 rgba(79,177,245,0); }
+            30% { box-shadow: 0 0 0 8px rgba(79,177,245,.35); }
+            60% { box-shadow: 0 0 0 2px rgba(79,177,245,.55); }
+            100% { box-shadow: 0 0 0 0 rgba(79,177,245,0); }
+          }
+        </style>
+        <div class="rcm-topbar">
+          <div>
+            <h2 class="rcm-heading">From Fragmented Records to Unified Orders</h2>
+            <p class="rcm-sub">
+              Configure a sample itinerary and ancillary set. Compare today’s multi-document flow (PNR, e-ticket, multiple EMDs, separate non-air references) versus a unified Offer &amp; Order construct with cohesive Order Items and lifecycle events.
+            </p>
+          </div>
+          <div class="rcm-controls-bar" aria-label="Module display controls">
+            <div class="rcm-theme-switch" role="group" aria-label="Theme selection">
+              <button type="button" data-theme="light" aria-pressed="false">Light</button>
+              <button type="button" data-theme="dark" aria-pressed="true">Dark</button>
+              <button type="button" data-theme="dual" aria-pressed="false">Dual</button>
+            </div>
+            <label class="rcm-toggle" aria-label="Toggle compact density">
+              <input type="checkbox" id="rcmCompactToggle">
+              <span class="indicator"></span>
+              Compact
+            </label>
+            <label class="rcm-toggle" aria-label="Toggle accent animation">
+              <input type="checkbox" id="rcmAccentToggle" checked>
+              <span class="indicator"></span>
+              Accents
+            </label>
           </div>
         </div>
-        <aside class="hero-metric-card">
-          <h2>40+ deep dives</h2>
-          <p>Battle-tested explanations and templates airlines use to brief execs, align squads and ship capability faster.</p>
-          <p><strong>Tools included:</strong> break-even load factor, RASM/CASM, overbooking optimisers, distance calculators and more.</p>
-        </aside>
-      </div>
-    </section>
 
-    <section class="container page-section" id="focus">
-      <span class="section-eyebrow">What we focus on</span>
-      <h2 class="section-title">Architecture, commercial models and execution detail</h2>
-      <p class="section-intro">Whether you are re-platforming to Offer &amp; Order, cleaning up availability, or wiring in telemetry, the goal is the same: reduce guesswork and give teams concrete artefacts to work from.</p>
-      <div class="card-grid">
-        <article class="feature-card">
-          <h3>Offer &amp; Order delivery playbooks</h3>
-          <p>Reference architectures, sequencing checklists and trade-off guides for migrating from legacy PSS, EDIFACT and ticketing to modern order management.</p>
-        </article>
-        <article class="feature-card">
-          <h3>Commercial intelligence</h3>
-          <p>Explainers on revenue levers, availability accuracy, continuous pricing and merchandising so product and RM stay in lockstep.</p>
-        </article>
-        <article class="feature-card">
-          <h3>Operational tooling</h3>
-          <p>Calculators, planners and lookup utilities that keep analysts, PMs and engineers speaking the same language when decisions need numbers.</p>
-        </article>
-      </div>
-    </section>
+        <div class="rcm-config" aria-label="Itinerary and ancillary configuration">
+          <h3>Configure Journey &amp; Services</h3>
+          <div class="rcm-field-grid">
+            <div class="rcm-field">
+              <label for="origin">Origin</label>
+              <select id="origin">
+                <option value="JFK">JFK – New York (JFK)</option>
+                <option value="LHR">LHR – London Heathrow</option>
+                <option value="DXB">DXB – Dubai</option>
+                <option value="SIN">SIN – Singapore</option>
+                <option value="FRA">FRA – Frankfurt</option>
+                <option value="HKG">HKG – Hong Kong</option>
+              </select>
+            </div>
+            <div class="rcm-field">
+              <label for="connection">Connection</label>
+              <select id="connection">
+                <option value="">None</option>
+                <option value="LHR">LHR – London Heathrow</option>
+                <option value="DXB">DXB – Dubai</option>
+                <option value="FRA">FRA – Frankfurt</option>
+                <option value="SIN">SIN – Singapore</option>
+              </select>
+            </div>
+            <div class="rcm-field">
+              <label for="destination">Destination</label>
+              <select id="destination">
+                <option value="DXB">DXB – Dubai</option>
+                <option value="TRV" selected>TRV – Thiruvananthapuram</option>
+                <option value="LHR">LHR – London Heathrow</option>
+                <option value="SIN">SIN – Singapore</option>
+                <option value="FRA">FRA – Frankfurt</option>
+              </select>
+            </div>
+            <div class="rcm-field">
+              <label for="cabin">Cabin</label>
+              <select id="cabin">
+                <option value="Economy">Economy</option>
+                <option value="Premium Economy">Premium Economy</option>
+                <option value="Business" selected>Business</option>
+                <option value="First">First</option>
+              </select>
+            </div>
+            <div class="rcm-field">
+              <label for="departureDate">Departure Date</label>
+              <input type="date" id="departureDate">
+            </div>
+            <div class="rcm-field">
+              <label for="returnDate">Return Date</label>
+              <input type="date" id="returnDate">
+            </div>
+            <div class="rcm-field">
+              <label for="seatType">Seat Product</label>
+              <select id="seatType">
+                <option value="">None</option>
+                <option value="Extra Legroom" selected>Extra Legroom</option>
+                <option value="Front Row">Front Row</option>
+                <option value="Privacy Suite">Privacy Suite</option>
+              </select>
+            </div>
+            <div class="rcm-field">
+              <label for="baggage">Extra Bags</label>
+              <input type="number" id="baggage" min="0" max="5" value="1">
+            </div>
+          </div>
+          <div class="rcm-inline">
+            <label class="rcm-check"><input type="checkbox" id="champagne" checked> Champagne</label>
+            <label class="rcm-check"><input type="checkbox" id="hotel" checked> Hotel</label>
+            <label class="rcm-check"><input type="checkbox" id="taxi" checked> Taxi</label>
+          </div>
+          <div class="rcm-inline" id="hotelDatesWrap" style="margin-top:10px;">
+            <div class="rcm-field" style="min-width:160px;">
+              <label for="hotelCheckIn">Hotel Check‑in</label>
+              <input type="date" id="hotelCheckIn">
+            </div>
+            <div class="rcm-field" style="min-width:160px;">
+              <label for="hotelCheckOut">Hotel Check‑out</label>
+              <input type="date" id="hotelCheckOut">
+            </div>
+          </div>
+          <div class="rcm-actions">
+            <button class="rcm-btn" id="applyConfig">Apply / Rebuild</button>
+            <button class="rcm-btn secondary" id="randomize">Randomize Refs</button>
+            <button class="rcm-btn secondary" id="reset">Reset</button>
+          </div>
+        </div>
 
-    <section class="container page-section" id="latest">
-      <span class="section-eyebrow">Latest analysis</span>
-      <h2 class="section-title">Fresh research from the field</h2>
-      <div class="card-grid" id="latest-posts" aria-live="polite">
-        <article class="article-card" data-state="loading">
-          <h3>Loading the latest analysis…</h3>
-          <p>One moment while we pull in the newest research from the field.</p>
+        <div class="rcm-panels">
+          <section class="rcm-panel" id="legacyPanel" aria-label="Current multi-document environment">
+            <div class="legend"><span>Legacy Documents</span></div>
+            <span class="rcm-label-strip legacy-tag">Current multi-record model</span>
+            <h4>Document &amp; System Fragmentation</h4>
+            <div class="rcm-intro">
+              Separate reservation, ticketing and ancillary documents; non‑air items outside core airline systems. Each reference independently tracked for changes, disruption or refund.
+            </div>
+            <div id="legacyDocs" class="legacy-grid" aria-live="polite"></div>
+            <div class="trace" id="legacyTrace"></div>
+          </section>
+
+          <section class="rcm-panel" id="futurePanel" aria-label="Offer and One Order model">
+            <div class="legend"><span>Unified Order</span></div>
+            <span class="rcm-label-strip future-tag">Offer &amp; One Order model</span>
+            <h4>Unified Order Structure</h4>
+            <div class="rcm-intro">
+              Accepted Offer crystallizes into a single Order with structured Order Items (transport + ancillary + non‑air) and centralized payment / servicing references.
+            </div>
+            <div class="order-wrapper" id="orderWrapper" aria-live="polite">
+              <div class="order-header">
+                <div>
+                  <div class="order-id" id="orderId">ORD-</div>
+                  <div style="font-size:.6rem; color:#5ee2b2; margin-top:2px;" id="offerContext">Offer accepted and normalized into Order.</div>
+                </div>
+                <div class="order-finance">
+                  <div class="order-total" id="orderTotal">Total: —</div>
+                  <div class="order-status" id="orderStatus">INITIAL</div>
+                </div>
+              </div>
+              <div class="order-items" id="orderItems"></div>
+            </div>
+            <div class="key-advantages">
+              <h5>Key Advantages</h5>
+              <ul>
+                <li>Single canonical Order ID for servicing &amp; disruption</li>
+                <li>Order Items encapsulate delivery &amp; pricing data</li>
+                <li>Less duplicated validation across layers</li>
+                <li>Consistent payment &amp; settlement references</li>
+                <li>Order Change events vs. document re‑issue</li>
+                <li>Extendable to non‑air via product catalog</li>
+              </ul>
+            </div>
+            <div class="trace" id="futureTrace"></div>
+          </section>
+        </div>
+
+        <div class="rcm-disclaimer">
+          <strong>Disclaimer:</strong> Simplified conceptual visualization. Real implementations include interline &amp; codeshare, revenue accounting, settlement, proration, payment orchestration, audit, disruption workflows, versioned Offers / Order Changes, regulatory artifacts, privacy &amp; security measures not shown here. Terminology based on publicly available IATA Airline Retailing materials (PNR, e‑Ticket, EMD, Offer, Order, Order Item, Product Catalog).
+        </div>
+
+        <script>
+          (function(){
+            const root = document.getElementById('retailing-comparison-module');
+            const today = new Date();
+            function setDate(id, date){
+              const el = document.getElementById(id);
+              if (el) el.value = date.toISOString().split('T')[0];
+            }
+            const dep = new Date(today.getFullYear(), today.getMonth()+1, 1);
+            const ret = new Date(today.getFullYear(), today.getMonth()+1, 9);
+            setDate('departureDate', dep);
+            setDate('returnDate', ret);
+            setDate('hotelCheckIn', new Date(dep.getTime()+24*3600*1000));
+            setDate('hotelCheckOut', new Date(dep.getTime()+4*24*3600*1000));
+
+            const els = {
+              origin: document.getElementById('origin'),
+              connection: document.getElementById('connection'),
+              destination: document.getElementById('destination'),
+              cabin: document.getElementById('cabin'),
+              departureDate: document.getElementById('departureDate'),
+              returnDate: document.getElementById('returnDate'),
+              seatType: document.getElementById('seatType'),
+              baggage: document.getElementById('baggage'),
+              champagne: document.getElementById('champagne'),
+              hotel: document.getElementById('hotel'),
+              taxi: document.getElementById('taxi'),
+              hotelCheckIn: document.getElementById('hotelCheckIn'),
+              hotelCheckOut: document.getElementById('hotelCheckOut'),
+              hotelDatesWrap: document.getElementById('hotelDatesWrap'),
+              legacyDocs: document.getElementById('legacyDocs'),
+              legacyTrace: document.getElementById('legacyTrace'),
+              orderId: document.getElementById('orderId'),
+              orderItems: document.getElementById('orderItems'),
+              orderTotal: document.getElementById('orderTotal'),
+              orderStatus: document.getElementById('orderStatus'),
+              futureTrace: document.getElementById('futureTrace'),
+              offerContext: document.getElementById('offerContext'),
+              applyConfig: document.getElementById('applyConfig'),
+              randomize: document.getElementById('randomize'),
+              reset: document.getElementById('reset'),
+              themeButtons: root.querySelectorAll('.rcm-theme-switch button'),
+              compactToggle: document.getElementById('rcmCompactToggle'),
+              accentToggle: document.getElementById('rcmAccentToggle')
+            };
+
+            const tooltips = {
+              PNR: "Passenger Name Record: reservation construct storing itinerary, traveler and service requests.",
+              ETKT: "Electronic Ticket: authoritative flight coupon document separate from the PNR's structure.",
+              EMD: "Electronic Miscellaneous Document: ancillary / optional service document (associated or standalone).",
+              HOTEL: "Hotel booking: non-air supplier system reference.",
+              TAXI: "Ground transfer: external vendor reservation reference.",
+              INVENTORY: "Booking class availability snapshot from inventory control.",
+              ORDER_ITEM: "Order Item: atomic product element within a unified Order (flight or ancillary) with pricing & delivery attributes."
+            };
+
+            let refState = {};
+            function randomDigits(n){
+              return Array.from({length:n},()=>Math.floor(Math.random()*10)).join('');
+            }
+            function regenRefs(){
+              refState = {
+                pnr: (Math.random().toString(36).slice(2,8)).toUpperCase(),
+                ticket: '250-' + randomDigits(10),
+                seatEmd: '176-' + randomDigits(10),
+                bagEmd: '176-' + randomDigits(10),
+                champEmd: '176-' + randomDigits(10),
+                hotelRef: 'HTL-' + randomDigits(6),
+                taxiRef: 'GND-' + randomDigits(5),
+                offerId: 'OF-' + (Math.random().toString(36).slice(2,7)).toUpperCase(),
+                orderId: 'ORD-' + (Math.random().toString(36).slice(2,10)).toUpperCase()
+              };
+            }
+            regenRefs();
+
+            function buildSegments(){
+              const o = els.origin.value;
+              const c = els.connection.value;
+              const d = els.destination.value;
+              const outbound = [];
+              const inbound = [];
+              if (c && c !== o && c !== d) {
+                outbound.push([o,c],[c,d]);
+                inbound.push([d,c],[c,o]);
+              } else {
+                outbound.push([o,d]);
+                inbound.push([d,o]);
+              }
+              return { outbound, inbound };
+            }
+            function plural(n, label){
+              return n + ' ' + label + (n === 1 ? '' : 's');
+            }
+            function hotelNights(){
+              if (!els.hotel.checked) return 0;
+              const inD = new Date(els.hotelCheckIn.value);
+              const outD = new Date(els.hotelCheckOut.value);
+              return Math.max(1, Math.round((outD - inD)/(24*3600*1000)));
+            }
+            function gatherAncillaries(segmentCount){
+              return {
+                cabin: els.cabin.value,
+                seatType: els.seatType.value,
+                extraBags: parseInt(els.baggage.value || '0',10),
+                champagne: els.champagne.checked,
+                hotel: els.hotel.checked,
+                taxi: els.taxi.checked,
+                segmentCount
+              };
+            }
+            function computePricing(anc){
+              const basePerSegment = { 'Economy': 340, 'Premium Economy': 520, 'Business': 1380, 'First': 2100 };
+              const segs = anc.segmentCount;
+              let total = basePerSegment[anc.cabin] * segs;
+              const seat = anc.seatType ? 60 : 0;
+              const bags = anc.extraBags * 85;
+              const champagne = anc.champagne ? 45 : 0;
+              const hotel = anc.hotel ? 900 : 0;
+              const taxi = anc.taxi ? 40 : 0;
+              const breakdown = { base: total, seat, bags, champagne, hotel, taxi };
+              total += seat + bags + champagne + hotel + taxi;
+              return { total, breakdown };
+            }
+            function currencyFormat(v){
+              return 'USD ' + v.toLocaleString(undefined,{minimumFractionDigits:0});
+            }
+
+            function makeDocCard({title, ref, meta, type, mapTo}){
+              const div = document.createElement('div');
+              div.className = 'doc-card rcm-tooltip-anchor';
+              div.setAttribute('tabindex','0');
+              div.dataset.mapTo = mapTo || '';
+              div.innerHTML = `
+                <div class="doc-title">${title} <span class="doc-ref">${ref}</span></div>
+                <div class="doc-meta">${meta}</div>
+                <div class="rcm-tooltip">${tooltips[type]||''}</div>
+              `;
+              div.addEventListener('click', ()=>highlightMapped(mapTo));
+              div.addEventListener('keydown', (evt)=>{
+                if (evt.key === 'Enter' || evt.key === ' ') {
+                  evt.preventDefault();
+                  highlightMapped(mapTo);
+                }
+              });
+              return div;
+            }
+
+            function buildLegacy(){
+              els.legacyDocs.innerHTML = '';
+              const segData = buildSegments();
+              const segCount = segData.outbound.length + segData.inbound.length;
+              const anc = gatherAncillaries(segCount);
+
+              els.legacyDocs.appendChild(makeDocCard({
+                title:'PNR',
+                ref:refState.pnr,
+                meta:`Itinerary ${segCount} segs, cabin ${anc.cabin}.`,
+                type:'PNR',
+                mapTo:'flight-line'
+              }));
+              els.legacyDocs.appendChild(makeDocCard({
+                title:'e-Ticket',
+                ref:refState.ticket,
+                meta:`Coupons: ${segCount}.`,
+                type:'ETKT',
+                mapTo:'flight-line'
+              }));
+              if (anc.seatType){
+                els.legacyDocs.appendChild(makeDocCard({
+                  title:'EMD (Seat)',
+                  ref:refState.seatEmd,
+                  meta:`Seat: ${anc.seatType}.`,
+                  type:'EMD',
+                  mapTo:'seat-line'
+                }));
+              }
+              if (anc.extraBags>0){
+                els.legacyDocs.appendChild(makeDocCard({
+                  title:'EMD (Baggage)',
+                  ref:refState.bagEmd,
+                  meta:`${plural(anc.extraBags,'extra bag')}.`,
+                  type:'EMD',
+                  mapTo:'bag-line'
+                }));
+              }
+              if (anc.champagne){
+                els.legacyDocs.appendChild(makeDocCard({
+                  title:'EMD (F&B)',
+                  ref:refState.champEmd,
+                  meta:'Onboard beverage.',
+                  type:'EMD',
+                  mapTo:'champ-line'
+                }));
+              }
+              if (anc.hotel){
+                els.legacyDocs.appendChild(makeDocCard({
+                  title:'Hotel',
+                  ref:refState.hotelRef,
+                  meta:`${hotelNights()} night stay.`,
+                  type:'HOTEL',
+                  mapTo:'hotel-line'
+                }));
+              }
+              if (anc.taxi){
+                els.legacyDocs.appendChild(makeDocCard({
+                  title:'Taxi',
+                  ref:refState.taxiRef,
+                  meta:'Airport transfer.',
+                  type:'TAXI',
+                  mapTo:'taxi-line'
+                }));
+              }
+              const inv = document.createElement('div');
+              inv.className='doc-card rcm-tooltip-anchor';
+              inv.dataset.mapTo='flight-line';
+              const classes = ['Y','K','M','J','F'];
+              const invRows = classes.map(cls=>{
+                const pct = Math.max(8, Math.floor(Math.random()*90));
+                return `<div class="inv-row">
+                  <span style="width:18px;font-weight:600;">${cls}</span>
+                  <div class="inv-bar"><div class="inv-fill" style="width:${pct}%"></div></div>
+                  <span style="font-size:.55rem; color:var(--rcm-text-dim);">${pct>=50?'A':'L'}</span>
+                </div>`;
+              }).join('');
+              inv.innerHTML = `
+                <div class="doc-title">Inventory <span class="multi-badge">Classes</span></div>
+                <div class="doc-meta">Availability snapshot.</div>
+                <div class="inventory-block">${invRows}</div>
+                <div class="rcm-tooltip">${tooltips.INVENTORY}</div>
+              `;
+              inv.addEventListener('click', ()=>highlightMapped('flight-line'));
+              inv.addEventListener('keydown', (evt)=>{
+                if (evt.key === 'Enter' || evt.key === ' ') {
+                  evt.preventDefault();
+                  highlightMapped('flight-line');
+                }
+              });
+              els.legacyDocs.appendChild(inv);
+
+              els.legacyTrace.innerHTML = `<strong>Lifecycle (Legacy):</strong> Create PNR → Price & issue e‑Ticket → Issue separate EMD(s) per ancillary → Non‑air refs handled outside core → Monitor coupon + EMD statuses across systems for servicing/refund.`;
+            }
+
+            function routeLabel(segData){
+              const outbound = segData.outbound.map(s=>s.join('→')).join(' / ');
+              const inbound = segData.inbound.map(s=>s.join('→')).join(' / ');
+              return `Outbound: ${outbound} | Return: ${inbound}`;
+            }
+
+            function addOrderLine({id,label,detail,ref,price,tooltip}){
+              const li = document.createElement('div');
+              li.className='order-line rcm-tooltip-anchor';
+              li.id = id;
+              li.innerHTML = `
+                <div class="ol-main">
+                  <strong>${label}</strong><br>
+                  ${detail}
+                  <div class="ol-ref">Ref: ${ref}</div>
+                  <div class="rcm-tooltip">${tooltip || tooltips.ORDER_ITEM}</div>
+                </div>
+                <div class="ol-price">${currencyFormat(price)}</div>
+              `;
+              els.orderItems.appendChild(li);
+            }
+
+            function buildOrder(){
+              els.orderItems.innerHTML = '';
+              els.orderId.textContent = refState.orderId;
+              const segData = buildSegments();
+              const segCount = segData.outbound.length + segData.inbound.length;
+              const anc = gatherAncillaries(segCount);
+              const pricing = computePricing(anc);
+
+              addOrderLine({
+                id:'flight-line',
+                label:`Flight segments (${segCount})`,
+                detail:routeLabel(segData),
+                ref:'FL-01',
+                price:pricing.breakdown.base
+              });
+              if (anc.seatType){
+                addOrderLine({
+                  id:'seat-line',
+                  label:'Paid Seat',
+                  detail:anc.seatType,
+                  ref:'SEAT-02',
+                  price:pricing.breakdown.seat
+                });
+              }
+              if (anc.extraBags>0){
+                addOrderLine({
+                  id:'bag-line',
+                  label:'Additional Baggage',
+                  detail:plural(anc.extraBags,'piece'),
+                  ref:'BAG-03',
+                  price:pricing.breakdown.bags
+                });
+              }
+              if (anc.champagne){
+                addOrderLine({
+                  id:'champ-line',
+                  label:'Onboard Beverage',
+                  detail:'Premium champagne',
+                  ref:'FNB-04',
+                  price:pricing.breakdown.champagne
+                });
+              }
+              if (anc.hotel){
+                addOrderLine({
+                  id:'hotel-line',
+                  label:'Hotel',
+                  detail:`${hotelNights()} nights (${els.hotelCheckIn.value} → ${els.hotelCheckOut.value})`,
+                  ref:'HTL-05',
+                  price:pricing.breakdown.hotel
+                });
+              }
+              if (anc.taxi){
+                addOrderLine({
+                  id:'taxi-line',
+                  label:'Ground Transfer',
+                  detail:'Airport taxi service',
+                  ref:'GND-06',
+                  price:pricing.breakdown.taxi
+                });
+              }
+
+              els.orderTotal.textContent = 'Total: ' + currencyFormat(pricing.total);
+              els.orderStatus.textContent = 'ORDERED';
+              els.futureTrace.innerHTML = `<strong>Lifecycle (Offer & Order):</strong> Priced Offer → Offer accepted → Single Order (ID & Items) → Ancillaries & non‑air as Order Items → Servicing via Order Change events (not multiple doc re‑issuances).`;
+              els.offerContext.textContent = `Offer ${refState.offerId} accepted; consolidated under Order ${refState.orderId}.`;
+            }
+
+            function highlightMapped(id){
+              if (!id) return;
+              const el = document.getElementById(id);
+              if (el){
+                el.classList.remove('flash');
+                void el.offsetWidth;
+                el.classList.add('flash');
+                el.scrollIntoView({behavior:'smooth', block:'center'});
+              }
+            }
+
+            els.hotel.addEventListener('change', () => {
+              els.hotelDatesWrap.style.display = els.hotel.checked ? 'flex' : 'none';
+            });
+            els.applyConfig.addEventListener('click', buildAll);
+            els.randomize.addEventListener('click', () => { regenRefs(); buildAll(); });
+            els.reset.addEventListener('click', () => {
+              els.origin.value='JFK';
+              els.connection.value='LHR';
+              els.destination.value='TRV';
+              els.cabin.value='Business';
+              els.seatType.value='Extra Legroom';
+              els.baggage.value='1';
+              els.champagne.checked=true;
+              els.hotel.checked=true;
+              els.taxi.checked=true;
+              els.hotelDatesWrap.style.display='flex';
+              regenRefs();
+              buildAll();
+            });
+
+            els.themeButtons.forEach(btn=>{
+              btn.addEventListener('click', ()=>{
+                els.themeButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
+                btn.setAttribute('aria-pressed','true');
+                root.classList.remove('theme-light','theme-dark','theme-dual');
+                root.classList.add('theme-'+btn.dataset.theme);
+              });
+            });
+
+            els.compactToggle.addEventListener('change', ()=>{
+              root.classList.toggle('compact', els.compactToggle.checked);
+            });
+
+            els.accentToggle.addEventListener('change', ()=>{
+              root.classList.toggle('accent-animated', els.accentToggle.checked);
+            });
+
+            function buildAll(){
+              buildLegacy();
+              buildOrder();
+            }
+            buildAll();
+          })();
+        </script>
+      </section>
+      <section id="dynamic-offers" class="section" aria-labelledby="dynamic-offers-heading" style="margin-top: 40px;">
+        <div class="container">
+          <h2 id="dynamic-offers-heading" class="title is-3">IATA Dynamic Offers Maturity Model</h2>
+          <p class="maturity-headline">
+            This interactive matrix summarizes how airlines evolve from static products and prices to fully dynamic, contextualized offers. Hover or tap each cell for in-depth detail, based on IATA's official factsheet.
+          </p>
+          <div class="dynamic-matrix-wrapper">
+            <table class="dynamic-matrix">
+              <thead>
+                <tr>
+                  <th style="background:#222f45;color:#fff;border:none;"></th>
+                  <th style="background:#222f45;color:#fff;text-align:center;padding:1rem 1.2rem;border:none;">Pre-defined price points<br><span style="font-weight:400;">with dynamic availability</span></th>
+                  <th style="background:#222f45;color:#fff;text-align:center;padding:1rem 1.2rem;border:none;">Pre-defined price points<br><span style="font-weight:400;">with dynamic price adjustments</span></th>
+                  <th style="background:#222f45;color:#fff;text-align:center;padding:1rem 1.2rem;border:none;">Dynamic price determination</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th style="background:#222f45;color:#fff;text-align:left;padding:1.1rem 1rem;border:none;">Static flights and ancillaries</th>
+                  <td class="traditional" data-detail="<b>Traditional Pricing</b><br>Filed fares, published in advance, distributed via GDS/ATPCO with 26-letter booking classes. Inventory managed by booking class availability and nesting. No real-time adjustment to price or product. Airlines have limited ability to respond to demand; offers are static and undifferentiated.">Traditional Pricing</td>
+                  <td class="adjustment" data-detail="<b>Price Adjustment</b><br>Filed fares as baseline, with manual or rule-based surcharges, markups, or discounts. Basic contextual signals (e.g., corporate code, frequent flyer) may influence price, but core price points remain static. No real-time price optimization; adjustments are additive and limited in scope.">Price Adjustment</td>
+                  <td class="dynamic" data-detail="<b>Dynamic Offers</b><br>Real-time price determination based on contextual data (e.g., demand, time to departure, competition, remaining capacity). Airlines use dynamic pricing engines to set prices at shopping time, not constrained by static fare filing. Enables continuous pricing: unlimited price points tailored to the request, maximizing revenue and customer satisfaction.">Dynamic Offers</td>
+                </tr>
+                <tr>
+                  <th style="background:#222f45;color:#fff;text-align:left;padding:1.1rem 1rem;border:none;">Static bundles</th>
+                  <td class="traditional" data-detail="<b>Traditional Pricing</b><br>Branded fares or bundles (e.g., Light, Classic, Flex) are predefined and filed. Each bundle has a fixed set of services and a published price. Customers choose from a limited menu, with little or no contextual adaptation. Ancillaries typically sold separately at fixed prices.">Traditional Pricing</td>
+                  <td class="adjustment" data-detail="<b>Price Adjustment</b><br>Bundles remain static, but prices may be adjusted via rules or simple algorithms (e.g., demand-based upsell offers, limited-time discounts). Price adjustments are applied to the base bundle price, but the bundle composition is fixed. Some basic personalization may occur, but not at scale.">Price Adjustment</td>
+                  <td class="dynamic" data-detail="<b>Dynamic Offers</b><br>Bundles are offered at dynamically determined prices, using real-time demand, customer context, and competitive data. Airlines can optimize bundle pricing for each request, increasing conversion and customer value. Enables more granular, personalized offers, though bundle composition is still largely static.">Dynamic Offers</td>
+                </tr>
+                <tr>
+                  <th style="background:#222f45;color:#fff;text-align:left;padding:1.1rem 1rem;border:none;">Dynamic bundling</th>
+                  <td class="empty" data-detail="Not typically supported. Product and price are both static; no real-time composition of offers. Airlines lack the technology to dynamically assemble products and ancillaries during shopping.">—</td>
+                  <td class="empty" data-detail="Limited support. Some rule-based or promotional dynamic bundling may occur, but price points remain tied to filed fares or simple adjustments. Bundles may be constructed for specific campaigns, but not in real time for each request.">—</td>
+                  <td class="dynamic" data-detail="<b>Dynamic Offers</b><br>Full dynamic offer creation: both the product (bundling of flights, ancillaries, and services) and the price are determined in real time using contextual, behavioral, and predictive data. The airline's system co-optimizes what to offer and at what price, leveraging NDC and direct channels. Enables true personalization, increased conversion, and efficient use of capacity.">Dynamic Offers</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="matrix-tooltip"></div>
+          <div style="display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.9em;margin-bottom:1.2rem;margin-top:.9rem;">
+            <span style="display:inline-flex;align-items:center;gap:.5em;"><span style="width:18px;height:18px;display:inline-block;background:#2953a7;border-radius:4px;margin-right:.4em;"></span>Traditional Pricing</span>
+            <span style="display:inline-flex;align-items:center;gap:.5em;"><span style="width:18px;height:18px;display:inline-block;background:#e3b93c;border-radius:4px;margin-right:.4em;"></span>Price Adjustment</span>
+            <span style="display:inline-flex;align-items:center;gap:.5em;"><span style="width:18px;height:18px;display:inline-block;background:#e74a4a;border-radius:4px;margin-right:.4em;"></span>Dynamic Offers</span>
+          </div>
+          <p class="maturity-attrib" style="font-size:.7em; color:#9fb3c5;">
+            Source: IATA Dynamic Offers factsheet. <br>
+            <strong>Vertical:</strong> Product determination (from static flights to dynamic bundling).<br>
+            <strong>Horizontal:</strong> Price determination (from static to fully dynamic).
+          </p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="featured" class="section" aria-labelledby="latest-heading">
+    <div class="container">
+      <div class="level">
+        <div class="level-left">
+          <h2 id="latest-heading" class="title is-3">Latest from the Blog</h2>
+        </div>
+        <div class="level-right" style="display:flex;align-items:center;gap:1rem;">
+          <div class="image-mode-wrapper">
+            <label for="featImgMode" style="margin:0;">Images</label>
+            <select id="featImgMode" aria-label="Featured image mode">
+              <option value="sticky">Sticky</option>
+              <option value="always">Re-roll</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+          <a class="button is-link is-light" href="/blog/">View All Blogs</a>
+        </div>
+      </div>
+
+      <div id="featured-cards">
+        <article class="post-card reveal" aria-hidden="true">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="post-body">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </article>
+        <article class="post-card reveal" aria-hidden="true">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="post-body">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </article>
+        <article class="post-card reveal" aria-hidden="true">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="post-body">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
         </article>
       </div>
-      <p class="latest-posts-empty" id="latest-posts-empty" hidden>
-        No recent posts available yet. Browse the full <a href="/blog/index.html">analysis archive</a> instead.
+      <div id="feed-status" style="margin-top:2rem;font-size:.85rem;color:var(--clr-text-dim);display:none;"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>© <span id="year"></span> Modern Airline Retailing</p>
+      <p><img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitor counter badge"></p>
+      <p>
+        <a href="mailto:modernairlineretailing@gmail.com">modernairlineretailing@gmail.com</a>
+        &nbsp;|&nbsp;
+        <a href="https://www.linkedin.com/in/neerejsasikumar/" target="_blank" rel="noopener">LinkedIn</a>
       </p>
-      <noscript>
-        <p class="latest-posts-empty">
-          Enable JavaScript to see the latest posts here, or jump straight to the <a href="/blog/index.html">blog archive</a>.
-        </p>
-      </noscript>
-    </section>
+    </div>
+  </footer>
 
-    <section class="container page-section" id="tools">
-      <span class="section-eyebrow">Tools for teams</span>
-      <h2 class="section-title">Decision support without the spreadsheet sprawl</h2>
-      <div class="card-grid">
-        <article class="tool-card">
-          <h3>Break-even load factor modeller</h3>
-          <p>Play with yields, costs and load factors to understand the revenue envelope you need for a route or fleet.</p>
-          <a class="tool-link" href="/tools/break-even-load-factor.html">Open the modeller</a>
-        </article>
-        <article class="tool-card">
-          <h3>RASM vs CASM calculator</h3>
-          <p>Quickly compare unit revenue and unit cost performance to spot where optimisation will actually move the needle.</p>
-          <a class="tool-link" href="/tools/rasm-casm-calculator.html">Check the ratios</a>
-        </article>
-        <article class="tool-card">
-          <h3>Great circle distance</h3>
-          <p>Plan schedules, fuel and block times with an instant lookup for city pairs and stage-length adjustments.</p>
-          <a class="tool-link" href="/tools/great-circle.html">Calculate mileage</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="container page-section" id="maturity">
-      <div class="maturity-card">
-        <div>
-          <h3>Offer &amp; Order capability ladder</h3>
-          <p>Use the ladder to benchmark your state: from legacy availability clean-up through to dynamic offers, order control and downstream settlement.</p>
-        </div>
-        <ul>
-          <li>Diagnostic checklist to score inventory, pricing and servicing maturity.</li>
-          <li>Sequencing guide to move from pilots to scaled roll-outs.</li>
-          <li>Architecture notes to keep data quality, telemetry and settlement flowing.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="container testimonial-strip">
-      <article class="testimonial">
-        “This cut three months off our Offer &amp; Order planning phase. The artefacts let product, RM and engineering finally share a vocabulary.”
-        <strong>VP Product, Network Carrier</strong>
-      </article>
-      <article class="testimonial">
-        “Our teams now have a clear view of stock vs order responsibilities. The tooling meant we could model the trade-offs in hours.”
-        <strong>Director, Distribution Transformation</strong>
-      </article>
-      <article class="testimonial">
-        “The frameworks here became the backbone of our merchandising roadmap—pragmatic, detailed and written by someone who has shipped this stuff.”
-        <strong>Chief Commercial Officer</strong>
-      </article>
-    </section>
-
-    <section class="container cta-panel">
-      <h2>Need Offer &amp; Order to ship faster?</h2>
-      <p>Bring the content, tooling and decision playbooks inside your organisation. Let’s align stakeholders, sharpen your roadmap and deliver capability you can operate.</p>
-      <a class="button-primary" href="mailto:hello@modernairlineretailing.com">Book a working session</a>
-    </section>
-  </main>
-  <footer class="site-footer"></footer>
-  <script src="/assets/site.js" defer></script>
   <script>
-    (function () {
-      const container = document.getElementById('latest-posts');
-      if (!container) {
-        return;
+    document.addEventListener('DOMContentLoaded', function() {
+      const burger = document.querySelector('.navbar-burger');
+      const menu = document.getElementById('navMenu');
+      if (burger && menu) {
+        burger.addEventListener('click', function() {
+          burger.classList.toggle('is-active');
+          menu.classList.toggle('is-active');
+          const expanded = burger.getAttribute('aria-expanded') === 'true';
+          burger.setAttribute('aria-expanded', String(!expanded));
+        });
       }
-      const emptyState = document.getElementById('latest-posts-empty');
 
-      function renderPosts(posts) {
-        container.innerHTML = '';
-        if (!posts.length) {
-          if (emptyState) {
-            emptyState.hidden = false;
-          }
-          return;
+      const posts = [
+        {
+          url: "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html",
+          img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+          date: "Jun 2024",
+          badge: "NDC",
+          title: "NDC in the Real World: Seller and Airline Responsibilities",
+          excerpt: "Exploring the practical responsibilities of sellers and airlines when implementing NDC at scale.",
+          author: "Neerej S",
+          time: "5 min read"
+        },
+        {
+          url: "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html",
+          img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+          date: "Jul 2024",
+          badge: "Offer & Order",
+          title: "Order Management: Life After PNR, Tickets and EMDs",
+          excerpt: "How the transition to Order Management is reshaping airline retailing beyond legacy artifacts.",
+          author: "Neerej S",
+          time: "7 min read"
+        },
+        {
+          url: "/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html",
+          img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+          date: "May 2024",
+          badge: "Dynamic Pricing",
+          title: "Continuous Pricing: Beyond Filed Ladders",
+          excerpt: "A look into continuous pricing — how airlines are moving from static filed fares to dynamic price points.",
+          author: "Neerej S",
+          time: "6 min read"
         }
+      ];
 
-        posts.forEach((post) => {
-          const article = document.createElement('article');
-          article.className = 'article-card';
-
-          const time = document.createElement('time');
-          time.dateTime = post.date;
-          time.textContent = post.displayDate;
-
-          const heading = document.createElement('h3');
-          const link = document.createElement('a');
-          link.href = post.href;
-          link.textContent = post.title;
-          heading.appendChild(link);
-
-          const summary = document.createElement('p');
-          summary.textContent = post.description;
-
-          article.appendChild(time);
-          article.appendChild(heading);
-          article.appendChild(summary);
-
-          container.appendChild(article);
-        });
+      const cards = posts.map(post => `
+        <article class="post-card reveal">
+          <a href="${post.url}">
+            <div class="post-media">
+              <img src="${post.img}" alt="${post.title}"/>
+              <span class="badge-date">${post.date}</span>
+              <span class="img-badge">${post.badge}</span>
+            </div>
+            <div class="post-body">
+              <h3 class="post-title">${post.title}</h3>
+              <p class="post-excerpt">${post.excerpt}</p>
+              <div class="post-meta">
+                <span>${post.author}</span>
+                <span>${post.time}</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      `).join('');
+      const featuredCards = document.getElementById('featured-cards');
+      if (featuredCards) {
+        featuredCards.innerHTML = cards;
       }
 
-      fetch('/blog/posts.json')
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Unexpected response: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((posts) => {
-          const latest = posts
-            .slice()
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .slice(0, 3);
-          renderPosts(latest);
-        })
-        .catch((error) => {
-          console.error('Failed to load latest posts', error);
-          container.innerHTML = '';
-          if (emptyState) {
-            emptyState.innerHTML = 'Unable to load the latest posts right now. Visit the <a href="/blog/index.html">blog archive</a> for everything.';
-            emptyState.hidden = false;
+      const tooltip = document.getElementById('matrix-tooltip');
+      let activeCell = null;
+
+      function positionTooltip(cell) {
+        if (!tooltip) return;
+        const detail = cell.getAttribute('data-detail');
+        if (!detail) return;
+        tooltip.innerHTML = detail;
+        tooltip.style.display = 'block';
+
+        const rect = cell.getBoundingClientRect();
+        let top = rect.bottom + 8;
+        let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+
+        if (left < 10) left = 10;
+        if (left + tooltip.offsetWidth > window.innerWidth - 10) {
+          left = window.innerWidth - tooltip.offsetWidth - 10;
+        }
+        if (top + tooltip.offsetHeight > window.innerHeight - 10) {
+          top = rect.top - tooltip.offsetHeight - 8;
+        }
+        if (top < 10) top = rect.bottom + 8;
+
+        tooltip.style.top = top + 'px';
+        tooltip.style.left = left + 'px';
+      }
+
+      function hideTooltip() {
+        if (!tooltip) return;
+        tooltip.style.display = 'none';
+        activeCell = null;
+      }
+
+      document.querySelectorAll('.dynamic-matrix td[data-detail]').forEach(cell => {
+        cell.setAttribute('tabindex', '0');
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('aria-label', 'Click to view details');
+
+        cell.addEventListener('mouseenter', () => {
+          activeCell = cell;
+          positionTooltip(cell);
+        });
+        cell.addEventListener('mouseleave', () => {
+          if (activeCell === cell) hideTooltip();
+        });
+        cell.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (activeCell === cell) {
+            hideTooltip();
+          } else {
+            activeCell = cell;
+            positionTooltip(cell);
           }
         });
-    })();
+        cell.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          if (activeCell === cell) {
+            hideTooltip();
+          } else {
+            activeCell = cell;
+            positionTooltip(cell);
+          }
+        }, { passive: false });
+        cell.addEventListener('focus', () => {
+          activeCell = cell;
+          positionTooltip(cell);
+        });
+        cell.addEventListener('blur', () => {
+          if (activeCell === cell) hideTooltip();
+        });
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (activeCell === cell) {
+              hideTooltip();
+            } else {
+              activeCell = cell;
+              positionTooltip(cell);
+            }
+          }
+        });
+      });
+
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', hideTooltip, { passive: true });
+      document.addEventListener('click', function(e) {
+        if (activeCell && !e.target.closest('.dynamic-matrix td[data-detail]')) {
+          hideTooltip();
+        }
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && activeCell) {
+          hideTooltip();
+        }
+      });
+
+      const yearEl = document.getElementById('year');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+    });
   </script>
 </body>
 </html>
