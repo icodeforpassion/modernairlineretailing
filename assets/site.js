@@ -51,7 +51,42 @@
 
     const nav = header.querySelector('.nav-links');
     const toggle = header.querySelector('.nav-toggle');
+    if (!nav) {
+      return;
+    }
     const links = Array.from(nav.querySelectorAll('a'));
+
+    function setNavOpen(open) {
+      nav.setAttribute('data-open', String(open));
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', String(open));
+      }
+      if (open) {
+        document.addEventListener('keydown', handleKeydown);
+        document.addEventListener('click', handleDocumentClick);
+        if (links.length) {
+          links[0].focus();
+        }
+      } else {
+        document.removeEventListener('keydown', handleKeydown);
+        document.removeEventListener('click', handleDocumentClick);
+        if (toggle && document.activeElement !== toggle) {
+          toggle.focus();
+        }
+      }
+    }
+
+    function handleKeydown(evt) {
+      if (evt.key === 'Escape' && nav.getAttribute('data-open') === 'true') {
+        setNavOpen(false);
+      }
+    }
+
+    function handleDocumentClick(evt) {
+      if (!header.contains(evt.target)) {
+        setNavOpen(false);
+      }
+    }
 
     const currentPath = window.location.pathname.replace(/index\.html$/, '');
     links.forEach(function(link){
@@ -66,15 +101,13 @@
     if (toggle) {
       toggle.addEventListener('click', function(){
         const open = nav.getAttribute('data-open') === 'true';
-        nav.setAttribute('data-open', String(!open));
-        toggle.setAttribute('aria-expanded', String(!open));
+        setNavOpen(!open);
       });
     }
 
     nav.addEventListener('click', function(evt){
       if (evt.target.tagName === 'A' && nav.getAttribute('data-open') === 'true') {
-        nav.setAttribute('data-open', 'false');
-        toggle.setAttribute('aria-expanded', 'false');
+        setNavOpen(false);
       }
     });
   });
