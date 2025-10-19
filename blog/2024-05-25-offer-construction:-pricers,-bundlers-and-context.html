@@ -32,20 +32,62 @@
 
   <section class="section">
     <div class="container content">
-      <p>Teams argue about this in chat at 2 a.m., and the answer is usually: it depends. Offer Construction: Pricers, Bundlers and Context sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Offer construction is what turns a raw availability response into a proposal a seller can display with confidence. If you only bolt a pricer onto the host, you end up with mismatched taxes, invisible ancillaries, and options that cannot actually be fulfilled. This walkthrough breaks the work into repeatable components so product, pricing, and engineering teams stay aligned.</p>
+
+      <h2 id="context">Start with the shopping context</h2>
+      <p>Every decision the offer service makes should be anchored in a context object: who is asking, which channel they represent, and what the request constraints look like. Capture device hints, frequent-flyer numbers, corporate contract IDs, and servicing intent. Use that context to determine which pricers to call, which bundles are eligible, and whether you should short-circuit to stored offers or refresh from live inventory.</p>
+
+      <div class="box">
+        <strong>Context checklist</strong>
+        <ul>
+          <li>Trip purpose (initial sale vs re-shop) clearly labeled.</li>
+          <li>Known traveler profiles attached, including loyalty tier, age, and special service requests.</li>
+          <li>Channel capabilities stored so you avoid returning content the UI cannot render (for example, branded fares without images).</li>
+        </ul>
+      </div>
+
+      <h2 id="pricing">Layer the pricers deliberately</h2>
+      <p>Do not let a single monolithic pricing engine decide everything. Compose pricers like functions, each responsible for a specific adjustment:</p>
+      <ul>
+        <li><strong>Base fare sourcing:</strong> filed fares or continuous price curves.</li>
+        <li><strong>Revenue management overlays:</strong> bid price checks or availability controls that cap discounting.</li>
+        <li><strong>Ancillary valuation:</strong> seat, bag, lounge, and paid flexibility add-ons with rules about who can buy them.</li>
+        <li><strong>Tax and fee resolution:</strong> accurate jurisdiction logic, ideally via a certified engine so finance trusts the totals.</li>
+      </ul>
+      <p>Each pricer should emit a structured explanation. Persist the components in the offer so settlement and audit teams can reconstruct how the number was produced.</p>
+
+      <h2 id="bundling">Bundle deliberately, not accidentally</h2>
+      <p>Bundles and branded fares exist to reduce decision fatigue, but they are only helpful when the rules are explicit. Maintain a catalog describing which ancillaries belong together, what happens when the traveler changes flights, and how to reprice if one item is unavailable. Run automated checks to ensure the bundle still makes sense across cabins and channels.</p>
+
+      <h3 id="bundle-tech">Technical guardrails</h3>
+      <ol>
+        <li>Assign stable bundle IDs and version them. Include the version in the offer response so the order manager can validate fulfillment.</li>
+        <li>Return both the package summary and the underlying line items, allowing downstream systems to break the bundle if required.</li>
+        <li>Map bundles to servicing policies (refundability, change fees) so customer care sees the same rules that pricing applied.</li>
+      </ol>
+
+      <h2 id="composition">Compose the final offer object</h2>
+      <p>With context, pricing, and bundling complete, assemble an offer that is traceable and easy to commit:</p>
+      <ul>
+        <li>Attach <code>offerId</code>, <code>createdAt</code>, and <code>expiresAt</code> timestamps for cache control.</li>
+        <li>Embed a pricing breakdown with per-passenger, per-segment details for transparency.</li>
+        <li>Link to the stock or order IDs you will need at fulfillment, such as seat maps or EMD designators.</li>
+        <li>Include diagnostic metadata (rules fired, pricers used, data freshness) that helps operations when something looks wrong.</li>
+      </ul>
+
+      <h2 id="qa">Operational checks before launch</h2>
+      <p>Teams often ship an offer engine without hardening the basics. Run these tests continuously:</p>
+      <ul>
+        <li><strong>Cross-channel parity:</strong> Confirm web, NDC, and call-center channels receive equivalent offers when policies require parity.</li>
+        <li><strong>Reprice-to-order:</strong> Commit an offer, then immediately reprice the resulting order to verify totals match.</li>
+        <li><strong>Stress on change scenarios:</strong> Simulate voluntary changes, involuntary reroutes, and partial refunds to be sure bundles and ancillaries adjust correctly.</li>
+        <li><strong>Latency budgets:</strong> Track each service call (availability, dynamic ancillary pricing, tax calculation) so you know where to invest in caching or parallelization.</li>
+      </ul>
+
+      <h2 id="handoff">Document the hand-off to order management</h2>
+      <p>Offer construction only succeeds when the next team can fulfill what you sell. Define the canonical offer schema shared with order management, settlement, and analytics. Capture a minimum audit trail: who priced it, which data sources were touched, and the correlation IDs required to trace a customer complaint months later.</p>
+
+      <p>When the offer layer behaves predictably, merchandising innovation becomes far less risky. You can test new bundles, introduce continuous pricing safely, and feed analytics with consistent data. That is the foundation for retailing that feels deliberate rather than accidental.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html">← Previous</a>

@@ -32,20 +32,38 @@
 
   <section class="section">
     <div class="container content">
-      <p>Teams argue about this in chat at 2 a.m., and the answer is usually: it depends. Stock Keeper: Managing Seats and Products as Stock sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>When you treat seats and ancillaries as stock, retailing decisions become faster and more auditable. Stock in this context is not just seat counts—it is every sellable component with rules about who can consume it. Here is a practical framework for building a stock service that powers both offers and orders.</p>
+
+      <h2 id="catalog">Catalog your stock objects</h2>
+      <p>Start by defining the atomic units you manage. For flights: cabin, fare brand, RBD, and seat map positions. For ancillaries: bag allowances, lounge passes, paid upgrades, subscription perks. Represent each as a stock keeping unit (SKU) with metadata: validity dates, markets, channel restrictions, and fulfillment instructions.</p>
+
+      <h2 id="inventory-model">Inventory model choices</h2>
+      <ol>
+        <li><strong>Deterministic counts:</strong> Seats, upgrade certificates, meal counts—hold exact quantities and decrement on commit.</li>
+        <li><strong>Entitlement checks:</strong> Products such as lounge access might be unlimited but gated by loyalty tier. Encode these as rules rather than numeric stock.</li>
+        <li><strong>Derived availability:</strong> Combine multiple constraints (aircraft swaps, operational limits) into derived availability that updates via events.</li>
+      </ol>
+
+      <h2 id="interfaces">Interfaces that teams need</h2>
+      <ul>
+        <li><strong>Offer service:</strong> Queries current stock levels and eligibility to decide what to surface.</li>
+        <li><strong>Order manager:</strong> Reserves and releases stock atomically during commit and servicing.</li>
+        <li><strong>Operations dashboards:</strong> Provide human overrides, for example when an aircraft change requires manual seat protection.</li>
+      </ul>
+
+      <div class="box">
+        <strong>Concurrency guardrails</strong>
+        <ul>
+          <li>Use optimistic locking with retry budgets for most ancillaries.</li>
+          <li>Introduce pessimistic locks only for extremely scarce items (e.g., two cabin upgrades per flight).</li>
+          <li>Emit stock change events with correlation IDs so downstream systems reconcile easily.</li>
+        </ul>
+      </div>
+
+      <h2 id="analytics">Analytics and forecasting</h2>
+      <p>Because the stock service sits between offer and order, it is the best place to track conversion funnels. Log every request, hold, release, and expiry. Feed the data into revenue management to refine bid prices and into product teams to evaluate which bundles need rethinking.</p>
+
+      <p>Treating seats and ancillaries as managed stock sounds simple, but it shifts the mindset: you stop leaking revenue through manual spreadsheets and start making reliable promises to travelers.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html">← Previous</a>

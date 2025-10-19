@@ -32,20 +32,34 @@
 
   <section class="section">
     <div class="container content">
-      <p>I learned this on a Tuesday morning when a simple search returned two different answers. Designing Airline APIs: Idempotency and Versioning sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Airline retailing APIs often run into the same problems: duplicate bookings from retries, breaking changes that blindside partners, and debugging sessions with no correlation IDs. Idempotency and versioning are not glamorous, but they are what make integrations trustworthy.</p>
+
+      <h2 id="idempotency-basics">Idempotency basics</h2>
+      <p>Any endpoint that changes state—create offer, commit order, apply payment—must accept an idempotency key. The client generates it per logical action; the server stores the result and returns the same response if the request is retried. Persist the key alongside request payload hashes and timestamps. Expire entries only after you are certain downstream processing cannot still act on a duplicate.</p>
+
+      <div class="box">
+        <strong>Implementation hints</strong>
+        <ul>
+          <li>Use a composite key of <code>{client_id, idempotency_key}</code>.</li>
+          <li>Store the HTTP status, response body, and any side effects identifiers (order IDs, payment references).</li>
+          <li>Return a clear error when the payload changes for the same key—do not silently accept mismatched requests.</li>
+        </ul>
+      </div>
+
+      <h2 id="versioning">Versioning strategy</h2>
+      <p>Versioning starts with telling partners how long you support a schema. Choose between URI versioning (<code>/v1/orders</code>) or header-based negotiation, but be consistent. Publish a calendar: when a new version appears, how long v1 remains supported, and what migration support exists. Provide change logs, sample payloads, and contract tests partners can run.</p>
+
+      <h2 id="compatibility">Backwards compatibility guidelines</h2>
+      <ul>
+        <li>Additive changes (new optional fields) stay within the same version.</li>
+        <li>Behavioral changes or mandatory fields trigger a new version.</li>
+        <li>Run compatibility suites that replay historical requests against the new implementation to detect surprises.</li>
+      </ul>
+
+      <h2 id="observability">Observability and diagnostics</h2>
+      <p>Idempotency and versioning only help if you can trace issues. Include correlation IDs in every response and require clients to echo them in support tickets. Emit structured logs that tie the idempotency record to downstream actions (inventory holds, payment calls, event publications).</p>
+
+      <p>With disciplined idempotency and a transparent versioning roadmap, partners stop fearing API upgrades. You spend less time firefighting duplicates and more time adding features travelers notice.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-09-12-event-driven-retailing:-from-batch-to-streaming.html">← Previous</a>

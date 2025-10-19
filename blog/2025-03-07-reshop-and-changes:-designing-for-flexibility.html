@@ -32,20 +32,36 @@
 
   <section class="section">
     <div class="container content">
-      <p>A real shopper does not care about our acronyms; they just want the right option quickly. Reshop and Changes: Designing for Flexibility sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Reshop is where travelers judge your retailing system. If the experience is clumsy or inconsistent, trust erodes fast. Designing for flexibility means aligning offer, order, and servicing logic so changes feel intentional.</p>
+
+      <h2 id="eligibility">Determine eligibility up front</h2>
+      <p>Before presenting new options, evaluate policy: fare rules, waiver programs, disruption status, corporate contracts. Create a servicing eligibility service that returns what actions are allowed and what penalties apply. Cache results briefly but revalidate before committing.</p>
+
+      <h2 id="offer-strategy">Offer strategy for reshop</h2>
+      <ul>
+        <li>Use the existing order as context. Pre-fill traveler data, seating preferences, and loyalty benefits.</li>
+        <li>Surface options in buckets: same day/same cabin, upgrade opportunities, alternative airports.</li>
+        <li>Display price differences transparently—break down original paid amount, repriced itinerary, and any residual value.</li>
+      </ul>
+
+      <h2 id="pricing-servicing">Pricing and settlement considerations</h2>
+      <p>Reshop pricing is not just a re-run of the original pricer. You must compute change fees, reissue EMDs, and update payment captures:</p>
+      <ol>
+        <li>Calculate differential fares and taxes with certified engines.</li>
+        <li>Handle residuals by storing them as vouchers or open credits tied to the order.</li>
+        <li>Emit accounting events for both the debit and credit components.</li>
+      </ol>
+
+      <div class="box">
+        <strong>Experience tips</strong>
+        <ul>
+          <li>Provide progress indicators; reshopping often involves multiple steps.</li>
+          <li>Allow travelers to compare new and original itineraries side by side.</li>
+          <li>Keep customer service in sync—agents should see the same options the traveler sees online.</li>
+        </ul>
+      </div>
+
+      <p>When reshop flows respect policies, show transparent pricing, and keep orders consistent, travelers feel in control—even when plans change.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2025-02-13-search-architecture:-ranking,-pruning-and-repricing.html">← Previous</a>

@@ -32,20 +32,46 @@
 
   <section class="section">
     <div class="container content">
-      <p>A real shopper does not care about our acronyms; they just want the right option quickly. NDC in the Real World: Seller and Airline Responsibilities sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>NDC is not a magic API that solves distribution on its own. Once you adopt it, you have to decide which team owns the response time, who certifies the content, and how you coordinate servicing flows. Below is a pragmatic split of responsibilities that keeps sellers and airlines aligned once real bookings and servicing volumes arrive.</p>
+
+      <h2 id="seller">What a seller must take seriously</h2>
+      <ul>
+        <li><strong>Channel UX and caching:</strong> Sellers own the experience, so they must manage caches, retries, and fallbacks without hiding problems. If an airline downgrades content, the seller should surface it transparently.</li>
+        <li><strong>Shopping rules compliance:</strong> Respect shopping throttles, authentication, and offer reuse periods the airline specifies. Ignore them and you risk being cut off.</li>
+        <li><strong>Order integrity:</strong> When a seller commits an order, they must pass through every data element the airline needs for fulfillment—ancillary selections, payment references, and traveler contact.</li>
+      </ul>
+
+      <h2 id="airline">What the airline cannot delegate</h2>
+      <p>The airline controls the product and inventory. With NDC in production, it must:</p>
+      <ol>
+        <li>Publish stable schemas and version roadmaps so sellers can adopt changes without guesswork.</li>
+        <li>Operate a responsive offer and order API, including SLAs, incident channels, and sandbox environments.</li>
+        <li>Provide servicing coverage (changes, refunds, disruption flows) for the same set of products sold in NDC.</li>
+      </ol>
+
+      <h2 id="joint">Shared obligations</h2>
+      <p>Certain responsibilities are joint, and disagreements here derail programs. Define them explicitly:</p>
+      <div class="box">
+        <ul>
+          <li><strong>Catalog synchronization:</strong> Airlines publish ancillaries, rich media, and fare brands; sellers confirm ingestion and highlight mismatches.</li>
+          <li><strong>Fraud and payment flows:</strong> Agree on who captures payment, who handles fraud screening, and how chargeback evidence travels.</li>
+          <li><strong>Disruption communication:</strong> Build two-way messaging for schedule changes, irregular operations, and voluntary servicing so both sides know when the traveler has been notified.</li>
+        </ul>
+      </div>
+
+      <h2 id="governance">Governance model that works</h2>
+      <p>Set up a joint steering forum with four artifacts kept current:</p>
+      <ul>
+        <li><strong>Product matrix:</strong> which fare families, ancillaries, and payment types are live per market.</li>
+        <li><strong>Operational scorecard:</strong> latency, error codes, servicing completion rates, and fraud metrics.</li>
+        <li><strong>Incident playbooks:</strong> escalation paths, severity definitions, and communication channels.</li>
+        <li><strong>Change calendar:</strong> planned releases, testing windows, and blackout periods.</li>
+      </ul>
+
+      <h2 id="servicing">Designing servicing flows together</h2>
+      <p>Voluntary changes and involuntary disruptions require tight loops. Use correlated order IDs and change records so both parties see the same state. Automate reconciliation: when a seller submits a change request, return a unique reference and status updates via webhooks or polling APIs.</p>
+
+      <p>Success with NDC looks boring: predictable releases, no hidden fare ladders, and quick recovery when a dependency fails. When both sides document their responsibilities, the traveler never notices the machinery behind the scenes.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-05-25-offer-construction:-pricers,-bundlers-and-context.html">← Previous</a>

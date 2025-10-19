@@ -32,20 +32,34 @@
 
   <section class="section">
     <div class="container content">
-      <p>A real shopper does not care about our acronyms; they just want the right option quickly. Interline in an Order World: Offers, Orders, Settlement sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Interline is where order-based retailing proves its worth—or falls apart. Two airlines must agree on what was sold, how much it cost, and how to settle, even when only one of them issued the offer. Here’s a pragmatic look at making interline work with orders instead of pure ticket coupons.</p>
+
+      <h2 id="offer-sharing">Share offers deliberately</h2>
+      <p>When the operating carrier provides content, include machine-readable provenance: which carrier priced it, refresh timestamps, applicable settlement agreements. If the marketing carrier adjusts the offer (adding ancillaries or discounts), record the adjustments in an audit trail so settlement can reconcile later.</p>
+
+      <h2 id="order-structure">Structure the order for multiple parties</h2>
+      <ul>
+        <li>Partition order items by owning carrier with clear fulfillment status.</li>
+        <li>Include settlement references (SIS line item IDs, proration references) while keeping traveler-friendly descriptions.</li>
+        <li>Tag servicing rights: who may rebook, who handles refunds, and how status updates propagate.</li>
+      </ul>
+
+      <h2 id="messaging">Messaging flows</h2>
+      <p>Adopt event-driven messaging or APIs for order updates, but fall back to legacy messages where partners are not ready. Map your order events to PADIS or Type B messages (e.g., an order change event may still produce a PNR update for the partner’s host). Keep correlation IDs across all formats.</p>
+
+      <div class="box">
+        <strong>Checklist for settlement readiness</strong>
+        <ul>
+          <li>Agreed proration logic documented (mileage, sector, revenue share).</li>
+          <li>Billing and Settlement Plan (BSP) or SIS references generated from the order without manual spreadsheets.</li>
+          <li>Dispute workflow defined—who raises a charge, timeframes, communication channel.</li>
+        </ul>
+      </div>
+
+      <h2 id="disruption">Handling disruption cooperatively</h2>
+      <p>During irregular operations, share re-accommodation offers quickly. The order record should show which carrier initiated the change and the traveler’s response. Automate notifications so the marketing carrier knows when the operating carrier has rebooked or reissued vouchers.</p>
+
+      <p>Interline with orders is about transparency. When every adjustment is recorded with ownership and settlement context, disputes shrink and the traveler sees a single consistent story across carriers.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-11-17-merchandising:-attributes,-bundles-and-post-purchase.html">← Previous</a>

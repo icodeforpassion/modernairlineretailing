@@ -32,20 +32,41 @@
 
   <section class="section">
     <div class="container content">
-      <p>I learned this on a Tuesday morning when a simple search returned two different answers. Payments and Clearing: From BSP/ARC to Modern Rails sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Airline payments run on a mix of BSP/ARC remittance cycles, card acquiring, and emerging digital wallets. Modernizing does not mean abandoning clearing houses overnight; it means layering new rails while keeping accounting precise. Here’s how leading teams are approaching the transition.</p>
+
+      <h2 id="current-state">Understand the current state</h2>
+      <p>Document every payment type you accept and how it settles:</p>
+      <ul>
+        <li>Agency sales remitted via BSP/ARC with periodic billing.</li>
+        <li>Direct credit card acquiring with daily funding and chargeback exposure.</li>
+        <li>Alternative methods (wallets, instant bank transfers) with their own reconciliation files.</li>
+      </ul>
+      <p>Knowing the mix helps prioritize which flows to modernize first.</p>
+
+      <h2 id="modern-rails">Introduce modern rails safely</h2>
+      <ol>
+        <li><strong>Separate authorization from capture:</strong> Offers commit quickly, but captures wait until fulfillment milestones to reduce refunds.</li>
+        <li><strong>Support tokenized payments:</strong> Vault cards securely so re-accommodation or ancillaries can reuse stored instruments with consent.</li>
+        <li><strong>Add instant payout options:</strong> For refunds or compensation, consider push-to-card or real-time payment rails that delight travelers and lower costs.</li>
+      </ol>
+
+      <h2 id="reconciliation">Reconciliation discipline</h2>
+      <p>Whether funds arrive via BSP or a new API, reconciliation is the make-or-break step. Tie every payment transaction to the order line item. Automate matching between settlement files, gateway reports, and internal ledgers. Surface mismatches promptly with owner assignments.</p>
+
+      <div class="box">
+        <strong>Metrics to track</strong>
+        <ul>
+          <li>Authorization approval rate by channel.</li>
+          <li>Chargeback volume and recovery success.</li>
+          <li>Average refund time per payment method.</li>
+          <li>Breakage or unapplied cash awaiting reconciliation.</li>
+        </ul>
+      </div>
+
+      <h2 id="compliance">Compliance considerations</h2>
+      <p>New rails bring new obligations: PSD2 strong customer authentication in Europe, PCI scope for stored cards, local tax reporting requirements. Engage legal and finance early so the modernization roadmap accounts for licensing and audits.</p>
+
+      <p>Blending BSP/ARC with modern rails is achievable when you treat payments as a product. Travelers get faster refunds, finance sees cleaner books, and you gain the flexibility to support new retailing models.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-12-09-interline-in-an-order-world:-offers,-orders,-settlement.html">← Previous</a>

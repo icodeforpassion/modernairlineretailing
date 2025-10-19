@@ -32,20 +32,35 @@
 
   <section class="section">
     <div class="container content">
-      <p>If you ever wondered why a single letter in an availability display can move revenue, this one is for you. Security and Trust: Signing Offers and Protecting APIs sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Retailing APIs carry inventory, pricing, and personal data. A compromised channel can leak fares early, issue fraudulent tickets, or expose traveler details. Security is therefore foundational, not optional. Focus on signing offers, hardening APIs, and building trust with partners.</p>
+
+      <h2 id="offer-signing">Sign and validate offers</h2>
+      <p>Digitally sign offers so a seller cannot tamper with price or rules. Include timestamps, issuer identity, and a hash of key fields (itinerary, price breakdown, validity). On commit, verify the signature before accepting payment. Rotate keys regularly and publish revocation mechanisms.</p>
+
+      <div class="box">
+        <strong>Signing implementation tips</strong>
+        <ul>
+          <li>Use JSON Web Signatures (JWS) or equivalent with strong algorithms (RS256/ES256).</li>
+          <li>Separate signing keys per partner or channel to limit blast radius.</li>
+          <li>Log signature validation results for audit trails.</li>
+        </ul>
+      </div>
+
+      <h2 id="api-protection">Protect APIs with layered controls</h2>
+      <ul>
+        <li><strong>Authentication:</strong> Mutual TLS or signed tokens tied to client identities.</li>
+        <li><strong>Authorization:</strong> Scope tokens to specific operations (search, order, servicing) and markets.</li>
+        <li><strong>Rate limiting:</strong> Apply per-client quotas and burst controls, with real-time dashboards.</li>
+        <li><strong>Threat detection:</strong> Monitor for credential stuffing, abnormal patterns, and anomaly spikes.</li>
+      </ul>
+
+      <h2 id="data-protection">Data protection and privacy</h2>
+      <p>Encrypt sensitive data at rest, mask PII in logs, and enforce retention policies. Build incident response runbooks with clear contacts and notification steps. Regularly run penetration tests and share summarized findings with partners to build trust.</p>
+
+      <h2 id="trust">Operational trust</h2>
+      <p>Security is ongoing. Provide partners with uptime status, change notices, and security bulletins. Train internal teams on secure coding and review flows for third-party libraries. Document compliance posture (PCI, ISO 27001, SOC 2) and keep attestations current.</p>
+
+      <p>By signing offers and hardening APIs, you signal that retailing innovation can move fast without sacrificing safety. Travelers and partners alike notice when security is handled with care.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2025-03-29-irregular-ops:-disruption-handling-with-orders.html">← Previous</a>
