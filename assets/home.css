@@ -110,54 +110,151 @@
   background: var(--brand-gradient);
 }
 
-.maturity-card {
-  background: linear-gradient(165deg, rgba(0, 192, 163, 0.18), rgba(61, 183, 255, 0.12));
-  border-radius: 20px;
-  padding: 2rem 2.2rem;
+.maturity-matrix {
+  margin-top: 2.5rem;
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(160deg, rgba(0, 192, 163, 0.14), rgba(61, 183, 255, 0.1));
+  overflow-x: auto;
+  box-shadow: 0 20px 44px rgba(8, 19, 33, 0.45);
+}
+
+.maturity-matrix > div {
   display: grid;
-  gap: 1.4rem;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  align-items: start;
-}
-
-.maturity-card h3 {
-  margin: 0;
-  font-size: 1.4rem;
-}
-
-.maturity-card ul {
-  margin: 0;
-  padding-left: 1.3rem;
-  color: rgba(220, 233, 250, 0.82);
-  line-height: 1.65;
-}
-
-.testimonial-strip {
-  margin-top: 4.5rem;
-  display: grid;
+  grid-template-columns: minmax(200px, 230px) repeat(4, minmax(240px, 1fr));
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  padding: 1.8rem 2rem;
+  min-width: 960px;
 }
 
-.testimonial {
-  padding: 1.8rem;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: var(--shadow-soft);
-  color: rgba(220, 232, 248, 0.78);
-  line-height: 1.65;
-  font-size: 0.95rem;
-}
-
-.testimonial strong {
-  display: block;
-  margin-top: 1.2rem;
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
+.matrix-head {
+  background: rgba(8, 19, 33, 0.55);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(233, 242, 255, 0.75);
+  color: rgba(233, 242, 255, 0.78);
+}
+
+.matrix-row {
+  color: rgba(223, 235, 250, 0.85);
+  line-height: 1.65;
+  backdrop-filter: blur(4px);
+}
+
+.matrix-row:nth-of-type(odd) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.matrix-heading {
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+.journey-tool {
+  margin-top: 2.5rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(150deg, rgba(61, 183, 255, 0.12), rgba(143, 123, 255, 0.14));
+  padding: 2.4rem;
+  box-shadow: 0 20px 44px rgba(8, 19, 33, 0.45);
+}
+
+.journey-toggle {
+  display: inline-flex;
+  padding: 0.35rem;
+  background: rgba(8, 19, 33, 0.55);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  gap: 0.35rem;
+}
+
+.journey-toggle-button {
+  appearance: none;
+  border: none;
+  padding: 0.65rem 1.3rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(223, 235, 250, 0.75);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.journey-toggle-button.is-active {
+  background: linear-gradient(135deg, rgba(61, 183, 255, 0.45), rgba(143, 123, 255, 0.55));
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(8, 19, 33, 0.35);
+}
+
+.journey-panels {
+  margin-top: 2.4rem;
+}
+
+.journey-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.journey-panel.is-active {
+  display: block;
+}
+
+.journey-panel h3 {
+  margin-top: 0;
+  color: #fff;
+}
+
+.journey-panel ol {
+  margin: 0;
+  padding-left: 1.4rem;
+  color: rgba(223, 235, 250, 0.85);
+  line-height: 1.7;
+}
+
+.journey-panel ol li + li {
+  margin-top: 0.6rem;
+}
+
+.journey-note {
+  margin-top: 1.5rem;
+  font-size: 0.92rem;
+  color: rgba(209, 224, 243, 0.75);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 960px) {
+  .maturity-matrix > div {
+    min-width: 880px;
+    padding: 1.6rem 1.6rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .journey-tool {
+    padding: 2rem 1.6rem;
+  }
+
+  .journey-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .journey-toggle-button {
+    flex: 1 1 auto;
+    text-align: center;
+  }
 }
 
 .cta-panel {

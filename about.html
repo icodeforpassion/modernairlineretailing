@@ -60,6 +60,12 @@
       gap: 0.6rem;
       margin-top: 1.8rem;
     }
+    .about-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
     .about-chip {
       padding: .55rem 1.1rem;
       border-radius: 999px;
@@ -125,9 +131,18 @@
       color: rgba(226,235,248,.78);
       line-height: 1.7;
     }
+    .contact-actions {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
     @media (max-width: 640px) {
       .contact-panel {
         padding: 2.4rem;
+      }
+      .about-links {
+        justify-content: flex-start;
       }
     }
   </style>
@@ -147,6 +162,10 @@
             <span class="about-chip">Inventory &amp; Stock</span>
             <span class="about-chip">Merchandising</span>
             <span class="about-chip">Data &amp; telemetry</span>
+          </div>
+          <div class="about-links">
+            <a class="button-primary" href="mailto:modernairlineretailing@gmail.com">Email me</a>
+            <a class="button-secondary" href="https://www.linkedin.com/in/neerejsasikumar/" target="_blank" rel="noopener">Connect on LinkedIn</a>
           </div>
         </div>
         <aside class="about-card">
@@ -204,7 +223,10 @@
     <section class="container about-section contact-panel">
       <h2>Let’s build the next capability</h2>
       <p>If you’re standing up Offer &amp; Order, untangling inventory, or need artefacts to align execs, I’d love to help. Bring a thorny problem and we’ll work the sequencing, architecture and measurement together.</p>
-      <a class="button-primary" href="mailto:hello@modernairlineretailing.com">Start a conversation</a>
+      <div class="contact-actions">
+        <a class="button-primary" href="mailto:modernairlineretailing@gmail.com">Start a conversation</a>
+        <a class="button-secondary" href="https://www.linkedin.com/in/neerejsasikumar/" target="_blank" rel="noopener">Connect on LinkedIn</a>
+      </div>
     </section>
   </main>
   <footer class="site-footer"></footer>
