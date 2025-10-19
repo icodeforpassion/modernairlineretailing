@@ -1,0 +1,86 @@
+body.has-site-chrome .page-content {
+  padding-top: 5rem;
+  padding-bottom: 4rem;
+}
+
+body.has-site-chrome .section {
+  padding: clamp(3rem, 5vw, 4.5rem) 0;
+}
+
+body.has-site-chrome .section .container.content,
+body.has-site-chrome .section .container .content {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border-radius: 24px;
+  padding: clamp(2rem, 4vw, 3rem);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 52px rgba(8, 19, 33, 0.55);
+}
+
+body.has-site-chrome .section .container.content > *:first-child {
+  margin-top: 0;
+}
+
+body.has-site-chrome .section .container.content,
+body.has-site-chrome .section .container .content {
+  color: rgba(226, 235, 248, 0.88);
+  line-height: 1.8;
+  font-size: 1.03rem;
+}
+
+body.has-site-chrome .section .container.content h1,
+body.has-site-chrome .section .container .content h1,
+body.has-site-chrome .section .container.content h2,
+body.has-site-chrome .section .container .content h2,
+body.has-site-chrome .section .container.content h3,
+body.has-site-chrome .section .container .content h3 {
+  color: #fff;
+}
+
+body.has-site-chrome .section .container.content blockquote,
+body.has-site-chrome .section .container .content blockquote {
+  border-left: 4px solid rgba(61, 183, 255, 0.7);
+  padding-left: 1.2rem;
+  background: rgba(8, 19, 33, 0.4);
+  color: rgba(226, 235, 248, 0.88);
+}
+
+body.has-site-chrome .section .container.content pre,
+body.has-site-chrome .section .container .content pre {
+  background: rgba(8, 19, 33, 0.65);
+  padding: 1.2rem;
+  border-radius: 12px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+}
+
+body.has-site-chrome .section .container.content code,
+body.has-site-chrome .section .container .content code {
+  font-family: var(--font-mono);
+}
+
+body.has-site-chrome .section .container.content a,
+body.has-site-chrome .section .container .content a {
+  color: var(--brand-accent);
+}
+
+body.has-site-chrome .section .container.content a:hover,
+body.has-site-chrome .section .container .content a:hover {
+  color: #fff;
+}
+
+body.has-site-chrome .post-footer-cta {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+body.has-site-chrome .post-footer-cta p {
+  color: rgba(226, 235, 248, 0.78);
+}
+
+@media (max-width: 720px) {
+  body.has-site-chrome .section .container.content,
+  body.has-site-chrome .section .container .content {
+    padding: 2rem 1.6rem;
+    border-radius: 20px;
+  }
+}

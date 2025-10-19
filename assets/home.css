@@ -1,0 +1,200 @@
+.hero-home {
+  padding: 6rem 0 5rem;
+  position: relative;
+}
+
+.hero-home::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(61, 183, 255, 0.25), transparent 65%),
+              radial-gradient(circle at 80% 80%, rgba(0, 192, 163, 0.22), transparent 60%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: center;
+}
+
+.hero-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  color: rgba(235, 244, 255, 0.75);
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: clamp(2.7rem, 2.1rem + 3vw, 3.8rem);
+  line-height: 1.05;
+  margin: 1.2rem 0 1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.hero-lede {
+  font-size: 1.08rem;
+  line-height: 1.75;
+  color: rgba(229, 240, 252, 0.82);
+  max-width: 36ch;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.25rem;
+}
+
+.hero-metric-card {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  border-radius: 20px;
+  padding: 2.4rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 42px rgba(8, 19, 33, 0.6);
+}
+
+.hero-metric-card h2 {
+  margin: 0;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.hero-metric-card p {
+  margin: 0.5rem 0 0;
+  color: rgba(223, 233, 248, 0.75);
+  line-height: 1.5;
+}
+
+.showcase-grid {
+  margin-top: 3rem;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.showcase-chip {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(226, 235, 248, 0.85);
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(209, 224, 243, 0.72);
+  font-size: 0.78rem;
+  margin-bottom: 1.4rem;
+}
+
+.section-eyebrow::before {
+  content: "";
+  width: 32px;
+  height: 2px;
+  border-radius: 99px;
+  background: var(--brand-gradient);
+}
+
+.maturity-card {
+  background: linear-gradient(165deg, rgba(0, 192, 163, 0.18), rgba(61, 183, 255, 0.12));
+  border-radius: 20px;
+  padding: 2rem 2.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
+}
+
+.maturity-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.maturity-card ul {
+  margin: 0;
+  padding-left: 1.3rem;
+  color: rgba(220, 233, 250, 0.82);
+  line-height: 1.65;
+}
+
+.testimonial-strip {
+  margin-top: 4.5rem;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.testimonial {
+  padding: 1.8rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-soft);
+  color: rgba(220, 232, 248, 0.78);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+.testimonial strong {
+  display: block;
+  margin-top: 1.2rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(233, 242, 255, 0.75);
+}
+
+.cta-panel {
+  margin-top: 5rem;
+  border-radius: 24px;
+  padding: 3.2rem 3rem;
+  background: linear-gradient(135deg, rgba(61, 183, 255, 0.16), rgba(143, 123, 255, 0.18), rgba(255, 110, 201, 0.16));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 24px 48px rgba(8, 19, 33, 0.55);
+  text-align: center;
+}
+
+.cta-panel h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 1.8rem + 1vw, 2.8rem);
+}
+
+.cta-panel p {
+  margin: 0 auto 2rem;
+  max-width: 60ch;
+  color: rgba(226, 235, 248, 0.78);
+  line-height: 1.7;
+}
+
+.latest-posts-empty {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--brand-text-soft);
+}
+
+.latest-posts-empty a {
+  color: var(--brand-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.latest-posts-empty a:hover,
+.latest-posts-empty a:focus {
+  text-decoration: underline;
+}
