@@ -36,20 +36,36 @@
 
   <section class="section">
     <div class="container content">
-      <p>Teams argue about this in chat at 2 a.m., and the answer is usually: it depends. Search Architecture: Ranking, Pruning and Repricing sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Search is the front door of retailing. If you rank poorly, prune aggressively, or reprice too late, the traveler never sees the right option. This breakdown covers the three major levers: ranking, pruning, and repricing.</p>
+
+      <h2 id="ranking">Ranking that reflects traveler intent</h2>
+      <p>Ranking should balance commercial goals with traveler signals. Start with features you can explain: price, duration, number of stops, fare conditions, loyalty value. Layer machine learning models only after you have solid baselines. Keep an explanation object alongside each offer so you can audit why it appeared first.</p>
+
+      <h2 id="pruning">Prune with rules, not guesswork</h2>
+      <ul>
+        <li>Set hard limits per search (e.g., maximum itineraries per cabin) to protect latency.</li>
+        <li>Apply policy filters early: remove ineligible fare brands for corporate travelers, block combinations that violate regulatory rules.</li>
+        <li>Monitor pruning ratios—if you throw away too many offers, you might be overfitting to historical behavior.</li>
+      </ul>
+
+      <h2 id="repricing">Repricing discipline</h2>
+      <p>Repricing is mandatory before you present the final selection or commit an order. Define when it happens:</p>
+      <ol>
+        <li><strong>Pre-display validation:</strong> Confirm fare, tax, and availability for the top-ranked offers.</li>
+        <li><strong>Pre-commit repricing:</strong> Revalidate the chosen offer using fresh availability and payment rules.</li>
+        <li><strong>Post-commit audit:</strong> Store the repriced snapshot in the order so you can defend the amount later.</li>
+      </ol>
+
+      <div class="box">
+        <strong>Metrics to monitor</strong>
+        <ul>
+          <li>Average search latency split by component (cache, host, pricing).</li>
+          <li>Drop-off rate after repricing errors.</li>
+          <li>Offer diversity (number of unique fare brands, cabins) in the top results.</li>
+        </ul>
+      </div>
+
+      <p>Great search architecture makes the rest of retailing easier. Travelers see relevant options, operations trust the prices, and analytics receives consistent data to refine ranking further.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2025-01-22-telemetry-and-data-quality:-measuring-the-offer-funnel.html">← Previous</a>

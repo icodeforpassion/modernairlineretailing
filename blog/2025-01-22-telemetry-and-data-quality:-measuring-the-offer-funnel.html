@@ -36,20 +36,38 @@
 
   <section class="section">
     <div class="container content">
-      <p>If you ever wondered why a single letter in an availability display can move revenue, this one is for you. Telemetry and Data Quality: Measuring the Offer Funnel sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>You cannot improve the offer funnel if you cannot measure it. Telemetry should show what request came in, what was returned, how fast it happened, and whether the traveler converted. Treat the funnel like a product with instrumentation baked in.</p>
+
+      <h2 id="funnel">Define the funnel stages</h2>
+      <ul>
+        <li><strong>Search received:</strong> Request metadata, traveler context, correlation IDs.</li>
+        <li><strong>Offers generated:</strong> Count, composition, pricing methods used.</li>
+        <li><strong>Offers viewed:</strong> Which offers reached the UI or partner API response.</li>
+        <li><strong>Offer selected and ordered:</strong> Conversion events, including reasons when travelers abandon.</li>
+      </ul>
+
+      <h2 id="data-quality">Data quality guardrails</h2>
+      <p>Telemetry is only helpful if data is trustworthy. Implement automated checks:</p>
+      <ol>
+        <li>Schema validation for every event before it leaves the service.</li>
+        <li>Sampling of payloads against business rules (e.g., total price matches sum of components).</li>
+        <li>Anomaly detection for sudden drops in offer counts or spikes in errors.</li>
+      </ol>
+
+      <div class="box">
+        <strong>Golden signals to monitor</strong>
+        <ul>
+          <li>Latency percentiles per dependency (inventory, pricing, ancillaries).</li>
+          <li>Error code distribution grouped by partner or channel.</li>
+          <li>Offer-to-order conversion by market and fare brand.</li>
+          <li>Time to first meaningful interaction after new releases.</li>
+        </ul>
+      </div>
+
+      <h2 id="tooling">Tooling considerations</h2>
+      <p>Adopt centralized logging and metrics platforms. Ensure developers can trace a single request across microservices using consistent correlation IDs. Provide dashboards for operations, but also create self-service notebooks so analysts can explore data without engineering bottlenecks.</p>
+
+      <p>With disciplined telemetry and data quality checks, the offer funnel becomes a feedback loop. Teams can prioritize fixes based on measurable impact rather than intuition.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-12-31-payments-and-clearing:-from-bsp-arc-to-modern-rails.html">← Previous</a>

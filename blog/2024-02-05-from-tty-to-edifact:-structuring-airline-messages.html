@@ -60,34 +60,6 @@
 
   <section class="section">
     <div class="container content">
-
-      <p>If you ever wondered why a single letter in an availability display can move revenue, this one is for you. From TTY to EDIFACT: Structuring Airline Messages sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-      <h2>What problem are we solving?</h2>
-      <p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-      <h2>Mechanics, not magic</h2>
-      <p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-      <h2>A concrete example</h2>
-      <p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-      <h2>Where teams stumble</h2>
-      <ul>
-        <li>Unclear ownership of truth between cache, host, and order.</li>
-        <li>Hidden timeouts that turn soft failures into inconsistencies.</li>
-        <li>Rules scattered across channels, making fixes slow.</li>
-      </ul>
-      <h2>Design moves that help</h2>
-      <ul>
-        <li>Expose freshness with timestamps and provenance.</li>
-        <li>Keep mapping to legacy explicit for faster migrations.</li>
-        <li>Emit events for material changes so downstream systems react.</li>
-      </ul>
-      <h2>Short checklist</h2>
-      <ul>
-        <li>Write the flow with sources of truth marked.</li>
-        <li>List the top three failure modes you see.</li>
-        <li>Instrument search and commit paths with IDs traceable across services.</li>
-      </ul>
-      <hr/>
-
       <!-- EXTENDED LEGACY + EDIFACT CONTENT -->
       <h2 id="legacy-messaging">Deep Dive: TTY, Type A, Type B & Modern Equivalents</h2>
       <p>Let us walk through the evolution calmly and systematically, removing any mystery – just clear building blocks you can implement and test.</p>
