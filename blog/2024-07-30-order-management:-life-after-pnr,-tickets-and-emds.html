@@ -36,20 +36,38 @@
 
   <section class="section">
     <div class="container content">
-      <p>If you ever wondered why a single letter in an availability display can move revenue, this one is for you. Order Management: Life After PNR, Tickets and EMDs sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Moving beyond PNRs, tickets, and EMDs is less about a big bang migration and more about building an order record that can coexist with legacy systems. The order must be the source of truth for the traveler journey, yet you still need to settle, interline, and serve airports that speak the old language. Here is how modern programs make the transition manageable.</p>
+
+      <h2 id="canonical-order">Define a canonical order first</h2>
+      <p>Create a schema that represents everything you sell: flights, ancillaries, payment intents, servicing rules, delivery status. Include references to legacy identifiers (record locator, ticket number) so you can bridge to existing infrastructure. Version the schema and invest in contract tests—orders should be immutable once committed, with servicing events applied as separate records.</p>
+
+      <h2 id="lifecycle">Map the lifecycle explicitly</h2>
+      <ol>
+        <li><strong>Create:</strong> Offer acceptance converts into an order with a committed snapshot of price and fulfillment obligations.</li>
+        <li><strong>Fulfill:</strong> Issue boarding privileges, seat assignments, and ancillaries based on the order, not a PNR.</li>
+        <li><strong>Settle:</strong> Generate accounting events by reading order line items, even if you still produce tickets for external partners.</li>
+        <li><strong>Change/Cancel:</strong> Append change orders referencing the original. Preserve audit history to explain charges later.</li>
+      </ol>
+
+      <h2 id="coexist">Coexistence patterns</h2>
+      <p>You cannot turn off legacy overnight. Adopt coexistence patterns that minimize duplicate data entry:</p>
+      <ul>
+        <li><strong>Shadow PNR:</strong> Create a minimal PNR solely for host synchronization. Store the locator on the order and sync state via events.</li>
+        <li><strong>Ticket envelope:</strong> Issue electronic tickets/EMDs only where clearing houses require them. Map ticket coupons back to order items.</li>
+        <li><strong>Airport services:</strong> For DCS systems that still expect PNR updates, expose a read model that renders the order in their required format.</li>
+      </ul>
+
+      <h2 id="operations">Operational readiness</h2>
+      <p>Customer care, revenue accounting, and audit teams need tools built around the order:</p>
+      <div class="box">
+        <ul>
+          <li>Searchable timeline showing every state change, who initiated it, and the financial impact.</li>
+          <li>Inline validation that prevents agents from making changes that violate fare conditions captured in the order.</li>
+          <li>Reconciliation dashboards comparing order revenue, tickets issued, and settlement files to catch drift quickly.</li>
+        </ul>
+      </div>
+
+      <p>The goal is not to wage war on legacy but to decouple the customer-facing view from the clearing constraints. When the order is the authoritative record, you can iterate on offers, servicing flows, and data products without rewriting decades of host logic in one go.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-07-08-direct-connect-vs-aggregators:-latency-and-control.html">← Previous</a>

@@ -36,20 +36,39 @@
 
   <section class="section">
     <div class="container content">
-      <p>If you ever wondered why a single letter in an availability display can move revenue, this one is for you. Identity and Personalization in Offers sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Personalization fails when teams argue about who the traveler is. Identity resolution has to be boringly reliable before you experiment with tailored bundles. This article outlines a practical architecture for identifying customers and using that insight responsibly.</p>
+
+      <h2 id="identity-graph">Build an identity graph</h2>
+      <p>Start by linking every identifier: loyalty numbers, email addresses, device fingerprints, corporate contract IDs, even PNR locators from past trips. Store them as nodes in an identity graph with confidence scores. Make it easy to explain why two records merged—regulators and customer support will ask.</p>
+
+      <h2 id="consent">Respect consent and jurisdictions</h2>
+      <ul>
+        <li>Capture consent state per channel and per data use (marketing, personalization, analytics).</li>
+        <li>Tag identities with residency to apply regional privacy rules automatically.</li>
+        <li>Expose a self-service portal so travelers can review and revoke consent without calling support.</li>
+      </ul>
+
+      <h2 id="segmentation">Segmentation that drives offers</h2>
+      <p>Segmentation should be transparent to product teams. Define segments based on behaviors you can measure: upgrade propensity, ancillary purchase history, on-time sensitivity. Publish the segment definitions and refresh cadence so analysts and engineers work off the same reference.</p>
+
+      <div class="box">
+        <strong>Signal quality checklist</strong>
+        <ul>
+          <li>Confidence scores on every attribute (email verified, device inferred, etc.).</li>
+          <li>Timestamped source details so you can expire stale data.</li>
+          <li>Audit logs for merges and manual overrides.</li>
+        </ul>
+      </div>
+
+      <h2 id="personalization-engine">Deploy personalization thoughtfully</h2>
+      <p>Use the identity graph to tailor offers, but keep fallbacks:</p>
+      <ol>
+        <li>Check eligibility rules first (fare brand restrictions, corporate policies).</li>
+        <li>Apply personalization to ranked offers or ancillaries—never compromise availability integrity.</li>
+        <li>Log decisions with the identity reference so customer care can explain why a traveler saw a certain offer.</li>
+      </ol>
+
+      <p>When identity resolution is transparent, personalization stops being a guessing game. Travelers get relevant offers, regulators get clear controls, and your teams iterate without fear of breaking trust.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-10-04-designing-airline-apis:-idempotency-and-versioning.html">← Previous</a>

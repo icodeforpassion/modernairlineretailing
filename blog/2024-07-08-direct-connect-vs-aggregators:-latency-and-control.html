@@ -36,20 +36,41 @@
 
   <section class="section">
     <div class="container content">
-      <p>I learned this on a Tuesday morning when a simple search returned two different answers. Direct Connect vs Aggregators: Latency and Control sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Distribution teams love the promise of direct connect—full control, richer content, faster iteration. Aggregators counter with reach, resiliency, and existing settlement plumbing. Instead of debating in abstract, measure the trade-offs with latency and control as the main lenses.</p>
+
+      <h2 id="latency-profile">Latency profiles in the real world</h2>
+      <p>Instrument every leg of the request. A typical pattern we see:</p>
+      <ul>
+        <li><strong>Direct connect:</strong> Seller → airline offer service → inventory host → pricer → response. Fewer hops, but each dependency is now the airline’s problem.</li>
+        <li><strong>Aggregator:</strong> Seller → aggregator cache → airline host via legacy protocol → aggregator normalization → response. More hops, but aggregators absorb spikes with their caches.</li>
+      </ul>
+      <p>Plot P50, P95, and error-rate metrics for both paths. Only then can you decide where to invest in optimization.</p>
+
+      <h2 id="control">Control dimensions</h2>
+      <p>Control is not binary. Break it into concrete dimensions:</p>
+      <ol>
+        <li><strong>Product breadth:</strong> Can you sell every bundle, seat, and policy you design? Direct connect usually yes; aggregators often lag.</li>
+        <li><strong>Content freshness:</strong> Who updates media, fare brand descriptions, and ancillaries? Direct connect gives you immediate updates; aggregators may require synchronized batches.</li>
+        <li><strong>Servicing coverage:</strong> Do changes, refunds, and disruptions flow with the same richness? Direct connect allows bespoke flows; aggregators standardize to the lowest common denominator.</li>
+      </ol>
+
+      <h2 id="hybrid">Designing a hybrid strategy</h2>
+      <p>Most airlines end up hybrid. Use direct connect where differentiation matters (premium cabins, subscription bundles) and aggregators where reach is king (OTAs that will not integrate bespoke APIs). Build a routing layer that decides, per market and channel, which path to use.</p>
+
+      <div class="box">
+        <strong>Routing signals worth tracking</strong>
+        <ul>
+          <li>Search volume per origin/destination pair.</li>
+          <li>Error codes from upstream dependencies.</li>
+          <li>Share of ancillaries sold vs offered.</li>
+          <li>Latency budgets for mobile vs desktop experiences.</li>
+        </ul>
+      </div>
+
+      <h2 id="governance">Operational governance</h2>
+      <p>If you operate both paths, create a single source of truth for offers. Tag each offer with origin path, data freshness, and servicing limitations. Provide dashboards so commercial teams see the impact of a slow direct connect deployment or an aggregator outage.</p>
+
+      <p>When you measure latency honestly and articulate control dimensions, the debate stops being philosophical. You can justify investments, pick the right partners, and build a roadmap that gradually moves volume where it delivers the most value.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html">← Previous</a>

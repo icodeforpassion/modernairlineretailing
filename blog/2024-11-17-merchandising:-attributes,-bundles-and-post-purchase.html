@@ -36,20 +36,39 @@
 
   <section class="section">
     <div class="container content">
-      <p>Teams argue about this in chat at 2 a.m., and the answer is usually: it depends. Merchandising: Attributes, Bundles and Post‑Purchase sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Merchandising is the connective tissue between what revenue management plans and what the traveler sees. If your product catalog is a maze, every new bundle or post-purchase offer takes months. This playbook keeps attributes, bundles, and post-purchase flows organized.</p>
+
+      <h2 id="attributes">Get the attribute model right</h2>
+      <p>Attributes describe the experience: seat pitch, Wi-Fi quality, meal type, changeability. Keep them structured and translatable. Provide short codes for systems, marketing descriptions for front ends, and data lineage so analytics knows where the value came from. Attribute consistency allows comparison across fare brands and channels.</p>
+
+      <h2 id="bundles">Bundle with intent</h2>
+      <ul>
+        <li>Define the traveler problem the bundle solves (e.g., “business traveler arriving rested”).</li>
+        <li>Map included items to stock and servicing rules.</li>
+        <li>Set pricing logic that can be audited—show the base items, discounts, and any dynamic adjustments.</li>
+      </ul>
+
+      <div class="box">
+        <strong>Bundle QA questions</strong>
+        <ul>
+          <li>Does the bundle degrade gracefully when one ancillary is unavailable?</li>
+          <li>Are refund rules clear when only part of the bundle is consumed?</li>
+          <li>Can customer service rebook while preserving bundle benefits?</li>
+        </ul>
+      </div>
+
+      <h2 id="post-purchase">Post-purchase monetization</h2>
+      <p>Once an order exists, the merchandising opportunity shifts. Use order data to tailor follow-ups:</p>
+      <ol>
+        <li>Send targeted offers tied to trip milestones (upgrade after check-in opens, lounge access for long connections).</li>
+        <li>Respect operational data—do not upsell paid seats if an aircraft change is pending.</li>
+        <li>Measure acceptance, revenue, and operational impact so you can tune algorithms.</li>
+      </ol>
+
+      <h2 id="tooling">Tooling and governance</h2>
+      <p>Provide a single merchandising console where product managers publish bundles, attach media, and schedule promotions. Integrate with experimentation platforms to A/B test messaging. Keep a changelog so finance and compliance teams know why a bundle changed.</p>
+
+      <p>When attributes stay consistent, bundles are intentional, and post-purchase flows respect operations, merchandising becomes a lever for differentiation rather than a backlog of ad-hoc requests.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-10-26-identity-and-personalization-in-offers.html">← Previous</a>

@@ -36,20 +36,31 @@
 
   <section class="section">
     <div class="container content">
-      <p>I learned this on a Tuesday morning when a simple search returned two different answers. Irregular Ops: Disruption Handling with Orders sits at the center of how airlines sell, and the mechanics matter. I’ll keep this practical and show the moving parts without hand‑waving.</p>
-<h2>What problem are we solving?</h2>
-<p>Behind the jargon there is a straightforward goal: present a sellable option, at a price that makes sense to the customer and to the airline, and commit it reliably. The challenge is the chain of systems in between — caches, hosts, pricers, stock, and settlement — each with different views of the truth.</p>
-<h2>Mechanics, not magic</h2>
-<p>Draw the flow. Who creates the answer first? Who confirms it? What data do we reuse, and what do we recompute? Writing these steps down turns disagreements into test cases.</p>
-<h2>A concrete example</h2>
-<p>Take a simple A–B–C journey request. A seller calls search. A cache answers fast with a candidate. Before we show a price, we confirm with the airline host or offer service. Stock is checked once, at commit, and the order becomes the source of truth for fulfillment. If those steps drift, you see phantom seats, price mismatches, or carts that cannot be fulfilled.</p>
-<h2>Where teams stumble</h2>
-<ul><li>Unclear ownership of truth between cache, host, and order.</li><li>Hidden timeouts that turn soft failures into inconsistencies.</li><li>Rules scattered across channels, making fixes slow.</li></ul>
-<h2>Design moves that help</h2>
-<ul><li>Expose freshness with timestamps and provenance.</li><li>Keep mapping to legacy explicit for faster migrations.</li><li>Emit events for material changes so downstream systems react.</li></ul>
-<h2>Short checklist</h2>
-<ul><li>Write the flow with sources of truth marked.</li><li>List the top three failure modes you see.</li><li>Instrument search and commit paths with IDs traceable across services.</li></ul>
-      <hr/>
+      <p>Irregular operations expose every weakness in your order platform. When flights cancel or delay, you must protect revenue, keep passengers informed, and stay compliant. Orders give you the context to do this—if you design the flows deliberately.</p>
+
+      <h2 id="detection">Detect disruptions quickly</h2>
+      <p>Integrate operational feeds (movement control, crew systems, weather alerts) into an event bus. Tag orders with affected segments and trigger workflows automatically. Time matters: the sooner you know which travelers are impacted, the sooner you can make good offers.</p>
+
+      <h2 id="reaccommodation">Automate re-accommodation offers</h2>
+      <ul>
+        <li>Generate alternative itineraries ranked by arrival time, cabin, and connection risk.</li>
+        <li>Respect traveler preferences stored on the order (seating needs, loyalty status, paid ancillaries).</li>
+        <li>Send offers via multiple channels—app notifications, email, SMS—and allow self-service acceptance.</li>
+      </ul>
+
+      <h2 id="compensation">Compensation and policy handling</h2>
+      <p>Use the order to determine eligibility for vouchers, refunds, or statutory compensation. Automate issuance of EMDs or digital credits. Track acceptance so finance and customer relations have a single view of liabilities.</p>
+
+      <div class="box">
+        <strong>Operational guardrails</strong>
+        <ul>
+          <li>Single command center view showing disruption status per flight.</li>
+          <li>Audit trail of who offered what and when the traveler responded.</li>
+          <li>Fallback scripts for manual handling when systems degrade.</li>
+        </ul>
+      </div>
+
+      <p>Orders unlock consistent disruption handling: every update, offer, and compensation sits in one record. Travelers notice the difference when recovery feels coordinated instead of chaotic.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2025-03-07-reshop-and-changes:-designing-for-flexibility.html">← Previous</a>
