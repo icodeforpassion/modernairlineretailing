@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <title>Compose Blog Post</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <link rel="stylesheet" href="/assets/site.css"/>
 </head>
 <body>
+  <header class="site-header"></header>
+  <main class="page-content">
     <div class="container">
         <h1 class="title">Compose New Blog Post</h1>
         <input type="password" id="secretCode" placeholder="Enter Secret Code" class="input"/>
@@ -46,5 +49,8 @@
             document.getElementById('postContent').value = '';
         };
     </script>
+  </main>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>

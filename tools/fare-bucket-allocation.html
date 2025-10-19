@@ -189,8 +189,11 @@
             border-color: rgba(255, 80, 80, .9);
         }
     </style>
+  <link rel="stylesheet" href="/assets/site.css"/>
 </head>
 <body>
+  <header class="site-header"></header>
+  <div class="page-content">
 <main>
     <h1>Fare Bucket Protection (EMSRb)</h1>
     <p class="lede">Enter fare classes ordered from highest fare to lowest with mean and standard deviation of unconstrained demand. The EMSRb algorithm aggregates lower classes, computing protection levels that maximize expected revenue under normal demand assumptions.</p>
@@ -471,5 +474,8 @@
     loadFromURL();
 })();
 </script>
+    </div>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>

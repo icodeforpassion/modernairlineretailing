@@ -3,593 +3,183 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Blog - Modern Airline Retailing</title>
-  <meta name="description" content="All long-form posts on airline retailing: Offers & Orders, merchandising, pricing, disruption, telemetry, identity, payments and more."/>
+  <title>Modern Airline Retailing Blog – Offer &amp; Order, merchandising, inventory</title>
+  <meta name="description" content="All long-form posts on Offer &amp; Order, NDC, merchandising, pricing, telemetry and airline retailing execution."/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-  <style>
-    :root {
-      --clr-bg:#0d1b2a;
-      --clr-bg-alt:#132235;
-      --clr-surface:#1f3145;
-      --clr-border:#2f4a63;
-      --clr-accent:#3298dc;
-      --clr-accent-alt:#4fb1f5;
-      --clr-text:#e8f0f7;
-      --clr-text-dim:#9fb3c5;
-      --radius:14px;
-      --transition:.28s cubic-bezier(.4,.2,.2,1);
-      --focus-ring:0 0 0 3px rgba(50,152,220,.55);
-      --shadow-1:0 2px 6px -1px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.04) inset;
-      --shadow-2:0 10px 34px -8px rgba(0,0,0,.65),0 4px 10px -3px rgba(0,0,0,.55);
-      --gradient-hero:linear-gradient(140deg, rgba(13,27,42,.90), rgba(13,27,42,.55) 55%, rgba(30,55,80,.75));
-    }
-    html { background:var(--clr-bg); scroll-behavior:smooth; }
-    body { color:var(--clr-text); background:var(--clr-bg); font-feature-settings:"liga" 1,"kern" 1; }
-
-    /* Hero */
-    .hero-blog {
-      position:relative;
-      min-height:380px;
-      display:flex;
-      align-items:center;
-      background:
-        var(--gradient-hero),
-        url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1650&q=60') center/cover no-repeat;
-      overflow:hidden;
-    }
-    .hero-blog::after {
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(circle at 70% 30%, rgba(79,177,245,.18), transparent 60%),
-        radial-gradient(circle at 20% 75%, rgba(50,152,220,.22), transparent 65%);
-      mix-blend-mode:screen;
-      pointer-events:none;
-    }
-    .hero-blog .container { position:relative; z-index:2; max-width:1040px; }
-    .hero-title {
-      font-size:3rem;
-      font-weight:700;
-      line-height:1.05;
-      background:linear-gradient(95deg,#fff,#cfe8fa 45%,#4fb1f5 80%);
-      -webkit-background-clip:text;
-      color:transparent;
-      letter-spacing:.6px;
-      margin-bottom:1rem;
-    }
-    .hero-sub {
-      max-width:640px;
-      font-size:1.05rem;
-      color:var(--clr-text-dim);
-    }
-    .hero-figure {
-      position:absolute;
-      right:5%;
-      bottom:-10%;
-      width:300px;
-      max-width:32vw;
-      opacity:.75;
-      filter:drop-shadow(0 8px 26px rgba(0,0,0,.55));
-      pointer-events:none;
-      user-select:none;
-    }
-    .hero-figure img {
-      width:100%;
-      height:auto;
-      border-radius:18px;
-      object-fit:cover;
-      mix-blend-mode:screen;
-    }
-
-    /* Toolbar */
-    .toolbar {
-      display:flex;
-      flex-wrap:wrap;
-      gap:1rem;
-      align-items:flex-end;
-      margin:2.5rem 0 1.25rem;
-    }
-    .toolbar-group {
-      display:flex;
-      flex-direction:column;
-      gap:.4rem;
-    }
-    .toolbar label {
-      font-size:.65rem;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      font-weight:600;
-      color:var(--clr-text-dim);
-    }
-    .input, .select select {
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.15);
-      color:var(--clr-text);
-      border-radius:10px;
-      transition:var(--transition);
-    }
-    .input:focus, .select select:focus {
-      border-color:var(--clr-accent-alt);
-      box-shadow:var(--focus-ring);
-      outline:none;
-    }
-
-    .clear-btn {
-      background:linear-gradient(135deg,var(--clr-accent) 0%,var(--clr-accent-alt) 100%);
-      border:none;
-      color:#fff;
-      font-weight:600;
-      font-size:.8rem;
-      padding:.65rem 1rem;
-      border-radius: 999px;
-      cursor:pointer;
-      letter-spacing:.5px;
-      transition:var(--transition);
-      box-shadow:0 6px 18px -4px rgba(50,152,220,.55),0 2px 3px -1px rgba(0,0,0,.5);
-    }
-    .clear-btn:hover { transform:translateY(-3px); box-shadow:0 10px 26px -6px rgba(50,152,220,.6),0 3px 6px -2px rgba(0,0,0,.55); }
-    .clear-btn:active { transform:translateY(-1px); }
-    .clear-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-
-    /* Grid */
-    .posts-grid {
-      display:flex;
-      flex-wrap:wrap;
-      gap:2rem 1.6rem;
-    }
-    .post-card {
-      flex:1 1 300px;
-      max-width:340px;
-      display:flex;
-      flex-direction:column;
-      background:linear-gradient(175deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      overflow:hidden;
-      box-shadow:var(--shadow-1);
-      position:relative;
-      min-height:395px;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      opacity:0;
-      transform:translateY(26px) scale(.97);
-      transition:var(--transition);
-    }
-    .post-card.reveal { opacity:1; transform:translateY(0) scale(1); }
-    .post-card:hover {
-      transform:translateY(-7px) scale(1.015);
-      box-shadow:var(--shadow-2);
-      border-color:var(--clr-accent-alt);
-    }
-    .card-media {
-      position:relative;
-      height:170px;
-      background:linear-gradient(135deg,#1e354b,#244b66);
-      overflow:hidden;
-    }
-    .card-media img {
-      width:100%; height:100%; object-fit:cover;
-      filter:saturate(108%) contrast(102%);
-      transition:transform 1.2s ease, filter .6s ease;
-    }
-    .post-card:hover img { transform:scale(1.08); filter:saturate(120%) contrast(110%); }
-    .date-badge {
-      position:absolute;
-      top:.7rem;
-      left:.7rem;
-      background:rgba(13,27,42,.78);
-      color:#fff;
-      font-size:.62rem;
-      padding:.35rem .55rem;
-      border-radius:.55rem;
-      letter-spacing:.6px;
-      font-weight:600;
-      text-transform:uppercase;
-      border:1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(6px);
-    }
-    .img-badge{
-      position:absolute;
-      top:.7rem;
-      right:.7rem;
-      background:rgba(13,27,42,.72);
-      color:#fff;
-      font-size:.6rem;
-      padding:.35rem .55rem;
-      border-radius:.55rem;
-      border:1px solid rgba(255,255,255,.18);
-      letter-spacing:.5px;
-      font-weight:600;
-      text-transform:uppercase;
-      backdrop-filter:blur(6px);
-    }
-    .card-body {
-      padding:1.05rem 1.15rem 1.15rem;
-      display:flex;
-      flex-direction:column;
-      gap:.7rem;
-      flex:1;
-    }
-    .post-title {
-      font-size:1rem;
-      font-weight:600;
-      line-height:1.25;
-      margin:0;
-      color:#fff;
-    }
-    .post-excerpt {
-      font-size:.8rem;
-      line-height:1.35;
-      color:var(--clr-text-dim);
-      flex-grow:1;
-      margin:0;
-    }
-    .post-meta {
-      font-size:.62rem;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      color:var(--clr-text-dim);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-top:.15rem;
-    }
-    .read-chip {
-      display:inline-flex;
-      align-items:center;
-      gap:.3rem;
-      font-weight:600;
-      background:rgba(79,177,245,.15);
-      color:#cfeafe;
-      padding:.45rem .75rem;
-      border-radius: .55rem;
-      font-size:.65rem;
-      letter-spacing:.5px;
-      border:1px solid rgba(79,177,245,.38);
-      transition:var(--transition);
-    }
-    .post-card:hover .read-chip {
-      background:var(--clr-accent-alt);
-      color:#082032;
-      border-color:var(--clr-accent-alt);
-      box-shadow:0 4px 16px -5px rgba(79,177,245,.55);
-    }
-
-    a.post-link { color:inherit; text-decoration:none; display:flex; flex-direction:column; height:100%; }
-
-    .no-results {
-      margin-top:2.5rem;
-      font-size:.9rem;
-      color:var(--clr-text-dim);
-      text-align:center;
-      display:none;
-    }
-
-    /* Footer */
-    footer.footer {
-      background:#0d1b2a;
-      border-top:1px solid var(--clr-border);
-      padding:3rem 1.5rem 4rem;
-      color:var(--clr-text-dim);
-      margin-top:4rem;
-    }
-    footer a { color:var(--clr-accent-alt); }
-    footer a:hover { color:#fff; }
-
-    /* Focus */
-    a:focus-visible, button:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-
-    @media (max-width:880px){
-      .posts-grid { justify-content:center; }
-      .hero-title { font-size:2.55rem; }
-      .hero-figure{ display:none; }
-    }
-    @media (max-width:580px){
-      .post-card { flex:1 1 100%; max-width:520px; }
-      .hero-title { font-size:2.2rem; }
-      .hero-sub { font-size:.95rem; }
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/site.css"/>
+  <link rel="stylesheet" href="/assets/blog.css"/>
 </head>
 <body>
-  <header class="hero-blog">
-    <div class="container">
-      <a href="/index.html" class="button is-link is-light" style="margin-bottom:1.8rem;">Home</a>
-      <h1 class="hero-title">Blog</h1>
-      <p class="hero-sub">
-        Deep dives and practical guides across airline retailing: pricing, offers & orders, merchandising, disruption, identity, telemetry, payments, and more. Explore the evolution from legacy control to modern, data‑driven retail platforms.
-      </p>
-      <figure class="hero-figure" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1514454529242-9e4677563e7a?auto=format&fit=crop&w=800&q=60" alt="">
-      </figure>
-    </div>
-  </header>
+  <header class="site-header"></header>
+  <main class="page-content">
+    <section class="hero-blog">
+      <div class="container">
+        <div>
+          <h1 class="hero-headline">Deep dives on airline retailing that you can actually ship</h1>
+          <p class="hero-text">Every article is written from implementation work: sequencing Offer &amp; Order, tuning availability accuracy, designing merchandising flows, untangling data and measuring what matters.</p>
+          <div class="hero-actions">
+            <a class="button-primary" href="mailto:hello@modernairlineretailing.com">Book a workshop</a>
+            <a class="button-secondary" href="/about.html">Why this exists</a>
+          </div>
+        </div>
+        <aside class="hero-metric-card">
+          <h2>Most-read themes</h2>
+          <p>Offer &amp; Order migration, inventory as stock, merchandising frameworks, availability telemetry, data quality and revenue accountability.</p>
+          <p>Use the filters below to narrow by topic or year.</p>
+        </aside>
+      </div>
+    </section>
 
-  <main class="section" style="background:linear-gradient(to bottom,var(--clr-bg),var(--clr-bg-alt));">
-    <div class="container" style="max-width:1140px;">
-      <!-- Toolbar -->
-      <div class="toolbar" role="search">
-        <div class="toolbar-group" style="flex:1 1 260px; min-width:240px;">
-          <label for="searchPosts">Search</label>
-            <input id="searchPosts" class="input" type="search" placeholder="Filter posts (title / excerpt / year)..." autocomplete="off"/>
-        </div>
-        <div class="toolbar-group">
-          <label for="yearFilter">Year</label>
-          <div class="select">
-            <select id="yearFilter">
-              <option value="">All</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
+    <section class="container page-section">
+      <div class="blog-filters">
+        <form id="blog-filter-form" role="search">
+          <div class="field-group">
+            <label for="search">Search</label>
+            <input id="search" name="search" type="search" placeholder="Search topics, keywords or titles"/>
+          </div>
+          <div class="field-group">
+            <label for="year">Year</label>
+            <select id="year" name="year">
+              <option value="all">All years</option>
             </select>
           </div>
-        </div>
-        <!-- Optional image mode selector -->
-        <div class="toolbar-group">
-          <label for="imgMode">Images</label>
-          <div class="select">
-            <select id="imgMode" aria-label="Random image mode">
-              <option value="sticky">Sticky</option>
-              <option value="always">Re-roll</option>
-              <option value="off">Off</option>
+          <div class="field-group">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic">
+              <option value="all">All topics</option>
+              <option value="offer-order">Offer &amp; Order</option>
+              <option value="inventory">Inventory &amp; stock</option>
+              <option value="merchandising">Merchandising &amp; ancillaries</option>
+              <option value="pricing">Pricing &amp; revenue</option>
+              <option value="ops">Operations &amp; telemetry</option>
             </select>
           </div>
-        </div>
-        <div class="toolbar-group">
-          <label>&nbsp;</label>
-          <button id="clearFilters" class="clear-btn" type="button">Reset Filters</button>
-        </div>
+          <button class="button-secondary reset-button" type="reset">Clear filters</button>
+        </form>
       </div>
 
-      <div id="postsGrid" class="posts-grid" aria-live="polite"></div>
-      <div id="noResults" class="no-results">No posts match your filters.</div>
-    </div>
+      <div id="blog-grid" class="blog-grid" aria-live="polite"></div>
+      <p id="blog-empty" class="blog-empty" hidden>No articles match those filters yet. Try another keyword or reset the filters.</p>
+    </section>
   </main>
-
-  <footer class="footer">
-    <div class="content has-text-centered">
-      <p>© <span id="year"></span> Modern Airline Retailing</p>
-      <p><img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing.blog" alt="Visitor counter"></p>
-    </div>
-  </footer>
-
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
   <script>
-    // ----------------------------------------------
-    // POSTS (static list; replace with fetch if needed)
-    // ----------------------------------------------
-    const posts = [
-      { date:'2025-10-12', title:'Legacy Translator - A Practical Bridge', slug:'2025-10-12-legacy-translator-pss-to-offer-order' },
-      { date:'2025-06-25', title:'The 2025 Roadmap: Capabilities to Prioritize Now', slug:'2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now' },
-      { date:'2025-06-03', title:'Retail KPIs: Measuring What Matters', slug:'2025-06-03-retail-kpis:-measuring-what-matters' },
-      { date:'2025-05-12', title:'Migration Paths: Coexisting with Legacy Inventory', slug:'2025-05-12-migration-paths:-coexisting-with-legacy-inventory' },
-      { date:'2025-04-20', title:'Security and Trust: Signing Offers and Protecting APIs', slug:'2025-04-20-security-and-trust:-signing-offers-and-protecting-apis' },
-      { date:'2025-03-29', title:'Irregular Ops: Disruption Handling with Orders', slug:'2025-03-29-irregular-ops:-disruption-handling-with-orders' },
-      { date:'2025-03-07', title:'Reshop and Changes: Designing for Flexibility', slug:'2025-03-07-reshop-and-changes:-designing-for-flexibility' },
-      { date:'2025-02-13', title:'Search Architecture: Ranking, Pruning and Repricing', slug:'2025-02-13-search-architecture:-ranking,-pruning-and-repricing' },
-      { date:'2025-01-22', title:'Telemetry and Data Quality: Measuring the Offer Funnel', slug:'2025-01-22-telemetry-and-data-quality:-measuring-the-offer-funnel' },
-      { date:'2024-12-31', title:'Payments and Clearing: From BSP/ARC to Modern Rails', slug:'2024-12-31-payments-and-clearing:-from-bsp-arc-to-modern-rails' },
-      { date:'2024-12-09', title:'Interline in an Order World: Offers, Orders, Settlement', slug:'2024-12-09-interline-in-an-order-world:-offers,-orders,-settlement' },
-      { date:'2024-11-17', title:'Merchandising: Attributes, Bundles and Post‑Purchase', slug:'2024-11-17-merchandising:-attributes,-bundles-and-post-purchase' },
-      { date:'2024-10-26', title:'Identity and Personalization in Offers', slug:'2024-10-26-identity-and-personalization-in-offers' },
-      { date:'2024-10-04', title:'Designing Airline APIs: Idempotency and Versioning', slug:'2024-10-04-designing-airline-apis:-idempotency-and-versioning' },
-      { date:'2024-09-12', title:'Event-Driven Retailing: From Batch to Streaming', slug:'2024-09-12-event-driven-retailing:-from-batch-to-streaming' },
-      { date:'2024-08-21', title:'Stock Keeper: Managing Seats and Products as Stock', slug:'2024-08-21-stock-keeper:-managing-seats-and-products-as-stock' },
-      { date:'2024-07-30', title:'Order Management: Life After PNR, Tickets and EMDs', slug:'2024-07-30-order-management:-life-after-pnr,-tickets-and-emds' },
-      { date:'2024-07-08', title:'Direct Connect vs Aggregators: Latency and Control', slug:'2024-07-08-direct-connect-vs-aggregators:-latency-and-control' },
-      { date:'2024-06-16', title:'NDC in the Real World: Seller and Airline Responsibilities', slug:'2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities' },
-      { date:'2024-05-25', title:'Offer Construction: Pricers, Bundlers and Context', slug:'2024-05-25-offer-construction:-pricers,-bundlers-and-context' },
-      { date:'2024-05-03', title:'Continuous Pricing: Beyond Filed Ladders', slug:'2024-05-03-continuous-pricing:-beyond-filed-ladders' },
-      { date:'2024-04-11', title:'Why Caches Disagree: GDS vs Airline Host Availability', slug:'2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability' },
-      { date:'2024-03-20', title:'Availability Controls: O&D, Nesting, and Married Segments', slug:'2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments' },
-      { date:'2024-02-27', title:'ATPCO Fare Filing: Fares, Rules and Footnotes in Practice', slug:'2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice' },
-      { date:'2024-02-05', title:'From TTY to EDIFACT: Structuring Airline Messages', slug:'2024-02-05-from-tty-to-edifact:-structuring-airline-messages' },
-      { date:'2024-01-15', title:'Early RBD Revenue Management: How Booking Classes Shaped Control', slug:'2024-01-15-early-rbd-revenue-management:-how-booking-classes-shaped-control' }
-    ].map(p => ({ ...p, url: p.slug + '.html' }));
+    const postsDataUrl = '/blog/posts.json';
+    const topicMap = new Map([
+      ['offer', 'offer-order'],
+      ['order', 'offer-order'],
+      ['ndc', 'offer-order'],
+      ['stock', 'inventory'],
+      ['inventory', 'inventory'],
+      ['availability', 'inventory'],
+      ['merchandising', 'merchandising'],
+      ['ancillary', 'merchandising'],
+      ['pricing', 'pricing'],
+      ['revenue', 'pricing'],
+      ['telemetry', 'ops'],
+      ['data', 'ops'],
+      ['ops', 'ops']
+    ]);
 
-    // ----------------------------------------------
-    // RANDOM IMAGE SYSTEM
-    // ----------------------------------------------
-    // Modes: 'sticky' (deterministic per slug), 'always' (re-roll each render), 'off' (no random; fallback placeholder)
-    let CURRENT_IMAGE_MODE = 'sticky';
-
-    // Curated Unsplash pool (can swap to local images later)
-    const IMAGE_POOL = [
-      { url:'https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=900&q=60', alt:'Aircraft banking in clear sky' },
-      { url:'https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&w=900&q=60', alt:'Storm clouds from airplane window' },
-      { url:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=60', alt:'Abstract roadmap lines' },
- 
-      { url:'https://images.unsplash.com/photo-1488229297570-58520851e868?auto=format&fit=crop&w=900&q=60', alt:'Network of data nodes' },
-      { url:'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=900&q=60', alt:'Digital padlock security concept' },
-      { url:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=60', alt:'Code lines on monitor' },
-      { url:'https://images.unsplash.com/photo-1561414927-6d86591d0c4f?auto=format&fit=crop&w=900&q=60', alt:'Digital finance network' },
-      { url:'https://images.unsplash.com/photo-1504386106331-3e4e71712b38?auto=format&fit=crop&w=900&q=60', alt:'Interconnected glowing nodes' },
-
-      { url:'https://images.unsplash.com/photo-1556761175-129418cb2dfe?auto=format&fit=crop&w=900&q=60', alt:'Handshake with digital overlay' },
-      { url:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=60', alt:'Curved lines on dark graph' },
-      { url:'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=900&q=60', alt:'Multiple database icons' },
-      { url:'https://images.unsplash.com/photo-1508615070457-7baeba4003a0?auto=format&fit=crop&w=900&q=60', alt:'Seat map abstract grid' },
-      { url:'https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=900&q=60', alt:'Vintage split-flap board' }
-    ];
-
-    // Cache to avoid image jumping when filtering in 'sticky'
-    const chosenImageCache = {};
-
-    function hashSlug(str){
-      let h = 2166136261 >>> 0;
-      for(let i=0;i<str.length;i++){
-        h ^= str.charCodeAt(i);
-        h = (h * 16777619) >>> 0;
+    function inferTopics(item) {
+      const text = (item.description + ' ' + item.title).toLowerCase();
+      const tags = new Set();
+      for (const [needle, topic] of topicMap.entries()) {
+        if (text.includes(needle)) {
+          tags.add(topic);
+        }
       }
-      return h;
+      return Array.from(tags);
     }
 
-    function pickImage(post){
-      if (CURRENT_IMAGE_MODE === 'off') {
-        // Provide a placeholder SVG (will show text if not overridden)
-        return {
-          url: 'data:image/svg+xml;utf8,' + encodeURIComponent(
-            '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240"><rect width="400" height="240" fill="#1f3145"/><text x="50" y="125" font-size="22" fill="#9fb3c5" font-family="Arial,sans-serif">No Image</text></svg>'
-          ),
-          alt: 'Placeholder graphic'
-        };
-      }
-      if (CURRENT_IMAGE_MODE === 'always') {
-        return IMAGE_POOL[Math.floor(Math.random()*IMAGE_POOL.length)];
-      }
-      // sticky
-      if (!chosenImageCache[post.slug]) {
-        const idx = hashSlug(post.slug) % IMAGE_POOL.length;
-        chosenImageCache[post.slug] = IMAGE_POOL[idx];
-      }
-      return chosenImageCache[post.slug];
-    }
-
-    function imageBadge(){
-      if (CURRENT_IMAGE_MODE === 'off') return '';
-      if (CURRENT_IMAGE_MODE === 'always') return '<span class="img-badge" title="Random on each load">RND</span>';
-      return '<span class="img-badge" title="Deterministic random">IMG</span>';
-    }
-
-    // ----------------------------------------------
-    // EXCERPT + UTILITIES
-    // ----------------------------------------------
-    function buildExcerpt(t) {
-      const base = 'A closer look at ' + t.replace(/[:–—-]/g,' ').toLowerCase();
-      if (base.length < 84) return base + ' in modern airline retailing.';
-      return t.length > 110 ? t.slice(0, 100).replace(/\s+\S*$/, '') + '…' : t;
-    }
-    function formatHuman(dateStr){
-      const d = new Date(dateStr + 'T00:00:00Z');
-      return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    }
-    function escapeHTML(str){
-      return str.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
-
-    // ----------------------------------------------
-    // RENDER
-    // ----------------------------------------------
-    function render(postsList){
-      const grid = document.getElementById('postsGrid');
+    function renderPosts(posts, topicsLookup) {
+      const grid = document.getElementById('blog-grid');
+      const emptyState = document.getElementById('blog-empty');
       grid.innerHTML = '';
-      postsList.forEach(p=>{
-        const human = formatHuman(p.date);
-        const excerpt = buildExcerpt(p.title);
-        const imgObj = pickImage(p);
-        const alt = escapeHTML(imgObj.alt || ('Illustrative image for ' + p.title));
-        const imgURL = imgObj.url;
-        grid.insertAdjacentHTML('beforeend', `
-          <article class="post-card" data-date="${p.date}" data-year="${p.date.slice(0,4)}">
-            <a class="post-link" href="${p.url}" aria-label="${escapeHTML(p.title)}">
-              <div class="card-media">
-                <img src="${imgURL}" alt="${alt}" loading="lazy"
-                     onerror="this.onerror=null;this.style.opacity=.35;">
-                <span class="date-badge">${human}</span>
-                ${imageBadge()}
-              </div>
-              <div class="card-body">
-                <h2 class="post-title">${escapeHTML(p.title)}</h2>
-                <p class="post-excerpt">${escapeHTML(excerpt)}</p>
-                <div class="post-meta">
-                  <span>${p.date}</span>
-                  <span class="read-chip">Read →</span>
-                </div>
-              </div>
-            </a>
-          </article>
-        `);
-      });
-      observeCards();
-    }
-
-    function observeCards() {
-      const cards = document.querySelectorAll('.post-card');
-      const obs = new IntersectionObserver(entries=>{
-        entries.forEach(en=>{
-          if(en.isIntersecting){
-            en.target.classList.add('reveal');
-            obs.unobserve(en.target);
-          }
-        });
-      },{threshold:.25});
-      cards.forEach(c=>obs.observe(c));
-    }
-
-    // ----------------------------------------------
-    // FILTERING
-    // ----------------------------------------------
-    function applyFilters(){
-      const q = document.getElementById('searchPosts').value.trim().toLowerCase();
-      const y = document.getElementById('yearFilter').value;
-      const filtered = posts.filter(p=>{
-        const hay = (p.title + ' ' + buildExcerpt(p.title) + ' ' + p.date.slice(0,4)).toLowerCase();
-        const matchesQuery = !q || hay.includes(q);
-        const matchesYear = !y || p.date.startsWith(y);
-        return matchesQuery && matchesYear;
-      });
-      render(filtered);
-      document.getElementById('noResults').style.display = filtered.length ? 'none':'block';
-    }
-
-    // ----------------------------------------------
-    // INIT
-    // ----------------------------------------------
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.getElementById('year').textContent = new Date().getFullYear();
-      render(posts);
-      document.getElementById('searchPosts').addEventListener('input', applyFilters);
-      document.getElementById('yearFilter').addEventListener('change', applyFilters);
-      document.getElementById('clearFilters').addEventListener('click', ()=>{
-        document.getElementById('searchPosts').value = '';
-        document.getElementById('yearFilter').value = '';
-        applyFilters();
-        document.getElementById('searchPosts').focus();
-      });
-
-      const imgModeSel = document.getElementById('imgMode');
-      if (imgModeSel){
-        imgModeSel.value = CURRENT_IMAGE_MODE;
-        imgModeSel.addEventListener('change', ()=>{
-          CURRENT_IMAGE_MODE = imgModeSel.value;
-          if (CURRENT_IMAGE_MODE !== 'sticky') {
-            // Clear cache so switching back to sticky recomputes if desired
-            for (const k in chosenImageCache) delete chosenImageCache[k];
-          }
-          applyFilters();
-        });
+      if (posts.length === 0) {
+        emptyState.hidden = false;
+        return;
       }
-    });
+      emptyState.hidden = true;
+      const fragment = document.createDocumentFragment();
+      posts.forEach((post) => {
+        const card = document.createElement('a');
+        card.className = 'blog-card';
+        card.href = post.href;
+        card.innerHTML = `
+          <time datetime="${post.date}">${post.displayDate}</time>
+          <h3>${post.title}</h3>
+          <p>${post.description}</p>
+          <div class="blog-meta">
+            <span>${topicsLookup.get(post.href)?.join(' \u2022 ') || 'Airline retailing'}</span>
+            <span>${post.readingTime || '5 min read'}</span>
+          </div>`;
+        fragment.appendChild(card);
+      });
+      grid.appendChild(fragment);
+    }
 
-    // ----------------------------------------------
-    // JSON-LD Structured Data
-    // ----------------------------------------------
-    (function addStructuredData(){
-      const siteUrl = 'https://yourdomain.example'; // replace with your real domain
-      const list = posts.map(p=>({
-        "@type":"BlogPosting",
-        "@id": siteUrl + '/blog/' + p.url + '#post',
-        "headline": p.title,
-        "datePublished": p.date,
-        "dateModified": p.date,
-        "url": siteUrl + '/blog/' + p.url,
-        "author": { "@type":"Person","name":"Your Name" },
-        "publisher": { "@type":"Organization","name":"Modern Airline Retailing" },
-        "mainEntityOfPage": siteUrl + '/blog/' + p.url
-      }));
-      const data = {
-        "@context":"https://schema.org",
-        "@type":"Blog",
-        "name":"Modern Airline Retailing Blog",
-        "url": siteUrl + "/blog/",
-        "blogPost": list
-      };
-      const script = document.createElement('script');
-      script.type='application/ld+json';
-      script.textContent = JSON.stringify(data);
-      document.head.appendChild(script);
-    })();
+    function populateYears(posts) {
+      const years = Array.from(new Set(posts.map((post) => new Date(post.date).getFullYear()))).sort((a, b) => b - a);
+      const yearSelect = document.getElementById('year');
+      years.forEach((year) => {
+        const option = document.createElement('option');
+        option.value = String(year);
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
+    }
+
+    function buildTopicLookup(posts) {
+      const lookup = new Map();
+      posts.forEach((post) => {
+        lookup.set(post.href, post.topics && post.topics.length ? post.topics : inferTopics(post));
+      });
+      return lookup;
+    }
+
+    function applyFilters(posts, topicsLookup) {
+      const form = document.getElementById('blog-filter-form');
+      const data = new FormData(form);
+      const search = String(data.get('search') || '').trim().toLowerCase();
+      const year = data.get('year');
+      const topic = data.get('topic');
+
+      return posts.filter((post) => {
+        const matchesYear = year === 'all' || String(new Date(post.date).getFullYear()) === year;
+        const derivedTopics = topicsLookup.get(post.href) || [];
+        const matchesTopic = topic === 'all' || derivedTopics.includes(topic);
+        const haystack = `${post.title} ${post.description}`.toLowerCase();
+        const matchesSearch = !search || haystack.includes(search);
+        return matchesYear && matchesTopic && matchesSearch;
+      });
+    }
+
+    fetch(postsDataUrl)
+      .then((response) => response.json())
+      .then((posts) => {
+        populateYears(posts);
+        const topicsLookup = buildTopicLookup(posts);
+        const form = document.getElementById('blog-filter-form');
+        const render = () => {
+          const filtered = applyFilters(posts, topicsLookup);
+          renderPosts(filtered, topicsLookup);
+        };
+        form.addEventListener('input', render);
+        form.addEventListener('reset', () => {
+          setTimeout(render, 0);
+        });
+        render();
+      })
+      .catch((error) => {
+        console.error('Failed to load posts', error);
+        document.getElementById('blog-empty').hidden = false;
+        document.getElementById('blog-empty').textContent = 'Unable to load posts right now. Please refresh in a moment.';
+      });
   </script>
 </body>
 </html>

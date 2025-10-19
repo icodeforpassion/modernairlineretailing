@@ -464,8 +464,11 @@
             background: rgba(255, 255, 255, .3);
         }
     </style>
+  <link rel="stylesheet" href="/assets/site.css"/>
 </head>
 <body>
+  <header class="site-header"></header>
+  <main class="page-content">
     <!-- NAVBAR -->
     <nav class="navbar" role="navigation" aria-label="Main">
         <div class="container">
@@ -512,18 +515,18 @@
             </div>
         </div>
     </header>
-    <main style="max-width:1320px; margin:0 auto; padding:0 1.3rem;">
+    <div class="tools-shell" style="max-width:1320px; margin:0 auto; padding:0 1.3rem;">
         <section class="grid" id="toolGrid" aria-label="Tool cards">
             <!-- Cards will be injected via JS for easier future extension (also progressive enhancement safe). -->
             <noscript>
                 <p style="color:var(--text-dim);">Enable JavaScript to view enhanced tool cards.</p>
             </noscript>
         </section>
-    </main>
-    <footer class="footer">
+    </div>
+    <section class="footer">
         <div>These tools are indicative helpers and depend on the accuracy of your inputs; always validate outputs with internal data sources and commercial judgment. Suggestions or a request for a new module? <a href="/about.html#contact">Let me know</a>.</div>
         <div>© <span id="year"></span> Modern Airline Retailing – Built for practitioners.</div>
-    </footer>
+    </section>
     <script id="toolsData" type="application/json">
         [
             {
@@ -787,5 +790,8 @@
             ]
         }
     </script>
+  </main>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>

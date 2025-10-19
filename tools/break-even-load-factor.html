@@ -46,8 +46,11 @@ a.inline{color:var(--clr-accent-alt);text-decoration:none;}
 a.inline:hover{color:#fff;}
 @media(prefers-reduced-motion:reduce){.card,.share-btn{transition:none!important;transform:none!important;}}
 </style>
+  <link rel="stylesheet" href="/assets/site.css"/>
 </head>
 <body>
+  <header class="site-header"></header>
+  <div class="page-content">
 <main>
   <h1>Break-Even Load Factor Analyzer</h1>
   <p class="lede">Enter flight economics parameters. The tool instantly computes break-even load factor (BELF), RASM vs CASM gap, profit per flight and sensitivity. Useful for quick scenario checks in pricing, capacity planning and network development.</p>
@@ -270,5 +273,8 @@ a.inline:hover{color:#fff;}
   calc();
 })();
 </script>
+    </div>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>

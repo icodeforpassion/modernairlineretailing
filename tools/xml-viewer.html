@@ -190,8 +190,11 @@
       .tree { font-size: 0.97em;}
     }
   </style>
+  <link rel="stylesheet" href="/assets/site.css"/>
 </head>
 <body>
+  <header class="site-header"></header>
+  <main class="page-content">
     <div class="container">
     <div style="display: flex; justify-content: flex-start; margin-bottom: 12px;">
       <a href="/" style="text-decoration: none;">
@@ -424,5 +427,8 @@
       document.getElementById("xmlInput").addEventListener("input", beautifyAndRender);
     });
   </script>
+  </main>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>

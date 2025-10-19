@@ -123,8 +123,12 @@
     /* Footer */
     footer{border-top:1px solid var(--border); background:#f9fafb}
   </style>
+  <link rel="stylesheet" href="/assets/site.css"/>
+  <link rel="stylesheet" href="/assets/post.css"/>
 </head>
 <body>
+  <header class="site-header"></header>
+  <main class="page-content">
   <div id="progress" aria-hidden="true"></div>
 
   <!-- NAV / Breadcrumb -->
@@ -174,7 +178,7 @@
     </div>
   </section>
 
-  <main class="section">
+  <section class="section">
     <div class="container read">
       <div class="columns is-variable is-6">
         <!-- CONTENT -->
@@ -363,7 +367,7 @@ PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxe
         </aside>
       </div>
     </div>
-  </main>
+  </section>
 
   <footer class="section">
     <div class="container read">
@@ -449,5 +453,8 @@ PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxe
       }
     })();
   </script>
+  </main>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>
