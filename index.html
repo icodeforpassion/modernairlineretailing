@@ -83,27 +83,15 @@
     .hero.is-landing .title.is-1 {
       position: relative;
       display: inline-block;
-      background: none !important;
-      color: #fff;
-      -webkit-text-fill-color: currentColor;
       margin: 0;
       padding: 0;
       line-height: 1.08;
-      overflow: visible;
       font-size: clamp(2.2rem, 7.5vw, 3rem);
-    }
-
-    .hero.is-landing .title.is-1::after {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
       background: linear-gradient(95deg,#82e0ff 0%,#b388ff 28%,#ff6ec7 55%,#ffcf5d 85%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       -webkit-text-fill-color: transparent;
-      padding-right: 1.25rem;
-      pointer-events: none;
     }
 
     .hero::after {
@@ -689,7 +677,7 @@
   <section class="hero is-landing">
     <div class="hero-body">
       <div class="container has-text-centered">
-        <h1 class="title is-1" data-text="Modern Airline Retailing">Modern Airline Retailing</h1>
+        <h1 class="title is-1">Modern Airline Retailing</h1>
         <p class="subtitle is-4">Tools, insights and real-world stories from the airline tech stack.</p>
         <a href="#featured" class="hero-cta" id="scrollLatest">
           Read Latest Blogs <span aria-hidden="true" style="font-size:1.1em;">↘</span>
@@ -2021,93 +2009,6 @@
     </div>
   </footer>
 
-    <section class="container page-section" id="maturity">
-      <span class="section-eyebrow">Airline retailing maturity</span>
-      <h2 class="section-title">Offer &amp; Order maturity matrix</h2>
-      <p class="section-intro">Benchmark where you are today and what needs to shift across product, technology, operations and data. The matrix below mirrors the artefact used in the original site version.</p>
-      <div class="maturity-matrix" role="table">
-        <div class="matrix-head" role="row">
-          <span class="matrix-heading" role="columnheader">Capability lane</span>
-          <span role="columnheader">Level 1 · Stabilise legacy</span>
-          <span role="columnheader">Level 2 · Dual run</span>
-          <span role="columnheader">Level 3 · Integrated offers</span>
-          <span role="columnheader">Level 4 · Retail-native</span>
-        </div>
-        <div class="matrix-row" role="row">
-          <span class="matrix-heading" role="rowheader">Product &amp; Merchandising</span>
-          <span role="cell">Filed fares, static ancillaries, minimal personalisation. Offer strategy driven by schedule and fare ladder constraints.</span>
-          <span role="cell">Dual maintenance of fares + offers. Bundled ancillaries on priority flows, experimentation on direct channels.</span>
-          <span role="cell">Dynamic offer construction with attach targets and bundles tuned by segment, channel and context.</span>
-          <span role="cell">Fully attribute-led retailing with offer decisioning tied to telemetry, CLV, servicing affordability and partner content.</span>
-        </div>
-        <div class="matrix-row" role="row">
-          <span class="matrix-heading" role="rowheader">Technology &amp; Data</span>
-          <span role="cell">Monolithic PSS, EDIFACT distribution, availability fixes via batch jobs, telemetry fragmented.</span>
-          <span role="cell">Order API pilots with translators. Event streams augment host data. Data lake mirrors PNR/ticket for analytics.</span>
-          <span role="cell">Offer &amp; order services authoritative for inventory, pricing and servicing. Near real-time telemetry feeds KPI cockpit.</span>
-          <span role="cell">Composable architecture with domain services, decisioning graph and unified data contracts powering AI-driven offers.</span>
-        </div>
-        <div class="matrix-row" role="row">
-          <span class="matrix-heading" role="rowheader">Operations &amp; Servicing</span>
-          <span role="cell">Contact centre, airport and digital flows hinge on PNR/ticket artifacts. Reconciliation is manual.</span>
-          <span role="cell">Shadow order records with reconciliation jobs. Limited servicing in new stack; complex cases revert to host.</span>
-          <span role="cell">End-to-end servicing in order manager with automation for voluntary changes, IRROPS and settlement.</span>
-          <span role="cell">Single order spine across channels and partners. Exception handling instrumented and closed-loop.</span>
-        </div>
-        <div class="matrix-row" role="row">
-          <span class="matrix-heading" role="rowheader">People &amp; Governance</span>
-          <span role="cell">Project-based funding, functions operate in silos, vocabulary split between product and RM.</span>
-          <span role="cell">Offer &amp; Order council aligns workstreams. Shared lexicon emerging; KPIs still function specific.</span>
-          <span role="cell">Cross-functional squads with shared scorecards. Operating model covers product, RM, servicing and finance.</span>
-          <span role="cell">Retailing governance embeds data science, product ops and finance. Decisions validated with telemetry and experimentation.</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="container page-section" id="journey">
-      <span class="section-eyebrow">Offer &amp; Order journeys</span>
-      <h2 class="section-title">Journey walkthrough: PNR / Ticket world vs Order world</h2>
-      <p class="section-intro">Use the toggle to revisit the original comparison tool showing how a customer journey flows in the legacy stack versus a modern order-native architecture.</p>
-      <div class="journey-tool" data-state="legacy">
-        <div class="journey-toggle" role="tablist" aria-label="Journey view selector">
-          <button type="button" class="journey-toggle-button is-active" id="journey-tab-legacy" data-view-toggle="legacy" role="tab" aria-selected="true" aria-controls="journey-panel-legacy" tabindex="0">PNR &amp; Ticket stack</button>
-          <button type="button" class="journey-toggle-button" id="journey-tab-order" data-view-toggle="order" role="tab" aria-selected="false" aria-controls="journey-panel-order" tabindex="-1">Offer &amp; Order stack</button>
-        </div>
-        <div class="journey-panels">
-          <article class="journey-panel is-active" data-view="legacy" role="tabpanel" id="journey-panel-legacy" aria-labelledby="journey-tab-legacy" aria-hidden="false" tabindex="0">
-            <h3>Legacy journey flow</h3>
-            <ol>
-              <li><strong>Shop:</strong> Availability + fare quotes pulled from PSS and ATPCO; product limited to filed combinations.</li>
-              <li><strong>Price &amp; hold:</strong> PNR shell created with time limit; ancillaries added via SSR codes or EMD offers.</li>
-              <li><strong>Pay:</strong> Ticketing service issues e-ticket + EMD, reconciled against PNR and accounting systems.</li>
-              <li><strong>Service:</strong> Change flows reissue tickets, revalidate coupons and trigger queue-based handling.</li>
-              <li><strong>Settle:</strong> BSP/ARC and interline settlement consume coupon-level data; finance reconciles manually.</li>
-            </ol>
-            <p class="journey-note">Artefacts: PNR, e-ticket, EMD, SSR, RBD mappings. Ownership split across distribution, RM and airport teams.</p>
-          </article>
-          <article class="journey-panel" data-view="order" role="tabpanel" id="journey-panel-order" aria-hidden="true" aria-labelledby="journey-tab-order" tabindex="-1">
-            <h3>Offer &amp; Order journey flow</h3>
-            <ol>
-              <li><strong>Construct offer:</strong> Offer management assembles products from dynamic catalogs with attribute pricing and context triggers.</li>
-              <li><strong>Commit:</strong> Order manager persists a single order record with services, payments and fulfilment commitments.</li>
-              <li><strong>Service:</strong> One order spine drives self-service, assisted and partner flows with event-based updates.</li>
-              <li><strong>Operate:</strong> Downstream ops use order events for departure control, disruption handling and partner delivery.</li>
-              <li><strong>Settle &amp; learn:</strong> Clearing, finance and telemetry consume the same order data contract; insights feed back into offer decisioning.</li>
-            </ol>
-            <p class="journey-note">Artefacts: Offer, Order, Service list, Fulfilment record. Ownership sits with cross-functional retail squads anchored by product ops.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="container cta-panel">
-      <h2>Need Offer &amp; Order to ship faster?</h2>
-      <p>Bring the content, tooling and decision playbooks inside your organisation. Let’s align stakeholders, sharpen your roadmap and deliver capability you can operate.</p>
-      <a class="button-primary" href="mailto:modernairlineretailing@gmail.com">Book a working session</a>
-    </section>
-  </main>
-  <footer class="site-footer"></footer>
-  <script src="/assets/site.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const burger = document.querySelector('.navbar-burger');
@@ -2232,50 +2133,53 @@
             positionTooltip(cell);
           }
         });
-    })();
-
-    (function () {
-      const tool = document.querySelector('.journey-tool');
-      if (!tool) {
-        return;
-      }
-      const buttons = Array.from(tool.querySelectorAll('[data-view-toggle]'));
-      const panels = Array.from(tool.querySelectorAll('.journey-panel'));
-
-      function setActive(view) {
-        tool.setAttribute('data-state', view);
-        buttons.forEach((button) => {
-          const isActive = button.getAttribute('data-view-toggle') === view;
-          button.classList.toggle('is-active', isActive);
-          button.setAttribute('aria-selected', String(isActive));
-          button.setAttribute('tabindex', isActive ? '0' : '-1');
+        cell.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          if (activeCell === cell) {
+            hideTooltip();
+          } else {
+            activeCell = cell;
+            positionTooltip(cell);
+          }
+        }, { passive: false });
+        cell.addEventListener('focus', () => {
+          activeCell = cell;
+          positionTooltip(cell);
         });
-        panels.forEach((panel) => {
-          const match = panel.getAttribute('data-view') === view;
-          panel.classList.toggle('is-active', match);
-          panel.setAttribute('aria-hidden', String(!match));
-          panel.setAttribute('tabindex', match ? '0' : '-1');
+        cell.addEventListener('blur', () => {
+          if (activeCell === cell) hideTooltip();
         });
-      }
-
-      buttons.forEach((button) => {
-        button.addEventListener('click', () => {
-          setActive(button.getAttribute('data-view-toggle'));
-        });
-        button.addEventListener('keydown', (event) => {
-          if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-            const currentIndex = buttons.indexOf(button);
-            const offset = event.key === 'ArrowRight' ? 1 : -1;
-            const nextButton = buttons[(currentIndex + offset + buttons.length) % buttons.length];
-            nextButton.focus();
-            setActive(nextButton.getAttribute('data-view-toggle'));
-            event.preventDefault();
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (activeCell === cell) {
+              hideTooltip();
+            } else {
+              activeCell = cell;
+              positionTooltip(cell);
+            }
           }
         });
       });
 
-      setActive(tool.getAttribute('data-state') || 'legacy');
-    })();
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', hideTooltip, { passive: true });
+      document.addEventListener('click', function(e) {
+        if (activeCell && !e.target.closest('.dynamic-matrix td[data-detail]')) {
+          hideTooltip();
+        }
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && activeCell) {
+          hideTooltip();
+        }
+      });
+
+      const yearEl = document.getElementById('year');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+    });
   </script>
 </body>
 </html>
