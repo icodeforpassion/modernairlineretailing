@@ -32,77 +32,77 @@
     "description": "Simple, detailed 2025 airline retail roadmap: what to build, why it matters, concrete actions, real airline examples, metrics, risks, references.",
     "date": "2025-06-25",
     "displayDate": "June 25, 2025",
-    "href": "/blog/2025-06-25-the-2025-roadmap:-capabilities-to-prioritize-now.html"
+    "href": "/blog/2025-06-25-the-2025-roadmap-capabilities-to-prioritize-now.html"
   },
   {
     "title": "Retail KPIs: Measuring What Matters (Airlines Chasing an Amazon Mindset)",
     "description": "Simple, detailed guide to airline retail KPIs for teams aiming to operate with an 'Amazon mindset': customer focus, speed, experimentation, profitable growth.",
     "date": "2025-06-03",
     "displayDate": "June 3, 2025",
-    "href": "/blog/2025-06-03-retail-kpis:-measuring-what-matters.html"
+    "href": "/blog/2025-06-03-retail-kpis-measuring-what-matters.html"
   },
   {
     "title": "Migration Paths: Coexisting with Legacy Inventory",
     "description": "Deep dive into strategies, architecture patterns, and phased roadmap for coexisting with legacy airline inventory while moving toward Offer & Order, dynamic control, and RBD\u2011less retailing.",
     "date": "2025-05-12",
     "displayDate": "May 12, 2025",
-    "href": "/blog/2025-05-12-migration-paths:-coexisting-with-legacy-inventory.html"
+    "href": "/blog/2025-05-12-migration-paths-coexisting-with-legacy-inventory.html"
   },
   {
     "title": "Security and Trust: Signing Offers and Protecting APIs",
     "description": "Security and Trust: Signing Offers and Protecting APIs \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2025-04-20",
     "displayDate": "April 20, 2025",
-    "href": "/blog/2025-04-20-security-and-trust:-signing-offers-and-protecting-apis.html"
+    "href": "/blog/2025-04-20-security-and-trust-signing-offers-and-protecting-apis.html"
   },
   {
     "title": "Irregular Ops: Disruption Handling with Orders",
     "description": "Irregular Ops: Disruption Handling with Orders \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2025-03-29",
     "displayDate": "March 29, 2025",
-    "href": "/blog/2025-03-29-irregular-ops:-disruption-handling-with-orders.html"
+    "href": "/blog/2025-03-29-irregular-ops-disruption-handling-with-orders.html"
   },
   {
     "title": "Reshop and Changes: Designing for Flexibility",
     "description": "Reshop and Changes: Designing for Flexibility \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2025-03-07",
     "displayDate": "March 7, 2025",
-    "href": "/blog/2025-03-07-reshop-and-changes:-designing-for-flexibility.html"
+    "href": "/blog/2025-03-07-reshop-and-changes-designing-for-flexibility.html"
   },
   {
     "title": "Search Architecture: Ranking, Pruning and Repricing",
     "description": "Search Architecture: Ranking, Pruning and Repricing \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2025-02-13",
     "displayDate": "February 13, 2025",
-    "href": "/blog/2025-02-13-search-architecture:-ranking,-pruning-and-repricing.html"
+    "href": "/blog/2025-02-13-search-architecture-ranking-pruning-and-repricing.html"
   },
   {
     "title": "Telemetry and Data Quality: Measuring the Offer Funnel",
     "description": "Telemetry and Data Quality: Measuring the Offer Funnel \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2025-01-22",
     "displayDate": "January 22, 2025",
-    "href": "/blog/2025-01-22-telemetry-and-data-quality:-measuring-the-offer-funnel.html"
+    "href": "/blog/2025-01-22-telemetry-and-data-quality-measuring-the-offer-funnel.html"
   },
   {
     "title": "Payments and Clearing: From BSP/ARC to Modern Rails",
     "description": "Payments and Clearing: From BSP/ARC to Modern Rails \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-12-31",
     "displayDate": "December 31, 2024",
-    "href": "/blog/2024-12-31-payments-and-clearing:-from-bsp-arc-to-modern-rails.html"
+    "href": "/blog/2024-12-31-payments-and-clearing-from-bsp-arc-to-modern-rails.html"
   },
   {
     "title": "Interline in an Order World: Offers, Orders, Settlement",
     "description": "Interline in an Order World: Offers, Orders, Settlement \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-12-09",
     "displayDate": "December 9, 2024",
-    "href": "/blog/2024-12-09-interline-in-an-order-world:-offers,-orders,-settlement.html"
+    "href": "/blog/2024-12-09-interline-in-an-order-world-offers-orders-settlement.html"
   },
   {
     "title": "Merchandising: Attributes, Bundles and Post\u2011Purchase",
     "description": "Merchandising: Attributes, Bundles and Post\u2011Purchase \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-11-17",
     "displayDate": "November 17, 2024",
-    "href": "/blog/2024-11-17-merchandising:-attributes,-bundles-and-post-purchase.html"
+    "href": "/blog/2024-11-17-merchandising-attributes-bundles-and-post-purchase.html"
   },
   {
     "title": "Identity and Personalization in Offers",
@@ -116,70 +116,70 @@
     "description": "Designing Airline APIs: Idempotency and Versioning \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-10-04",
     "displayDate": "October 4, 2024",
-    "href": "/blog/2024-10-04-designing-airline-apis:-idempotency-and-versioning.html"
+    "href": "/blog/2024-10-04-designing-airline-apis-idempotency-and-versioning.html"
   },
   {
     "title": "Event-Driven Retailing: From Batch to Streaming",
     "description": "Event-Driven Retailing: From Batch to Streaming \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-09-12",
     "displayDate": "September 12, 2024",
-    "href": "/blog/2024-09-12-event-driven-retailing:-from-batch-to-streaming.html"
+    "href": "/blog/2024-09-12-event-driven-retailing-from-batch-to-streaming.html"
   },
   {
     "title": "Stock Keeper: Managing Seats and Products as Stock",
     "description": "Stock Keeper: Managing Seats and Products as Stock \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-08-21",
     "displayDate": "August 21, 2024",
-    "href": "/blog/2024-08-21-stock-keeper:-managing-seats-and-products-as-stock.html"
+    "href": "/blog/2024-08-21-stock-keeper-managing-seats-and-products-as-stock.html"
   },
   {
     "title": "Order Management: Life After PNR, Tickets and EMDs",
     "description": "Order Management: Life After PNR, Tickets and EMDs \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-07-30",
     "displayDate": "July 30, 2024",
-    "href": "/blog/2024-07-30-order-management:-life-after-pnr,-tickets-and-emds.html"
+    "href": "/blog/2024-07-30-order-management-life-after-pnr-tickets-and-emds.html"
   },
   {
     "title": "Direct Connect vs Aggregators: Latency and Control",
     "description": "Direct Connect vs Aggregators: Latency and Control \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-07-08",
     "displayDate": "July 8, 2024",
-    "href": "/blog/2024-07-08-direct-connect-vs-aggregators:-latency-and-control.html"
+    "href": "/blog/2024-07-08-direct-connect-vs-aggregators-latency-and-control.html"
   },
   {
     "title": "NDC in the Real World: Seller and Airline Responsibilities",
     "description": "NDC in the Real World: Seller and Airline Responsibilities \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-06-16",
     "displayDate": "June 16, 2024",
-    "href": "/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html"
+    "href": "/blog/2024-06-16-ndc-in-the-real-world-seller-and-airline-responsibilities.html"
   },
   {
     "title": "Offer Construction: Pricers, Bundlers and Context",
     "description": "Offer Construction: Pricers, Bundlers and Context \u2014 a practical, implementation-focused walkthrough for airline retailing teams.",
     "date": "2024-05-25",
     "displayDate": "May 25, 2024",
-    "href": "/blog/2024-05-25-offer-construction:-pricers,-bundlers-and-context.html"
+    "href": "/blog/2024-05-25-offer-construction-pricers-bundlers-and-context.html"
   },
   {
     "title": "Continuous Pricing: Beyond Filed Ladders",
     "description": "A simple, practical guide to moving from fare ladders to dynamic and continuous pricing. What it is, why it helps, how to roll it out safely, and what to watch.",
     "date": "2024-05-03",
     "displayDate": "May 3, 2024",
-    "href": "/blog/2024-05-03-continuous-pricing:-beyond-filed-ladders.html"
+    "href": "/blog/2024-05-03-continuous-pricing-beyond-filed-ladders.html"
   },
   {
     "title": "Why Caches Disagree: GDS vs Airline Host Availability",
     "description": "Engineering deep\u2011dive into why GDS and airline host availability differ: latency windows, O&D control updates, married segments, cache architectures, detection, reconciliation, observability, and modernization patterns.",
     "date": "2024-04-11",
     "displayDate": "April 11, 2024",
-    "href": "/blog/2024-04-11-why-caches-disagree:-gds-vs-airline-host-availability.html"
+    "href": "/blog/2024-04-11-why-caches-disagree-gds-vs-airline-host-availability.html"
   },
   {
     "title": "Availability Controls: O&amp;D, Nesting, and Married Segments",
     "description": "Deep, implementation-focused guide to airline availability controls: O&D control, nesting strategies, bid prices, married segments logic, dilution risks, integrity checks, observability, and modernization toward offers & orders.",
     "date": "2024-03-20",
     "displayDate": "March 20, 2024",
-    "href": "/blog/2024-03-20-availability-controls:-oandd,-nesting,-and-married-segments.html"
+    "href": "/blog/2024-03-20-availability-controls-oandd-nesting-and-married-segments.html"
   },
   {
     "title": "ATPCO Fare Filing: Fares, Rules, Footnotes, Routing, Taxes \u2014 Deep-Dive Guide (2025)",
@@ -189,24 +189,17 @@
     "href": "/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html"
   },
   {
-    "title": "ATPCO Fare Filing: Fares, Rules & Footnotes\u2014A Practitioner's Guide",
-    "description": "A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together\u2014and how to implement them reliably while modernizing toward Offers & Orders.",
-    "date": "2024-02-27",
-    "displayDate": "February 27, 2024",
-    "href": "/blog/2024-02-27-atpco-fare-filing:-fares,-rules-and-footnotes-in-practice.html"
-  },
-  {
     "title": "From TTY to EDIFACT: Structuring Airline Messages",
     "description": "From TTY to EDIFACT: Structuring Airline Messages \u2014 a practical, implementation-focused walkthrough for airline retailing teams with deep examples of TTY, Type A vs Type B, and sample PAOREQ/PAORES, ITAREQ/ITARES, HWPREQ/HWPRES messages.",
     "date": "2024-02-05",
     "displayDate": "February 5, 2024",
-    "href": "/blog/2024-02-05-from-tty-to-edifact:-structuring-airline-messages.html"
+    "href": "/blog/2024-02-05-from-tty-to-edifact-structuring-airline-messages.html"
   },
   {
     "title": "Early RBD Revenue Management: How Booking Classes Shaped Control",
     "description": "Deep dive into early airline revenue management: how RBD (booking classes) became the control surface for yield management, availability calculation, and the path toward modern offer & order retailing.",
     "date": "2024-01-15",
     "displayDate": "January 15, 2024",
-    "href": "/blog/2024-01-15-early-rbd-revenue-management:-how-booking-classes-shaped-control.html"
+    "href": "/blog/2024-01-15-early-rbd-revenue-management-how-booking-classes-shaped-control.html"
   }
 ]
