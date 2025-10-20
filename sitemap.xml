@@ -2,80 +2,302 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.modernairlineretailing.com/</loc>
-    <lastmod>2025-10-19</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.modernairlineretailing.com/blog/</loc>
-    <lastmod>2025-10-19</lastmod>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html</loc>
-    <lastmod>2025-10-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.modernairlineretailing.com/blog/2024-06-16-ndc-in-the-real-world:-seller-and-airline-responsibilities.html</loc>
-    <lastmod>2025-10-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.modernairlineretailing.com/tools/</loc>
-    <lastmod>2025-10-19</lastmod>
+    <loc>https://www.modernairlineretailing.com/2025-08-06-stock-keeper.html</loc>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.modernairlineretailing.com/tools/xml-viewer.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <loc>https://www.modernairlineretailing.com/about.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-01-15-early-rbd-revenue-management-how-booking-classes-shaped-control.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-02-05-from-tty-to-edifact-structuring-airline-messages.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-03-20-availability-controls-oandd-nesting-and-married-segments.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-04-11-why-caches-disagree-gds-vs-airline-host-availability.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-05-03-continuous-pricing-beyond-filed-ladders.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-05-25-offer-construction-pricers-bundlers-and-context.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-06-16-ndc-in-the-real-world-seller-and-airline-responsibilities.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-07-08-direct-connect-vs-aggregators-latency-and-control.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-07-30-order-management-life-after-pnr-tickets-and-emds.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-08-21-stock-keeper-managing-seats-and-products-as-stock.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-09-12-event-driven-retailing-from-batch-to-streaming.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-10-04-designing-airline-apis-idempotency-and-versioning.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-10-26-identity-and-personalization-in-offers.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-11-17-merchandising-attributes-bundles-and-post-purchase.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-12-09-interline-in-an-order-world-offers-orders-settlement.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2024-12-31-payments-and-clearing-from-bsp-arc-to-modern-rails.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-01-22-telemetry-and-data-quality-measuring-the-offer-funnel.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-02-13-search-architecture-ranking-pruning-and-repricing.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-03-07-reshop-and-changes-designing-for-flexibility.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-03-29-irregular-ops-disruption-handling-with-orders.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-04-20-security-and-trust-signing-offers-and-protecting-apis.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-05-12-migration-paths-coexisting-with-legacy-inventory.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-06-03-retail-kpis-measuring-what-matters.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-06-25-the-2025-roadmap-capabilities-to-prioritize-now.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-08-06-stock-keeper.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-08-08-offer-and-order-explained.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-08-08-stock-keeper-transition.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-08-10-my-new-post.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/blog/2025-10-12-legacy-translator-pss-to-offer-order.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/airport-lookup.html</loc>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.modernairlineretailing.com/about.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <loc>https://www.modernairlineretailing.com/tools/break-even-load-factor.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/countdowntimer.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/demand-elasticity-planner.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/fare-bucket-allocation.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/flashcardvivaan.html</loc>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://www.modernairlineretailing.com/tools/great-circle.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.modernairlineretailing.com/tools/airport-lookup.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <loc>https://www.modernairlineretailing.com/tools/mathsmock.html</loc>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.modernairlineretailing.com/tools/break-even-load-factor.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <loc>https://www.modernairlineretailing.com/tools/mathsquestionmockgenerator.html</loc>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.modernairlineretailing.com/tools/fare-bucket-allocation.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <loc>https://www.modernairlineretailing.com/tools/nonverbal.html</loc>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://www.modernairlineretailing.com/tools/overbooking-optimizer.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://www.modernairlineretailing.com/tools/rasm-casm-calculator.html</loc>
-    <lastmod>2025-10-19</lastmod>
+    <lastmod>2025-10-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/vivaanmathsmockver2.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/vivaansfullmocketest.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/xml-viewer.html</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>
