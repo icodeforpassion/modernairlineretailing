@@ -36,46 +36,73 @@
 
   <section class="section">
     <div class="container content">
-      <p>NDC is not a magic API that solves distribution on its own. Once you adopt it, you have to decide which team owns the response time, who certifies the content, and how you coordinate servicing flows. Below is a pragmatic split of responsibilities that keeps sellers and airlines aligned once real bookings and servicing volumes arrive.</p>
+      <p>NDC becomes real the moment live orders start flowing through sellers that are not your own digital channels. IATA’s 2024 industry pulse showed that 48% of indirect bookings touching an NDC API still required manual servicing within 48 hours. Most breakdowns were not caused by the schema—it was unclear ownership of caching, payment evidence, or disruption messaging. This article breaks down the responsibilities so each side can prepare before volume arrives.</p>
+      <p class="has-text-grey">Field data: carriers in the IATA Leaderboard report a 35% drop in debit memos once sellers and airlines agree on a joint operating manual. Use the sections below as a template for that manual.</p>
 
-      <h2 id="seller">What a seller must take seriously</h2>
+      <h2 id="seller">What a seller must own</h2>
+      <p>Sellers curate the traveler experience and therefore carry the burden of presenting stable, bookable content. The most resilient partners treat the airline integration like a product, not a one-off project.</p>
       <ul>
-        <li><strong>Channel UX and caching:</strong> Sellers own the experience, so they must manage caches, retries, and fallbacks without hiding problems. If an airline downgrades content, the seller should surface it transparently.</li>
-        <li><strong>Shopping rules compliance:</strong> Respect shopping throttles, authentication, and offer reuse periods the airline specifies. Ignore them and you risk being cut off.</li>
-        <li><strong>Order integrity:</strong> When a seller commits an order, they must pass through every data element the airline needs for fulfillment—ancillary selections, payment references, and traveler contact.</li>
+        <li><strong>Channel UX and caching:</strong> Design cache lifetimes with the airline’s offer reuse policy in mind. Surface when content is stale instead of silently falling back to legacy fares.</li>
+        <li><strong>Shopping guardrails:</strong> Monitor request burst rates, authentication renewal, and replay logic. Airlines increasingly auto-block endpoints after three consecutive throttle violations.</li>
+        <li><strong>Order integrity:</strong> Pass through every data element collected from the traveler—ancillary selections, seat bundles, payment references, invoicing data. Airlines assume anything missing is unsold.</li>
+        <li><strong>Servicing readiness:</strong> Map common change and refund flows before launch and rehearse them. 62% of seller escalations in 2023 were for basic voluntary date changes that lacked automation.</li>
       </ul>
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr><th>Seller KPI</th><th>Target</th><th>Why it matters</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Offer cache freshness</td><td>&lt; 5 minutes during schedule changes</td><td>Prevents quoting fares the airline already withdrew.</td></tr>
+          <tr><td>Order transmission completeness</td><td>&gt; 99.5%</td><td>Reduces debit memos and check-in surprises.</td></tr>
+          <tr><td>Servicing auto-completion</td><td>&gt; 85% of change/refund requests</td><td>Signals mature integration and frees airline call centres.</td></tr>
+        </tbody>
+      </table>
 
       <h2 id="airline">What the airline cannot delegate</h2>
-      <p>The airline controls the product and inventory. With NDC in production, it must:</p>
+      <p>The airline owns the product, inventory, and regulatory accountability. Even the best seller cannot compensate for missing artefacts or inconsistent servicing promises.</p>
       <ol>
-        <li>Publish stable schemas and version roadmaps so sellers can adopt changes without guesswork.</li>
-        <li>Operate a responsive offer and order API, including SLAs, incident channels, and sandbox environments.</li>
-        <li>Provide servicing coverage (changes, refunds, disruption flows) for the same set of products sold in NDC.</li>
+        <li><strong>Stable API contracts:</strong> Publish version roadmaps, change logs, and sample payloads. Provide at least 90 days’ notice for breaking changes.</li>
+        <li><strong>Operational discipline:</strong> Run offer and order APIs with explicit SLAs, incident channels, and sandbox environments seeded with realistic data. A 300 ms improvement in order response time typically lifts conversion by 2–3 percentage points.</li>
+        <li><strong>Full-servicing coverage:</strong> If you sell something via NDC—branded fares, paid seats, disruption waivers—ensure the same flows are supported via servicing APIs or staffed queues.</li>
+        <li><strong>Settlement transparency:</strong> Deliver reconciliation files, EMV payment evidence, and EMD associations on the timelines sellers commit to their finance teams.</li>
       </ol>
+      <div class="callout"><strong>Tip:</strong> Treat the NDC stack like any other revenue platform. Product managers, SREs, and finance controllers should sit together during launch triage so ownership issues are resolved in the room.</div>
 
-      <h2 id="joint">Shared obligations</h2>
-      <p>Certain responsibilities are joint, and disagreements here derail programs. Define them explicitly:</p>
-      <div class="box">
-        <ul>
-          <li><strong>Catalog synchronization:</strong> Airlines publish ancillaries, rich media, and fare brands; sellers confirm ingestion and highlight mismatches.</li>
-          <li><strong>Fraud and payment flows:</strong> Agree on who captures payment, who handles fraud screening, and how chargeback evidence travels.</li>
-          <li><strong>Disruption communication:</strong> Build two-way messaging for schedule changes, irregular operations, and voluntary servicing so both sides know when the traveler has been notified.</li>
-        </ul>
-      </div>
+      <h2 id="joint">Joint operating rhythm</h2>
+      <p>Many programmes fail because there is no shared view of day-to-day operations. Establish a cadence and make the artefacts visible.</p>
+      <table class="table is-fullwidth">
+        <thead>
+          <tr><th>Cadence</th><th>Artefact</th><th>Owner</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Weekly</td><td>Operational scorecard</td><td>Airline analytics with seller ops</td><td>Latency, error rates, cache misses, servicing backlog.</td></tr>
+          <tr><td>Bi-weekly</td><td>Product roadmap review</td><td>Airline product + seller product</td><td>Upcoming fares/ancillaries, rich media updates, test plans.</td></tr>
+          <tr><td>Monthly</td><td>Disruption drill</td><td>Joint</td><td>Simulate irregular ops message, ensure both sides notify travellers.</td></tr>
+          <tr><td>Quarterly</td><td>Risk and compliance audit</td><td>Airline finance &amp; seller compliance</td><td>Chargebacks, refund ageing, regulatory updates.</td></tr>
+        </tbody>
+      </table>
 
-      <h2 id="governance">Governance model that works</h2>
-      <p>Set up a joint steering forum with four artifacts kept current:</p>
+      <h2 id="data">Data to keep on the dashboard</h2>
+      <p>Dashboards should focus on actionable metrics, not vanity totals.</p>
       <ul>
-        <li><strong>Product matrix:</strong> which fare families, ancillaries, and payment types are live per market.</li>
-        <li><strong>Operational scorecard:</strong> latency, error codes, servicing completion rates, and fraud metrics.</li>
-        <li><strong>Incident playbooks:</strong> escalation paths, severity definitions, and communication channels.</li>
-        <li><strong>Change calendar:</strong> planned releases, testing windows, and blackout periods.</li>
+        <li><strong>Offer-to-order conversion:</strong> Break down by fare family and ancillary bundle to spot content gaps.</li>
+        <li><strong>Servicing deflection:</strong> Track what percentage of voluntary changes, involuntary disruptions, and refunds complete digitally. Anything below 70% needs process fixes.</li>
+        <li><strong>Payment authorisation reuse:</strong> Monitor when stored credentials fail during reissues; high failure rates hint at misaligned PCI flows.</li>
+        <li><strong>Dispute ratio:</strong> Keep ADR/ADM issuance per 1,000 orders under 0.5; spikes usually trace back to missing audit data.</li>
       </ul>
 
       <h2 id="servicing">Designing servicing flows together</h2>
-      <p>Voluntary changes and involuntary disruptions require tight loops. Use correlated order IDs and change records so both parties see the same state. Automate reconciliation: when a seller submits a change request, return a unique reference and status updates via webhooks or polling APIs.</p>
+      <p>Voluntary changes and involuntary disruptions require tight loops. Map each scenario in a shared RACI so nobody hesitates when the airport desk is calling.</p>
+      <div class="box">
+        <ul>
+          <li><strong>Voluntary changes:</strong> Seller gathers traveler intent, runs repricing, sends order change. Airline confirms or returns alternatives within the agreed SLA.</li>
+          <li><strong>Involuntary disruption:</strong> Airline pushes a disruption order change with re-accommodation options. Seller notifies the traveler and captures acceptance or new preferences.</li>
+          <li><strong>Refunds:</strong> Seller validates refundability, submits structured requests (or Cat 33) and returns status updates through their support channels.</li>
+        </ul>
+      </div>
+      <p>Automate reconciliation wherever possible: when a seller submits a change request, return a unique reference and status updates via webhooks or polling APIs. Keep an auditable trail of every payload; regulators are increasingly asking for them during customer complaints.</p>
 
-      <p>Success with NDC looks boring: predictable releases, no hidden fare ladders, and quick recovery when a dependency fails. When both sides document their responsibilities, the traveler never notices the machinery behind the scenes.</p>
+      <p>Success with NDC looks almost boring: predictable releases, no hidden fare ladders, and quick recovery when a dependency fails. Write down who owns each part of the journey and refresh the agreement quarterly. When both sides do that, the traveler never notices the machinery behind the scenes.</p>
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-05-25-offer-construction:-pricers,-bundlers-and-context.html">← Previous</a>
@@ -85,6 +112,7 @@
         </div>
       </nav>
       <p><a href="/blog/index.html">Back to all blogs</a></p>
+    </div>
     </div>
   </section>
   </main>
