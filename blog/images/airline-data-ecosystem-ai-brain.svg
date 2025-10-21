@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Airline Data Ecosystem with AI Brain</title>
+  <desc id="desc">Graphic showing a central AI brain connected to airline data domains.</desc>
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0%" stop-color="#0e3b69"/>
+      <stop offset="100%" stop-color="#061326"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g font-family="'Segoe UI',sans-serif" fill="#d7f3ff">
+    <circle cx="600" cy="340" r="130" fill="#123d66" stroke="#5ed2ff" stroke-width="5"/>
+    <text x="600" y="320" font-size="44" text-anchor="middle">AI Brain</text>
+    <text x="600" y="360" font-size="24" text-anchor="middle" fill="#aee4ff">LLM reasoning + orchestration</text>
+    <text x="600" y="395" font-size="22" text-anchor="middle" fill="#aee4ff">Decision APIs · Guardrails · Telemetry</text>
+    <g fill="#8fd9ff" font-size="26">
+      <text x="600" y="90" text-anchor="middle">Airline Data Ecosystem Powered by AI</text>
+      <text x="600" y="630" text-anchor="middle" font-size="30">modernairlineretailing.com · AI Airline Data Fabric</text>
+    </g>
+    <g fill="#111f36" font-size="24">
+      <g transform="translate(260,150)">
+        <circle cx="0" cy="0" r="80" fill="#cbefff"/>
+        <text x="0" y="-10" text-anchor="middle">Offer</text>
+        <text x="0" y="25" text-anchor="middle">Mgmt</text>
+      </g>
+      <g transform="translate(940,150)">
+        <circle cx="0" cy="0" r="80" fill="#cbefff"/>
+        <text x="0" y="-10" text-anchor="middle">Order</text>
+        <text x="0" y="25" text-anchor="middle">Mgmt</text>
+      </g>
+      <g transform="translate(180,360)">
+        <circle cx="0" cy="0" r="80" fill="#cbefff"/>
+        <text x="0" y="-10" text-anchor="middle">Loyalty</text>
+        <text x="0" y="25" text-anchor="middle">CRM</text>
+      </g>
+      <g transform="translate(1020,360)">
+        <circle cx="0" cy="0" r="80" fill="#cbefff"/>
+        <text x="0" y="-10" text-anchor="middle">Revenue</text>
+        <text x="0" y="25" text-anchor="middle">Mgmt</text>
+      </g>
+      <g transform="translate(360,540)">
+        <circle cx="0" cy="0" r="80" fill="#cbefff"/>
+        <text x="0" y="-10" text-anchor="middle">Ops</text>
+        <text x="0" y="25" text-anchor="middle">Control</text>
+      </g>
+      <g transform="translate(840,540)">
+        <circle cx="0" cy="0" r="80" fill="#cbefff"/>
+        <text x="0" y="-10" text-anchor="middle">Finance</text>
+        <text x="0" y="25" text-anchor="middle">Settlement</text>
+      </g>
+    </g>
+  </g>
+  <g stroke="#5ed2ff" stroke-width="4" opacity="0.7">
+    <line x1="260" y1="150" x2="600" y2="340"/>
+    <line x1="940" y1="150" x2="600" y2="340"/>
+    <line x1="180" y1="360" x2="600" y2="340"/>
+    <line x1="1020" y1="360" x2="600" y2="340"/>
+    <line x1="360" y1="540" x2="600" y2="340"/>
+    <line x1="840" y1="540" x2="600" y2="340"/>
+  </g>
+</svg>

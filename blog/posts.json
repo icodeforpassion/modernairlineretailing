@@ -1,5 +1,12 @@
 [
   {
+    "title": "How Large Language Models Are Transforming Modern Airline Retailing",
+    "description": "How LLMs reshape airline retailing: personalization, NDC translation, agent copilots, data governance, and Offer & Order orchestration.",
+    "date": "2025-11-30",
+    "displayDate": "November 30, 2025",
+    "href": "/blog/2025-11-30-how-large-language-models-are-transforming-modern-airline-retailing.html"
+  },
+  {
     "title": "Legacy Translator: A Practical Bridge from PSS to Offer and Order Management",
     "description": "A practical guide to building a legacy translator to move from PSS to Offer and Order Management. Architecture, data mapping, risks, KPIs, and a phased roadmap.",
     "date": "2025-10-12",
