@@ -87,58 +87,6 @@
       z-index:1000;
       box-shadow:var(--focus-ring);
     }
-    .navbar {
-      width: 100%;
-      background: linear-gradient(90deg, var(--clr-surface) 60%, var(--clr-accent-alt) 120%);
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 90;
-      box-shadow: var(--shadow-1);
-      padding: 0.6rem 0;
-    }
-    .navbar-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.2rem;
-    }
-    .navbar-title {
-      font-family: var(--font-heading);
-      font-size: 1.25rem;
-      font-weight: 900;
-      letter-spacing: .7px;
-      color: #fff;
-      text-shadow: 0 2px 8px #3298dc33;
-      margin-right: 2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .navbar-home-btn {
-      background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-alt) 100%);
-      color: #fff;
-      border: none;
-      font-weight: 700;
-      padding: 0.5rem 1.2rem;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 4px 14px -4px var(--clr-accent-alt);
-      transition: var(--transition);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .navbar-home-btn:hover, .navbar-home-btn:focus-visible {
-      background: var(--clr-accent-alt);
-      color: #082032;
-      box-shadow: 0 10px 28px -6px var(--clr-accent-alt);
-      outline: none;
-      transform: translateY(-2px);
-    }
     main.tools-wrapper {
       position: relative;
       z-index: 2;
@@ -485,24 +433,6 @@
   <div class="page-content">
   <div class="animated-bg"></div>
   <a href="#main" class="skip-link">Skip to content</a>
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="navbar-content">
-      <span class="navbar-title">
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" style="vertical-align:middle;" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="13" cy="13" r="13" fill="#3298dc"/>
-          <path d="M13 6L15 13H11L13 6Z" fill="#fff"/>
-          <rect x="11" y="14" width="4" height="6" rx="1.5" fill="#fff"/>
-        </svg>
-        Airport / City Lookup
-      </span>
-      <a href="/" class="navbar-home-btn" aria-label="Home">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="vertical-align:middle;" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 2L2 9H4V16H7V12H11V16H14V9H16L9 2Z" fill="currentColor"/>
-        </svg>
-        Home
-      </a>
-    </div>
-  </nav>
   <main id="main" class="tools-wrapper">
     <section class="lookup-hero">
       <h1>Airport / City Lookup</h1>
@@ -572,305 +502,384 @@
       </aside>
     </section>
   </main>
+  </div>
+
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
   <script>
-  (function(){
-    'use strict';
-    // ---------- Configuration ----------
-    const DATA_URL = 'airports.json'; // Adjust if stored elsewhere
-    const MAX_RESULTS = 15;
-    const MAP_DELTA = 0.18;
-    const ENTER_SELECTS_FIRST = true;
-    // ---------- State ----------
-    let airports = null;
-    let rawAirports = null;
-    let loadingData = false;
-    let lastQuery = '';
-    let activeIndex = -1;
-    let currentSelection = null;
-    let debounceTimer = null;
-    // ---------- DOM ----------
-    const input = document.getElementById('lookupInput');
-    const form = document.getElementById('lookupForm');
-    const statusEl = document.getElementById('status');
-    const resultsList = document.getElementById('resultsList');
-    const skeletonContainer = document.getElementById('skeletonContainer');
-    const searchBtn = document.getElementById('searchBtn');
-    const btnSpinnerSlot = searchBtn.querySelector('.btn-spinner-slot');
-    const clearBtn = document.getElementById('clearBtn');
-    const randomBtn = document.getElementById('randomBtn');
-    const mapFrame = document.getElementById('mapFrame');
-    const mapInfo = document.getElementById('mapInfo');
-    // ---------- Utils ----------
-    function norm(str){
-      return (str||'')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g,'')
-        .toUpperCase()
-        .trim();
-    }
-    function levenshtein(a,b){
-      if(a===b) return 0;
-      const al=a.length, bl=b.length;
-      if(!al) return bl;
-      if(!bl) return al;
-      const v0=new Array(bl+1), v1=new Array(bl+1);
-      for(let i=0;i<=bl;i++) v0[i]=i;
-      for(let i=0;i<al;i++){
-        v1[0]=i+1;
-        for(let j=0;j<bl;j++){
-          const cost = a[i]===b[j]?0:1;
-          v1[j+1]=Math.min(v1[j]+1, v0[j+1]+1, v0[j]+cost);
+    (function(){
+      'use strict';
+
+      const DATA_URL = '/tools/airports.json';
+      const MAX_RESULTS = 20;
+      const MAP_PADDING = 0.25;
+
+      const input = document.getElementById('lookupInput');
+      const form = document.getElementById('lookupForm');
+      const statusEl = document.getElementById('status');
+      const resultsList = document.getElementById('resultsList');
+      const skeletonContainer = document.getElementById('skeletonContainer');
+      const searchBtn = document.getElementById('searchBtn');
+      const btnSpinnerSlot = searchBtn ? searchBtn.querySelector('.btn-spinner-slot') : null;
+      const clearBtn = document.getElementById('clearBtn');
+      const randomBtn = document.getElementById('randomBtn');
+      const mapFrame = document.getElementById('mapFrame');
+      const mapInfo = document.getElementById('mapInfo');
+
+      let airports = [];
+      let normalized = [];
+      let currentResults = [];
+      let loadingPromise = null;
+      let activeIndex = -1;
+      let debounceHandle = null;
+
+      function normalize(str) {
+        return (str || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toUpperCase()
+          .trim();
+      }
+
+      function escapeHTML(value) {
+        return (value || '').replace(/[&<>'"]/g, char => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[char]);
+      }
+
+      function highlight(text, query) {
+        if (!query) return escapeHTML(text);
+        const escaped = query.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+        return escapeHTML(text).replace(new RegExp(`(${escaped})`, 'ig'), '<mark>$1</mark>');
+      }
+
+      function formatMeta(airport) {
+        const parts = [];
+        if (airport.city) parts.push(airport.city);
+        if (airport.country) parts.push(airport.country);
+        return parts.join(', ');
+      }
+
+      function setStatus(message, isError = false) {
+        if (!statusEl) return;
+        statusEl.textContent = message;
+        statusEl.classList.toggle('error', Boolean(isError));
+      }
+
+      function setLoading(loading) {
+        if (searchBtn) {
+          searchBtn.disabled = loading;
         }
-        for(let j=0;j<=bl;j++) v0[j]=v1[j];
-      }
-      return v1[bl];
-    }
-    function scoreEntry(entryQ, queryN){
-      if(!queryN) return 0;
-      let s=0;
-      if(entryQ.code===queryN) s=140;
-      else {
-        if(entryQ.code.startsWith(queryN)) s=Math.max(s,120);
-        if(entryQ.city===queryN || entryQ.name===queryN) s=Math.max(s,115);
-        if(entryQ.city.startsWith(queryN) || entryQ.name.startsWith(queryN)) s=Math.max(s,110);
-        if(entryQ.city.includes(queryN) || entryQ.name.includes(queryN)) s=Math.max(s,95);
-        const dCode=levenshtein(entryQ.code,queryN);
-        if(dCode>0 && dCode<=2) s=Math.max(s,90 - dCode*8);
-        if(queryN.length>=3){
-          const dCity=levenshtein(entryQ.city.slice(0,queryN.length+3),queryN);
-          if(dCity<=2) s=Math.max(s,78 - dCity*6);
-          const dName=levenshtein(entryQ.name.slice(0,queryN.length+5),queryN);
-          if(dName<=2) s=Math.max(s,74 - dName*6);
+        if (btnSpinnerSlot) {
+          btnSpinnerSlot.innerHTML = loading ? '<span class="spinner" aria-hidden="true"></span>' : '';
+        }
+        if (skeletonContainer) {
+          skeletonContainer.style.display = loading ? 'grid' : 'none';
         }
       }
-      return s;
-    }
-    function highlight(text, rawQuery){
-      if(!rawQuery) return escapeHTML(text);
-      const escQ = rawQuery.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-      return escapeHTML(text).replace(new RegExp('('+escQ+')','ig'), '<mark>$1</mark>');
-    }
-    function escapeHTML(str){
-      return (str+'').replace(/[&<>'"]/g,c=>({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-      }[c]));
-    }
-    function setStatus(msg, isError=false){
-      statusEl.textContent = msg;
-      statusEl.className = isError ? 'error' : '';
-    }
-    function setLoading(isLoading){
-      if(isLoading){
-        searchBtn.disabled=true;
-        btnSpinnerSlot.innerHTML='<span class="spinner" aria-hidden="true"></span>';
-      } else {
-        searchBtn.disabled=false;
-        btnSpinnerSlot.innerHTML='';
-      }
-    }
-    function showSkeleton(show){
-      skeletonContainer.style.display = show ? 'grid':'none';
-    }
-    async function ensureData(){
-      if(airports || loadingData) return;
-      loadingData=true;
-      setLoading(true);
-      showSkeleton(true);
-      try{
-        const res = await fetch(DATA_URL, {cache:'no-store'});
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        const json = await res.json();
-        let list;
-        if(Array.isArray(json)){
-          list=json;
-        } else {
-          list=Object.keys(json).map(k=>{
-            const v = json[k];
-            if(!v.code) v.code=k;
-            return v;
-          });
+
+      function levenshtein(a, b) {
+        if (a === b) return 0;
+        const al = a.length;
+        const bl = b.length;
+        if (!al) return bl;
+        if (!bl) return al;
+        const prev = new Array(bl + 1);
+        const curr = new Array(bl + 1);
+        for (let j = 0; j <= bl; j++) prev[j] = j;
+        for (let i = 0; i < al; i++) {
+          curr[0] = i + 1;
+          for (let j = 0; j < bl; j++) {
+            const cost = a[i] === b[j] ? 0 : 1;
+            curr[j + 1] = Math.min(curr[j] + 1, prev[j + 1] + 1, prev[j] + cost);
+          }
+          for (let j = 0; j <= bl; j++) prev[j] = curr[j];
         }
-        rawAirports = list;
-        airports = list.map(o=>{
-          return {
-            o,
-            code: norm(o.code),
-            city: norm(o.city),
-            name: norm(o.name)
-          };
-        });
-        setStatus('Data loaded. Type to search.');
-      } catch(e){
-        setStatus('Failed to load data: '+e.message, true);
-      } finally {
-        loadingData=false;
-        setLoading(false);
-        showSkeleton(false);
+        return curr[bl];
       }
-    }
-    function renderResults(results, rawQuery){
-      resultsList.innerHTML='';
-      input.setAttribute('aria-expanded', 'true');
-      activeIndex=-1;
-      if(!results.length){
-        resultsList.innerHTML='<div class="empty-hint" role="note">No matches. Try a broader or different term.</div>';
-        return;
+
+      function scoreAirport(entry, query) {
+        if (!query) return 0;
+        let score = 0;
+        if (entry.code === query) return 250;
+        if (entry.code.startsWith(query)) score = Math.max(score, 200);
+        if (entry.city === query || entry.name === query) score = Math.max(score, 180);
+        if (entry.city.startsWith(query) || entry.name.startsWith(query)) score = Math.max(score, 160);
+        if (entry.city.includes(query) || entry.name.includes(query)) score = Math.max(score, 140);
+        if (entry.code.includes(query)) score = Math.max(score, 130);
+
+        if (query.length >= 3) {
+          const codeDistance = levenshtein(entry.code, query);
+          if (codeDistance > 0 && codeDistance <= 2) {
+            score = Math.max(score, 120 - codeDistance * 10);
+          }
+          if (entry.city) {
+            const cityDistance = levenshtein(entry.city.slice(0, query.length + 2), query);
+            if (cityDistance <= 2) score = Math.max(score, 112 - cityDistance * 8);
+          }
+          if (entry.name) {
+            const nameDistance = levenshtein(entry.name.slice(0, query.length + 2), query);
+            if (nameDistance <= 2) score = Math.max(score, 108 - nameDistance * 6);
+          }
+        }
+        return score;
       }
-      const frag = document.createDocumentFragment();
-      results.forEach((r,i)=>{
-        const orig=r.o;
-        const div=document.createElement('div');
-        div.className='result-item';
-        div.setAttribute('role','option');
-        div.setAttribute('data-index', i);
-        div.tabIndex=-1;
-        const codeDisplay = highlight(orig.code, rawQuery);
-        const cityDisplay = orig.city ? highlight(orig.city, rawQuery) : '';
-        const nameDisplay = highlight(orig.name, rawQuery);
-        div.innerHTML=`
-          <div class="result-line">
-            <strong>${codeDisplay}</strong>
-            <span>${nameDisplay}</span>
-          </div>
-          <div class="result-meta">
-            <span>${cityDisplay}${orig.country ? ', '+escapeHTML(orig.country):''}</span>
-            <span class="score-pill" title="Match score">${r.score}</span>
-            <span class="copy-indicator">Copied</span>
-          </div>
-        `;
-        div.addEventListener('click', ()=> {
-          selectResult(i, results);
-        });
-        div.addEventListener('keydown', e=>{
-          if(e.key==='Enter'){
-            e.preventDefault();
-            selectResult(i, results);
+
+      async function loadAirports() {
+        if (loadingPromise) return loadingPromise;
+        loadingPromise = (async () => {
+          setLoading(true);
+          try {
+            const response = await fetch(DATA_URL, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            const list = Array.isArray(data)
+              ? data
+              : Object.keys(data).map(code => ({ code, ...(data[code] || {}) }));
+            airports = list.filter(item => item && item.code);
+            normalized = airports.map(item => ({
+              airport: item,
+              code: normalize(item.code),
+              city: normalize(item.city),
+              name: normalize(item.name)
+            }));
+            setStatus('Data loaded. Start typing to search.');
+          } catch (error) {
+            setStatus(`Failed to load airport data: ${error.message}`, true);
+            throw error;
+          } finally {
+            setLoading(false);
+          }
+          return airports;
+        })();
+        return loadingPromise;
+      }
+
+      function updateActiveVisual() {
+        const items = resultsList ? resultsList.querySelectorAll('.result-item') : [];
+        items.forEach((item, index) => {
+          const isActive = index === activeIndex;
+          item.classList.toggle('is-active-temp', isActive);
+          item.setAttribute('aria-selected', String(isActive));
+          if (isActive) {
+            item.focus({ preventScroll: true });
           }
         });
-        frag.appendChild(div);
-      });
-      resultsList.appendChild(frag);
-    }
-    function updateActiveVisual(){
-      const items = resultsList.querySelectorAll('.result-item');
-      items.forEach((el,idx)=>{
-        if(idx===activeIndex){
-          el.setAttribute('aria-selected','true');
-          el.classList.add('is-active-temp');
-          el.focus({preventScroll:true});
-        } else {
-          el.removeAttribute('aria-selected');
-          el.classList.remove('is-active-temp');
+      }
+
+      function renderResults(results, rawQuery) {
+        if (!resultsList) return;
+        resultsList.innerHTML = '';
+        activeIndex = -1;
+        currentResults = results;
+        if (!results.length) {
+          resultsList.innerHTML = '<div class="empty-hint" role="note">No matches. Try another spelling or city.</div>';
+          input.setAttribute('aria-expanded', 'false');
+          return;
         }
-      });
-    }
-    function selectResult(idx, resultArr){
-      const item = resultArr[idx];
-      if(!item) return;
-      currentSelection = item.o;
-      flashCopy(resultArr, idx);
-      focusMap(item.o);
-      setStatus(`${item.o.name} (${item.o.code}) selected.`);
-    }
-    function flashCopy(results, idx){
-      const code = results[idx].o.code || '';
-      try {
-        navigator.clipboard.writeText(code).catch(()=>{});
-      } catch(_){}
-      const node = resultsList.querySelector(`.result-item[data-index="${idx}"]`);
-      if(!node) return;
-      node.classList.add('copied');
-      setTimeout(()=>node.classList.remove('copied'), 1400);
-    }
-    function focusMap(o){
-      if(typeof o.lat !== 'number' || typeof o.lon !== 'number'){
-        mapFrame.src='';
-        mapInfo.textContent='No coordinates';
-        return;
+        const fragment = document.createDocumentFragment();
+        results.forEach((entry, index) => {
+          const { airport } = entry;
+          const node = document.createElement('div');
+          node.className = 'result-item';
+          node.setAttribute('role', 'option');
+          node.setAttribute('data-index', String(index));
+          node.tabIndex = -1;
+          const meta = formatMeta(airport);
+          node.innerHTML = `
+            <div class="result-line">
+              <strong>${highlight(airport.code, rawQuery)}</strong>
+              <span>${highlight(airport.name || '', rawQuery)}</span>
+            </div>
+            <div class="result-meta">
+              <span>${highlight(meta, rawQuery)}</span>
+              <span class="score-pill" title="Match score">${entry.score}</span>
+              <span class="copy-indicator" aria-hidden="true">Copied</span>
+            </div>
+          `;
+          node.addEventListener('click', () => selectResult(index));
+          node.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              selectResult(index);
+            }
+          });
+          fragment.appendChild(node);
+        });
+        resultsList.appendChild(fragment);
+        input.setAttribute('aria-expanded', 'true');
       }
-      const {lat, lon} = o;
-      const bbox = `${(lon-MAP_DELTA)},${(lat-MAP_DELTA)},${(lon+MAP_DELTA)},${(lat+MAP_DELTA)}`;
-      const url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(lat+','+lon)}`;
-      mapFrame.src = url;
-      mapInfo.textContent = o.code || '';
-    }
-    function pickRandom(){
-      if(!airports) return;
-      const idx = Math.floor(Math.random()*airports.length);
-      const chosen = airports[idx].o;
-      input.value = chosen.code;
-      doLookup();
-    }
-    function doLookup(){
-      const rawQuery = input.value.trim();
-      lastQuery = rawQuery;
-      if(!airports){
-        setStatus('Data not loaded yet.');
-        return;
+
+      function selectResult(index) {
+        const entry = currentResults[index];
+        if (!entry) return;
+        activeIndex = index;
+        updateActiveVisual();
+        const airport = entry.airport;
+        focusMap(airport);
+        setStatus(`${airport.name || airport.code} (${airport.code}) selected.`);
+        copyCode(airport.code);
       }
-      const queryN = norm(rawQuery);
-      if(!queryN){
-        resultsList.innerHTML='';
-        input.setAttribute('aria-expanded','false');
-        setStatus('Type something to search.');
-        return;
+
+      function copyCode(code) {
+        const items = resultsList ? resultsList.querySelectorAll('.result-item') : [];
+        items.forEach(item => item.classList.remove('copied'));
+        const active = items[activeIndex];
+        if (active) {
+          active.classList.add('copied');
+          setTimeout(() => active.classList.remove('copied'), 1400);
+        }
+        if (!navigator.clipboard) return;
+        navigator.clipboard.writeText(code).catch(() => {});
       }
-      const scored=[];
-      for(const a of airports){
-        const sc = scoreEntry(a, queryN);
-        if(sc>0) scored.push({ ...a, score: sc });
+
+      function focusMap(airport) {
+        if (!mapFrame || !mapInfo) return;
+        if (typeof airport.lat !== 'number' || typeof airport.lon !== 'number') {
+          mapFrame.removeAttribute('src');
+          mapInfo.textContent = 'No coordinates available';
+          return;
+        }
+        const { lat, lon } = airport;
+        const bbox = [
+          lon - MAP_PADDING,
+          lat - MAP_PADDING,
+          lon + MAP_PADDING,
+          lat + MAP_PADDING
+        ].join(',');
+        const marker = encodeURIComponent(`${lat},${lon}`);
+        const url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${marker}`;
+        mapFrame.src = url;
+        mapInfo.textContent = `${airport.code} • ${airport.name || ''}`.trim();
       }
-      scored.sort((a,b)=>b.score-a.score);
-      const limited = scored.slice(0, MAX_RESULTS);
-      renderResults(limited, rawQuery);
-      if(scored.length){
-        setStatus(`Found ${scored.length} (showing top ${limited.length}).`);
-        if(ENTER_SELECTS_FIRST){
-          const exact = limited.findIndex(x=>x.code===queryN);
-          if(exact>=0) {
-            activeIndex=exact;
+
+      function runSearch(fromInput = false) {
+        const rawQuery = input.value.trim();
+        const query = normalize(rawQuery);
+        if (!query) {
+          currentResults = [];
+          if (resultsList) {
+            resultsList.innerHTML = '';
+          }
+          input.setAttribute('aria-expanded', 'false');
+          setStatus('Type an airport code, city or name to search.');
+          return;
+        }
+        const scored = normalized
+          .map(entry => ({ ...entry, score: scoreAirport(entry, query) }))
+          .filter(entry => entry.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, MAX_RESULTS);
+        renderResults(scored, rawQuery);
+        if (scored.length) {
+          setStatus(`Found ${scored.length} matching airports.`);
+          if (fromInput && scored[0].code === query) {
+            activeIndex = 0;
             updateActiveVisual();
           }
-        }
-      } else {
-        setStatus('No matches.', true);
-      }
-    }
-    form.addEventListener('submit', e=>{
-      e.preventDefault();
-      doLookup();
-    });
-    input.addEventListener('input', ()=>{
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(()=>{
-        ensureData().then(doLookup);
-      }, 240);
-    });
-    input.addEventListener('keydown', e=>{
-      const items = resultsList.querySelectorAll('.result-item');
-      const max = items.length - 1;
-      if(!items.length) return;
-      if(e.key === 'ArrowDown'){
-        e.preventDefault();
-        activeIndex = (activeIndex < max) ? activeIndex + 1 : 0;
-        updateActiveVisual();
-      } else if(e.key === 'ArrowUp'){
-        e.preventDefault();
-        activeIndex = (activeIndex > 0) ? activeIndex - 1 : max;
-        updateActiveVisual();
-      } else if(e.key === 'Enter'){
-        if(activeIndex >=0){
-          e.preventDefault();
-          const arr = Array.from(items).map(it=>{
-            const idx = parseInt(it.getAttribute('data-index'),10);
-            return {
-              o: airportsFilteredCache[idx]?.o || null
-            };
-          });
+        } else {
+          setStatus('No matches found.', true);
         }
       }
-    });
-    resultsList.addEventListener('keydown', e=>{
-      if(e.key==='Enter'){
-        const focused = document.activeElement;
-        if(focused && focused.classList.contains('result-item')){
+
+      function handleArrowNavigation(event) {
+        const items = resultsList ? resultsList.querySelectorAll('.result-item') : [];
+        if (!items.length) return;
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          activeIndex = (activeIndex + 1) % items.length;
+          updateActiveVisual();
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          activeIndex = (activeIndex - 1 + items.length) % items.length;
+          updateActiveVisual();
+        } else if (event.key === 'Enter') {
+          if (activeIndex >= 0) {
+            event.preventDefault();
+            selectResult(activeIndex);
+          }
+        }
+      }
+
+      function clearResults() {
+        input.value = '';
+        currentResults = [];
+        activeIndex = -1;
+        if (resultsList) {
+          resultsList.innerHTML = '';
+        }
+        input.setAttribute('aria-expanded', 'false');
+        setStatus('Cleared. Type to search again.');
+        if (mapFrame) mapFrame.removeAttribute('src');
+        if (mapInfo) mapInfo.textContent = 'Pick a result to preview it on the map.';
+        input.focus();
+      }
+
+      async function handleRandom() {
+        await loadAirports().catch(() => {});
+        if (!airports.length) return;
+        const random = airports[Math.floor(Math.random() * airports.length)];
+        input.value = random.code;
+        runSearch();
+        if (currentResults.length) {
+          selectResult(0);
+        }
+      }
+
+      if (resultsList) {
+        resultsList.addEventListener('click', event => {
+          const target = event.target.closest('.result-item');
+          if (!target) return;
+          const index = Number(target.getAttribute('data-index'));
+          selectResult(index);
+        });
+      }
+
+      if (form) {
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          loadAirports().then(() => runSearch()).catch(() => {});
+        });
+      }
+
+      if (input) {
+        input.addEventListener('input', () => {
+          clearTimeout(debounceHandle);
+          debounceHandle = setTimeout(() => {
+            loadAirports().then(() => runSearch(true)).catch(() => {});
+          }, 220);
+        });
+        input.addEventListener('keydown', handleArrowNavigation);
+      }
+
+      if (resultsList) {
+        resultsList.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            const target = event.target.closest('.result-item');
+            if (!target) return;
+            event.preventDefault();
+            const index = Number(target.getAttribute('data-index'));
+            selectResult(index);
+          } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            handleArrowNavigation(event);
+          }
+        });
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', clearResults);
+      }
+
+      if (randomBtn) {
+        randomBtn.addEventListener('click', handleRandom);
+      }
+
+      loadAirports().catch(() => {});
+    })();
+  </script>
+</body>
+</html>

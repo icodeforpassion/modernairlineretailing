@@ -14,6 +14,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"/>
+  <link rel="stylesheet" href="/assets/site.css"/>
   <style>
     :root {
       --clr-bg-page: #f6f9fc;
@@ -59,24 +60,6 @@
     }
     a { color: var(--clr-primary); text-decoration:none; }
     a:hover { color: var(--clr-primary-hover); }
-
-    /* NAV */
-    .navbar {
-      background:#0d1b2a;
-      border-bottom: 3px solid var(--clr-primary);
-      padding: .55rem 0;
-    }
-    .navbar .navbar-item {
-      color:#f1f6fb;
-      font-weight:600;
-      letter-spacing:.03em;
-      transition:color var(--trans);
-    }
-    .navbar .navbar-item:hover,
-    .navbar .navbar-item:focus {
-      color: var(--clr-accent-warm);
-      outline: none;
-    }
 
     /* HERO (light, inviting) */
     .hero-glass {
@@ -352,18 +335,6 @@
       box-shadow:0 0 0 3px var(--clr-focus), var(--shadow-md);
     }
 
-    /* FOOTER */
-    .footer {
-      background:#0d1b2a;
-      color:#b6c8d9;
-      text-align:center;
-      font-size:.85rem;
-      padding:2.1rem 1rem 1.8rem;
-      line-height:1.5;
-      position:relative;
-    }
-    .footer span b { color:#fff; font-weight:600; }
-
     /* FOCUS STYLES (GLOBAL) */
     :focus-visible {
       outline:2px solid var(--clr-focus);
@@ -412,16 +383,11 @@
     }
   </style>
 </head>
-<body>
-  <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="https://www.modernairlineretailing.com/index.html">
-        <i class="fas fa-home"></i>&nbsp;Home
-      </a>
-    </div>
-  </nav>
+  <body>
+    <header class="site-header"></header>
+    <main id="main-content">
 
-  <section class="hero-glass">
+    <section class="hero-glass">
     <div class="hero-inner">
       
       <h1 class="hero-title">About Me</h1>
@@ -488,15 +454,9 @@ At heart, I believe innovation in our industry comes from collaboration, sharing
     </div>
   </section>
 
-  <footer class="footer" role="contentinfo">
-    <div>
-     <div>
-  &copy; 2025 Neerej Sasikumar – Modern Airline Retailing.<br>
+    </main>
 
-  Designed with ❤️ for the airline community.</span>
-</div>
-
-    </div>
-  </footer>
-</body>
+    <footer class="site-footer"></footer>
+    <script src="/assets/site.js" defer></script>
+  </body>
 </html>
