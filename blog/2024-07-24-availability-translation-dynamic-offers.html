@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Availability Translation for Dynamic Offers</title>
+  <meta name="description" content="How to translate legacy availability controls into a dynamic offer environment: data contracts, service layers, telemetry, and rollout playbooks."/>
+  <meta property="og:title" content="Availability Translation for Dynamic Offers"/>
+  <meta property="og:description" content="Practical guide to translating legacy availability into dynamic offer-ready signals across inventory, offer management, and channels."/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="/blog/images/blog-18.jpg"/>
+  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-07-24-availability-translation-dynamic-offers.html"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <style>
+    .hero-banner { background: url('/blog/images/blog-18.jpg') center/cover no-repeat; }
+    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.78), rgba(13,27,42,.58)); }
+    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
+    .content p { line-height: 1.75; }
+    .callout { border-left: 4px solid #3298dc; padding: 1.25rem 1.5rem; background: rgba(50,152,220,0.08); border-radius: 10px; }
+    .metric-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .metric-table th, .metric-table td { border: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 1rem; text-align: left; }
+    .metric-table th { background: rgba(19,34,53,0.9); font-weight: 600; }
+  </style>
+  <link rel="stylesheet" href="/assets/site.css"/>
+  <link rel="stylesheet" href="/assets/post.css"/>
+</head>
+<body>
+  <header class="site-header"></header>
+  <main class="page-content">
+  <section class="hero is-medium hero-banner">
+    <div class="hero-body overlay">
+      <div class="container">
+        <a class="button is-light home-btn" href="/index.html">Home</a>
+        <h1 class="title has-text-white">Availability Translation for Dynamic Offers</h1>
+        <p class="subtitle has-text-white">July 24, 2024</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container content">
+      <p>Dynamic offers need the same guardrails that protected legacy revenue management: bid prices, nesting rules, O&amp;D closures, schedule integrity. The challenge is that those controls still live in RBD-centric inventory systems while the offer system expects structured, API-ready signals. Availability translation is the bridge. Treat it as a product with clear contracts instead of a throwaway adapter.</p>
+
+      <h2 id="why-it-matters">Why availability translation matters now</h2>
+      <p>Legacy availability was optimized for <em>booking class access</em>; dynamic offers optimize for <em>offer suitability</em>. That mismatch creates three failure modes:</p>
+      <ul>
+        <li><strong>Over-permissioning:</strong> Translating every open RBD into a sellable product leads to dilution when downstream rules (married segment, continuous pricing fences) are ignored.</li>
+        <li><strong>Under-permissioning:</strong> Offer services throttle creativity because they only understand fully open / fully closed classes. High-value bundles never leave the warehouse.</li>
+        <li><strong>Lost accountability:</strong> Commercial teams cannot trace why an offer was suppressed or overexposed, so they abandon the dynamic engine.</li>
+      </ul>
+      <p>A modern translation layer normalizes these controls into explicit signals the offer engine and channels can honor.</p>
+
+      <h2 id="contracts">Designing the translation contract</h2>
+      <p>Start with the contract between inventory and the offer system. Each availability response must declare the controls that apply to a request. We use four buckets:</p>
+      <ol>
+        <li><strong>Structural status:</strong> O&amp;D availability, schedule integrity, operational blackout flags.</li>
+        <li><strong>Revenue controls:</strong> Bid price bands, nesting state, dynamic fare class limits, closed user group flags.</li>
+        <li><strong>Customer fences:</strong> Corporate deal applicability, frequent flyer tier fences, origin-based surcharges.</li>
+        <li><strong>Telemetry hooks:</strong> Control version, last update source, and correlation IDs for reconciliation.</li>
+      </ol>
+      <div class="callout">
+        <strong>Tip:</strong> Capture both the <em>raw</em> inventory value (e.g., ATPCO RBD open/closed) and the <em>interpreted</em> value (offerable seats, price band). It makes root-cause analysis far simpler when behavior diverges.
+      </div>
+
+      <h2 id="service-layer">Service layer patterns</h2>
+      <p>Availability translation is not a single batch job. Implement it as a service layer with three capabilities:</p>
+      <ul>
+        <li><strong>Request adjudication:</strong> Evaluate the incoming shopping request, fetch relevant control states, and expose the eligible product sets.</li>
+        <li><strong>Rule rendering:</strong> Translate control states into offer-friendly artifacts (availability tiers, price guardrails, disallow lists) that the offer engine consumes synchronously.</li>
+        <li><strong>State publication:</strong> Push incremental changes (e.g., closing an O&amp;D, updating a corporate fence) to event streams so channels and caches stay aligned.</li>
+      </ul>
+      <p>Align interfaces with the formats your offer management uses today: JSON contracts with explicit enums instead of encoded EDIFACT segments.</p>
+
+      <h2 id="data-pipeline">Data we need to translate</h2>
+      <p>Inventory teams usually maintain dozens of data feeds. Prioritize the ones that change the sell/no-sell decision:</p>
+      <table class="metric-table">
+        <thead>
+          <tr>
+            <th>Control input</th>
+            <th>Source system</th>
+            <th>Translation output</th>
+            <th>Dynamic offer impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bid price curves</td>
+            <td>Revenue management optimizer</td>
+            <td>Sell bands + minimum price guardrails</td>
+            <td>Prevents pricing engine from undercutting yield management</td>
+          </tr>
+          <tr>
+            <td>Married segment logic</td>
+            <td>Inventory host / availability processor</td>
+            <td>Leg pairing matrix + prohibitions</td>
+            <td>Stops standalone legs from leaking when a connection is controlled</td>
+          </tr>
+          <tr>
+            <td>Corporate deal fences</td>
+            <td>Contract management</td>
+            <td>Eligibility flags per traveler profile</td>
+            <td>Supports personalized bundles without exposing corporate content to public channels</td>
+          </tr>
+          <tr>
+            <td>Operational disruptions</td>
+            <td>Ops control center</td>
+            <td>Capacity overrides + forced closes</td>
+            <td>Ensures dynamic offers respect disruption handling priorities</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="telemetry">Telemetry and guardrails</h2>
+      <p>Translation work is invisible unless we measure it. Instrument three feedback loops:</p>
+      <ul>
+        <li><strong>Parity monitors:</strong> Compare legacy availability responses with translated offerability for the same request to catch drift.</li>
+        <li><strong>Suppression analysis:</strong> Track why an offer was blocked (e.g., bid price threshold, married segment, personalization fence) and expose this in dashboards.</li>
+        <li><strong>Revenue impact:</strong> Tie translation changes to conversion, take-rate, and yield metrics. If a new rule causes a revenue drop, teams should see it within hours.</li>
+      </ul>
+      <p>Feed those signals back into both revenue management and offer design forums so translation stays aligned with strategy.</p>
+
+      <h2 id="rollout">Rollout playbook</h2>
+      <p>Avoid the temptation to “flip the switch.” We use a four-step rollout for airlines modernizing availability:</p>
+      <ol>
+        <li><strong>Shadow mode:</strong> Run translation in parallel, log differences, and validate with analysts before impacting customers.</li>
+        <li><strong>Channel pilots:</strong> Enable a controlled channel (e.g., employee sales or a friendly OTA) with guardrails on volume.</li>
+        <li><strong>Hybrid control:</strong> Allow dynamic offers to override legacy availability only when telemetry confidence is high.</li>
+        <li><strong>Full transition:</strong> Move ownership of availability rules into the offer platform, keeping the translation service as the canonical interface.</li>
+      </ol>
+      <p>Throughout the rollout, keep revenue management accountable for the control logic while empowering offer teams to use it creatively. Translation is successful when both groups can diagnose outcomes without reverse engineering EDIFACT strings.</p>
+
+      <p>Dynamic offers thrive on flexibility, but flexibility without discipline collapses quickly. Treat availability translation as a core capability—built with contracts, telemetry, and a phased rollout—and you keep the best of legacy control while unlocking modern retailing speed.</p>
+
+      <nav class="level">
+        <div class="level-left">
+          <a class="button is-link is-light" href="/blog/2024-07-08-direct-connect-vs-aggregators-latency-and-control.html">← Previous</a>
+        </div>
+        <div class="level-right">
+          <a class="button is-link" href="/blog/2024-07-30-order-management-life-after-pnr-tickets-and-emds.html">Next →</a>
+        </div>
+      </nav>
+    </div>
+  </section>
+  </main>
+  <footer class="site-footer"></footer>
+  <script src="/assets/site.js" defer></script>
+</body>
+</html>
