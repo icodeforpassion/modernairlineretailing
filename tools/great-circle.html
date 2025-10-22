@@ -1,5 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Great Circle Distance Calculator | Modern Airline Retailing Tools</title>
+  <meta name="description" content="Compute great-circle distances between airports, explore bearings and midpoint, and share routes instantly."/>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+  <style>
+    :root {
+      --clr-bg: #0d1b2a;
+      --clr-bg-alt: #132235;
+      --clr-surface: rgba(255,255,255,0.04);
+      --clr-border: rgba(255,255,255,0.12);
+      --clr-accent: #4fb1f5;
+      --clr-accent-strong: #3db7ff;
+      --clr-text: #e8f0f7;
+      --clr-text-dim: #9fb3c5;
+      --radius: 18px;
+      --shadow: 0 14px 38px -18px rgba(0,0,0,0.65);
+      --transition: .24s cubic-bezier(.4,.2,.2,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(79,177,245,0.18), transparent 55%),
+                  radial-gradient(circle at 80% 0%, rgba(50,152,220,0.14), transparent 62%),
+                  linear-gradient(to bottom, var(--clr-bg), #0a1522 65%, #091220);
+      color: var(--clr-text);
+      min-height: 100vh;
+    }
+
+    .tool-main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 6.5rem 1.5rem 4.5rem;
+    }
+
+    .tool-hero {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto 3rem;
+    }
+
+    .tool-hero h1 {
+      font-size: clamp(2.15rem, 4vw, 3rem);
+      margin: 0 0 1rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      background: linear-gradient(95deg,#ffffff,#b3dcff 45%,#4fb1f5 85%);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .tool-hero p {
+      margin: 0;
+      color: var(--clr-text-dim);
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+
+    .card {
+      background: linear-gradient(155deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius);
+      padding: 1.8rem 1.6rem 2.1rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .field {
+      margin-bottom: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .field label {
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-size: .68rem;
+      color: var(--clr-text-dim);
+      font-weight: 600;
+    }
+
+    .field input[type="text"] {
+      padding: .9rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: var(--clr-text);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .field input[type="text"]:focus {
+      outline: none;
+      border-color: var(--clr-accent);
+      box-shadow: 0 0 0 3px rgba(79,177,245,0.4);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .8rem;
+      align-items: center;
+      margin-top: .4rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      border: none;
+      border-radius: 999px;
+      padding: .75rem 1.3rem;
+      font-weight: 600;
+      font-size: .92rem;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-strong));
+      color: #051120;
+      box-shadow: 0 12px 26px -12px rgba(79,177,245,0.7);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -14px rgba(79,177,245,0.8);
+      outline: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--clr-text);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus-visible {
+      background: rgba(255,255,255,0.14);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .btn-secondary.copied {
+      background: linear-gradient(135deg, #3bb273, #66d69b);
+      color: #04101f;
+    }
+
+    .status {
+      margin-top: 1rem;
+      font-size: .7rem;
+      letter-spacing: .55px;
+      text-transform: uppercase;
+      color: var(--clr-text-dim);
+      min-height: 1rem;
+    }
+
+    .status.error { color: #ff9a9a; }
+    .status.success { color: #8ce0a3; }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+    }
+
+    .metric {
+      background: rgba(13,27,42,0.65);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+
+    .metric h3 {
+      margin: 0;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .55px;
+      color: var(--clr-text-dim);
+    }
+
+    .metric-value {
+      font-size: 1.35rem;
+      font-weight: 600;
+    }
+
+    .metric-sub {
+      margin: 0;
+      color: var(--clr-text-dim);
+      font-size: .85rem;
+    }
+
+    .pair-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      margin: 1.6rem 0 1.4rem;
+      color: var(--clr-text-dim);
+      font-size: .92rem;
+    }
+
+    .pair-details h4 {
+      margin: 0 0 .4rem;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--clr-text);
+    }
+
+    .map-wrapper {
+      margin-top: 1.2rem;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      min-height: 240px;
+      background: rgba(0,0,0,0.35);
+    }
+
+    .map-wrapper img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 1024px) {
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .tool-main {
+        padding-top: 5.5rem;
+      }
+
+      .card {
+        padding: 1.4rem 1.1rem 1.7rem;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  </style>
   <link rel="stylesheet" href="/assets/site.css"/>
+</head>
+<body>
   <header class="site-header"></header>
   <div class="page-content">
+    <main class="tool-main">
+      <section class="tool-hero">
+        <h1>Great Circle Distance Calculator</h1>
+        <p>Pick any two airports worldwide to compute the great-circle distance, bearings and midpoint. Results use the WGS84 Earth radius and update instantly for quick network planning and benchmarking.</p>
+      </section>
+
+      <section class="tool-grid">
+        <div class="card input-card">
+          <form id="gcForm" novalidate autocomplete="off">
+            <div class="field">
+              <label for="origin">Origin airport</label>
+              <input id="origin" name="origin" type="text" list="airportOptions" placeholder="Try: LHR or London Heathrow" autocomplete="off" required>
+            </div>
+            <div class="field">
+              <label for="destination">Destination airport</label>
+              <input id="destination" name="destination" type="text" list="airportOptions" placeholder="Try: SIN or Singapore" autocomplete="off" required>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn-secondary" id="swapBtn">Swap</button>
+              <button type="submit" class="btn-primary">Compute distance</button>
+              <button type="button" class="btn-secondary" id="shareBtn">Share</button>
+            </div>
+            <p class="status" id="status">Loading airport data…</p>
+          </form>
+        </div>
+
+        <div class="card result-card">
+          <div class="metric-grid">
+            <div class="metric">
+              <h3>Great-circle distance</h3>
+              <div class="metric-value" id="distanceKm">—</div>
+              <p class="metric-sub" id="distanceAlt">Miles • Nautical miles</p>
+            </div>
+            <div class="metric">
+              <h3>Estimated flight time @ 800 km/h</h3>
+              <div class="metric-value" id="flightTime">—</div>
+            </div>
+            <div class="metric">
+              <h3>Initial / final bearing</h3>
+              <div class="metric-value" id="bearing">—</div>
+            </div>
+            <div class="metric">
+              <h3>Midpoint</h3>
+              <div class="metric-value" id="midpoint">—</div>
+            </div>
+          </div>
+
+          <div class="pair-details">
+            <div>
+              <h4 id="originHeading">Origin —</h4>
+              <p id="originDetails">Select an airport to see details.</p>
+            </div>
+            <div>
+              <h4 id="destinationHeading">Destination —</h4>
+              <p id="destinationDetails">Select an airport to see details.</p>
+            </div>
+          </div>
+
+          <div class="map-wrapper">
+            <img id="routeMap" alt="Route preview map" loading="lazy">
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <datalist id="airportOptions"></datalist>
+  </div>
   <footer class="site-footer"></footer>
   <script src="/assets/site.js" defer></script>
+  <script>
+    (function(){
+      'use strict';
+
+      const DATA_URL = '/tools/airports.json';
+      const form = document.getElementById('gcForm');
+      const originInput = document.getElementById('origin');
+      const destinationInput = document.getElementById('destination');
+      const status = document.getElementById('status');
+      const distanceKmEl = document.getElementById('distanceKm');
+      const distanceAltEl = document.getElementById('distanceAlt');
+      const flightTimeEl = document.getElementById('flightTime');
+      const bearingEl = document.getElementById('bearing');
+      const midpointEl = document.getElementById('midpoint');
+      const originHeading = document.getElementById('originHeading');
+      const originDetails = document.getElementById('originDetails');
+      const destinationHeading = document.getElementById('destinationHeading');
+      const destinationDetails = document.getElementById('destinationDetails');
+      const mapImage = document.getElementById('routeMap');
+      const datalist = document.getElementById('airportOptions');
+      const swapBtn = document.getElementById('swapBtn');
+      const shareBtn = document.getElementById('shareBtn');
+
+      let airports = [];
+      let normalized = [];
+      const airportByCode = new Map();
+      let loadingPromise = null;
+
+      function normalize(value) {
+        return (value || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toUpperCase()
+          .trim();
+      }
+
+      function scoreAirport(entry, query) {
+        if (!query) return 0;
+        let score = 0;
+        if (entry.code === query) return 250;
+        if (entry.code.startsWith(query)) score = Math.max(score, 210);
+        if (entry.city === query || entry.name === query) score = Math.max(score, 190);
+        if (entry.city.startsWith(query) || entry.name.startsWith(query)) score = Math.max(score, 170);
+        if (entry.city.includes(query) || entry.name.includes(query)) score = Math.max(score, 150);
+        if (entry.code.includes(query)) score = Math.max(score, 140);
+        return score;
+      }
+
+      async function loadAirports() {
+        if (loadingPromise) return loadingPromise;
+        loadingPromise = (async () => {
+          try {
+            const response = await fetch(DATA_URL, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            const list = Array.isArray(data)
+              ? data
+              : Object.keys(data).map(code => ({ code, ...(data[code] || {}) }));
+            airports = list.filter(item => item && item.code);
+            normalized = airports.map(item => ({
+              airport: item,
+              code: normalize(item.code),
+              city: normalize(item.city),
+              name: normalize(item.name)
+            }));
+            airportByCode.clear();
+            airports.forEach(item => {
+              airportByCode.set(item.code.toUpperCase(), item);
+            });
+            populateDatalist(airports);
+            setStatus('Data loaded. Choose two airports.', 'success');
+          } catch (error) {
+            setStatus(`Failed to load airport data: ${error.message}`, 'error');
+            throw error;
+          }
+          return airports;
+        })();
+        return loadingPromise;
+      }
+
+      function populateDatalist(list) {
+        datalist.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        list.forEach(item => {
+          const parts = [item.name || '', item.city || '', item.country || '']
+            .filter(Boolean)
+            .join(', ');
+          const label = parts ? `${item.code.toUpperCase()} — ${parts}` : item.code.toUpperCase();
+          const option = document.createElement('option');
+          option.value = label;
+          fragment.appendChild(option);
+        });
+        datalist.appendChild(fragment);
+      }
+
+      function setStatus(message, variant) {
+        status.textContent = message;
+        status.classList.remove('error', 'success');
+        if (variant) status.classList.add(variant);
+      }
+
+      function extractCode(value) {
+        const trimmed = (value || '').trim().toUpperCase();
+        if (!trimmed) return null;
+        const direct = trimmed.match(/^([A-Z0-9]{3})/);
+        if (direct) return direct[1];
+        const inside = trimmed.match(/\(([A-Z0-9]{3})\)/);
+        if (inside) return inside[1];
+        return null;
+      }
+
+      function resolveAirport(value) {
+        const trimmed = (value || '').trim();
+        if (!trimmed) return null;
+        const code = extractCode(trimmed);
+        if (code && airportByCode.has(code)) {
+          return airportByCode.get(code);
+        }
+        const query = normalize(trimmed);
+        if (!query) return null;
+        const scored = normalized
+          .map(entry => ({ ...entry, score: scoreAirport(entry, query) }))
+          .filter(entry => entry.score > 0)
+          .sort((a, b) => b.score - a.score);
+        return scored.length ? scored[0].airport : null;
+      }
+
+      function toRadians(degrees) {
+        return degrees * Math.PI / 180;
+      }
+
+      function toDegrees(radians) {
+        return radians * 180 / Math.PI;
+      }
+
+      function haversineDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371.0088; // mean Earth radius in km
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const phi1 = toRadians(lat1);
+        const phi2 = toRadians(lat2);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(phi1) * Math.cos(phi2) * Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+
+      function calculateBearing(lat1, lon1, lat2, lon2) {
+        const phi1 = toRadians(lat1);
+        const phi2 = toRadians(lat2);
+        const dLon = toRadians(lon2 - lon1);
+        const y = Math.sin(dLon) * Math.cos(phi2);
+        const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLon);
+        return (toDegrees(Math.atan2(y, x)) + 360) % 360;
+      }
+
+      function calculateMidpoint(lat1, lon1, lat2, lon2) {
+        const phi1 = toRadians(lat1);
+        const phi2 = toRadians(lat2);
+        const lambda1 = toRadians(lon1);
+        const lambda2 = toRadians(lon2);
+        const dLon = lambda2 - lambda1;
+
+        const Bx = Math.cos(phi2) * Math.cos(dLon);
+        const By = Math.cos(phi2) * Math.sin(dLon);
+        const phi3 = Math.atan2(
+          Math.sin(phi1) + Math.sin(phi2),
+          Math.sqrt((Math.cos(phi1) + Bx) ** 2 + By ** 2)
+        );
+        const lambda3 = lambda1 + Math.atan2(By, Math.cos(phi1) + Bx);
+        return {
+          lat: toDegrees(phi3),
+          lon: ((toDegrees(lambda3) + 540) % 360) - 180
+        };
+      }
+
+      function formatCoordinate(value, positive, negative) {
+        const abs = Math.abs(value);
+        const direction = value >= 0 ? positive : negative;
+        return `${abs.toFixed(2)}° ${direction}`;
+      }
+
+      function formatAirportDetails(airport) {
+        const parts = [airport.name, airport.city, airport.country].filter(Boolean).join(', ');
+        if (typeof airport.lat !== 'number' || typeof airport.lon !== 'number') {
+          return `${parts || '—'}\nCoordinates unavailable.`;
+        }
+        const lat = formatCoordinate(airport.lat, 'N', 'S');
+        const lon = formatCoordinate(airport.lon, 'E', 'W');
+        return `${parts || '—'}\n${lat}, ${lon}`;
+      }
+
+      function updateDetails(airport, headingEl, detailsEl, label) {
+        if (!airport) {
+          headingEl.textContent = `${label} —`;
+          detailsEl.textContent = 'Select an airport to see details.';
+          return;
+        }
+        headingEl.textContent = `${label} ${airport.code}`;
+        detailsEl.textContent = formatAirportDetails(airport);
+      }
+
+      function updateMap(origin, destination) {
+        if (!origin || !destination || typeof origin.lat !== 'number' || typeof origin.lon !== 'number' || typeof destination.lat !== 'number' || typeof destination.lon !== 'number') {
+          mapImage.removeAttribute('src');
+          mapImage.alt = 'Map preview unavailable.';
+          return;
+        }
+        const lat1 = origin.lat.toFixed(4);
+        const lon1 = origin.lon.toFixed(4);
+        const lat2 = destination.lat.toFixed(4);
+        const lon2 = destination.lon.toFixed(4);
+        const path = `&path=weight:3|color:0x4fb1f5|${lat1},${lon1}|${lat2},${lon2}`;
+        const markers = `&markers=${lat1},${lon1},lightblue1|${lat2},${lon2},lightblue1`;
+        const url = `https://staticmap.openstreetmap.de/staticmap.php?size=800x420${markers}${path}`;
+        mapImage.src = url;
+        mapImage.alt = `Route from ${origin.code} to ${destination.code}`;
+      }
+
+      function updateUrl(origin, destination) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('origin', origin.code);
+        url.searchParams.set('dest', destination.code);
+        window.history.replaceState({}, '', url.toString());
+      }
+
+      function handleCompute(event) {
+        event.preventDefault();
+        loadAirports().then(() => {
+          const origin = resolveAirport(originInput.value);
+          const destination = resolveAirport(destinationInput.value);
+          if (!origin) {
+            setStatus('Could not resolve the origin airport.', 'error');
+            return;
+          }
+          if (!destination) {
+            setStatus('Could not resolve the destination airport.', 'error');
+            return;
+          }
+          if (origin.code === destination.code) {
+            setStatus('Choose two different airports.', 'error');
+            return;
+          }
+
+          const distanceKm = haversineDistance(origin.lat, origin.lon, destination.lat, destination.lon);
+          const distanceMiles = distanceKm * 0.621371;
+          const distanceNm = distanceKm * 0.539957;
+          const flightHours = distanceKm / 800;
+          const initialBearing = calculateBearing(origin.lat, origin.lon, destination.lat, destination.lon);
+          const finalBearing = (calculateBearing(destination.lat, destination.lon, origin.lat, origin.lon) + 180) % 360;
+          const midpoint = calculateMidpoint(origin.lat, origin.lon, destination.lat, destination.lon);
+
+          distanceKmEl.textContent = `${distanceKm.toFixed(1)} km`;
+          distanceAltEl.textContent = `${distanceMiles.toFixed(1)} mi • ${distanceNm.toFixed(1)} nm`;
+
+          if (Number.isFinite(flightHours) && flightHours > 0) {
+            const hours = Math.floor(flightHours);
+            const minutes = Math.round((flightHours - hours) * 60);
+            flightTimeEl.textContent = `${hours}h ${minutes.toString().padStart(2, '0')}m`;
+          } else {
+            flightTimeEl.textContent = '—';
+          }
+
+          bearingEl.textContent = `${initialBearing.toFixed(1)}° / ${finalBearing.toFixed(1)}°`;
+          midpointEl.textContent = `${formatCoordinate(midpoint.lat, 'N', 'S')}, ${formatCoordinate(midpoint.lon, 'E', 'W')}`;
+
+          updateDetails(origin, originHeading, originDetails, 'Origin');
+          updateDetails(destination, destinationHeading, destinationDetails, 'Destination');
+          updateMap(origin, destination);
+          updateUrl(origin, destination);
+          setStatus('Great-circle distance calculated.', 'success');
+        }).catch(() => {
+          setStatus('Unable to compute right now. Try again shortly.', 'error');
+        });
+      }
+
+      function applyFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const originCode = params.get('origin');
+        const destCode = params.get('dest');
+        if (originCode) originInput.value = originCode;
+        if (destCode) destinationInput.value = destCode;
+        if (originCode || destCode) {
+          loadAirports().then(() => {
+            const origin = resolveAirport(originInput.value);
+            const destination = resolveAirport(destinationInput.value);
+            if (origin) originInput.value = `${origin.code} — ${(origin.city || origin.name || '')}`.trim();
+            if (destination) destinationInput.value = `${destination.code} — ${(destination.city || destination.name || '')}`.trim();
+            if (origin && destination) {
+              handleCompute({ preventDefault() {} });
+            }
+          }).catch(() => {});
+        }
+      }
+
+      form.addEventListener('submit', handleCompute);
+
+      swapBtn.addEventListener('click', () => {
+        const currentOrigin = originInput.value;
+        originInput.value = destinationInput.value;
+        destinationInput.value = currentOrigin;
+        setStatus('Airports swapped. Compute to refresh results.');
+      });
+
+      shareBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          shareBtn.classList.add('copied');
+          shareBtn.textContent = 'Copied!';
+          setTimeout(() => {
+            shareBtn.classList.remove('copied');
+            shareBtn.textContent = 'Share';
+          }, 1400);
+        }).catch(() => {
+          shareBtn.textContent = 'Copy failed';
+          setTimeout(() => {
+            shareBtn.classList.remove('copied');
+            shareBtn.textContent = 'Share';
+          }, 1400);
+        });
+      });
+
+      loadAirports().catch(() => {});
+      applyFromUrl();
+    })();
+  </script>
+</body>
+</html>
