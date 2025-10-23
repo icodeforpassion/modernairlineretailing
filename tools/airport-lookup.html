@@ -513,16 +513,13 @@
 
   <footer class="site-footer"></footer>
   <script src="/assets/site.js" defer></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-1A+0+ZKU6Nwf35p3xNmPR9U1FVLtZLgm52r3yAqoMWU=" crossorigin=""></script>
   <script>
     (function(){
       'use strict';
 
       const DATA_URL = '/tools/airports.json';
       const MAX_RESULTS = 20;
-      const MAP_DEFAULT_VIEW = [20, 0];
-      const MAP_DEFAULT_ZOOM = 2;
-      const MAP_FOCUS_ZOOM = 7;
+      const MAP_PADDING = 0.25;
 
       const input = document.getElementById('lookupInput');
       const form = document.getElementById('lookupForm');
@@ -533,9 +530,8 @@
       const btnSpinnerSlot = searchBtn ? searchBtn.querySelector('.btn-spinner-slot') : null;
       const clearBtn = document.getElementById('clearBtn');
       const randomBtn = document.getElementById('randomBtn');
-      const mapCanvas = document.getElementById('lookupMap');
+      const mapFrame = document.getElementById('mapFrame');
       const mapInfo = document.getElementById('mapInfo');
-      const urlParams = new URLSearchParams(window.location.search);
 
       let airports = [];
       let normalized = [];
@@ -543,8 +539,6 @@
       let loadingPromise = null;
       let activeIndex = -1;
       let debounceHandle = null;
-      let mapInstance = null;
-      let mapMarker = null;
 
       function normalize(str) {
         return (str || '')
@@ -581,34 +575,6 @@
         if (!statusEl) return;
         statusEl.textContent = message;
         statusEl.classList.toggle('error', Boolean(isError));
-      }
-
-      function initializeMap() {
-        if (!mapCanvas || !window.L) return;
-        mapInstance = L.map(mapCanvas, {
-          worldCopyJump: true,
-          scrollWheelZoom: false,
-          zoomControl: false
-        });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapInstance);
-        mapInstance.setView(MAP_DEFAULT_VIEW, MAP_DEFAULT_ZOOM);
-        requestAnimationFrame(() => {
-          mapInstance.invalidateSize();
-        });
-      }
-
-      function resetMap(message = 'Pick a result to preview it on the map.') {
-        if (mapInfo) {
-          mapInfo.textContent = message;
-        }
-        if (!mapInstance) return;
-        if (mapMarker) {
-          mapInstance.removeLayer(mapMarker);
-          mapMarker = null;
-        }
-        mapInstance.setView(MAP_DEFAULT_VIEW, MAP_DEFAULT_ZOOM);
       }
 
       function setLoading(loading) {
@@ -764,7 +730,6 @@
         focusMap(airport);
         setStatus(`${airport.name || airport.code} (${airport.code}) selected.`);
         copyCode(airport.code);
-        updateQueryParam(airport.code);
       }
 
       function copyCode(code) {
@@ -779,33 +744,23 @@
         navigator.clipboard.writeText(code).catch(() => {});
       }
 
-      function updateQueryParam(value) {
-        const url = new URL(window.location.href);
-        if (value) {
-          url.searchParams.set('q', value);
-        } else {
-          url.searchParams.delete('q');
-        }
-        window.history.replaceState({}, '', url.toString());
-      }
-
       function focusMap(airport) {
-        if (!mapInstance || !mapInfo) return;
+        if (!mapFrame || !mapInfo) return;
         if (typeof airport.lat !== 'number' || typeof airport.lon !== 'number') {
-          resetMap('No coordinates available');
+          mapFrame.removeAttribute('src');
+          mapInfo.textContent = 'No coordinates available';
           return;
         }
         const { lat, lon } = airport;
-        if (mapMarker) {
-          mapInstance.removeLayer(mapMarker);
-        }
-        mapMarker = L.marker([lat, lon], {
-          title: `${airport.code} ${airport.name || ''}`.trim()
-        });
-        mapMarker.addTo(mapInstance);
-        mapInstance.flyTo([lat, lon], MAP_FOCUS_ZOOM, {
-          duration: 0.6
-        });
+        const bbox = [
+          lon - MAP_PADDING,
+          lat - MAP_PADDING,
+          lon + MAP_PADDING,
+          lat + MAP_PADDING
+        ].join(',');
+        const marker = encodeURIComponent(`${lat},${lon}`);
+        const url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${marker}`;
+        mapFrame.src = url;
         mapInfo.textContent = `${airport.code} • ${airport.name || ''}`.trim();
       }
 
@@ -819,7 +774,7 @@
           }
           input.setAttribute('aria-expanded', 'false');
           setStatus('Type an airport code, city or name to search.');
-          return currentResults;
+          return;
         }
         const scored = normalized
           .map(entry => ({ ...entry, score: scoreAirport(entry, query) }))
@@ -836,7 +791,6 @@
         } else {
           setStatus('No matches found.', true);
         }
-        return currentResults;
       }
 
       function handleArrowNavigation(event) {
@@ -867,9 +821,9 @@
         }
         input.setAttribute('aria-expanded', 'false');
         setStatus('Cleared. Type to search again.');
-        resetMap();
+        if (mapFrame) mapFrame.removeAttribute('src');
+        if (mapInfo) mapInfo.textContent = 'Pick a result to preview it on the map.';
         input.focus();
-        updateQueryParam('');
       }
 
       async function handleRandom() {
@@ -881,20 +835,6 @@
         if (currentResults.length) {
           selectResult(0);
         }
-      }
-
-      function applyInitialQuery() {
-        if (!input) return;
-        const initialQuery = urlParams.get('q');
-        if (!initialQuery) return;
-        input.value = initialQuery;
-        const results = runSearch();
-        if (!results.length) {
-          setStatus(`No matches found for "${initialQuery.toUpperCase()}".`, true);
-          return;
-        }
-        const exactIndex = results.findIndex(entry => entry.airport.code.toUpperCase() === initialQuery.toUpperCase());
-        selectResult(exactIndex >= 0 ? exactIndex : 0);
       }
 
       if (resultsList) {
@@ -945,14 +885,7 @@
         randomBtn.addEventListener('click', handleRandom);
       }
 
-      initializeMap();
-      resetMap();
-
-      loadAirports()
-        .then(() => {
-          applyInitialQuery();
-        })
-        .catch(() => {});
+      loadAirports().catch(() => {});
     })();
   </script>
 </body>

@@ -6,7 +6,6 @@
   <title>Great Circle Distance Calculator | Modern Airline Retailing Tools</title>
   <meta name="description" content="Compute great-circle distances between airports, explore bearings and midpoint, and share routes instantly."/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4dMlyFCAsZ3qxEtp2trLI6Rz8pHe9mF+AuA2u9uB+0=" crossorigin=""/>
   <style>
     :root {
       --clr-bg: #0d1b2a;
@@ -235,12 +234,12 @@
       border: 1px solid rgba(255,255,255,0.12);
       min-height: 240px;
       background: rgba(0,0,0,0.35);
-      position: relative;
     }
 
-    .map-wrapper .map-canvas {
-      inset: 0;
-      position: absolute;
+    .map-wrapper img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     @media (max-width: 1024px) {
@@ -334,7 +333,7 @@
           </div>
 
           <div class="map-wrapper">
-            <div id="routeMap" class="map-canvas" role="presentation" aria-hidden="true"></div>
+            <img id="routeMap" alt="Route preview map" loading="lazy">
           </div>
         </div>
       </section>
@@ -344,16 +343,11 @@
   </div>
   <footer class="site-footer"></footer>
   <script src="/assets/site.js" defer></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-1A+0+ZKU6Nwf35p3xNmPR9U1FVLtZLgm52r3yAqoMWU=" crossorigin=""></script>
   <script>
     (function(){
       'use strict';
 
       const DATA_URL = '/tools/airports.json';
-      const MAP_DEFAULT_VIEW = [20, 0];
-      const MAP_DEFAULT_ZOOM = 2;
-      const MAP_MAX_ZOOM = 6;
-      const MAP_PADDING_RATIO = 0.25;
       const form = document.getElementById('gcForm');
       const originInput = document.getElementById('origin');
       const destinationInput = document.getElementById('destination');
@@ -367,20 +361,15 @@
       const originDetails = document.getElementById('originDetails');
       const destinationHeading = document.getElementById('destinationHeading');
       const destinationDetails = document.getElementById('destinationDetails');
-      const mapCanvas = document.getElementById('routeMap');
+      const mapImage = document.getElementById('routeMap');
       const datalist = document.getElementById('airportOptions');
       const swapBtn = document.getElementById('swapBtn');
       const shareBtn = document.getElementById('shareBtn');
-
-      const urlParams = new URLSearchParams(window.location.search);
 
       let airports = [];
       let normalized = [];
       const airportByCode = new Map();
       let loadingPromise = null;
-      let mapInstance = null;
-      let markersLayer = null;
-      let routeLayer = null;
 
       function normalize(value) {
         return (value || '')
@@ -450,35 +439,9 @@
       }
 
       function setStatus(message, variant) {
-        if (!status) return;
         status.textContent = message;
         status.classList.remove('error', 'success');
         if (variant) status.classList.add(variant);
-      }
-
-      function initializeMap() {
-        if (!mapCanvas || !window.L) return;
-        mapInstance = L.map(mapCanvas, {
-          worldCopyJump: true,
-          scrollWheelZoom: false
-        });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapInstance);
-        markersLayer = L.layerGroup().addTo(mapInstance);
-        routeLayer = L.layerGroup().addTo(mapInstance);
-        mapInstance.setView(MAP_DEFAULT_VIEW, MAP_DEFAULT_ZOOM);
-        requestAnimationFrame(() => {
-          mapInstance.invalidateSize();
-        });
-      }
-
-      function clearMap() {
-        if (markersLayer) markersLayer.clearLayers();
-        if (routeLayer) routeLayer.clearLayers();
-        if (mapInstance) {
-          mapInstance.setView(MAP_DEFAULT_VIEW, MAP_DEFAULT_ZOOM);
-        }
       }
 
       function extractCode(value) {
@@ -582,39 +545,20 @@
       }
 
       function updateMap(origin, destination) {
-        if (!mapInstance) return;
-        if (markersLayer) markersLayer.clearLayers();
-        if (routeLayer) routeLayer.clearLayers();
         if (!origin || !destination || typeof origin.lat !== 'number' || typeof origin.lon !== 'number' || typeof destination.lat !== 'number' || typeof destination.lon !== 'number') {
-          clearMap();
+          mapImage.removeAttribute('src');
+          mapImage.alt = 'Map preview unavailable.';
           return;
         }
-        const originLatLng = L.latLng(origin.lat, origin.lon);
-        const destinationLatLng = L.latLng(destination.lat, destination.lon);
-
-        markersLayer.addLayer(L.marker(originLatLng, {
-          title: `${origin.code} ${origin.name || ''}`.trim()
-        }));
-        markersLayer.addLayer(L.marker(destinationLatLng, {
-          title: `${destination.code} ${destination.name || ''}`.trim()
-        }));
-
-        routeLayer.addLayer(L.polyline([originLatLng, destinationLatLng], {
-          color: '#4fb1f5',
-          weight: 3,
-          opacity: 0.85
-        }));
-
-        const bounds = L.latLngBounds([originLatLng, destinationLatLng]);
-        if (!bounds.isValid()) {
-          mapInstance.setView(originLatLng, MAP_MAX_ZOOM);
-          return;
-        }
-        const padded = bounds.pad(MAP_PADDING_RATIO);
-        mapInstance.fitBounds(padded, {
-          maxZoom: MAP_MAX_ZOOM,
-          padding: [28, 28]
-        });
+        const lat1 = origin.lat.toFixed(4);
+        const lon1 = origin.lon.toFixed(4);
+        const lat2 = destination.lat.toFixed(4);
+        const lon2 = destination.lon.toFixed(4);
+        const path = `&path=weight:3|color:0x4fb1f5|${lat1},${lon1}|${lat2},${lon2}`;
+        const markers = `&markers=${lat1},${lon1},lightblue1|${lat2},${lon2},lightblue1`;
+        const url = `https://staticmap.openstreetmap.de/staticmap.php?size=800x420${markers}${path}`;
+        mapImage.src = url;
+        mapImage.alt = `Route from ${origin.code} to ${destination.code}`;
       }
 
       function updateUrl(origin, destination) {
@@ -624,79 +568,73 @@
         window.history.replaceState({}, '', url.toString());
       }
 
-      function computeGreatCircle() {
-        return loadAirports()
-          .then(() => {
-            const origin = resolveAirport(originInput.value);
-            const destination = resolveAirport(destinationInput.value);
-            if (!origin) {
-              setStatus('Could not resolve the origin airport.', 'error');
-              clearMap();
-              return null;
-            }
-            if (!destination) {
-              setStatus('Could not resolve the destination airport.', 'error');
-              clearMap();
-              return null;
-            }
-            if (origin.code === destination.code) {
-              setStatus('Choose two different airports.', 'error');
-              clearMap();
-              return null;
-            }
-
-            const distanceKm = haversineDistance(origin.lat, origin.lon, destination.lat, destination.lon);
-            const distanceMiles = distanceKm * 0.621371;
-            const distanceNm = distanceKm * 0.539957;
-            const flightHours = distanceKm / 800;
-            const initialBearing = calculateBearing(origin.lat, origin.lon, destination.lat, destination.lon);
-            const finalBearing = (calculateBearing(destination.lat, destination.lon, origin.lat, origin.lon) + 180) % 360;
-            const midpoint = calculateMidpoint(origin.lat, origin.lon, destination.lat, destination.lon);
-
-            distanceKmEl.textContent = `${distanceKm.toFixed(1)} km`;
-            distanceAltEl.textContent = `${distanceMiles.toFixed(1)} mi • ${distanceNm.toFixed(1)} nm`;
-
-            if (Number.isFinite(flightHours) && flightHours > 0) {
-              const hours = Math.floor(flightHours);
-              const minutes = Math.round((flightHours - hours) * 60);
-              flightTimeEl.textContent = `${hours}h ${minutes.toString().padStart(2, '0')}m`;
-            } else {
-              flightTimeEl.textContent = '—';
-            }
-
-            bearingEl.textContent = `${initialBearing.toFixed(1)}° / ${finalBearing.toFixed(1)}°`;
-            midpointEl.textContent = `${formatCoordinate(midpoint.lat, 'N', 'S')}, ${formatCoordinate(midpoint.lon, 'E', 'W')}`;
-
-            updateDetails(origin, originHeading, originDetails, 'Origin');
-            updateDetails(destination, destinationHeading, destinationDetails, 'Destination');
-            updateMap(origin, destination);
-            updateUrl(origin, destination);
-            setStatus('Great-circle distance calculated.', 'success');
-            return { origin, destination };
-          })
-          .catch(() => {
-            setStatus('Unable to compute right now. Try again shortly.', 'error');
-            return null;
-          });
-      }
-
       function handleCompute(event) {
         event.preventDefault();
-        computeGreatCircle();
+        loadAirports().then(() => {
+          const origin = resolveAirport(originInput.value);
+          const destination = resolveAirport(destinationInput.value);
+          if (!origin) {
+            setStatus('Could not resolve the origin airport.', 'error');
+            return;
+          }
+          if (!destination) {
+            setStatus('Could not resolve the destination airport.', 'error');
+            return;
+          }
+          if (origin.code === destination.code) {
+            setStatus('Choose two different airports.', 'error');
+            return;
+          }
+
+          const distanceKm = haversineDistance(origin.lat, origin.lon, destination.lat, destination.lon);
+          const distanceMiles = distanceKm * 0.621371;
+          const distanceNm = distanceKm * 0.539957;
+          const flightHours = distanceKm / 800;
+          const initialBearing = calculateBearing(origin.lat, origin.lon, destination.lat, destination.lon);
+          const finalBearing = (calculateBearing(destination.lat, destination.lon, origin.lat, origin.lon) + 180) % 360;
+          const midpoint = calculateMidpoint(origin.lat, origin.lon, destination.lat, destination.lon);
+
+          distanceKmEl.textContent = `${distanceKm.toFixed(1)} km`;
+          distanceAltEl.textContent = `${distanceMiles.toFixed(1)} mi • ${distanceNm.toFixed(1)} nm`;
+
+          if (Number.isFinite(flightHours) && flightHours > 0) {
+            const hours = Math.floor(flightHours);
+            const minutes = Math.round((flightHours - hours) * 60);
+            flightTimeEl.textContent = `${hours}h ${minutes.toString().padStart(2, '0')}m`;
+          } else {
+            flightTimeEl.textContent = '—';
+          }
+
+          bearingEl.textContent = `${initialBearing.toFixed(1)}° / ${finalBearing.toFixed(1)}°`;
+          midpointEl.textContent = `${formatCoordinate(midpoint.lat, 'N', 'S')}, ${formatCoordinate(midpoint.lon, 'E', 'W')}`;
+
+          updateDetails(origin, originHeading, originDetails, 'Origin');
+          updateDetails(destination, destinationHeading, destinationDetails, 'Destination');
+          updateMap(origin, destination);
+          updateUrl(origin, destination);
+          setStatus('Great-circle distance calculated.', 'success');
+        }).catch(() => {
+          setStatus('Unable to compute right now. Try again shortly.', 'error');
+        });
       }
 
       function applyFromUrl() {
-        const originCode = urlParams.get('origin');
-        const destCode = urlParams.get('dest');
-        if (!originCode && !destCode) return;
+        const params = new URLSearchParams(window.location.search);
+        const originCode = params.get('origin');
+        const destCode = params.get('dest');
         if (originCode) originInput.value = originCode;
         if (destCode) destinationInput.value = destCode;
-        computeGreatCircle().then(result => {
-          if (!result) return;
-          const { origin, destination } = result;
-          originInput.value = `${origin.code} — ${(origin.city || origin.name || '')}`.trim();
-          destinationInput.value = `${destination.code} — ${(destination.city || destination.name || '')}`.trim();
-        });
+        if (originCode || destCode) {
+          loadAirports().then(() => {
+            const origin = resolveAirport(originInput.value);
+            const destination = resolveAirport(destinationInput.value);
+            if (origin) originInput.value = `${origin.code} — ${(origin.city || origin.name || '')}`.trim();
+            if (destination) destinationInput.value = `${destination.code} — ${(destination.city || destination.name || '')}`.trim();
+            if (origin && destination) {
+              handleCompute({ preventDefault() {} });
+            }
+          }).catch(() => {});
+        }
       }
 
       form.addEventListener('submit', handleCompute);
@@ -724,9 +662,6 @@
           }, 1400);
         });
       });
-
-      initializeMap();
-      clearMap();
 
       loadAirports().catch(() => {});
       applyFromUrl();
