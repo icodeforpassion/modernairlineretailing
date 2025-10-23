@@ -551,9 +551,13 @@
         })[char]);
       }
 
+      function escapeForRegex(value) {
+        return value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      }
+
       function highlight(text, query) {
         if (!query) return escapeHTML(text);
-        const escaped = query.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+        const escaped = escapeForRegex(query);
         return escapeHTML(text).replace(new RegExp(`(${escaped})`, 'ig'), '<mark>$1</mark>');
       }
 
