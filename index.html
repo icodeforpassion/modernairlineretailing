@@ -8,6 +8,7 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <link rel="stylesheet" href="/assets/site.css"/>
   <style>
     :root {
       --clr-bg: #0d1b2a;
@@ -37,37 +38,6 @@
       background: var(--clr-bg);
       color: var(--clr-text);
       font-feature-settings: "liga" 1, "kern" 1;
-    }
-
-    .navbar.is-dark {
-      background: linear-gradient(to right, #0d1b2a, #142a40);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border-bottom: 1px solid var(--clr-border);
-    }
-    .navbar a.navbar-item,
-    .navbar a.navbar-link {
-      color: var(--clr-text-dim);
-    }
-    .navbar a.navbar-item:hover,
-    .navbar a.navbar-link:hover {
-      color: var(--clr-text);
-      background: transparent;
-    }
-    .navbar.is-dark .navbar-dropdown {
-      background: linear-gradient(to right, #142a40 80%, #0d1b2a 100%);
-      border: 1px solid var(--clr-border);
-    }
-    .navbar.is-dark .navbar-dropdown .navbar-item {
-      color: var(--clr-text-dim);
-    }
-    .navbar.is-dark .navbar-dropdown .navbar-item:hover {
-      color: var(--clr-text);
-      background: var(--clr-accent);
-    }
-    .navbar.is-dark .navbar-dropdown .navbar-item:focus-visible {
-      background: var(--clr-accent-alt);
-      color: #fff;
     }
 
     .hero.is-landing,
@@ -634,47 +604,10 @@
     })();
   </script>
 </head>
-<body>
-  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/" style="padding-right:0.4rem;">
-          <span style="display:flex;align-items:center;gap:0.6rem;">
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-              <path d="M16 2C10.48 2 6 6.48 6 12c0 5.52 10 18 10 18s10-12.48 10-18c0-5.52-4.48-10-10-10zm0 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="#3298dc" />
-            </svg>
-            <span style="font-weight:700;letter-spacing:.5px;font-size:1.1em;">Modern Airline Retailing</span>
-          </span>
-        </a>
-        <button class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </button>
-      </div>
-      <div id="navMenu" class="navbar-menu">
-        <div class="navbar-start">
-          <a class="navbar-item is-active" href="/index.html">Home</a>
-          <a class="navbar-item" href="/blog/index.html">Blog</a>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link" href="/tools/index.html">Tools</a>
-            <div class="navbar-dropdown">
-              <a class="navbar-item" href="/tools/xml-viewer.html">Online XML Viewer</a>
-              <a class="navbar-item" href="/tools/great-circle.html">Great Circle Distance</a>
-              <a class="navbar-item" href="/tools/airport-lookup.html">Airport / City Lookup</a>
-              <a class="navbar-item" href="/tools/break-even-load-factor.html">Break Even Load Factor Analyser</a>
-              <a class="navbar-item" href="/tools/fare-bucket-allocation.html">Fare Bucket Allocation</a>
-              <a class="navbar-item" href="/tools/overbooking-optimizer.html">Overbooking Optimiser</a>
-              <a class="navbar-item" href="/tools/rasm-casm-calculator.html">Rasm Casm Calculator</a>
-            </div>
-          </div>
-          <a class="navbar-item" href="/about.html">About Me</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <section class="hero is-landing">
+  <body>
+    <header class="site-header"></header>
+    <main id="main-content">
+    <section class="hero is-landing">
     <div class="hero-body">
       <div class="container has-text-centered">
         <h1 class="title is-1">Modern Airline Retailing</h1>
@@ -1995,33 +1928,15 @@
       </div>
       <div id="feed-status" style="margin-top:2rem;font-size:.85rem;color:var(--clr-text-dim);display:none;"></div>
     </div>
-  </section>
+    </section>
+    </main>
 
-  <footer class="footer">
-    <div class="content has-text-centered">
-      <p>© <span id="year"></span> Modern Airline Retailing</p>
-      <p><img src="https://visitor-badge.laobi.icu/badge?page_id=icodeforpassion.modernairlineretailing" alt="Visitor counter badge"></p>
-      <p>
-        <a href="mailto:modernairlineretailing@gmail.com">modernairlineretailing@gmail.com</a>
-        &nbsp;|&nbsp;
-        <a href="https://www.linkedin.com/in/neerej/" target="_blank" rel="noopener">LinkedIn</a>
-      </p>
-    </div>
-  </footer>
+    <footer class="site-footer"></footer>
 
-  <script>
+    <script src="/assets/site.js" defer></script>
+
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const burger = document.querySelector('.navbar-burger');
-      const menu = document.getElementById('navMenu');
-      if (burger && menu) {
-        burger.addEventListener('click', function() {
-          burger.classList.toggle('is-active');
-          menu.classList.toggle('is-active');
-          const expanded = burger.getAttribute('aria-expanded') === 'true';
-          burger.setAttribute('aria-expanded', String(!expanded));
-        });
-      }
-
       const posts = [
         {
           url: "/blog/2024-07-24-availability-translation-dynamic-offers.html",
@@ -2175,10 +2090,6 @@
         }
       });
 
-      const yearEl = document.getElementById('year');
-      if (yearEl) {
-        yearEl.textContent = new Date().getFullYear();
-      }
     });
   </script>
 </body>
