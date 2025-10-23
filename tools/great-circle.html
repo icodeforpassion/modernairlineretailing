@@ -6,6 +6,7 @@
   <title>Great Circle Distance Calculator | Modern Airline Retailing Tools</title>
   <meta name="description" content="Compute great-circle distances between airports, explore bearings and midpoint, and share routes instantly."/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     :root {
       --clr-bg: #0d1b2a;
@@ -232,14 +233,21 @@
       border-radius: 16px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.12);
-      min-height: 240px;
       background: rgba(0,0,0,0.35);
     }
 
-    .map-wrapper img {
-      display: block;
+    .map-wrapper .map-canvas {
       width: 100%;
-      height: auto;
+      height: clamp(240px, 40vw, 360px);
+    }
+
+    .map-wrapper .leaflet-control-attribution {
+      background: rgba(13,27,42,0.75);
+      color: var(--clr-text-dim);
+    }
+
+    .map-wrapper .leaflet-control-attribution a {
+      color: var(--clr-accent);
     }
 
     @media (max-width: 1024px) {
@@ -333,7 +341,7 @@
           </div>
 
           <div class="map-wrapper">
-            <img id="routeMap" alt="Route preview map" loading="lazy">
+            <div id="routeMap" class="map-canvas" role="img" aria-label="Route preview map"></div>
           </div>
         </div>
       </section>
@@ -342,6 +350,7 @@
     <datalist id="airportOptions"></datalist>
   </div>
   <footer class="site-footer"></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/assets/site.js" defer></script>
   <script>
     (function(){
@@ -361,7 +370,7 @@
       const originDetails = document.getElementById('originDetails');
       const destinationHeading = document.getElementById('destinationHeading');
       const destinationDetails = document.getElementById('destinationDetails');
-      const mapImage = document.getElementById('routeMap');
+      const mapContainer = document.getElementById('routeMap');
       const datalist = document.getElementById('airportOptions');
       const swapBtn = document.getElementById('swapBtn');
       const shareBtn = document.getElementById('shareBtn');
@@ -370,6 +379,12 @@
       let normalized = [];
       const airportByCode = new Map();
       let loadingPromise = null;
+      let mapInstance = null;
+      let routeLayer = null;
+      let markersLayer = null;
+
+      const MAP_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+      const MAP_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
       function normalize(value) {
         return (value || '')
@@ -603,21 +618,83 @@
         detailsEl.textContent = formatAirportDetails(airport);
       }
 
+      function ensureMap() {
+        if (!mapContainer) return null;
+        if (!window.L) {
+          if (!mapContainer.textContent) {
+            mapContainer.textContent = 'Map preview unavailable.';
+          }
+          mapContainer.setAttribute('aria-label', 'Map preview unavailable.');
+          return null;
+        }
+        if (mapInstance) {
+          return mapInstance;
+        }
+        mapContainer.textContent = '';
+        mapInstance = L.map(mapContainer, {
+          worldCopyJump: true,
+          scrollWheelZoom: false,
+          zoomControl: true,
+          attributionControl: true
+        });
+        L.tileLayer(MAP_TILE_URL, {
+          maxZoom: 9,
+          attribution: MAP_ATTRIBUTION
+        }).addTo(mapInstance);
+        mapInstance.setView([20, 0], 2);
+        return mapInstance;
+      }
+
+      function resetMapView() {
+        const map = ensureMap();
+        if (!map) return;
+        if (routeLayer) {
+          map.removeLayer(routeLayer);
+          routeLayer = null;
+        }
+        if (markersLayer) {
+          map.removeLayer(markersLayer);
+          markersLayer = null;
+        }
+        map.setView([20, 0], 2);
+        mapContainer.setAttribute('aria-label', 'Route preview map');
+      }
+
       function updateMap(origin, destination) {
+        const map = ensureMap();
+        if (!map) return;
+
         if (!origin || !destination || typeof origin.lat !== 'number' || typeof origin.lon !== 'number' || typeof destination.lat !== 'number' || typeof destination.lon !== 'number') {
-          mapImage.removeAttribute('src');
-          mapImage.alt = 'Map preview unavailable.';
+          resetMapView();
           return;
         }
-        const lat1 = origin.lat.toFixed(4);
-        const lon1 = origin.lon.toFixed(4);
-        const lat2 = destination.lat.toFixed(4);
-        const lon2 = destination.lon.toFixed(4);
-        const path = `&path=weight:3|color:0x4fb1f5|${lat1},${lon1}|${lat2},${lon2}`;
-        const markers = `&markers=${lat1},${lon1},lightblue1&markers=${lat2},${lon2},lightblue1`;
-        const url = `https://staticmap.openstreetmap.de/staticmap.php?size=800x420${markers}${path}`;
-        mapImage.src = url;
-        mapImage.alt = `Route from ${origin.code} to ${destination.code}`;
+
+        const originLatLng = [origin.lat, origin.lon];
+        const destinationLatLng = [destination.lat, destination.lon];
+
+        if (routeLayer) {
+          map.removeLayer(routeLayer);
+        }
+        routeLayer = L.polyline([originLatLng, destinationLatLng], {
+          color: '#4fb1f5',
+          weight: 3,
+          opacity: 0.85
+        }).addTo(map);
+
+        if (markersLayer) {
+          map.removeLayer(markersLayer);
+        }
+        markersLayer = L.layerGroup([
+          L.circleMarker(originLatLng, { radius: 7, color: '#4fb1f5', fillColor: '#4fb1f5', fillOpacity: 1 }),
+          L.circleMarker(destinationLatLng, { radius: 7, color: '#4fb1f5', fillColor: '#4fb1f5', fillOpacity: 1 })
+        ]).addTo(map);
+
+        const bounds = L.latLngBounds(originLatLng, destinationLatLng);
+        if (bounds.isValid()) {
+          map.fitBounds(bounds.pad(0.25), { animate: false, maxZoom: 8 });
+        }
+
+        mapContainer.setAttribute('aria-label', `Route from ${origin.code} to ${destination.code}`);
       }
 
       function updateUrl(origin, destination) {
@@ -695,6 +772,9 @@
           }).catch(() => {});
         }
       }
+
+      ensureMap();
+      resetMapView();
 
       form.addEventListener('submit', handleCompute);
 
