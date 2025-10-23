@@ -412,7 +412,7 @@
             airports.forEach(item => {
               airportByCode.set(item.code.toUpperCase(), item);
             });
-            populateDatalist(airports);
+            populateDatalist([]);
             setStatus('Data loaded. Choose two airports.', 'success');
           } catch (error) {
             setStatus(`Failed to load airport data: ${error.message}`, 'error');
@@ -424,6 +424,7 @@
       }
 
       function populateDatalist(list) {
+        if (!datalist) return;
         datalist.innerHTML = '';
         const fragment = document.createDocumentFragment();
         list.forEach(item => {
@@ -436,6 +437,64 @@
           fragment.appendChild(option);
         });
         datalist.appendChild(fragment);
+      }
+
+      function findTopMatches(value, limit) {
+        const query = normalize(value);
+        if (!query) return [];
+        return normalized
+          .map(entry => ({ airport: entry.airport, score: scoreAirport(entry, query) }))
+          .filter(entry => entry.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, limit)
+          .map(entry => entry.airport);
+      }
+
+      function wireInputSuggestions(inputEl) {
+        if (!inputEl) return;
+        let suggestionTimer = null;
+
+        function clearSuggestionsIfUnfocused() {
+          const originFocused = originInput && originInput.matches(':focus');
+          const destinationFocused = destinationInput && destinationInput.matches(':focus');
+          if (!originFocused && !destinationFocused) {
+            populateDatalist([]);
+          }
+        }
+
+        function refreshSuggestions() {
+          suggestionTimer = null;
+          const value = inputEl.value.trim();
+          if (value.length < 2) {
+            populateDatalist([]);
+            return;
+          }
+          loadAirports().then(() => {
+            const matches = findTopMatches(value, 25);
+            populateDatalist(matches);
+          }).catch(() => {
+            populateDatalist([]);
+          });
+        }
+
+        function scheduleSuggestions() {
+          if (suggestionTimer) {
+            clearTimeout(suggestionTimer);
+          }
+          suggestionTimer = setTimeout(refreshSuggestions, 140);
+        }
+
+        inputEl.addEventListener('input', scheduleSuggestions);
+        inputEl.addEventListener('focus', () => {
+          if (!inputEl.value.trim()) {
+            populateDatalist([]);
+          } else {
+            scheduleSuggestions();
+          }
+        });
+        inputEl.addEventListener('blur', () => {
+          setTimeout(clearSuggestionsIfUnfocused, 120);
+        });
       }
 
       function setStatus(message, variant) {
@@ -555,7 +614,7 @@
         const lat2 = destination.lat.toFixed(4);
         const lon2 = destination.lon.toFixed(4);
         const path = `&path=weight:3|color:0x4fb1f5|${lat1},${lon1}|${lat2},${lon2}`;
-        const markers = `&markers=${lat1},${lon1},lightblue1|${lat2},${lon2},lightblue1`;
+        const markers = `&markers=${lat1},${lon1},lightblue1&markers=${lat2},${lon2},lightblue1`;
         const url = `https://staticmap.openstreetmap.de/staticmap.php?size=800x420${markers}${path}`;
         mapImage.src = url;
         mapImage.alt = `Route from ${origin.code} to ${destination.code}`;
@@ -638,6 +697,9 @@
       }
 
       form.addEventListener('submit', handleCompute);
+
+      wireInputSuggestions(originInput);
+      wireInputSuggestions(destinationInput);
 
       swapBtn.addEventListener('click', () => {
         const currentOrigin = originInput.value;
