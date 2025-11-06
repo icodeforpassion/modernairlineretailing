@@ -22,7 +22,7 @@
   const footerMarkup = `
     <div class="container">
       <p><strong>Modern Airline Retailing</strong> – Offer & Order, NDC, merchandising and airline commerce made practical.</p>
-      <p>Have a project or want to jam on architecture? <a href="mailto:modernairlineretailing@gmail.com">modernairlineretailing@gmail.com</a> or <a href="https://www.linkedin.com/in/neerej/" target="_blank" rel="noopener">LinkedIn</a></p>
+      <p>Want to chat about architecture or have questions? Reach out at <a href="mailto:modernairlineretailing@gmail.com">modernairlineretailing@gmail.com</a> or connect on <a href="https://www.linkedin.com/in/neerej/" target="_blank" rel="noopener">LinkedIn</a> for brainstorming or an interesting discussion.</p>
       <p>&copy; ${new Date().getFullYear()} Modern Airline Retailing. Built for builders, product leads and airline teams.</p>
     </div>`;
 
