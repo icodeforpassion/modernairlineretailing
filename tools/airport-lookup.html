@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VHHFDP9B88"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VHHFDP9B88');
+  </script>
+
   <meta charset="UTF-8">
   <title>Airport / City Lookup | Modern Airline Retailing Tools</title>
   <meta name="description" content="Search airports by IATA code, city, or name with fuzzy matching, interactive results, and instant map view.">
@@ -884,6 +893,36 @@
 
       loadAirports().catch(() => {});
     })();
+  </script>
+  <!-- Analytics configuration notes: Ensure GA4 Enhanced Measurement (including "Outbound clicks") remains enabled, validate tag deployment via https://tagassistant.google.com, monitor linkedin_redirect under GA4 → Reports → Engagement → Events, and mark it as a conversion in GA4 Admin → Events if desired. -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const linkedInLinks = document.querySelectorAll('a[href*="linkedin.com"]');
+      linkedInLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+          }
+          const href = link.href;
+          event.preventDefault();
+          if (typeof gtag === 'function') {
+            gtag('event', 'linkedin_redirect', {
+              event_category: 'Outbound',
+              event_label: href,
+              transport_type: 'beacon'
+            });
+          }
+          setTimeout(function () {
+            const target = link.getAttribute('target');
+            if (target && target !== '_self') {
+              window.open(href, target);
+            } else {
+              window.location.href = href;
+            }
+          }, 150);
+        });
+      });
+    });
   </script>
 </body>
 </html>
