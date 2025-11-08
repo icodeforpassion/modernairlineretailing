@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VHHFDP9B88"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VHHFDP9B88');
+  </script>
+
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>About Neerej – Modern Airline Retailing</title>
@@ -409,8 +418,10 @@ What really drives me is the way data can transform airline decision-making. I�
 Over the years, I’ve found myself at the intersection of technology and strategy—whether it’s modernizing availability in the cloud, building scalable Offer & Order architectures, or exploring how revenue management can be reimagined in a world of personalization and continuous pricing.
 
 At heart, I believe innovation in our industry comes from collaboration, sharing knowledge, and daring to challenge the status quo. This space is where I share my insights, tools, and thoughts about the future of airline retailing.      </div>
-      <a href="https://www.linkedin.com/in/neerej/" class="linkedin-btn" target="_blank" rel="noopener" aria-label="Connect with Neerej on LinkedIn">
-        <i class="fab fa-linkedin"></i> Connect on LinkedIn
+            <a href="https://www.linkedin.com/in/neerej-sasikumar/"
+         target="_blank"
+         class="linkedin-btn">
+         Connect on LinkedIn
       </a>
     </div>
   </section>
@@ -448,7 +459,7 @@ At heart, I believe innovation in our industry comes from collaboration, sharing
       <a href="/tools" class="cta-link">Explore Airline Tools</a>
       <a href="/blog" class="cta-link">Read the Blog</a>
       <a href="mailto:hello@modernairlineretailing.com" class="cta-link">Contact Me</a>
-      <a href="https://www.linkedin.com/in/neerej/" class="cta-link" target="_blank" rel="noopener">
+      <a href="https://www.linkedin.com/in/neerej-sasikumar/" class="cta-link" target="_blank" rel="noopener">
         <i class="fab fa-linkedin"></i> LinkedIn
       </a>
     </div>
@@ -458,5 +469,35 @@ At heart, I believe innovation in our industry comes from collaboration, sharing
 
     <footer class="site-footer"></footer>
     <script src="/assets/site.js" defer></script>
-  </body>
+    <!-- Analytics configuration notes: Ensure GA4 Enhanced Measurement (including "Outbound clicks") remains enabled, validate tag deployment via https://tagassistant.google.com, monitor linkedin_redirect under GA4 → Reports → Engagement → Events, and mark it as a conversion in GA4 Admin → Events if desired. -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const linkedInLinks = document.querySelectorAll('a[href*="linkedin.com"]');
+      linkedInLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+          }
+          const href = link.href;
+          event.preventDefault();
+          if (typeof gtag === 'function') {
+            gtag('event', 'linkedin_redirect', {
+              event_category: 'Outbound',
+              event_label: href,
+              transport_type: 'beacon'
+            });
+          }
+          setTimeout(function () {
+            const target = link.getAttribute('target');
+            if (target && target !== '_self') {
+              window.open(href, target);
+            } else {
+              window.location.href = href;
+            }
+          }, 150);
+        });
+      });
+    });
+  </script>
+</body>
 </html>
