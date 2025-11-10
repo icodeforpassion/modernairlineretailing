@@ -12,20 +12,23 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Management: Life After PNR, Tickets and EMDs</title>
-  <meta name="description" content="Order Management: Life After PNR, Tickets and EMDs — a practical, implementation-focused walkthrough for airline retailing teams."/>
-  <meta property="og:title" content="Order Management: Life After PNR, Tickets and EMDs"/>
-  <meta property="og:description" content="Order Management: Life After PNR, Tickets and EMDs — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <title>Order Management in Airlines — Life After PNRs, Tickets and EMDs</title>
+  <meta name="description" content="Discover how airlines are moving from PNR and ticket-based systems to modern Order Management. Learn about canonical orders, lifecycle mapping, coexistence strategies, and operational readiness."/>
+  <meta property="og:title" content="Order Management in Airlines — Life After PNRs, Tickets and EMDs"/>
+  <meta property="og:description" content="Modern Airline Retailing explains how to design, implement, and coexist with the new Order paradigm."/>
   <meta property="og:type" content="article"/>
-  <meta property="og:image" content="/blog/images/blog-10.jpg"/>
+  <meta property="og:image" content="https://www.modernairlineretailing.com/assets/og/order-management.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-07-30-order-management-life-after-pnr-tickets-and-emds.html"/>
   <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Order Management: Life After PNRs, Tickets and EMDs"/>
+  <meta name="twitter:description" content="A practical airline Order Management guide — canonical design, lifecycle, coexistence, and readiness."/>
+  <meta name="twitter:image" content="https://www.modernairlineretailing.com/assets/og/order-management.jpg"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
     .hero-banner { background: url('/blog/images/blog-10.jpg') center/cover no-repeat; }
     .overlay { background: linear-gradient(180deg, rgba(13,27,42,.75), rgba(13,27,42,.55)); }
     .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
+    .content p { line-height: 1.7; }
   </style>
   <link rel="stylesheet" href="/assets/site.css"/>
   <link rel="stylesheet" href="/assets/post.css"/>
@@ -37,7 +40,7 @@
     <div class="hero-body overlay">
       <div class="container">
         <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Order Management: Life After PNR, Tickets and EMDs</h1>
+        <h1 class="title has-text-white">Order Management: Life After PNRs, Tickets and EMDs</h1>
         <p class="subtitle has-text-white">July 30, 2024</p>
       </div>
     </div>
@@ -45,38 +48,102 @@
 
   <section class="section">
     <div class="container content">
-      <p>Moving beyond PNRs, tickets, and EMDs is less about a big bang migration and more about building an order record that can coexist with legacy systems. The order must be the source of truth for the traveler journey, yet you still need to settle, interline, and serve airports that speak the old language. Here is how modern programs make the transition manageable.</p>
+      <p class="has-text-weight-semibold">Published: July 30, 2024 — Modern Airline Retailing Team</p>
 
-      <h2 id="canonical-order">Define a canonical order first</h2>
-      <p>Create a schema that represents everything you sell: flights, ancillaries, payment intents, servicing rules, delivery status. Include references to legacy identifiers (record locator, ticket number) so you can bridge to existing infrastructure. Version the schema and invest in contract tests—orders should be immutable once committed, with servicing events applied as separate records.</p>
+      <p>For half a century, airline retailing has depended on three artifacts: the PNR, ticket, and EMD. They worked for a world of static fares and channel silos, but today’s travellers expect personalised offers, transparent servicing, and consistent experiences wherever they shop. To deliver that, airlines are elevating the <strong>Order</strong> as the single, authoritative record that captures offer acceptance, fulfilment, and service history.</p>
 
-      <h2 id="lifecycle">Map the lifecycle explicitly</h2>
-      <ol>
-        <li><strong>Create:</strong> Offer acceptance converts into an order with a committed snapshot of price and fulfillment obligations.</li>
-        <li><strong>Fulfill:</strong> Issue boarding privileges, seat assignments, and ancillaries based on the order, not a PNR.</li>
-        <li><strong>Settle:</strong> Generate accounting events by reading order line items, even if you still produce tickets for external partners.</li>
-        <li><strong>Change/Cancel:</strong> Append change orders referencing the original. Preserve audit history to explain charges later.</li>
-      </ol>
+      <p>The journey to orders is not a flip of a switch. It is a carefully managed coexistence between order-native capabilities and the legacy stack that still powers settlement, interline, and airport operations. This guide walks through five practical steps to make the transition resilient.</p>
 
-      <h2 id="coexist">Coexistence patterns</h2>
-      <p>You cannot turn off legacy overnight. Adopt coexistence patterns that minimize duplicate data entry:</p>
+      <h2 id="canonical-order">🧩 Step 1 — Define a canonical order</h2>
+      <p>Start with a canonical order model that represents everything you sell. It should cover flights, ancillary products, payments, fulfilment status, servicing rules, and delivery metadata. Include legacy identifiers—record locators, ticket numbers, and EMD references—so the order can bridge to existing clearing and airport systems. Once committed, treat the order as immutable: append servicing events instead of mutating the record to preserve auditability.</p>
+
+      <h2 id="lifecycle">🔄 Step 2 — Map the lifecycle clearly</h2>
+      <p>Translate the canonical model into an operational lifecycle so teams know how orders progress from offer to completion.</p>
+      <div class="table-container">
+        <table class="table is-fullwidth is-bordered is-striped is-narrow">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>What happens</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Create</td>
+              <td>Offer acceptance becomes an order, locking price, delivery promises, and servicing rules.</td>
+              <td>Eliminates post-acceptance fare recalculations.</td>
+            </tr>
+            <tr>
+              <td>Fulfil</td>
+              <td>Seats, ancillaries, and boarding credentials are issued directly from order data.</td>
+              <td>Provides a single servicing record across channels.</td>
+            </tr>
+            <tr>
+              <td>Settle</td>
+              <td>Revenue accounting reads order line items; tickets or EMDs are generated only where partners demand them.</td>
+              <td>Simplifies reconciliation and revenue recognition.</td>
+            </tr>
+            <tr>
+              <td>Change / Cancel</td>
+              <td>Change orders append to the original, maintaining a full timeline with financial impact.</td>
+              <td>Preserves the audit trail for customers and regulators.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="coexistence">⚙️ Step 3 — Build coexistence patterns</h2>
+      <p>Most airlines will run legacy and order-native flows in parallel for years. Layer coexistence mechanisms that keep data aligned without stalling innovation:</p>
       <ul>
-        <li><strong>Shadow PNR:</strong> Create a minimal PNR solely for host synchronization. Store the locator on the order and sync state via events.</li>
-        <li><strong>Ticket envelope:</strong> Issue electronic tickets/EMDs only where clearing houses require them. Map ticket coupons back to order items.</li>
-        <li><strong>Airport services:</strong> For DCS systems that still expect PNR updates, expose a read model that renders the order in their required format.</li>
+        <li><strong>Shadow PNR:</strong> Maintain a lightweight PNR for host synchronisation and store the locator inside the order for reference.</li>
+        <li><strong>Ticket envelope:</strong> Continue issuing tickets or EMDs when clearing houses require them, mapping each coupon back to its originating order line.</li>
+        <li><strong>Airport adapter:</strong> Expose order data as pseudo-PNR structures for DCS and airport partners that still rely on legacy messages.</li>
+        <li><strong>Hybrid architecture:</strong> Introduce an Order Management layer above the host to safely deliver new retailing capabilities.</li>
       </ul>
 
-      <h2 id="operations">Operational readiness</h2>
-      <p>Customer care, revenue accounting, and audit teams need tools built around the order:</p>
+      <h2 id="operations">🧮 Step 4 — Prepare operations for orders</h2>
+      <p>Order-centric operations change how customer service, finance, and audit teams work. Equip them with tools that make order behaviour visible:</p>
       <div class="box">
         <ul>
-          <li>Searchable timeline showing every state change, who initiated it, and the financial impact.</li>
-          <li>Inline validation that prevents agents from making changes that violate fare conditions captured in the order.</li>
-          <li>Reconciliation dashboards comparing order revenue, tickets issued, and settlement files to catch drift quickly.</li>
+          <li><strong>Unified order timeline:</strong> Track every change event, the user or system that initiated it, and the financial consequence.</li>
+          <li><strong>Embedded validation:</strong> Guardrails prevent servicing that conflicts with fare conditions, partner policies, or payment status.</li>
+          <li><strong>Reconciliation dashboards:</strong> Compare order revenue, tickets issued, and settlement data to catch mismatches early.</li>
+          <li><strong>Change management:</strong> Train teams on order concepts, retire PNR-centric scripts, and align KPIs to order success metrics.</li>
         </ul>
       </div>
 
-      <p>The goal is not to wage war on legacy but to decouple the customer-facing view from the clearing constraints. When the order is the authoritative record, you can iterate on offers, servicing flows, and data products without rewriting decades of host logic in one go.</p>
+      <h2 id="value">🚀 Step 5 — Unlock the value</h2>
+      <p>When the order becomes the core record of truth, airlines gain measurable benefits:</p>
+      <ul>
+        <li>Personalised retailing across web, app, and NDC channels.</li>
+        <li>Faster time to market for new products and partner integrations.</li>
+        <li>Improved revenue control through accurate, real-time reconciliation.</li>
+        <li>Richer data for forecasting, pricing, and offer optimisation.</li>
+        <li>Seamless customer experiences where shopping, servicing, and travel reflect the same record.</li>
+      </ul>
+
+      <p>Ultimately, an order-first approach decouples customer experience from host constraints while preserving the reliability of legacy infrastructure. Airlines can experiment, personalise, and automate without rewriting decades of core systems overnight.</p>
+
+      <h2 id="faq">❓ Frequently asked questions</h2>
+      <details class="box">
+        <summary>Can we implement orders without replacing our entire PSS?</summary>
+        <p>Yes. Start with an Order Management System layer that integrates with your host. Use shadow PNRs and ticket envelopes for interoperability while you build order-native flows.</p>
+      </details>
+      <details class="box">
+        <summary>How does this affect interline and codeshare?</summary>
+        <p>Synchronise via order events or APIs. When clearing or partner settlement mandates tickets, map each coupon back to its originating order line so reconciliation stays clean.</p>
+      </details>
+      <details class="box">
+        <summary>What changes for revenue accounting?</summary>
+        <p>Accounting reads data directly from orders and servicing events. Tickets and EMDs become external artefacts rather than the primary accounting source.</p>
+      </details>
+
+      <p><strong>Back to <a href="/blog/index.html">all blogs</a></strong></p>
+      <p class="is-size-6">Modern Airline Retailing – Offer &amp; Order, NDC, merchandising and airline commerce made practical.</p>
+      <p class="is-size-6">📩 <a href="mailto:modernairlineretailing@gmail.com">modernairlineretailing@gmail.com</a> · Connect on <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a></p>
+      <p class="is-size-7">© 2025 Modern Airline Retailing. Built for builders, product leads, and airline teams shaping the next generation of travel retailing.</p>
+
       <nav class="level">
         <div class="level-left">
           <a class="button is-link is-light" href="/blog/2024-07-24-availability-translation-dynamic-offers.html">← Previous</a>
@@ -85,7 +152,6 @@
           <a class="button is-link" href="/blog/2023-08-21-stock-keeper-managing-seats-and-products-as-stock.html">Next →</a>
         </div>
       </nav>
-      <p><a href="/blog/index.html">Back to all blogs</a></p>
     </div>
   </section>
   </main>
