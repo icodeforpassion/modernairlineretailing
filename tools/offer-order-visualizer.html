@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VHHFDP9B88"></script>
@@ -8,6 +8,21 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-VHHFDP9B88');
+  </script>
+  <script>
+    (function(){
+      try {
+        const storedTheme = localStorage.getItem('mr-theme');
+        if (storedTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.style.colorScheme = 'light';
+        } else {
+          document.documentElement.style.colorScheme = 'dark';
+        }
+      } catch (err) {
+        document.documentElement.style.colorScheme = 'dark';
+      }
+    })();
   </script>
 
   <meta charset="UTF-8">
@@ -22,11 +37,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
   <link rel="stylesheet" href="offer-order-visualizer.css">
   <script src="https://d3js.org/d3.v7.min.js" defer></script>
   <script src="offer-order-visualizer.js" defer></script>
 </head>
-<body>
+<body class="lab-page">
   <header class="site-header"></header>
   <div class="lab-shell">
     <header class="lab-header">
@@ -153,6 +169,52 @@
           }, 150);
         });
       });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const root = document.documentElement;
+      const navLinks = document.querySelector('.site-header .nav-links');
+      const currentTheme = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      let toggleButton;
+
+      function applyTheme(theme, persist) {
+        root.setAttribute('data-theme', theme);
+        root.style.colorScheme = theme === 'light' ? 'light' : 'dark';
+        if (toggleButton) {
+          toggleButton.setAttribute('data-theme', theme);
+          toggleButton.setAttribute('aria-pressed', theme === 'dark');
+        }
+        if (persist) {
+          try {
+            localStorage.setItem('mr-theme', theme);
+          } catch (err) {
+            /* no-op */
+          }
+        }
+      }
+
+      applyTheme(currentTheme, false);
+
+      if (navLinks && !navLinks.querySelector('.theme-toggle')) {
+        toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.className = 'theme-toggle';
+        toggleButton.setAttribute('aria-label', 'Toggle color theme');
+        toggleButton.setAttribute('aria-pressed', currentTheme === 'dark');
+        toggleButton.innerHTML = `
+          <span class="sr-only">Toggle color theme</span>
+          <span aria-hidden="true" class="theme-toggle__icon theme-toggle__icon--sun">☀</span>
+          <span aria-hidden="true" class="theme-toggle__icon theme-toggle__icon--moon">🌙</span>
+        `;
+        toggleButton.setAttribute('data-theme', currentTheme);
+        navLinks.appendChild(toggleButton);
+
+        toggleButton.addEventListener('click', function () {
+          const nextTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          applyTheme(nextTheme, true);
+        });
+      }
     });
   </script>
 </body>
