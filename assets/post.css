@@ -22,7 +22,7 @@ body.has-site-chrome .section .container.content > *:first-child {
 
 body.has-site-chrome .section .container.content,
 body.has-site-chrome .section .container .content {
-  color: rgba(226, 235, 248, 0.88);
+  color: rgba(235, 244, 255, 0.94);
   line-height: 1.8;
   font-size: 1.03rem;
 }
@@ -41,7 +41,7 @@ body.has-site-chrome .section .container .content blockquote {
   border-left: 4px solid rgba(61, 183, 255, 0.7);
   padding-left: 1.2rem;
   background: rgba(8, 19, 33, 0.4);
-  color: rgba(226, 235, 248, 0.88);
+  color: rgba(235, 244, 255, 0.94);
 }
 
 body.has-site-chrome .section .container.content pre,
@@ -74,7 +74,7 @@ body.has-site-chrome .post-footer-cta {
 }
 
 body.has-site-chrome .post-footer-cta p {
-  color: rgba(226, 235, 248, 0.78);
+  color: rgba(235, 244, 255, 0.92);
 }
 
 @media (max-width: 720px) {

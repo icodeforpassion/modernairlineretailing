@@ -7,7 +7,7 @@
   --brand-surface-soft: rgba(21, 40, 63, 0.65);
   --brand-border: rgba(116, 142, 168, 0.18);
   --brand-text: #f3f7fc;
-  --brand-text-soft: #a7b7c9;
+  --brand-text-soft: #d8e4f4;
   --brand-accent: #3db7ff;
   --brand-accent-strong: #00c0a3;
   --brand-gradient: linear-gradient(135deg, #3db7ff, #8f7bff 45%, #ff6ec9 85%);
@@ -263,7 +263,7 @@ img {
   font-size: 0.82rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(223, 235, 255, 0.7);
+  color: rgba(235, 244, 255, 0.88);
 }
 
 .article-card a {
