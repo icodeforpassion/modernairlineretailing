@@ -43,7 +43,7 @@
 
 .hero-metric-card p {
   margin: 0.6rem 0 0;
-  color: rgba(223, 233, 248, 0.75);
+  color: rgba(233, 242, 255, 0.9);
   line-height: 1.6;
 }
 
@@ -57,7 +57,7 @@
   margin: 0;
   max-width: 45ch;
   line-height: 1.7;
-  color: rgba(228, 236, 248, 0.78);
+  color: rgba(235, 244, 255, 0.92);
 }
 
 .blog-filters {
@@ -82,7 +82,7 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: rgba(228, 236, 248, 0.6);
+  color: rgba(233, 242, 255, 0.85);
   margin-bottom: 0.6rem;
 }
 
@@ -148,7 +148,7 @@
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(223, 235, 255, 0.72);
+  color: rgba(235, 244, 255, 0.9);
 }
 
 .blog-card h3 {
@@ -159,7 +159,7 @@
 
 .blog-card p {
   margin: 0;
-  color: rgba(225, 236, 252, 0.78);
+  color: rgba(235, 244, 255, 0.92);
   line-height: 1.65;
   z-index: 1;
 }
@@ -167,7 +167,7 @@
 .blog-empty {
   margin-top: 3rem;
   text-align: center;
-  color: rgba(226, 235, 248, 0.68);
+  color: rgba(235, 244, 255, 0.92);
   font-size: 1.05rem;
 }
 
@@ -186,7 +186,7 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .blog-meta {
@@ -197,7 +197,7 @@
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(207, 220, 240, 0.7);
+  color: rgba(226, 238, 255, 0.88);
   z-index: 1;
 }
 
