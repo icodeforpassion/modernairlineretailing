@@ -4,7 +4,10 @@ const products = [
   { id: 'bag', name: 'Bag', price: 30, defaultSelected: true, trackInventory: true, inventory: 38, description: 'One checked bag up to 23kg.' },
   { id: 'meal', name: 'Meal', price: 10, defaultSelected: false, trackInventory: true, inventory: 60, description: 'Chef-curated hot meal.' },
   { id: 'refund', name: 'Refundability', price: 40, defaultSelected: false, trackInventory: false, description: 'Full refund permitted before departure.' },
-  { id: 'change', name: 'Changeability', price: 15, defaultSelected: false, trackInventory: false, description: 'One free itinerary change.' }
+  { id: 'change', name: 'Changeability', price: 15, defaultSelected: false, trackInventory: false, description: 'One free itinerary change.' },
+  { id: 'lounge', name: 'Lounge Access', price: 35, defaultSelected: false, trackInventory: true, inventory: 20, description: 'Relax in the lounge on day of travel.' },
+  { id: 'car', name: 'Car Hire', price: 70, defaultSelected: false, trackInventory: false, description: 'Partner car rental aligned to your itinerary.' },
+  { id: 'hotel', name: 'Hotel Stay', price: 180, defaultSelected: false, trackInventory: false, description: 'Curated hotel package for your destination.' }
 ];
 
 const productMap = Object.fromEntries(products.map(p => [p.id, p]));
