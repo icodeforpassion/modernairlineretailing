@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Offer &amp; Order Retailing Lab (Prototype) | Modern Airline Retailing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive Airline Offer &amp; Order Visualizer — explore how NDC Offer &amp; Order Management compares to legacy PNR and Ticket systems.">
+  <meta name="keywords" content="Airline Offer and Order, NDC Visualizer, ONE Order, airline modernization, dynamic pricing, airline retailing education">
+  <meta property="og:title" content="Offer &amp; Order Retailing Lab | Modern Airline Retailing">
+  <meta property="og:description" content="An interactive simulator showing how modern airline Offer &amp; Order Management transforms pricing and servicing.">
+  <meta property="og:image" content="/assets/images/offer-order-lab-banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="offer-order-visualizer.css">
+  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+  <script src="offer-order-visualizer.js" defer></script>
+</head>
+<body>
+  <div class="lab-shell">
+    <header class="lab-header">
+      <h1>✈️ Offer &amp; Order Retailing Lab (Prototype)</h1>
+      <p class="lab-subtitle">Compare Legacy vs Modern Airline Retailing interactively.</p>
+      <div class="lab-disclaimer" role="alert">⚠️ Prototype for educational purposes only — this tool does not represent any airline’s live system.</div>
+    </header>
+
+    <main class="lab-main">
+      <section class="product-panel" aria-labelledby="product-panel-title">
+        <div class="panel-heading">
+          <h2 id="product-panel-title">Product Catalogue</h2>
+          <p>Select ancillaries to see how each retailing model handles them.</p>
+        </div>
+        <div class="product-grid" id="productList" role="group" aria-label="Retail catalogue"></div>
+        <div class="inventory-hint">Inventory counters update with a short animation whenever availability changes.</div>
+      </section>
+
+      <section class="flow-panel" aria-labelledby="flow-panel-title">
+        <h2 id="flow-panel-title">Legacy vs Modern Process Flow</h2>
+        <div class="flow-diagrams">
+          <article class="flow-card legacy" aria-labelledby="legacy-title">
+            <header>
+              <h3 id="legacy-title">Legacy Flow<br><span class="flow-sub">PNR + Ticket + EMD</span></h3>
+              <p class="flow-description">Follow the traditional servicing path from booking to fulfilment.</p>
+            </header>
+            <div class="dynamic-price" aria-live="polite">
+              <span class="label">Legacy Dynamic Price</span>
+              <span class="value" id="legacyDynamicPrice">£0</span>
+            </div>
+            <div class="flow-graph" id="legacyFlow" role="img" aria-label="Legacy retailing flow diagram"></div>
+          </article>
+          <article class="flow-card modern" aria-labelledby="modern-title">
+            <header>
+              <h3 id="modern-title">Modern Flow<br><span class="flow-sub">Offer + Order + Delivery</span></h3>
+              <p class="flow-description">Experience the NDC/ONE Order approach with enriched offers and orders.</p>
+            </header>
+            <div class="dynamic-price" aria-live="polite">
+              <span class="label">Modern Dynamic Price</span>
+              <span class="value" id="modernDynamicPrice">£0</span>
+            </div>
+            <div class="flow-graph" id="modernFlow" role="img" aria-label="Modern retailing flow diagram"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pricing-engine" aria-labelledby="pricing-engine-title">
+        <h2 id="pricing-engine-title">Dynamic Pricing Engine</h2>
+        <p>Adjust sliders to simulate demand, time to departure, and competitive pressure. Both retailing models react in real time.</p>
+        <div class="slider-grid">
+          <label class="slider-control">
+            <span>Demand Level</span>
+            <input type="range" id="demandSlider" min="0" max="100" value="60">
+            <output id="demandValue" for="demandSlider">60</output>
+          </label>
+          <label class="slider-control">
+            <span>Days to Departure</span>
+            <input type="range" id="timeSlider" min="0" max="90" value="30">
+            <output id="timeValue" for="timeSlider">30</output>
+          </label>
+          <label class="slider-control">
+            <span>Competitor Price Index</span>
+            <input type="range" id="competitionSlider" min="50" max="150" value="100">
+            <output id="competitionValue" for="competitionSlider">100</output>
+          </label>
+        </div>
+        <div class="formula" aria-live="polite"><code>dynamicPrice = base + (demand/100 * 50) - (time/90 * 20) + ((comp - 100) / 5)</code></div>
+      </section>
+
+      <section class="summary-panel" aria-labelledby="summary-title">
+        <h2 id="summary-title">Retailing Summary</h2>
+        <div class="summary-grid">
+          <div class="summary-card legacy">
+            <h3>Legacy Total Price</h3>
+            <p class="summary-value" id="legacyTotal">£0</p>
+            <ul id="legacyBreakdown" class="price-breakdown" aria-live="polite"></ul>
+          </div>
+          <div class="summary-card modern">
+            <h3>Modern Offer Total</h3>
+            <p class="summary-value" id="modernTotal">£0</p>
+            <ul id="modernBreakdown" class="price-breakdown" aria-live="polite"></ul>
+          </div>
+        </div>
+        <details class="json-preview" open>
+          <summary>Modern Offer JSON Preview</summary>
+          <pre id="offerJson" aria-live="polite"></pre>
+        </details>
+        <details class="json-preview legacy-json">
+          <summary>Legacy PNR Snapshot</summary>
+          <pre id="pnrJson" aria-live="polite"></pre>
+        </details>
+      </section>
+    </main>
+
+    <footer class="lab-footer">© ModernAirlineRetailing.com | Educational Prototype of Offer &amp; Order Retailing.</footer>
+  </div>
+</body>
+</html>
