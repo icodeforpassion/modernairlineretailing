@@ -22,8 +22,10 @@
 
   const footerMarkup = `
     <div class="container">
-      <p><strong>Modern Airline Retailing</strong> – Offer & Order, NDC, merchandising and airline commerce made practical.</p>
-      <p>Want to chat about architecture or have questions? Reach out at <a href="mailto:modernairlineretailing@gmail.com">modernairlineretailing@gmail.com</a> or connect on <a href="https://www.linkedin.com/in/neerej/" target="_blank" rel="noopener" class="linkedin-btn">LinkedIn</a> for brainstorming or an interesting discussion.</p>
+      <p><strong>Modern Airline Retailing</strong> – Offer &amp; Order, NDC, Merchandising, and Airline Commerce Made Practical</p>
+      <p>Passionate about airline retailing?</p>
+      <p>This is my personal blog, created purely to share insights and industry knowledge about the evolving world of airline retailing — independent of any airline I work with.</p>
+      <p>Want to chat about modern airline retailing, architecture, or innovation? Connect with me on <a href="https://www.linkedin.com/in/neerej/" target="_blank" rel="noopener" class="linkedin-btn">LinkedIn</a> for an engaging discussion.</p>
       <p>&copy; ${new Date().getFullYear()} Modern Airline Retailing. Built for builders, product leads and airline teams.</p>
     </div>`;
 
