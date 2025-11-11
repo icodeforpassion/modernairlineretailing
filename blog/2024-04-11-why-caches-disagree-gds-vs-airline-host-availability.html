@@ -112,7 +112,7 @@
     </div>
 
     <h2 id="intro">1. Introduction & Problem Frame</h2>
-    <p>You search a trip in a GDS and see 4 seats in R class; the airline host (or NDC offer API) returns 0. Sales complains. Revenue Management says they closed it hours ago. Distribution says “cache delay.” Everyone is technically right—just in different temporal slices. Understanding <em>why</em> these windows appear lets you reduce friction, false promises, and lost revenue.</p>
+    <p>You search a trip in a GDS and see 4 seats in R class; the airline host (or NDC offer API) returns 0. Sales complains. Revenue Management says they closed it hours ago. Distribution says “cache delay.” Everyone is technically right-just in different temporal slices. Understanding <em>why</em> these windows appear lets you reduce friction, false promises, and lost revenue.</p>
     <blockquote><strong>Goal:</strong> Minimize harmful divergence windows between widely distributed caches (GDS / meta / OTA / edge nodes) and authoritative inventory decisions, while preserving performance and cost efficiency.</blockquote>
 
     <h2 id="mental-model">2. Mental Model of Divergence</h2>
@@ -266,7 +266,7 @@ if (now - invTimestamp > classPolicy[class]) -> force refresh</code></pre>
       <li><strong>False Open Rate:</strong> (False Open responses) / (Total availability responses).</li>
       <li><strong>Commit Failure Attribution:</strong> % failures caused by stale availability vs payment vs price change.</li>
       <li><strong>Gap Frequency:</strong> Gaps per 10k event sequences.</li>
-      <li><strong>Propagation Latency Histogram:</strong> For closures vs opens (separate—closures require tighter SLA).</li>
+      <li><strong>Propagation Latency Histogram:</strong> For closures vs opens (separate-closures require tighter SLA).</li>
       <li><strong>Edge Stale Serve Count:</strong> Edge served objects beyond staleness budget.</li>
       <li><strong>Marriage Integrity Error Rate:</strong> Broken marriage validations per 1k multi-leg bookings.</li>
     </ul>

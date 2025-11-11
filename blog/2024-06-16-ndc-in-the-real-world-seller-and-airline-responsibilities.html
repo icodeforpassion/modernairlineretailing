@@ -13,9 +13,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NDC in the Real World: Seller and Airline Responsibilities</title>
-  <meta name="description" content="NDC in the Real World: Seller and Airline Responsibilities — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta name="description" content="NDC in the Real World: Seller and Airline Responsibilities - a practical, implementation-focused walkthrough for airline retailing teams."/>
   <meta property="og:title" content="NDC in the Real World: Seller and Airline Responsibilities"/>
-  <meta property="og:description" content="NDC in the Real World: Seller and Airline Responsibilities — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:description" content="NDC in the Real World: Seller and Airline Responsibilities - a practical, implementation-focused walkthrough for airline retailing teams."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-8.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-06-16-ndc-in-the-real-world-seller-and-airline-responsibilities.html"/>
@@ -45,7 +45,7 @@
 
   <section class="section">
     <div class="container content">
-      <p>NDC becomes real the moment live orders start flowing through sellers that are not your own digital channels. IATA’s 2024 industry pulse showed that 48% of indirect bookings touching an NDC API still required manual servicing within 48 hours. Most breakdowns were not caused by the schema—it was unclear ownership of caching, payment evidence, or disruption messaging. This article breaks down the responsibilities so each side can prepare before volume arrives.</p>
+      <p>NDC becomes real the moment live orders start flowing through sellers that are not your own digital channels. IATA’s 2024 industry pulse showed that 48% of indirect bookings touching an NDC API still required manual servicing within 48 hours. Most breakdowns were not caused by the schema-it was unclear ownership of caching, payment evidence, or disruption messaging. This article breaks down the responsibilities so each side can prepare before volume arrives.</p>
       <p class="has-text-grey">Field data: carriers in the IATA Leaderboard report a 35% drop in debit memos once sellers and airlines agree on a joint operating manual. Use the sections below as a template for that manual.</p>
 
       <h2 id="seller">What a seller must own</h2>
@@ -53,7 +53,7 @@
       <ul>
         <li><strong>Channel UX and caching:</strong> Design cache lifetimes with the airline’s offer reuse policy in mind. Surface when content is stale instead of silently falling back to legacy fares.</li>
         <li><strong>Shopping guardrails:</strong> Monitor request burst rates, authentication renewal, and replay logic. Airlines increasingly auto-block endpoints after three consecutive throttle violations.</li>
-        <li><strong>Order integrity:</strong> Pass through every data element collected from the traveler—ancillary selections, seat bundles, payment references, invoicing data. Airlines assume anything missing is unsold.</li>
+        <li><strong>Order integrity:</strong> Pass through every data element collected from the traveler-ancillary selections, seat bundles, payment references, invoicing data. Airlines assume anything missing is unsold.</li>
         <li><strong>Servicing readiness:</strong> Map common change and refund flows before launch and rehearse them. 62% of seller escalations in 2023 were for basic voluntary date changes that lacked automation.</li>
       </ul>
       <table class="table is-fullwidth is-striped is-hoverable">
@@ -72,7 +72,7 @@
       <ol>
         <li><strong>Stable API contracts:</strong> Publish version roadmaps, change logs, and sample payloads. Provide at least 90 days’ notice for breaking changes.</li>
         <li><strong>Operational discipline:</strong> Run offer and order APIs with explicit SLAs, incident channels, and sandbox environments seeded with realistic data. A 300 ms improvement in order response time typically lifts conversion by 2–3 percentage points.</li>
-        <li><strong>Full-servicing coverage:</strong> If you sell something via NDC—branded fares, paid seats, disruption waivers—ensure the same flows are supported via servicing APIs or staffed queues.</li>
+        <li><strong>Full-servicing coverage:</strong> If you sell something via NDC-branded fares, paid seats, disruption waivers-ensure the same flows are supported via servicing APIs or staffed queues.</li>
         <li><strong>Settlement transparency:</strong> Deliver reconciliation files, EMV payment evidence, and EMD associations on the timelines sellers commit to their finance teams.</li>
       </ol>
       <div class="callout"><strong>Tip:</strong> Treat the NDC stack like any other revenue platform. Product managers, SREs, and finance controllers should sit together during launch triage so ownership issues are resolved in the room.</div>

@@ -321,30 +321,30 @@
           <div class="metric-grid">
             <div class="metric">
               <h3>Great-circle distance</h3>
-              <div class="metric-value" id="distanceKm">—</div>
+              <div class="metric-value" id="distanceKm">-</div>
               <p class="metric-sub" id="distanceAlt">Miles • Nautical miles</p>
             </div>
             <div class="metric">
               <h3>Estimated flight time @ 800 km/h</h3>
-              <div class="metric-value" id="flightTime">—</div>
+              <div class="metric-value" id="flightTime">-</div>
             </div>
             <div class="metric">
               <h3>Initial / final bearing</h3>
-              <div class="metric-value" id="bearing">—</div>
+              <div class="metric-value" id="bearing">-</div>
             </div>
             <div class="metric">
               <h3>Midpoint</h3>
-              <div class="metric-value" id="midpoint">—</div>
+              <div class="metric-value" id="midpoint">-</div>
             </div>
           </div>
 
           <div class="pair-details">
             <div>
-              <h4 id="originHeading">Origin —</h4>
+              <h4 id="originHeading">Origin -</h4>
               <p id="originDetails">Select an airport to see details.</p>
             </div>
             <div>
-              <h4 id="destinationHeading">Destination —</h4>
+              <h4 id="destinationHeading">Destination -</h4>
               <p id="destinationDetails">Select an airport to see details.</p>
             </div>
           </div>
@@ -455,7 +455,7 @@
           const parts = [item.name || '', item.city || '', item.country || '']
             .filter(Boolean)
             .join(', ');
-          const label = parts ? `${item.code.toUpperCase()} — ${parts}` : item.code.toUpperCase();
+          const label = parts ? `${item.code.toUpperCase()} - ${parts}` : item.code.toUpperCase();
           const option = document.createElement('option');
           option.value = label;
           fragment.appendChild(option);
@@ -610,16 +610,16 @@
       function formatAirportDetails(airport) {
         const parts = [airport.name, airport.city, airport.country].filter(Boolean).join(', ');
         if (typeof airport.lat !== 'number' || typeof airport.lon !== 'number') {
-          return `${parts || '—'}\nCoordinates unavailable.`;
+          return `${parts || '-'}\nCoordinates unavailable.`;
         }
         const lat = formatCoordinate(airport.lat, 'N', 'S');
         const lon = formatCoordinate(airport.lon, 'E', 'W');
-        return `${parts || '—'}\n${lat}, ${lon}`;
+        return `${parts || '-'}\n${lat}, ${lon}`;
       }
 
       function updateDetails(airport, headingEl, detailsEl, label) {
         if (!airport) {
-          headingEl.textContent = `${label} —`;
+          headingEl.textContent = `${label} -`;
           detailsEl.textContent = 'Select an airport to see details.';
           return;
         }
@@ -747,7 +747,7 @@
             const minutes = Math.round((flightHours - hours) * 60);
             flightTimeEl.textContent = `${hours}h ${minutes.toString().padStart(2, '0')}m`;
           } else {
-            flightTimeEl.textContent = '—';
+            flightTimeEl.textContent = '-';
           }
 
           bearingEl.textContent = `${initialBearing.toFixed(1)}° / ${finalBearing.toFixed(1)}°`;
@@ -773,8 +773,8 @@
           loadAirports().then(() => {
             const origin = resolveAirport(originInput.value);
             const destination = resolveAirport(destinationInput.value);
-            if (origin) originInput.value = `${origin.code} — ${(origin.city || origin.name || '')}`.trim();
-            if (destination) destinationInput.value = `${destination.code} — ${(destination.city || destination.name || '')}`.trim();
+            if (origin) originInput.value = `${origin.code} - ${(origin.city || origin.name || '')}`.trim();
+            if (destination) destinationInput.value = `${destination.code} - ${(destination.city || destination.name || '')}`.trim();
             if (origin && destination) {
               handleCompute({ preventDefault() {} });
             }

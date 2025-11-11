@@ -461,14 +461,14 @@ canvas{width:100% !important;height:180px !important;}
     <div class="card">
       <h2>Calculated Metrics</h2>
       <div class="metric-box">
-        <div class="metric"><h3>Load Factor</h3><div class="val" id="lfVal">—</div></div>
-        <div class="metric"><h3>Yield</h3><div class="val" id="yieldVal">—</div><small class="note">Passenger revenue / RPM</small></div>
-        <div class="metric"><h3>PRASM</h3><div class="val" id="prasmVal">—</div><small class="note">Passenger revenue / ASM</small></div>
-        <div class="metric"><h3>RASM</h3><div class="val" id="rasmVal">—</div><small class="note">(Passenger + ancillary + cargo)/ASM</small></div>
-        <div class="metric"><h3>CASM</h3><div class="val" id="casmVal">—</div><small class="note">Operating cost / ASM</small></div>
-        <div class="metric"><h3>Break-Even LF</h3><div class="val" id="belfVal">—</div></div>
-        <div class="metric"><h3>Operating Margin</h3><div class="val" id="marginVal">—</div></div>
-        <div class="metric"><h3>Contribution (000)</h3><div class="val" id="contribVal">—</div></div>
+        <div class="metric"><h3>Load Factor</h3><div class="val" id="lfVal">-</div></div>
+        <div class="metric"><h3>Yield</h3><div class="val" id="yieldVal">-</div><small class="note">Passenger revenue / RPM</small></div>
+        <div class="metric"><h3>PRASM</h3><div class="val" id="prasmVal">-</div><small class="note">Passenger revenue / ASM</small></div>
+        <div class="metric"><h3>RASM</h3><div class="val" id="rasmVal">-</div><small class="note">(Passenger + ancillary + cargo)/ASM</small></div>
+        <div class="metric"><h3>CASM</h3><div class="val" id="casmVal">-</div><small class="note">Operating cost / ASM</small></div>
+        <div class="metric"><h3>Break-Even LF</h3><div class="val" id="belfVal">-</div></div>
+        <div class="metric"><h3>Operating Margin</h3><div class="val" id="marginVal">-</div></div>
+        <div class="metric"><h3>Contribution (000)</h3><div class="val" id="contribVal">-</div></div>
       </div>
 
       <hr class="divider">
@@ -477,19 +477,19 @@ canvas{width:100% !important;height:180px !important;}
       <small class="note">Sliders override correlated fields (RPM, Passenger Revenue, Operating Cost, Ancillary). Adjust to explore impact; you can still manually edit base numbers afterward.</small>
 
       <div class="range-field">
-        <label for="lfSlider">Load Factor (%) <span class="slider-val" id="lfSliderVal">—</span></label>
+        <label for="lfSlider">Load Factor (%) <span class="slider-val" id="lfSliderVal">-</span></label>
         <input type="range" id="lfSlider" min="50" max="97" step="1">
       </div>
       <div class="range-field">
-        <label for="yieldSlider">Yield (¢ / RPM) <span class="slider-val" id="yieldSliderVal">—</span></label>
+        <label for="yieldSlider">Yield (¢ / RPM) <span class="slider-val" id="yieldSliderVal">-</span></label>
         <input type="range" id="yieldSlider" min="5" max="30" step=".1">
       </div>
       <div class="range-field">
-        <label for="casmSlider">CASM (¢ / ASM) <span class="slider-val" id="casmSliderVal">—</span></label>
+        <label for="casmSlider">CASM (¢ / ASM) <span class="slider-val" id="casmSliderVal">-</span></label>
         <input type="range" id="casmSlider" min="4" max="25" step=".1">
       </div>
       <div class="range-field">
-        <label for="ancSlider">Ancillary (¢ / ASM) <span class="slider-val" id="ancSliderVal">—</span></label>
+        <label for="ancSlider">Ancillary (¢ / ASM) <span class="slider-val" id="ancSliderVal">-</span></label>
         <input type="range" id="ancSlider" min="0" max="10" step=".1">
       </div>
 
