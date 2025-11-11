@@ -15,6 +15,7 @@
         <a href="/index.html">Home</a>
         <a href="/blog/index.html">Blog</a>
         <a href="/tools/index.html">Tools</a>
+        <a href="/enterprise.html#architecture-map">OTA Architecture</a>
         <a href="/about.html">About</a>
       </nav>
     </div>`;
@@ -90,11 +91,16 @@
 
     const currentPath = window.location.pathname.replace(/index\.html$/, '');
     links.forEach(function(link){
-      const linkPath = link.getAttribute('href').replace(/index\.html$/, '');
+      const linkHref = link.getAttribute('href');
+      const linkPath = linkHref.replace(/index\.html$/, '').split('#')[0];
       const isBlog = currentPath.startsWith('/blog/') && linkPath === '/blog/';
       const isTools = currentPath.startsWith('/tools/') && linkPath === '/tools/';
-      if (currentPath === linkPath || isBlog || isTools) {
+      const isEnterprise = currentPath === '/enterprise.html' && linkPath === '/enterprise.html';
+      if (currentPath === linkPath || isBlog || isTools || isEnterprise) {
         link.classList.add('is-active');
+        if (isEnterprise && !link.hasAttribute('aria-current')) {
+          link.setAttribute('aria-current', 'page');
+        }
       }
     });
 
