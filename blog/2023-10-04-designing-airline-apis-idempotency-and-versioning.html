@@ -13,9 +13,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Designing Airline APIs: Idempotency and Versioning</title>
-  <meta name="description" content="Designing Airline APIs: Idempotency and Versioning — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta name="description" content="Designing Airline APIs: Idempotency and Versioning - a practical, implementation-focused walkthrough for airline retailing teams."/>
   <meta property="og:title" content="Designing Airline APIs: Idempotency and Versioning"/>
-  <meta property="og:description" content="Designing Airline APIs: Idempotency and Versioning — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:description" content="Designing Airline APIs: Idempotency and Versioning - a practical, implementation-focused walkthrough for airline retailing teams."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-13.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2023-10-04-designing-airline-apis-idempotency-and-versioning.html"/>
@@ -48,14 +48,14 @@
       <p>Airline retailing APIs often run into the same problems: duplicate bookings from retries, breaking changes that blindside partners, and debugging sessions with no correlation IDs. Idempotency and versioning are not glamorous, but they are what make integrations trustworthy.</p>
 
       <h2 id="idempotency-basics">Idempotency basics</h2>
-      <p>Any endpoint that changes state—create offer, commit order, apply payment—must accept an idempotency key. The client generates it per logical action; the server stores the result and returns the same response if the request is retried. Persist the key alongside request payload hashes and timestamps. Expire entries only after you are certain downstream processing cannot still act on a duplicate.</p>
+      <p>Any endpoint that changes state-create offer, commit order, apply payment-must accept an idempotency key. The client generates it per logical action; the server stores the result and returns the same response if the request is retried. Persist the key alongside request payload hashes and timestamps. Expire entries only after you are certain downstream processing cannot still act on a duplicate.</p>
 
       <div class="box">
         <strong>Implementation hints</strong>
         <ul>
           <li>Use a composite key of <code>{client_id, idempotency_key}</code>.</li>
           <li>Store the HTTP status, response body, and any side effects identifiers (order IDs, payment references).</li>
-          <li>Return a clear error when the payload changes for the same key—do not silently accept mismatched requests.</li>
+          <li>Return a clear error when the payload changes for the same key-do not silently accept mismatched requests.</li>
         </ul>
       </div>
 

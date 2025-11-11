@@ -12,14 +12,14 @@
 
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide</title>
+  <title>ATPCO Fare Filing: Fares, Rules & Footnotes-A Practitioner's Guide</title>
 
   <!-- Meta -->
-  <meta name="description" content="A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together—and how to implement them reliably while modernizing toward Offers & Orders."/>
+  <meta name="description" content="A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together-and how to implement them reliably while modernizing toward Offers & Orders."/>
   <link rel="canonical" href="https://www.modernairlineretailing.com/blog/2024-02-27-atpco-fare-filing-fares-rules-footnotes-practice.html"/>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="ATPCO Fare Filing: Fares & Rules—A Practitioner's Guide"/>
+  <meta property="og:title" content="ATPCO Fare Filing: Fares & Rules-A Practitioner's Guide"/>
   <meta property="og:description" content="How to make sense of ATPCO fare filing in real systems: fares, rules, footnotes, routing, YQ/YR, taxes, pricing checks, and modernization."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="https://www.modernairlineretailing.com/blog/images/blog-3.jpg"/>
@@ -57,8 +57,8 @@
   {
     "@context":"https://schema.org",
     "@type":"Article",
-    "headline":"ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide",
-    "description":"A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together—and how to implement them reliably while modernizing toward Offers & Orders.",
+    "headline":"ATPCO Fare Filing: Fares, Rules & Footnotes-A Practitioner's Guide",
+    "description":"A practical, engineer-friendly guide to ATPCO fare filing: how fares, rules, footnotes, routing, surcharges and taxes work together-and how to implement them reliably while modernizing toward Offers & Orders.",
     "datePublished":"2024-02-27",
     "dateModified":"2024-02-27",
     "author":{"@type":"Person","name":"Modern Airline Retailing"},
@@ -79,7 +79,7 @@
     <div class="hero-body overlay">
       <div class="container">
         <a class="button is-link is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title">ATPCO Fare Filing: Fares, Rules & Footnotes—A Practitioner's Guide</h1>
+        <h1 class="title">ATPCO Fare Filing: Fares, Rules & Footnotes-A Practitioner's Guide</h1>
         <p class="subtitle">February 27, 2024 • ~18 min read</p>
         <div>
           <span class="tag-badge">Pricing</span>
@@ -119,19 +119,19 @@
       </div>
 
       <p>
-        If you build airline retail or pricing systems, ATPCO fare filing isn’t “legacy noise”—it’s the rulebook most
+        If you build airline retail or pricing systems, ATPCO fare filing isn’t “legacy noise”-it’s the rulebook most
         of the ecosystem still plays by. Even if you’re racing toward dynamic Offers & Orders, the filed world powers
         interline, agency distribution, and servicing. Understanding it well makes modernization safer and faster.
       </p>
 
       <h2 id="why-it-matters">1) Why this still matters</h2>
       <ul>
-        <li><strong>It encodes policy, not just prices.</strong> Advance purchase, seasonality, who can buy, how you can combine—filed data describes the product you intend to sell, consistently, in every channel.</li>
+        <li><strong>It encodes policy, not just prices.</strong> Advance purchase, seasonality, who can buy, how you can combine-filed data describes the product you intend to sell, consistently, in every channel.</li>
         <li><strong>It keeps you interoperable.</strong> GDSs, pricers, and settlement rely on shared semantics; filed fares are the lingua franca across carriers.</li>
         <li><strong>It protects servicing and compliance.</strong> Refunds, changes, taxes, and disclosures lean on what you filed. Skip it, and you invite ADMs and disputes.</li>
       </ul>
       <blockquote>
-        Modern pitfall: jumping straight to dynamic pricing without a bridge to filed fares. You’ll ship faster—and break more—than you expect.
+        Modern pitfall: jumping straight to dynamic pricing without a bridge to filed fares. You’ll ship faster-and break more-than you expect.
       </blockquote>
 
       <h2 id="lifecycle">2) How fare data flows</h2>
@@ -178,7 +178,7 @@
           <tr><td>17</td><td>HIP/Mileage Exceptions</td><td>Overrides to higher-intermediate-point checks.</td></tr>
           <tr><td>31</td><td>Voluntary Changes</td><td>Structured change rules; newer, machine-friendly.</td></tr>
           <tr><td>33</td><td>Voluntary Refunds</td><td>Structured refund rules; automates refunds.</td></tr>
-          <tr><td>25</td><td>Fare By Rule</td><td>Programmatic transforms—discount/markup off bases.</td></tr>
+          <tr><td>25</td><td>Fare By Rule</td><td>Programmatic transforms-discount/markup off bases.</td></tr>
           <tr><td>35</td><td>Negotiated</td><td>Private/net fares with access controls.</td></tr>
         </tbody>
       </table>
@@ -267,7 +267,7 @@ PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxe
       <ul>
         <li><strong>Bridge service.</strong> Produce an Offer that either references a filed fare basis or a true dynamic bundle, but returns a unified schema.</li>
         <li><strong>Lineage.</strong> For filed offers include <code>fareBasis</code>, <code>ruleRefs</code>, and dataset version; for dynamic include algorithm ID/inputs.</li>
-        <li><strong>Interline reality.</strong> Partners often still expect filed attributes—carry a dual representation until the network moves.</li>
+        <li><strong>Interline reality.</strong> Partners often still expect filed attributes-carry a dual representation until the network moves.</li>
         <li><strong>Explainability.</strong> If you “nudge” a filed ladder with continuous pricing, store the base and the delta, clearly.</li>
       </ul>
 
@@ -307,8 +307,8 @@ PricingTrace { itinerarySig, fareComponents[], appliedCats[], surcharges[], taxe
         <li><strong>ATPCO:</strong> Industry platform distributing fares, rules, taxes, optional services to subscribed systems.</li>
         <li><strong>Fare basis code:</strong> Encodes fare family and conditions; rules provide the full meaning.</li>
         <li><strong>RBD:</strong> Inventory booking class (Y, M, J…); required seat bucket for a fare.</li>
-        <li><strong>HIP:</strong> Higher Intermediate Point—prevents charging less than an intermediate fare on the path.</li>
-        <li><strong>MPM:</strong> Maximum Permitted Mileage—cap on mileage for a market used in fare construction/validation.</li>
+        <li><strong>HIP:</strong> Higher Intermediate Point-prevents charging less than an intermediate fare on the path.</li>
+        <li><strong>MPM:</strong> Maximum Permitted Mileage-cap on mileage for a market used in fare construction/validation.</li>
         <li><strong>YQ/YR:</strong> Carrier-imposed surcharges (distinct from government taxes).</li>
         <li><strong>Cat 25 / Cat 35:</strong> Fare-by-Rule transformations; negotiated/private fares.</li>
       </ul>

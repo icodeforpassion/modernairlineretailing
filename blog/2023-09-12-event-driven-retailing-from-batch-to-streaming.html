@@ -13,9 +13,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event-Driven Retailing: From Batch to Streaming</title>
-  <meta name="description" content="Event-Driven Retailing: From Batch to Streaming — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta name="description" content="Event-Driven Retailing: From Batch to Streaming - a practical, implementation-focused walkthrough for airline retailing teams."/>
   <meta property="og:title" content="Event-Driven Retailing: From Batch to Streaming"/>
-  <meta property="og:description" content="Event-Driven Retailing: From Batch to Streaming — a practical, implementation-focused walkthrough for airline retailing teams."/>
+  <meta property="og:description" content="Event-Driven Retailing: From Batch to Streaming - a practical, implementation-focused walkthrough for airline retailing teams."/>
   <meta property="og:type" content="article"/>
   <meta property="og:image" content="/blog/images/blog-12.jpg"/>
   <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2023-09-12-event-driven-retailing-from-batch-to-streaming.html"/>
@@ -45,7 +45,7 @@
 
   <section class="section">
     <div class="container content">
-      <p>Batch jobs kept retailing alive for decades—overnight fare loads, hourly availability syncs, daily revenue reports. Event-driven retailing keeps the same discipline but removes the stale lag. Rather than rewriting everything, add streaming step by step.</p>
+      <p>Batch jobs kept retailing alive for decades-overnight fare loads, hourly availability syncs, daily revenue reports. Event-driven retailing keeps the same discipline but removes the stale lag. Rather than rewriting everything, add streaming step by step.</p>
 
       <h2 id="trigger-map">Map the triggers</h2>
       <p>List every situation where a human currently hits “refresh.” Those are your event candidates:</p>
@@ -56,10 +56,10 @@
       </ul>
 
       <h2 id="event-shape">Design event shapes carefully</h2>
-      <p>Each event should declare what changed, the scope, and how long the data remains valid. Include correlation IDs so downstream services can relate the event to requests they process. Favor additive schemas—when you extend them, add new fields rather than breaking existing consumers.</p>
+      <p>Each event should declare what changed, the scope, and how long the data remains valid. Include correlation IDs so downstream services can relate the event to requests they process. Favor additive schemas-when you extend them, add new fields rather than breaking existing consumers.</p>
 
       <h2 id="platform">Pick the platform and guardrails</h2>
-      <p>Kafka, Pulsar, cloud-native messaging—it matters less than the guardrails you wrap around it:</p>
+      <p>Kafka, Pulsar, cloud-native messaging-it matters less than the guardrails you wrap around it:</p>
       <ol>
         <li>Define ownership per topic or stream.</li>
         <li>Set retention policies aligned with replay needs.</li>

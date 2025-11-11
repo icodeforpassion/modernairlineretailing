@@ -229,10 +229,10 @@
         </div>
         <div class="card">
             <div class="result-box">
-                <div class="metric"><h3>Total Protection (Highest)</h3><div class="val" id="protSummary">—</div></div>
-                <div class="metric"><h3>Recommended Alloc (per class)</h3><div class="val" id="allocSummary">—</div></div>
-                <div class="metric"><h3>Expected Seats Sold</h3><div class="val" id="expSold">—</div></div>
-                <div class="metric"><h3>Expected Revenue</h3><div class="val" id="expRev">—</div></div>
+                <div class="metric"><h3>Total Protection (Highest)</h3><div class="val" id="protSummary">-</div></div>
+                <div class="metric"><h3>Recommended Alloc (per class)</h3><div class="val" id="allocSummary">-</div></div>
+                <div class="metric"><h3>Expected Seats Sold</h3><div class="val" id="expSold">-</div></div>
+                <div class="metric"><h3>Expected Revenue</h3><div class="val" id="expRev">-</div></div>
             </div>
             <table id="outputTable" style="margin-top:1.4rem;">
                 <thead>
@@ -320,7 +320,7 @@
         if (C <= 0 || rows.length === 0) {
             statusEl.textContent = 'Enter capacity & at least one class.';
             outBody.innerHTML = '';
-            protSummary.textContent = allocSummary.textContent = expSoldEl.textContent = expRevEl.textContent = '—';
+            protSummary.textContent = allocSummary.textContent = expSoldEl.textContent = expRevEl.textContent = '-';
             return;
         }
         const sorted = [...rows]; // assume already high->low

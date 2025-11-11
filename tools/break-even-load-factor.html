@@ -105,32 +105,32 @@ a.inline:hover{color:#fff;}
       <div class="metric-box">
         <div class="metric">
           <h3>Break-Even Load Factor</h3>
-          <div class="val" id="belfVal">—</div>
+          <div class="val" id="belfVal">-</div>
           <small class="note" id="belfExplain"></small>
         </div>
         <div class="metric">
           <h3>RASM (Projected)</h3>
-          <div class="val" id="rasmVal">—</div>
+          <div class="val" id="rasmVal">-</div>
           <small class="note">Passenger + ancillary / ASM</small>
         </div>
         <div class="metric">
           <h3>CASM (Input)</h3>
-          <div class="val" id="casmValOut">—</div>
+          <div class="val" id="casmValOut">-</div>
           <small class="note">Operating cost / ASM</small>
         </div>
         <div class="metric">
           <h3>Profit per Flight</h3>
-          <div class="val" id="profitVal">—</div>
+          <div class="val" id="profitVal">-</div>
           <small class="note" id="marginNote"></small>
         </div>
         <div class="metric">
           <h3>Revenue / Pax (Net)</h3>
-          <div class="val" id="revPaxVal">—</div>
+          <div class="val" id="revPaxVal">-</div>
           <small class="note">Base + ancillary − taxes</small>
         </div>
         <div class="metric">
           <h3>Seat Cost (Stage)</h3>
-          <div class="val" id="seatCostVal">—</div>
+          <div class="val" id="seatCostVal">-</div>
           <small class="note">CASM × stage length</small>
         </div>
       </div>
@@ -169,13 +169,13 @@ a.inline:hover{color:#fff;}
   function num(v){return isFinite(parseFloat(v)) ? parseFloat(v) : 0;}
 
   function fmtUSD(x){
-    if(!isFinite(x)) return '—';
+    if(!isFinite(x)) return '-';
     const neg = x<0;
     const abs = Math.abs(x);
     return (neg?'-':'')+'$'+abs.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
   }
   function fmtUSD2(x){
-    if(!isFinite(x)) return '—';
+    if(!isFinite(x)) return '-';
     const neg = x<0;
     const abs = Math.abs(x);
     return (neg?'-':'')+'$'+abs.toFixed(2);
@@ -220,7 +220,7 @@ a.inline:hover{color:#fff;}
     const profit = passengerRevenue - totalCost;
     const margin = passengerRevenue>0 ? profit / passengerRevenue * 100 : 0;
 
-    belfVal.textContent = isFinite(belf) ? (belf*100).toFixed(1)+'%' : '—';
+    belfVal.textContent = isFinite(belf) ? (belf*100).toFixed(1)+'%' : '-';
     belfExplain.textContent = isFinite(belf)
       ? 'At ≥ this load factor flight covers fixed + variable costs.'
       : 'Net revenue per pax must exceed cost per seat.';
@@ -235,7 +235,7 @@ a.inline:hover{color:#fff;}
 
   function setOutputsInvalid(){
     [belfVal,rasmVal,casmValOut,profitVal,revPaxVal,seatCostVal,marginNote,belfExplain]
-      .forEach(el=>el.textContent='—');
+      .forEach(el=>el.textContent='-');
   }
 
   function updateURL(){

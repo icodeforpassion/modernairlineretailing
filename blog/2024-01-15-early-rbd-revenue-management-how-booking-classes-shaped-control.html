@@ -76,7 +76,7 @@
   <section class="section">
     <div class="container content">
 
-      <p><strong>TL;DR</strong>: Before offer &amp; order, continuous pricing, and dynamic ancillaries, the airline’s principal control surface was the Reservation Booking Designator (RBD) — the one-letter (sometimes paired) booking class. By nesting these buckets and attaching filed fares + rules, airlines approximated marginal seat valuation. Understanding the mechanics of that era is still vital: you will migrate or interoperate with it for years. This post explains <em>why</em> booking classes existed, <em>how</em> they powered early yield management, common failure modes, and what to preserve (or retire) as you modernize.</p>
+      <p><strong>TL;DR</strong>: Before offer &amp; order, continuous pricing, and dynamic ancillaries, the airline’s principal control surface was the Reservation Booking Designator (RBD) - the one-letter (sometimes paired) booking class. By nesting these buckets and attaching filed fares + rules, airlines approximated marginal seat valuation. Understanding the mechanics of that era is still vital: you will migrate or interoperate with it for years. This post explains <em>why</em> booking classes existed, <em>how</em> they powered early yield management, common failure modes, and what to preserve (or retire) as you modernize.</p>
 
       <div class="toc">
         <strong>Table of Contents</strong>
@@ -120,7 +120,7 @@
         <li><strong>Nesting:</strong> Higher fares inherit availability of lower buckets, or vice versa, depending on design.
           <ul>
             <li><strong>Fully nested:</strong> Opening an expensive class does not automatically open cheaper classes (protect yield).</li>
-            <li><strong>Partitioned:</strong> Each class has fixed allotment—simpler, less optimal; used for groups/special cases.</li>
+            <li><strong>Partitioned:</strong> Each class has fixed allotment-simpler, less optimal; used for groups/special cases.</li>
           </ul>
         </li>
         <li><strong>Controls:</strong> Open/close (0/1) evolved into numeric <strong>protection levels</strong>.</li>
@@ -250,7 +250,7 @@
 
       <hr/>
       <div class="callout">
-        <strong>Key takeaway:</strong> RBD-based control was an engineering shorthand for airline economics. Modernization succeeds when you retain explicit sources of truth, freshness guarantees, and transparent economic logic—while decoupling distribution from legacy class limitations.
+        <strong>Key takeaway:</strong> RBD-based control was an engineering shorthand for airline economics. Modernization succeeds when you retain explicit sources of truth, freshness guarantees, and transparent economic logic-while decoupling distribution from legacy class limitations.
       </div>
 
       <p>If you are planning a migration from class-based availability to offer-driven dynamic pricing and want a neutral readiness checklist, stay tuned for an upcoming guide.</p>
