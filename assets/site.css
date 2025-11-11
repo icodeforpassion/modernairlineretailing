@@ -299,6 +299,134 @@ img {
   color: #fff;
 }
 
+.share-widget {
+  position: fixed;
+  right: clamp(1rem, 4vw, 2.5rem);
+  bottom: clamp(1rem, 4vw, 2.5rem);
+  z-index: 1200;
+}
+
+.share-fab {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(79, 177, 245, 0.95), rgba(130, 224, 255, 0.95));
+  color: #0d1b2a;
+  box-shadow: var(--shadow-2);
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.share-fab:focus {
+  outline: none;
+  box-shadow: var(--focus-ring), var(--shadow-2);
+}
+
+.share-fab:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.share-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.75rem);
+  width: min(260px, 80vw);
+  padding: 1rem 1.1rem 1.1rem;
+  border-radius: var(--radius);
+  background: var(--clr-surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-2);
+  display: none;
+  color: var(--clr-text);
+}
+
+.share-panel[data-open="true"] {
+  display: block;
+  animation: shareFadeIn 0.24s ease-out;
+}
+
+.share-panel__status {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--clr-text-dim);
+}
+
+.share-panel__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.share-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.07);
+  transition: background var(--transition-base), transform var(--transition-base);
+}
+
+.share-link:hover,
+.share-link:focus {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.share-link:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.share-link--whatsapp {
+  color: #25d366;
+}
+
+.share-link--x {
+  color: #1d9bf0;
+}
+
+.share-link--instagram {
+  color: #e1306c;
+}
+
+.share-link--facebook {
+  color: #1877f2;
+}
+
+@keyframes shareFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .share-widget {
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .share-panel {
+    width: min(280px, calc(100vw - 2rem));
+  }
+}
+
 @media (max-width: 880px) {
   .nav-links {
     position: absolute;

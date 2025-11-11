@@ -118,5 +118,127 @@
         setNavOpen(false);
       }
     });
+
+    const shareWrapper = document.createElement('div');
+    shareWrapper.className = 'share-widget';
+    shareWrapper.innerHTML = `
+      <button type="button" class="share-fab" aria-expanded="false" aria-controls="share-panel">
+        <span class="sr-only">Share this page</span>
+        <svg class="share-fab__icon" width="22" height="22" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+          <path d="M13.5 5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm-7 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm11 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm-.87-18.4-6.44 3.22a3 3 0 1 0 0 4.36l6.44 3.22a3 3 0 1 0 1.34-2.68l-6.44-3.22a2.98 2.98 0 0 0 .05-.5 2.98 2.98 0 0 0-.05-.5l6.44-3.22a3 3 0 1 0-1.34-2.68Z" fill="currentColor" />
+        </svg>
+      </button>
+      <div class="share-panel" id="share-panel" data-open="false">
+        <p class="share-panel__status" role="status" aria-live="polite">Share this page</p>
+        <ul class="share-panel__links">
+          <li><a class="share-link share-link--whatsapp" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a class="share-link share-link--x" target="_blank" rel="noopener">X (Twitter)</a></li>
+          <li><a class="share-link share-link--instagram" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a class="share-link share-link--facebook" target="_blank" rel="noopener">Facebook</a></li>
+        </ul>
+      </div>
+    `;
+
+    const encodedUrl = encodeURIComponent(window.location.href);
+    const encodedTitle = encodeURIComponent(document.title);
+
+    const shareLinks = shareWrapper.querySelectorAll('.share-link');
+    shareLinks.forEach(function(link){
+      if (link.classList.contains('share-link--whatsapp')) {
+        link.href = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
+      } else if (link.classList.contains('share-link--x')) {
+        link.href = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+      } else if (link.classList.contains('share-link--instagram')) {
+        link.href = `https://www.instagram.com/?url=${encodedUrl}`;
+      } else if (link.classList.contains('share-link--facebook')) {
+        link.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+      }
+    });
+
+    const sharePanel = shareWrapper.querySelector('.share-panel');
+    const shareFab = shareWrapper.querySelector('.share-fab');
+    const shareStatus = shareWrapper.querySelector('.share-panel__status');
+
+    function setShareOpen(open) {
+      sharePanel.setAttribute('data-open', String(open));
+      shareFab.setAttribute('aria-expanded', String(open));
+      if (open) {
+        document.addEventListener('click', handleOutsideClick);
+        document.addEventListener('keydown', handleEscape);
+        const firstLink = sharePanel.querySelector('.share-link');
+        if (firstLink) {
+          window.requestAnimationFrame(function(){
+            firstLink.focus();
+          });
+        }
+      } else {
+        document.removeEventListener('click', handleOutsideClick);
+        document.removeEventListener('keydown', handleEscape);
+      }
+    }
+
+    function handleOutsideClick(evt) {
+      if (!shareWrapper.contains(evt.target)) {
+        setShareOpen(false);
+      }
+    }
+
+    function handleEscape(evt) {
+      if (evt.key === 'Escape') {
+        setShareOpen(false);
+        shareFab.focus();
+      }
+    }
+
+    function copyCurrentUrl() {
+      const url = window.location.href;
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        return navigator.clipboard.writeText(url);
+      }
+      return new Promise(function(resolve, reject){
+        try {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = url;
+          tempInput.setAttribute('readonly', '');
+          tempInput.style.position = 'absolute';
+          tempInput.style.left = '-9999px';
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          const successful = document.execCommand('copy');
+          document.body.removeChild(tempInput);
+          if (successful) {
+            resolve();
+          } else {
+            reject();
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
+    shareFab.addEventListener('click', function(){
+      const isOpen = sharePanel.getAttribute('data-open') === 'true';
+      if (isOpen) {
+        setShareOpen(false);
+        return;
+      }
+
+      copyCurrentUrl().then(function(){
+        shareStatus.textContent = 'Link copied! Share using the options below:';
+      }).catch(function(){
+        shareStatus.textContent = 'Share using the options below:';
+      }).finally(function(){
+        setShareOpen(true);
+      });
+    });
+
+    sharePanel.addEventListener('click', function(evt){
+      if (evt.target.classList && evt.target.classList.contains('share-link')) {
+        setShareOpen(false);
+      }
+    });
+
+    document.body.appendChild(shareWrapper);
   });
 })();
