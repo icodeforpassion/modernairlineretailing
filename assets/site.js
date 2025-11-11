@@ -236,37 +236,29 @@
       }
     });
 
-    const currentPath = window.location.pathname || '';
-    const isLabToolPage = currentPath.indexOf('/tools/offer-order-visualizer') !== -1;
-    if (!isLabToolPage) {
-      const labShortcut = document.createElement('a');
-      labShortcut.className = 'lab-shortcut';
-      if (currentPath === '/' || currentPath.endsWith('/index.html')) {
-        labShortcut.classList.add('lab-shortcut--home');
+    const labShortcut = document.createElement('a');
+    labShortcut.className = 'lab-shortcut';
+    labShortcut.href = '/tools/offer-order-visualizer.html';
+    labShortcut.setAttribute('aria-label', 'Launch the Offer & Order Retailing Lab');
+    labShortcut.innerHTML = `
+      <span class="lab-shortcut__pulse" aria-hidden="true"></span>
+      <span class="lab-shortcut__icon" aria-hidden="true">⚡</span>
+      <span class="lab-shortcut__content">
+        <span class="lab-shortcut__eyebrow">Try now</span>
+        <span class="lab-shortcut__title">Offer &amp; Order Retailing Lab</span>
+      </span>
+    `;
+
+    labShortcut.addEventListener('click', function(){
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'lab_shortcut_click', {
+          event_category: 'engagement',
+          event_label: 'Offer & Order Retailing Lab'
+        });
       }
-      labShortcut.href = '/tools/offer-order-visualizer.html';
-      labShortcut.setAttribute('aria-label', 'Launch the Offer & Order Retailing Lab');
-      labShortcut.innerHTML = `
-        <span class="lab-shortcut__pulse" aria-hidden="true"></span>
-        <span class="lab-shortcut__icon" aria-hidden="true">⚡</span>
-        <span class="lab-shortcut__content">
-          <span class="lab-shortcut__eyebrow">Try now</span>
-          <span class="lab-shortcut__title">Offer &amp; Order Retailing Lab</span>
-        </span>
-      `;
+    });
 
-      labShortcut.addEventListener('click', function(){
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'lab_shortcut_click', {
-            event_category: 'engagement',
-            event_label: 'Offer & Order Retailing Lab'
-          });
-        }
-      });
-
-      document.body.appendChild(labShortcut);
-    }
-
+    document.body.appendChild(labShortcut);
     document.body.appendChild(shareWrapper);
   });
 })();
