@@ -15,7 +15,7 @@
         <a href="/index.html">Home</a>
         <a href="/blog/index.html">Blog</a>
         <a href="/tools/index.html">Tools</a>
-        <a href="/enterprise.html#architecture-map">OTA Architecture</a>
+        <a href="/enterprise.html">OTA Architecture</a>
         <a href="/about.html">About</a>
       </nav>
     </div>`;
