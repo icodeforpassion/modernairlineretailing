@@ -23,9 +23,6 @@
   const footerMarkup = `
     <div class="container">
       <p><strong>Modern Airline Retailing</strong> – Offer &amp; Order, NDC, Merchandising, and Airline Commerce Made Practical</p>
-      <p>Passionate about airline retailing?</p>
-      <p>This is my personal blog, created purely to share insights and industry knowledge about the evolving world of airline retailing — independent of any airline I work with.</p>
-      <p>Want to chat about modern airline retailing, architecture, or innovation? Connect with me on <a href="https://www.linkedin.com/in/neerej/" target="_blank" rel="noopener" class="linkedin-btn">LinkedIn</a> for an engaging discussion.</p>
       <p>&copy; ${new Date().getFullYear()} Modern Airline Retailing. Built for builders, product leads and airline teams.</p>
     </div>`;
 
@@ -239,6 +236,29 @@
       }
     });
 
+    const labShortcut = document.createElement('a');
+    labShortcut.className = 'lab-shortcut';
+    labShortcut.href = '/tools/offer-order-visualizer.html';
+    labShortcut.setAttribute('aria-label', 'Launch the Offer & Order Retailing Lab');
+    labShortcut.innerHTML = `
+      <span class="lab-shortcut__pulse" aria-hidden="true"></span>
+      <span class="lab-shortcut__icon" aria-hidden="true">⚡</span>
+      <span class="lab-shortcut__content">
+        <span class="lab-shortcut__eyebrow">Try now</span>
+        <span class="lab-shortcut__title">Offer &amp; Order Retailing Lab</span>
+      </span>
+    `;
+
+    labShortcut.addEventListener('click', function(){
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'lab_shortcut_click', {
+          event_category: 'engagement',
+          event_label: 'Offer & Order Retailing Lab'
+        });
+      }
+    });
+
+    document.body.appendChild(labShortcut);
     document.body.appendChild(shareWrapper);
   });
 })();
