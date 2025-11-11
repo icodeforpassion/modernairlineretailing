@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enterprise Architecture | Modern Airline Retailing — OTA System Blocks</title>
+  <meta name="description" content="Explore a connected OTA and airline retailing architecture spanning NDC, booking engines, GDS links, loyalty, corporate travel, and B2B/B2C channels.">
+  <link rel="canonical" href="https://www.modernairlineretailing.com/enterprise.html">
+  <meta property="og:title" content="Enterprise Architecture | Modern Airline Retailing — OTA System Blocks">
+  <meta property="og:description" content="Explore a connected OTA and airline retailing architecture spanning NDC, booking engines, GDS links, loyalty, corporate travel, and B2B/B2C channels.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.modernairlineretailing.com/enterprise.html">
+  <meta property="og:image" content="/assets/images/og-enterprise.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Enterprise Architecture | Modern Airline Retailing — OTA System Blocks">
+  <meta name="twitter:description" content="Explore a connected OTA and airline retailing architecture spanning NDC, booking engines, GDS links, loyalty, corporate travel, and B2B/B2C channels.">
+  <meta name="twitter:image" content="/assets/images/og-enterprise.png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/enterprise.css">
+  <script type="application/ld+json" id="enterprise-jsonld"></script>
+</head>
+<body>
+  <a href="#architecture-map" class="skip-link">Skip to architecture map</a>
+  <header class="site-header"></header>
+  <section class="hero" role="banner">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Enterprise Architecture</p>
+      <h1>System Blocks: The OTA Enterprise Solution</h1>
+      <p class="hero__subhead">Unify airline retailing from first search to lifelong loyalty with NDC-ready order management, rich servicing, and omnichannel distribution.
+        Connect modular services, partner APIs, and policy-aware experiences to deliver resilient journeys.</p>
+      <a class="hero__cta" href="#architecture-map">Explore the Map</a>
+    </div>
+    <div class="hero__visual" aria-hidden="true">
+      <svg viewBox="0 0 320 200" role="presentation" focusable="false">
+        <defs>
+          <linearGradient id="heroGradient" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ede9ff" />
+            <stop offset="100%" stop-color="#f8f7ff" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="320" height="200" fill="url(#heroGradient)" rx="24"></rect>
+        <g stroke="#6f4cff" stroke-width="1.5" fill="none" opacity="0.5">
+          <path d="M40 60h80v40H40zM200 100h60v40h-60z" />
+          <path d="M120 80 C160 70 180 120 220 110" />
+          <circle cx="80" cy="150" r="20" />
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <main id="main-content">
+    <section class="legacy-future" aria-labelledby="legacy-future-heading" data-view="compare">
+      <div class="section-heading">
+        <h2 id="legacy-future-heading">Legacy vs Future Operating Models</h2>
+      </div>
+      <div class="legacy-toggle" role="group" aria-label="Toggle legacy or future view">
+        <button type="button" class="legacy-toggle__button" data-view="legacy" aria-pressed="false">Legacy</button>
+        <button type="button" class="legacy-toggle__button" data-view="compare" aria-pressed="true">Compare</button>
+        <button type="button" class="legacy-toggle__button" data-view="future" aria-pressed="false">Future</button>
+      </div>
+      <div class="split-panel" role="list">
+        <div class="split-panel__column split-panel__column--legacy" role="listitem">
+          <h3>Legacy Stack</h3>
+          <ul>
+            <li><span aria-hidden="true" class="list-icon">🧱</span>Monolithic cores that slow change and scale.</li>
+            <li><span aria-hidden="true" class="list-icon">⏱️</span>Synchronous calls that stall in peak loads.</li>
+            <li><span aria-hidden="true" class="list-icon">🎫</span>PNR and ticket-centric records limit personalization.</li>
+            <li><span aria-hidden="true" class="list-icon">📄</span>Batch settlement cycles delay revenue clarity.</li>
+            <li><span aria-hidden="true" class="list-icon">🧭</span>Rigid UIs tied to host workflows.</li>
+          </ul>
+        </div>
+        <div class="split-panel__column split-panel__column--future" role="listitem">
+          <h3>Future Stack</h3>
+          <ul>
+            <li><span aria-hidden="true" class="list-icon">🧩</span>Modular services that evolve independently.</li>
+            <li><span aria-hidden="true" class="list-icon">⚡</span>Async, event-driven orchestration resilient to spikes.</li>
+            <li><span aria-hidden="true" class="list-icon">📦</span>Order-centric journeys spanning offers to delivery.</li>
+            <li><span aria-hidden="true" class="list-icon">💹</span>Continuous settlement and cash visibility.</li>
+            <li><span aria-hidden="true" class="list-icon">🛰️</span>API-first, headless experiences across channels.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Architecture controls">
+      <div class="toolbar__search">
+        <label for="architecture-search" class="sr-only">Search architecture blocks</label>
+        <input id="architecture-search" type="search" placeholder="Search blocks (e.g., loyalty)" autocomplete="off">
+      </div>
+      <div class="toolbar__actions">
+        <button type="button" class="toolbar__button" id="reset-view">Reset View</button>
+        <button type="button" class="toolbar__button" id="download-node" aria-disabled="true">Download Selected</button>
+      </div>
+      <div class="legend" aria-label="Category legend"></div>
+    </section>
+
+    <section id="customer-interface" class="architecture-section" aria-labelledby="customer-interface-heading">
+      <h2 id="customer-interface-heading">Customer Interface</h2>
+    </section>
+    <section id="integration-block" class="architecture-section" aria-labelledby="integration-block-heading">
+      <h2 id="integration-block-heading">Integration Block</h2>
+    </section>
+    <section id="back-office" class="architecture-section" aria-labelledby="back-office-heading">
+      <h2 id="back-office-heading">Back Office &amp; Business Rules</h2>
+    </section>
+    <section id="communication-social" class="architecture-section" aria-labelledby="communication-social-heading">
+      <h2 id="communication-social-heading">Communication &amp; Social</h2>
+    </section>
+    <section id="products-services" class="architecture-section" aria-labelledby="products-services-heading">
+      <h2 id="products-services-heading">Products &amp; Services</h2>
+    </section>
+    <section id="affiliate" class="architecture-section" aria-labelledby="affiliate-heading">
+      <h2 id="affiliate-heading">Affiliate / Partners</h2>
+    </section>
+
+    <section class="architecture-map" aria-label="Interactive architecture map">
+      <div class="map-layout">
+        <div class="diagram-container">
+          <svg id="architecture-map" role="img" aria-labelledby="architecture-map-title architecture-map-desc" tabindex="0"></svg>
+          <div id="tooltip" role="tooltip" hidden></div>
+        </div>
+        <aside class="side-panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" aria-describedby="panel-body">
+          <header class="side-panel__header">
+            <h3 id="panel-title">Explore a block to view details</h3>
+            <button type="button" class="side-panel__close" aria-label="Close details">&times;</button>
+          </header>
+          <div id="panel-body" class="side-panel__body">
+            <p>Select a block from the map to see its role, key features, and impact on enterprise travel retailing.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <section class="prototype-disclaimer" aria-label="Prototype disclaimer">
+      <p>This interactive is a <strong>prototype</strong> for <strong>educational</strong> purposes and does not represent live production systems.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="/assets/site.js" defer></script>
+  <script src="/enterprise.js" defer></script>
+</body>
+</html>
