@@ -23,6 +23,9 @@
 <body>
   <a href="#architecture-map" class="skip-link">Skip to architecture map</a>
   <header class="site-header"></header>
+  <div class="skip-link-inline">
+    <a class="skip-link-inline__button" href="#architecture-map">Skip to architecture map</a>
+  </div>
   <section class="hero" role="banner">
     <div class="hero__content">
       <p class="hero__eyebrow">Enterprise Architecture</p>
@@ -120,7 +123,7 @@
           <svg id="architecture-map" role="img" aria-labelledby="architecture-map-title architecture-map-desc" tabindex="0"></svg>
           <div id="tooltip" role="tooltip" hidden></div>
         </div>
-        <aside class="side-panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" aria-describedby="panel-body">
+        <aside class="side-panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" aria-describedby="panel-body" data-open="true">
           <header class="side-panel__header">
             <h3 id="panel-title">Explore a block to view details</h3>
             <button type="button" class="side-panel__close" aria-label="Close details">&times;</button>

@@ -514,11 +514,15 @@ function setPanelOpenState(open) {
   const panel = document.querySelector(".side-panel");
   if (!panel) return;
   if (open) {
+    panel.hidden = false;
     panel.dataset.open = "true";
+    panel.setAttribute("aria-hidden", "false");
     panel.setAttribute("aria-modal", window.matchMedia("(max-width: 1024px)").matches ? "true" : "false");
   } else {
     panel.removeAttribute("data-open");
     panel.setAttribute("aria-modal", "false");
+    panel.setAttribute("aria-hidden", "true");
+    panel.hidden = true;
   }
 }
 
