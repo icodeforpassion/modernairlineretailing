@@ -125,8 +125,26 @@ const ARCH_DATA = {
     {
       id: "affiliate-partners", category: "affiliate",
       title: "Products & Integration Partners",
-      description: "3rd-party partners and metas for distribution and sourcing.",
-      items: ["Priceline","Hotel.com","Orbitz"]
+      description: "Core partner catalogues, bed banks, rail and tours surfaced for cross-sell.",
+      items: ["Priceline","Hotels.com","Orbitz","Rail Europe","Tour Operators"]
+    },
+    {
+      id: "affiliate-marketplaces", category: "affiliate",
+      title: "Affiliate Marketplaces",
+      description: "Meta, media and marketplace connections that amplify reach and conversions.",
+      items: ["Google Travel","Kayak","Skyscanner","Travel media","Co-brands"]
+    },
+    {
+      id: "affiliate-tracking", category: "affiliate",
+      title: "Partner Tracking & Attribution",
+      description: "Performance tracking, payouts and compliance for affiliates and influencers.",
+      items: ["Click tracking","Conversion pixels","Commission rules","Payment cycles"]
+    },
+    {
+      id: "affiliate-connectivity", category: "affiliate",
+      title: "Partner API Connectivity",
+      description: "API gateway, caching and throttling for supplier and reseller integrations.",
+      items: ["REST/GraphQL","NDC","Cache refresh","Throttling","Sandbox"]
     }
   ]
 };
@@ -178,11 +196,11 @@ function ensureNavigation() {
   const siteNav = document.querySelector(".site-header .nav-links");
   if (siteNav) {
     const siteLinks = Array.from(siteNav.querySelectorAll("a"));
-    let siteLink = siteLinks.find((link) => link.getAttribute("href") === "/enterprise.html");
+    let siteLink = siteLinks.find((link) => (link.getAttribute("href") || "").startsWith("/enterprise.html"));
     if (!siteLink) {
       siteLink = document.createElement("a");
       siteLink.href = "/enterprise.html";
-      siteLink.textContent = "Enterprise Architecture";
+      siteLink.textContent = "OTA Architecture";
       siteNav.appendChild(siteLink);
     }
     if (window.location.pathname.endsWith("/enterprise.html")) {
@@ -203,12 +221,12 @@ function ensureNavigation() {
 
   if (nav) {
     const existing = Array.from(nav.querySelectorAll("a"));
-    let link = existing.find((item) => item.getAttribute("href") === "/enterprise.html");
+    let link = existing.find((item) => (item.getAttribute("href") || "").startsWith("/enterprise.html"));
     if (!link) {
       const li = document.createElement("li");
       link = document.createElement("a");
       link.href = "/enterprise.html";
-      link.textContent = "Enterprise Architecture";
+      link.textContent = "OTA Architecture";
       li.appendChild(link);
       nav.appendChild(li);
     }
