@@ -375,12 +375,21 @@
     });
 
     const isOfferOrderLabPage = currentPath === '/tools/offer-order-visualizer.html';
+    let labShortcutDismissed = false;
 
-    if (!isOfferOrderLabPage) {
+    try {
+      labShortcutDismissed = window.sessionStorage && window.sessionStorage.getItem('labShortcutDismissed') === 'true';
+    } catch (err) {
+      labShortcutDismissed = false;
+    }
+
+    if (!isOfferOrderLabPage && (!labShortcutDismissed || currentPath === '/')) {
       const labShortcut = document.createElement('a');
       labShortcut.className = 'lab-shortcut';
       labShortcut.href = '/tools/offer-order-visualizer.html';
       labShortcut.setAttribute('aria-label', 'Launch the Offer & Order Retailing Lab');
+      labShortcut.setAttribute('aria-haspopup', 'true');
+      labShortcut.setAttribute('data-state', 'collapsed');
       labShortcut.innerHTML = `
         <span class="lab-shortcut__pulse" aria-hidden="true"></span>
         <span class="lab-shortcut__icon" aria-hidden="true">⚡</span>
@@ -394,6 +403,8 @@
 
       if (currentPath === '/') {
         labShortcut.classList.add('lab-shortcut--home');
+        labShortcut.setAttribute('data-state', 'expanded');
+        labShortcut.setAttribute('aria-expanded', 'true');
         const heroContainer = document.querySelector('.hero.is-landing .container');
 
         if (heroContainer) {
@@ -416,7 +427,96 @@
         }
       }
 
-      labShortcut.addEventListener('click', function(){
+      function storeLabShortcutDismissal() {
+        try {
+          if (window.sessionStorage) {
+            window.sessionStorage.setItem('labShortcutDismissed', 'true');
+          }
+        } catch (err) {
+          // Ignore storage failures (private browsing, etc.)
+        }
+      }
+
+      function expandLabShortcut() {
+        if (labShortcut.classList.contains('lab-shortcut--home')) {
+          return;
+        }
+
+        labShortcut.classList.remove('lab-shortcut--collapsed');
+        labShortcut.classList.add('lab-shortcut--expanded');
+        labShortcut.setAttribute('data-state', 'expanded');
+        labShortcut.setAttribute('aria-expanded', 'true');
+      }
+
+      function collapseLabShortcut() {
+        if (labShortcut.classList.contains('lab-shortcut--home')) {
+          return;
+        }
+
+        if (!labShortcut.classList.contains('lab-shortcut--collapsed')) {
+          labShortcut.classList.remove('lab-shortcut--expanded');
+          labShortcut.classList.add('lab-shortcut--collapsed');
+          labShortcut.setAttribute('data-state', 'collapsed');
+          labShortcut.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      function handleLabShortcutClick(evt) {
+        if (labShortcut.classList.contains('lab-shortcut--home')) {
+          return;
+        }
+
+        const isCollapsed = labShortcut.classList.contains('lab-shortcut--collapsed');
+        const isModified = evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey || evt.button !== 0;
+
+        if (isCollapsed && !isModified) {
+          evt.preventDefault();
+          expandLabShortcut();
+          window.requestAnimationFrame(function(){
+            labShortcut.focus();
+          });
+          return;
+        }
+
+        if (!isCollapsed && !isModified) {
+          storeLabShortcutDismissal();
+        }
+      }
+
+      function handleLabShortcutKeydown(evt) {
+        if (labShortcut.classList.contains('lab-shortcut--home')) {
+          return;
+        }
+
+        if (labShortcut.classList.contains('lab-shortcut--collapsed') && (evt.key === 'Enter' || evt.key === ' ')) {
+          evt.preventDefault();
+          expandLabShortcut();
+        } else if (evt.key === 'Escape') {
+          collapseLabShortcut();
+        }
+      }
+
+      function handleDocumentClick(evt) {
+        if (!labShortcut.classList.contains('lab-shortcut--home') && !labShortcut.classList.contains('lab-shortcut--collapsed') && !labShortcut.contains(evt.target)) {
+          collapseLabShortcut();
+        }
+      }
+
+      function handleDocumentKeydown(evt) {
+        if (evt.key === 'Escape') {
+          collapseLabShortcut();
+        }
+      }
+
+      labShortcut.addEventListener('click', handleLabShortcutClick);
+
+      labShortcut.addEventListener('keydown', handleLabShortcutKeydown);
+
+      labShortcut.addEventListener('click', function(evt){
+        if (evt.defaultPrevented) {
+          return;
+        }
+
         if (typeof window.gtag === 'function') {
           window.gtag('event', 'lab_shortcut_click', {
             event_category: 'engagement',
@@ -426,6 +526,10 @@
       });
 
       if (!appendedToHero) {
+        labShortcut.classList.add('lab-shortcut--collapsed');
+        labShortcut.setAttribute('aria-expanded', 'false');
+        document.addEventListener('click', handleDocumentClick);
+        document.addEventListener('keydown', handleDocumentKeydown);
         document.body.appendChild(labShortcut);
       }
     }
