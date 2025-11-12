@@ -169,6 +169,37 @@
       box-shadow: var(--focus-ring);
     }
 
+    .hero-actions {
+      margin-top: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-actions .hero-cta {
+      margin-top: 0;
+    }
+
+    .hero-actions .lab-shortcut--home {
+      margin: 0;
+      width: min(420px, 100%);
+    }
+
+    @media (min-width: 768px) {
+      .hero-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+      }
+
+      .hero-actions .lab-shortcut--home {
+        width: auto;
+        padding: 0.85rem 1.4rem;
+      }
+    }
+
     .section {
       background: linear-gradient(to bottom, var(--clr-bg), var(--clr-bg-alt));
       padding-top: 4rem;
