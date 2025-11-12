@@ -17,6 +17,7 @@
         <a href="/tools/index.html">Tools</a>
         <a href="/enterprise.html">OTA Architecture</a>
         <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy &amp; Cookies</a>
       </nav>
     </div>`;
 
@@ -24,7 +25,137 @@
     <div class="container">
       <p><strong>Modern Airline Retailing</strong> – Offer &amp; Order, NDC, Merchandising, and Airline Commerce Made Practical</p>
       <p>&copy; ${new Date().getFullYear()} Modern Airline Retailing. Built for builders, product leads and airline teams.</p>
+      <p><a href="/privacy.html">Privacy &amp; Cookies Policy</a></p>
     </div>`;
+
+  // --- Cookie consent helpers ---
+  const CONSENT_STORAGE_KEY = 'cookieConsent';
+  const CONSENT_ACCEPTED = 'accepted';
+  const CONSENT_REJECTED = 'rejected';
+  const ANALYTICS_ID = 'G-L4958PW125';
+
+  /**
+   * Safely reads the stored cookie consent preference.
+   */
+  function getStoredConsent() {
+    try {
+      return window.localStorage.getItem(CONSENT_STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  /**
+   * Persists the user's cookie consent preference.
+   * @param {string} value
+   */
+  function setStoredConsent(value) {
+    try {
+      window.localStorage.setItem(CONSENT_STORAGE_KEY, value);
+    } catch (err) {
+      /* localStorage unavailable */
+    }
+  }
+
+  /**
+   * Injects the Google Analytics / Tag Manager script after consent is granted.
+   */
+  function loadAnalytics() {
+    if (window.__analyticsLoaded) {
+      return;
+    }
+    window.__analyticsLoaded = true;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function(){
+      window.dataLayer.push(arguments);
+    };
+    window.gtag('js', new Date());
+    window.gtag('config', ANALYTICS_ID);
+
+    const gaScript = document.createElement('script');
+    gaScript.id = 'google-analytics-loader';
+    gaScript.async = true;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}`;
+    document.head.appendChild(gaScript);
+  }
+
+  /**
+   * Builds the consent banner element and wires up button handlers.
+   * @param {Function} onAccept
+   * @param {Function} onReject
+   */
+  function createCookieBanner(onAccept, onReject) {
+    const banner = document.createElement('section');
+    banner.className = 'cookie-consent';
+    banner.setAttribute('role', 'region');
+    banner.setAttribute('aria-label', 'Cookie consent');
+    banner.innerHTML = `
+      <div class="cookie-consent__inner">
+        <p class="cookie-consent__message">This site uses cookies to analyse traffic via Google Tag Manager and Google Analytics. You can accept or reject analytics cookies at any time. Essential cookies are always enabled.</p>
+        <div class="cookie-consent__actions">
+          <button type="button" class="cookie-consent__button cookie-consent__button--accept">Accept All Cookies</button>
+          <button type="button" class="cookie-consent__button cookie-consent__button--reject">Reject Non-Essential</button>
+        </div>
+      </div>
+    `;
+
+    const acceptButton = banner.querySelector('.cookie-consent__button--accept');
+    const rejectButton = banner.querySelector('.cookie-consent__button--reject');
+
+    if (acceptButton) {
+      acceptButton.addEventListener('click', function(){
+        onAccept();
+        if (document.body) {
+          document.body.classList.remove('cookie-consent-visible');
+        }
+        banner.remove();
+      });
+    }
+
+    if (rejectButton) {
+      rejectButton.addEventListener('click', function(){
+        onReject();
+        if (document.body) {
+          document.body.classList.remove('cookie-consent-visible');
+        }
+        banner.remove();
+      });
+    }
+
+    return banner;
+  }
+
+  /**
+   * Shows the banner or loads analytics depending on stored preference.
+   */
+  function initCookieConsent() {
+    const stored = getStoredConsent();
+
+    if (stored === CONSENT_ACCEPTED) {
+      loadAnalytics();
+      return;
+    }
+
+    if (stored === CONSENT_REJECTED) {
+      return;
+    }
+
+    const banner = createCookieBanner(
+      function(){
+        setStoredConsent(CONSENT_ACCEPTED);
+        loadAnalytics();
+      },
+      function(){
+        setStoredConsent(CONSENT_REJECTED);
+      }
+    );
+
+    document.body.appendChild(banner);
+    if (document.body) {
+      document.body.classList.add('cookie-consent-visible');
+    }
+  }
 
   document.addEventListener('DOMContentLoaded', function(){
     document.body.classList.add('has-site-chrome');
@@ -48,6 +179,9 @@
     if (!footer.innerHTML.trim()) {
       footer.innerHTML = footerMarkup;
     }
+
+    // Kick off the cookie consent workflow once the DOM is ready.
+    initCookieConsent();
 
     const nav = header.querySelector('.nav-links');
     const toggle = header.querySelector('.nav-toggle');
@@ -95,9 +229,13 @@
       const isBlog = currentPath.startsWith('/blog/') && linkPath === '/blog/';
       const isTools = currentPath.startsWith('/tools/') && linkPath === '/tools/';
       const isEnterprise = currentPath === '/enterprise.html' && linkPath === '/enterprise.html';
-      if (currentPath === linkPath || isBlog || isTools || isEnterprise) {
+      const isPrivacy = currentPath === '/privacy.html' && linkPath === '/privacy.html';
+      if (currentPath === linkPath || isBlog || isTools || isEnterprise || isPrivacy) {
         link.classList.add('is-active');
         if (isEnterprise && !link.hasAttribute('aria-current')) {
+          link.setAttribute('aria-current', 'page');
+        }
+        if (isPrivacy && !link.hasAttribute('aria-current')) {
           link.setAttribute('aria-current', 'page');
         }
       }
