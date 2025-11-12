@@ -252,14 +252,29 @@
         </span>
       `;
 
+      let appendedToHero = false;
+
       if (currentPath === '/') {
         labShortcut.classList.add('lab-shortcut--home');
-        if (header) {
-          const headerHeight = header.getBoundingClientRect().height;
-          if (headerHeight) {
-            const homeOffset = Math.round(headerHeight + 24);
-            labShortcut.style.setProperty('--lab-shortcut-home-offset', `${homeOffset}px`);
+        const heroContainer = document.querySelector('.hero.is-landing .container');
+
+        if (heroContainer) {
+          let heroActions = heroContainer.querySelector('.hero-actions');
+
+          if (!heroActions) {
+            heroActions = document.createElement('div');
+            heroActions.className = 'hero-actions';
+
+            const existingCta = heroContainer.querySelector('.hero-cta');
+            if (existingCta) {
+              heroActions.appendChild(existingCta);
+            }
+
+            heroContainer.appendChild(heroActions);
           }
+
+          heroActions.appendChild(labShortcut);
+          appendedToHero = true;
         }
       }
 
@@ -272,7 +287,9 @@
         }
       });
 
-      document.body.appendChild(labShortcut);
+      if (!appendedToHero) {
+        document.body.appendChild(labShortcut);
+      }
     }
     document.body.appendChild(shareWrapper);
   });

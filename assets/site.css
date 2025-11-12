@@ -331,10 +331,16 @@ img {
 }
 
 .lab-shortcut--home {
-  top: var(--lab-shortcut-home-offset, 6.5rem);
+  position: relative;
+  top: auto;
   right: auto;
-  left: 50%;
-  transform: translateX(-50%);
+  left: auto;
+  transform: none;
+  width: min(420px, 100%);
+  margin: 2rem auto 0;
+  justify-content: center;
+  box-shadow: 0 12px 24px rgba(17, 44, 78, 0.32), 0 2px 8px rgba(6, 18, 34, 0.25);
+  background: linear-gradient(120deg, rgba(63, 184, 255, 0.92), rgba(162, 122, 255, 0.92) 55%, rgba(255, 110, 201, 0.9));
 }
 
 .lab-shortcut__pulse {
@@ -376,20 +382,24 @@ img {
   text-shadow: 0 4px 14px rgba(6, 18, 34, 0.22);
 }
 
-.lab-shortcut:hover,
-.lab-shortcut:focus {
+.lab-shortcut:not(.lab-shortcut--home):hover,
+.lab-shortcut:not(.lab-shortcut--home):focus {
   transform: translateY(-50%) translateY(-4px) scale(1.015);
   box-shadow: 0 24px 48px rgba(17, 44, 78, 0.45), 0 6px 14px rgba(6, 18, 34, 0.3);
 }
 
-.lab-shortcut:focus {
+.lab-shortcut:not(.lab-shortcut--home):focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 24px 48px rgba(17, 44, 78, 0.45);
 }
 
-.lab-shortcut--home:hover,
 .lab-shortcut--home:focus {
-  transform: translateX(-50%) translateY(-4px) scale(1.015);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45), 0 16px 32px rgba(17, 44, 78, 0.28);
+}
+
+.lab-shortcut--home:hover {
+  box-shadow: 0 16px 32px rgba(17, 44, 78, 0.36), 0 3px 10px rgba(6, 18, 34, 0.26);
 }
 
 .lab-shortcut::after {
@@ -429,21 +439,19 @@ img {
     transform: none;
   }
 
-  .lab-shortcut:hover,
-  .lab-shortcut:focus {
+  .lab-shortcut:not(.lab-shortcut--home):hover,
+  .lab-shortcut:not(.lab-shortcut--home):focus {
     transform: translateY(-6px) scale(1.02);
   }
 
   .lab-shortcut--home {
-    top: var(--lab-shortcut-home-offset, 6.5rem);
-    bottom: auto;
-    left: 50%;
-    transform: translateX(-50%);
+    transform: none;
+    margin-top: 1.75rem;
   }
 
   .lab-shortcut--home:hover,
   .lab-shortcut--home:focus {
-    transform: translateX(-50%) translateY(-6px) scale(1.02);
+    transform: none;
   }
 }
 
