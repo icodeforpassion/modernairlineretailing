@@ -28,133 +28,389 @@
       <p><a href="/privacy.html">Privacy &amp; Cookies Policy</a></p>
     </div>`;
 
-  // --- Cookie consent helpers ---
-  const CONSENT_STORAGE_KEY = 'cookieConsent';
-  const CONSENT_ACCEPTED = 'accepted';
-  const CONSENT_REJECTED = 'rejected';
-  const ANALYTICS_ID = 'G-L4958PW125';
+  // --- Privacy preference banner ---
+  const CONSENT_STORAGE_KEY = 'cookiePreferences';
+  const GA_MEASUREMENT_ID = 'G-L4958PW125';
+  const DEFAULT_PREFERENCES = {
+    analyticsEnabled: true,
+    countryTracking: true,
+    consentGiven: false
+  };
 
   /**
-   * Safely reads the stored cookie consent preference.
+   * Safely read stored privacy preferences from localStorage.
+   * @returns {typeof DEFAULT_PREFERENCES | null}
    */
-  function getStoredConsent() {
+  function readStoredPreferences() {
     try {
-      return window.localStorage.getItem(CONSENT_STORAGE_KEY);
+      const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
+      if (!raw) {
+        return null;
+      }
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return Object.assign({}, DEFAULT_PREFERENCES, parsed);
+      }
+      return null;
     } catch (err) {
       return null;
     }
   }
 
   /**
-   * Persists the user's cookie consent preference.
-   * @param {string} value
+   * Persist the user's privacy preferences.
+   * @param {typeof DEFAULT_PREFERENCES} value
    */
-  function setStoredConsent(value) {
+  function storePreferences(value) {
     try {
-      window.localStorage.setItem(CONSENT_STORAGE_KEY, value);
+      window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(value));
     } catch (err) {
       /* localStorage unavailable */
     }
   }
 
   /**
-   * Injects the Google Analytics / Tag Manager script after consent is granted.
+   * Inject CSS for the banner so that the component is self-contained.
    */
-  function loadAnalytics() {
-    if (window.__analyticsLoaded) {
+  function injectBannerStyles() {
+    if (document.getElementById('cookie-consent-styles')) {
       return;
     }
-    window.__analyticsLoaded = true;
+
+    const style = document.createElement('style');
+    style.id = 'cookie-consent-styles';
+    style.textContent = `
+      /* Offset floating share widget whenever the banner is visible */
+      body[data-cookie-banner="visible"] .share-widget {
+        bottom: 120px;
+      }
+
+      @media (max-width: 520px) {
+        body[data-cookie-banner="visible"] .share-widget {
+          bottom: 140px;
+        }
+      }
+
+      .cookie-consent-banner {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 2147483000;
+        max-width: 320px;
+        width: calc(100vw - 32px);
+        background: rgba(12, 22, 37, 0.92);
+        color: var(--brand-text-soft, #d8e4f4);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        border: 1px solid var(--brand-border, rgba(116, 142, 168, 0.18));
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 12px 30px rgba(4, 11, 20, 0.45);
+        backdrop-filter: blur(12px);
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      .cookie-consent-banner[data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .cookie-consent-banner__title {
+        margin: 0 0 4px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--brand-text, #f3f7fc);
+      }
+
+      .cookie-consent-banner__message {
+        margin: 0 0 12px;
+      }
+
+      .cookie-consent-banner__toggles {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .cookie-consent-banner__toggle {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        align-items: center;
+        column-gap: 10px;
+        cursor: pointer;
+      }
+
+      .cookie-consent-banner__toggle input[type="checkbox"] {
+        appearance: none;
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        background: rgba(61, 183, 255, 0.16);
+        border: 1px solid rgba(61, 183, 255, 0.45);
+        position: relative;
+        cursor: pointer;
+        transition: background 160ms ease, border-color 160ms ease;
+      }
+
+      .cookie-consent-banner__toggle input[type="checkbox"]::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        transition: transform 160ms ease;
+      }
+
+      .cookie-consent-banner__toggle input[type="checkbox"]:checked {
+        background: var(--brand-accent-strong, #00c0a3);
+        border-color: var(--brand-accent-strong, #00c0a3);
+      }
+
+      .cookie-consent-banner__toggle input[type="checkbox"]:checked::after {
+        transform: translateX(16px);
+      }
+
+      .cookie-consent-banner__toggle input[type="checkbox"]:focus-visible {
+        outline: 2px solid rgba(61, 183, 255, 0.7);
+        outline-offset: 2px;
+      }
+
+      .cookie-consent-banner__toggle-label {
+        display: block;
+        font-weight: 500;
+      }
+
+      .cookie-consent-banner__actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .cookie-consent-banner__button {
+        flex: 1;
+        border: none;
+        border-radius: 999px;
+        background: var(--brand-accent-strong, #00c0a3);
+        color: #04101c;
+        font-weight: 600;
+        padding: 8px 14px;
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+        box-shadow: 0 8px 18px rgba(0, 192, 163, 0.35);
+      }
+
+      .cookie-consent-banner__button:hover,
+      .cookie-consent-banner__button:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0, 192, 163, 0.45);
+        outline: none;
+      }
+
+      .cookie-consent-banner__link {
+        color: var(--brand-accent, #3db7ff);
+        text-decoration: underline;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 520px) {
+        .cookie-consent-banner {
+          right: 16px;
+          left: 16px;
+          max-width: none;
+        }
+
+        .cookie-consent-banner__actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .cookie-consent-banner__link {
+          text-align: center;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  /**
+   * Dynamically load the Google Analytics library with privacy guards in place.
+   */
+  function loadGoogleAnalytics() {
+    if (window.__modernRetailingAnalyticsLoaded) {
+      return;
+    }
+    window.__modernRetailingAnalyticsLoaded = true;
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function(){
       window.dataLayer.push(arguments);
     };
     window.gtag('js', new Date());
-    window.gtag('config', ANALYTICS_ID);
+    window.gtag('config', GA_MEASUREMENT_ID, {
+      anonymize_ip: true,
+      allow_ad_personalization_signals: false
+    });
 
-    const gaScript = document.createElement('script');
-    gaScript.id = 'google-analytics-loader';
-    gaScript.async = true;
-    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}`;
-    document.head.appendChild(gaScript);
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
   }
 
   /**
-   * Builds the consent banner element and wires up button handlers.
-   * @param {Function} onAccept
-   * @param {Function} onReject
+   * Fire a lightweight country-level tracking ping when analytics are disabled.
    */
-  function createCookieBanner(onAccept, onReject) {
+  async function runCountryTracking() {
+    if (window.__modernRetailingCountryLogged) {
+      return;
+    }
+    window.__modernRetailingCountryLogged = true;
+
+    try {
+      const geoResponse = await fetch('https://ipapi.co/json/');
+      if (!geoResponse.ok) {
+        return;
+      }
+      const geoData = await geoResponse.json();
+      const userCountry = geoData && (geoData.country_name || geoData.country);
+      if (!userCountry) {
+        return;
+      }
+
+      await fetch('https://regionlog.modernretailing.com/logCountry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ country: userCountry })
+      });
+    } catch (err) {
+      /* Swallow network errors to avoid breaking the experience. */
+    }
+  }
+
+  /**
+   * Apply preferences by conditionally loading integrations.
+   * @param {typeof DEFAULT_PREFERENCES} prefs
+   */
+  function applyPreferences(prefs) {
+    if (prefs.analyticsEnabled) {
+      loadGoogleAnalytics();
+    } else if (prefs.countryTracking) {
+      runCountryTracking();
+    }
+  }
+
+  /**
+   * Build and wire the banner element.
+   * @param {typeof DEFAULT_PREFERENCES} prefs
+   */
+  function buildConsentBanner(prefs) {
+    injectBannerStyles();
+
     const banner = document.createElement('section');
-    banner.className = 'cookie-consent';
-    banner.setAttribute('role', 'region');
+    banner.className = 'cookie-consent-banner';
+    banner.setAttribute('aria-live', 'polite');
     banner.setAttribute('aria-label', 'Cookie consent');
+    // Inline markup for the banner; mirrors the snippet requested for insertion before </body>.
     banner.innerHTML = `
-      <div class="cookie-consent__inner">
-        <p class="cookie-consent__message">This site uses cookies to analyse traffic via Google Tag Manager and Google Analytics. You can accept or reject analytics cookies at any time. Essential cookies are always enabled.</p>
-        <div class="cookie-consent__actions">
-          <button type="button" class="cookie-consent__button cookie-consent__button--accept">Accept All Cookies</button>
-          <button type="button" class="cookie-consent__button cookie-consent__button--reject">Reject Non-Essential</button>
-        </div>
+      <h2 class="cookie-consent-banner__title">Cookie Preferences</h2>
+      <p class="cookie-consent-banner__message">We use limited cookies to understand visits and improve this site. You can choose your privacy level below.</p>
+      <div class="cookie-consent-banner__toggles">
+        <label class="cookie-consent-banner__toggle">
+          <input type="checkbox" name="analytics" checked>
+          <span class="cookie-consent-banner__toggle-label">Enable analytics (No IP is tracked)</span>
+        </label>
+        <label class="cookie-consent-banner__toggle">
+          <input type="checkbox" name="country" checked>
+          <span class="cookie-consent-banner__toggle-label">Allow country-level tracking only</span>
+        </label>
+      </div>
+      <div class="cookie-consent-banner__actions">
+        <button type="button" class="cookie-consent-banner__button">OK</button>
+        <a class="cookie-consent-banner__link" href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
       </div>
     `;
 
-    const acceptButton = banner.querySelector('.cookie-consent__button--accept');
-    const rejectButton = banner.querySelector('.cookie-consent__button--reject');
+    const analyticsToggle = banner.querySelector('input[name="analytics"]');
+    const countryToggle = banner.querySelector('input[name="country"]');
+    const okButton = banner.querySelector('.cookie-consent-banner__button');
 
-    if (acceptButton) {
-      acceptButton.addEventListener('click', function(){
-        onAccept();
-        if (document.body) {
-          document.body.classList.remove('cookie-consent-visible');
+    if (analyticsToggle) {
+      analyticsToggle.checked = Boolean(prefs.analyticsEnabled);
+    }
+    if (countryToggle) {
+      countryToggle.checked = Boolean(prefs.countryTracking);
+    }
+
+    function closeBanner() {
+      banner.setAttribute('data-visible', 'false');
+      banner.addEventListener('transitionend', function handleTransitionEnd(evt) {
+        if (evt.propertyName === 'opacity') {
+          banner.removeEventListener('transitionend', handleTransitionEnd);
+          banner.remove();
         }
-        banner.remove();
+      });
+      window.setTimeout(function(){
+        if (banner.parentElement) {
+          banner.remove();
+        }
+      }, 400);
+      if (document.body) {
+        document.body.removeAttribute('data-cookie-banner');
+      }
+    }
+
+    if (okButton) {
+      okButton.addEventListener('click', function(){
+        const updatedPrefs = {
+          analyticsEnabled: analyticsToggle ? analyticsToggle.checked : DEFAULT_PREFERENCES.analyticsEnabled,
+          countryTracking: countryToggle ? countryToggle.checked : DEFAULT_PREFERENCES.countryTracking,
+          consentGiven: true
+        };
+
+        storePreferences(updatedPrefs);
+        applyPreferences(updatedPrefs);
+        closeBanner();
       });
     }
 
-    if (rejectButton) {
-      rejectButton.addEventListener('click', function(){
-        onReject();
-        if (document.body) {
-          document.body.classList.remove('cookie-consent-visible');
-        }
-        banner.remove();
-      });
+    banner.setAttribute('data-visible', 'false');
+    if (document.body) {
+      document.body.setAttribute('data-cookie-banner', 'visible');
     }
+
+    requestAnimationFrame(function(){
+      banner.setAttribute('data-visible', 'true');
+    });
 
     return banner;
   }
 
   /**
-   * Shows the banner or loads analytics depending on stored preference.
+   * Initialise the privacy banner lifecycle.
    */
-  function initCookieConsent() {
-    const stored = getStoredConsent();
+  function initCookieConsentBanner() {
+    const storedPrefs = readStoredPreferences();
+    const prefs = storedPrefs ? storedPrefs : Object.assign({}, DEFAULT_PREFERENCES);
 
-    if (stored === CONSENT_ACCEPTED) {
-      loadAnalytics();
+    if (prefs.consentGiven) {
+      applyPreferences(prefs);
       return;
     }
 
-    if (stored === CONSENT_REJECTED) {
-      return;
-    }
-
-    const banner = createCookieBanner(
-      function(){
-        setStoredConsent(CONSENT_ACCEPTED);
-        loadAnalytics();
-      },
-      function(){
-        setStoredConsent(CONSENT_REJECTED);
-      }
-    );
-
+    const banner = buildConsentBanner(prefs);
     document.body.appendChild(banner);
-    if (document.body) {
-      document.body.classList.add('cookie-consent-visible');
-    }
   }
 
   document.addEventListener('DOMContentLoaded', function(){
@@ -180,8 +436,8 @@
       footer.innerHTML = footerMarkup;
     }
 
-    // Kick off the cookie consent workflow once the DOM is ready.
-    initCookieConsent();
+    // Kick off the privacy preference workflow once the DOM is ready.
+    initCookieConsentBanner();
 
     const nav = header.querySelector('.nav-links');
     const toggle = header.querySelector('.nav-toggle');
