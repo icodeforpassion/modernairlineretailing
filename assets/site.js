@@ -98,14 +98,16 @@
         z-index: 2147483000;
         max-width: 320px;
         width: calc(100vw - 32px);
-        background: #f9fff9;
-        color: #333;
+        background: rgba(12, 22, 37, 0.92);
+        color: var(--brand-text-soft, #d8e4f4);
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         font-size: 13px;
         line-height: 1.5;
-        border-radius: 10px;
+        border: 1px solid var(--brand-border, rgba(116, 142, 168, 0.18));
+        border-radius: 12px;
         padding: 14px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 12px 30px rgba(4, 11, 20, 0.45);
+        backdrop-filter: blur(12px);
         opacity: 0;
         transform: translateY(10px);
         transition: opacity 220ms ease, transform 220ms ease;
@@ -120,6 +122,7 @@
         margin: 0 0 4px;
         font-weight: 600;
         font-size: 14px;
+        color: var(--brand-text, #f3f7fc);
       }
 
       .cookie-consent-banner__message {
@@ -146,8 +149,8 @@
         width: 36px;
         height: 20px;
         border-radius: 999px;
-        background: rgba(60, 120, 90, 0.25);
-        border: 1px solid rgba(76, 175, 80, 0.35);
+        background: rgba(61, 183, 255, 0.16);
+        border: 1px solid rgba(61, 183, 255, 0.45);
         position: relative;
         cursor: pointer;
         transition: background 160ms ease, border-color 160ms ease;
@@ -167,8 +170,8 @@
       }
 
       .cookie-consent-banner__toggle input[type="checkbox"]:checked {
-        background: #4caf50;
-        border-color: #4caf50;
+        background: var(--brand-accent-strong, #00c0a3);
+        border-color: var(--brand-accent-strong, #00c0a3);
       }
 
       .cookie-consent-banner__toggle input[type="checkbox"]:checked::after {
@@ -176,7 +179,7 @@
       }
 
       .cookie-consent-banner__toggle input[type="checkbox"]:focus-visible {
-        outline: 2px solid rgba(76, 175, 80, 0.6);
+        outline: 2px solid rgba(61, 183, 255, 0.7);
         outline-offset: 2px;
       }
 
@@ -196,22 +199,24 @@
         flex: 1;
         border: none;
         border-radius: 999px;
-        background: #4caf50;
-        color: #fff;
+        background: var(--brand-accent-strong, #00c0a3);
+        color: #04101c;
         font-weight: 600;
         padding: 8px 14px;
         cursor: pointer;
-        transition: filter 160ms ease;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+        box-shadow: 0 8px 18px rgba(0, 192, 163, 0.35);
       }
 
       .cookie-consent-banner__button:hover,
       .cookie-consent-banner__button:focus-visible {
-        filter: brightness(0.95);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0, 192, 163, 0.45);
         outline: none;
       }
 
       .cookie-consent-banner__link {
-        color: #2e7d32;
+        color: var(--brand-accent, #3db7ff);
         text-decoration: underline;
         white-space: nowrap;
       }
