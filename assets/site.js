@@ -404,13 +404,9 @@
     const storedPrefs = readStoredPreferences();
     const prefs = storedPrefs ? storedPrefs : Object.assign({}, DEFAULT_PREFERENCES);
 
-    if (prefs.consentGiven) {
-      applyPreferences(prefs);
-      return;
-    }
-
-    const banner = buildConsentBanner(prefs);
-    document.body.appendChild(banner);
+    const effectivePrefs = Object.assign({}, prefs, { consentGiven: true });
+    storePreferences(effectivePrefs);
+    applyPreferences(effectivePrefs);
   }
 
   document.addEventListener('DOMContentLoaded', function(){
