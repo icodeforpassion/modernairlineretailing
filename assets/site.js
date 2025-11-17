@@ -30,7 +30,7 @@
 
   // --- Privacy preference banner ---
   const CONSENT_STORAGE_KEY = 'cookiePreferences';
-  const GA_MEASUREMENT_ID = 'G-L4958PW125';
+  const GA_MEASUREMENT_ID = 'G-VHHFDP9B88';
   const DEFAULT_PREFERENCES = {
     analyticsEnabled: true,
     countryTracking: true,
