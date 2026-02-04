@@ -1,189 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VHHFDP9B88"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-VHHFDP9B88');
   </script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Availability Translation for Dynamic Offers</title>
-  <meta name="description" content="How to translate legacy availability controls into a dynamic offer environment: data contracts, service layers, telemetry, and rollout playbooks."/>
-  <meta property="og:title" content="Availability Translation for Dynamic Offers"/>
-  <meta property="og:description" content="Practical guide to translating legacy availability into dynamic offer-ready signals across inventory, offer management, and channels."/>
-  <meta property="og:type" content="article"/>
-  <meta property="og:image" content="/blog/images/blog-18.jpg"/>
-  <meta property="og:url" content="https://www.modernairlineretailing.com/blog/2024-07-24-availability-translation-dynamic-offers.html"/>
-  <meta name="twitter:card" content="summary_large_image"/>
+  <title>The Availability Translation Manifesto | Modern Airline Retailing</title>
+  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
   <style>
-    .hero-banner { background: url('/blog/images/blog-18.jpg') center/cover no-repeat; }
-    .overlay { background: linear-gradient(180deg, rgba(13,27,42,.78), rgba(13,27,42,.58)); }
-    .home-btn { position: sticky; top: 0; display: inline-block; margin: 0.5rem 0 1rem; }
-    .content p { line-height: 1.75; }
-    .callout { border-left: 4px solid #3298dc; padding: 1.25rem 1.5rem; background: rgba(50,152,220,0.08); border-radius: 10px; }
-    .metric-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
-    .metric-table th, .metric-table td { border: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 1rem; text-align: left; }
-    .metric-table th { background: rgba(19,34,53,0.9); font-weight: 600; }
+    :root {
+      --navy: #0d1b2a;
+      --sky: #3298dc;
+      --slate: #2d3436;
+      --cloud: #f4f7f6;
+      --paper: #ffffff;
+    }
+    
+    body { background-color: var(--cloud); color: var(--slate); font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    
+    .hero-banner { 
+      background: linear-gradient(rgba(13, 27, 42, 0.9), rgba(13, 27, 42, 0.8)), 
+                  url('/blog/images/blog-18.jpg') center/cover no-repeat;
+      padding: 6rem 0;
+    }
+    
+    .content-wrapper { 
+      background: var(--paper); 
+      padding: 5rem; 
+      border-radius: 12px; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06); 
+      margin-top: -6rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Typography Fixes */
+    .content h1, .content h2, .content h3 { color: var(--navy); font-weight: 800; }
+    .content h2 { border-left: 5px solid var(--sky); padding-left: 1rem; margin-top: 4rem; }
+    .content p { line-height: 2; font-size: 1.2rem; margin-bottom: 2rem; color: #333; }
+    .content ul li, .content ol li { font-size: 1.15rem; line-height: 1.8; margin-bottom: 1rem; }
+
+    .highlight-box { 
+      background: #f0f9ff; 
+      border: 1px solid #cceeff;
+      padding: 2.5rem; 
+      margin: 3rem 0;
+      border-radius: 8px;
+    }
+
+    .expert-note {
+      background: #fffbe6;
+      border-left: 6px solid #fadb14;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      font-weight: 500;
+    }
+
+    .data-table { width: 100%; margin: 3rem 0; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .data-table th { background: var(--navy); color: white !important; padding: 1.2rem; text-align: left; }
+    .data-table td { padding: 1.2rem; border-bottom: 1px solid #eee; background: white; color: #444; }
+    
+    .has-text-white { color: var(--paper) !important; }
+    .dropcap { float: left; font-size: 5rem; line-height: 1; font-weight: bold; margin-right: 1rem; color: var(--sky); }
+
+    @media (max-width: 768px) {
+      .content-wrapper { padding: 2rem; margin-top: -3rem; }
+      .dropcap { font-size: 3.5rem; }
+    }
   </style>
-  <link rel="stylesheet" href="/assets/site.css"/>
-  <link rel="stylesheet" href="/assets/post.css"/>
 </head>
 <body>
-  <header class="site-header"></header>
-  <main class="page-content">
+
   <section class="hero is-medium hero-banner">
-    <div class="hero-body overlay">
-      <div class="container">
-        <a class="button is-light home-btn" href="/index.html">Home</a>
-        <h1 class="title has-text-white">Availability Translation for Dynamic Offers</h1>
-        <p class="subtitle has-text-white">July 24, 2024</p>
+    <div class="hero-body">
+      <div class="container has-text-centered">
+        <a class="button is-outline is-light is-rounded" href="/index.html" style="margin-bottom: 2rem; border: 1px solid white;">← RETURN TO ARCHIVE</a>
+        <h1 class="title is-size-1 has-text-white">The Availability Translation Manifesto</h1>
+        <p class="subtitle is-size-3 has-text-white">Decoupling Retail Strategy from Legacy PSS Constraints</p>
       </div>
     </div>
   </section>
 
   <section class="section">
-    <div class="container content">
-      <p>Dynamic offers need the same guardrails that protected legacy revenue management: bid prices, nesting rules, O&amp;D closures, schedule integrity. The challenge is that those controls still live in RBD-centric inventory systems while the offer system expects structured, API-ready signals. Availability translation is the bridge. Treat it as a product with clear contracts instead of a throwaway adapter.</p>
+    <div class="container">
+      <div class="content content-wrapper">
+        
+        <p><span class="dropcap">A</span>irline retailing is currently in a state of architectural schizophrenia. On one hand, your Chief Commercial Officer is demanding "Dynamic Offers"—Amazon-style bundles, personalized pricing, and Netflix-speed experimentation. On the other hand, your inventory still lives in a Passenger Service System (PSS) built on mainframe logic from the era of the Walkman. </p>
 
-      <h2 id="why-it-matters">Why availability translation matters now</h2>
-      <p>Legacy availability was optimized for <em>booking class access</em>; dynamic offers optimize for <em>offer suitability</em>. That mismatch creates three failure modes:</p>
-      <ul>
-        <li><strong>Over-permissioning:</strong> Translating every open RBD into a sellable product leads to dilution when downstream rules (married segment, continuous pricing fences) are ignored.</li>
-        <li><strong>Under-permissioning:</strong> Offer services throttle creativity because they only understand fully open / fully closed classes. High-value bundles never leave the warehouse.</li>
-        <li><strong>Lost accountability:</strong> Commercial teams cannot trace why an offer was suppressed or overexposed, so they abandon the dynamic engine.</li>
-      </ul>
-      <p>A modern translation layer normalizes these controls into explicit signals the offer engine and channels can honor.</p>
+        <p>This isn't just a technical annoyance; it is a fundamental bottleneck. If you want to move from <strong>Booking Classes</strong> (A, B, C...Z) to <strong>Offer Management</strong>, you have to build a bridge. That bridge is Availability Translation. In this 10-minute deep dive, we will explore why this layer is the most critical (and most ignored) component of your NDC and ONE Order journey.</p>
 
-      <h2 id="contracts">Designing the translation contract</h2>
-      <p>Start with the contract between inventory and the offer system. Each availability response must declare the controls that apply to a request. We use four buckets:</p>
-      <ol>
-        <li><strong>Structural status:</strong> O&amp;D availability, schedule integrity, operational blackout flags.</li>
-        <li><strong>Revenue controls:</strong> Bid price bands, nesting state, dynamic fare class limits, closed user group flags.</li>
-        <li><strong>Customer fences:</strong> Corporate deal applicability, frequent flyer tier fences, origin-based surcharges.</li>
-        <li><strong>Telemetry hooks:</strong> Control version, last update source, and correlation IDs for reconciliation.</li>
-      </ol>
-      <div class="callout">
-        <strong>Tip:</strong> Capture both the <em>raw</em> inventory value (e.g., ATPCO RBD open/closed) and the <em>interpreted</em> value (offerable seats, price band). It makes root-cause analysis far simpler when behavior diverges.
+        <h2 id="the-legacy-prison">1. The Legacy Prison: Why RBDs are Killing Your Margin</h2>
+        <p>For fifty years, the "Booking Class" (RBD) has been the only way an airline can communicate availability. If 'Q' class is open, the price is $200. If 'Q' is closed and 'Y' is open, the price is $800. This 26-step ladder is too blunt for 2026.</p>
+        
+        <p>When you attempt to launch Dynamic Pricing—where you might want to offer a seat at $242.15 based on real-time demand—the legacy PSS has no way to store that. It only knows its 26 buckets. This leads to <strong>Price Gapping</strong>, where the jump between two available buckets is so high that you lose the customer to a competitor who has a more "granular" ladder.</p>
+        
+        <div class="highlight-box">
+          <h3>The "Incompatibility" Problem</h3>
+          <p>The offer engine says: <em>"I want to sell this seat for $350."</em><br>
+          The PSS says: <em>"I don't know what $350 is. I have a $300 bucket and a $400 bucket. Pick one."</em><br>
+          If you pick $300, you leave $50 on the table (Dilution). If you pick $400, the customer leaves (Lost Sale).</p>
+        </div>
+
+        <h2 id="translation-logic">2. The Anatomy of a Modern Translation Layer</h2>
+        <p>To solve this, you need a middleware layer that acts as a <strong>Bi-Directional Interpreter</strong>. This layer doesn't just pass messages; it recalculates permissions in real-time. It must handle three distinct logic streams simultaneously:</p>
+
+        
+
+        <h3>A. Structural Integrity (The PSS Feed)</h3>
+        <p>This is the raw data. How many physical seats are left? Are there operational blocks? The translation layer must ingest AVS (Availability Status) and NAVS (Numeric Availability) messages at sub-millisecond speeds. If the PSS says a flight is physically full, the translation layer must immediately kill every dynamic offer associated with it to prevent overselling.</p>
+
+        <h3>B. Commercial Logic (The RM Feed)</h3>
+        <p>This is where the <strong>Bid Price</strong> (or Hurdle Rate) lives. Modern Revenue Management systems calculate a "minimum acceptable value" for every seat. The translation layer must ensure that no dynamic offer ever violates this hurdle. It acts as the "Floor Guard."</p>
+
+        <h3>C. Retailing Attributes (The Offer Feed)</h3>
+        <p>This is the "New World." Here, we define what the product actually <em>is</em>. Is it "Economy Basic" or "Economy Plus"? The translation layer maps these retailing labels back to legacy fare bases so that when the booking finally hits the PSS, the "Old World" knows how to handle it.</p>
+
+        <h2 id="deep-dive-mapping">3. Deep Dive: Mapping the "Un-mappable"</h2>
+        <p>One of the biggest hurdles is <strong>Married Segment Logic</strong>. In a hub-and-spoke model, an airline might be willing to sell a seat from New York to Dubai for $500 as part of a journey to India, but <em>not</em> as a standalone flight to Dubai. Legacy PSS systems handle this via "Marriage Indicators."</p>
+
+        <p>If your Dynamic Offer engine is "Marriage Blind," it will accidentally cannibalize your high-value long-haul traffic. Your translation layer must be sophisticated enough to replicate the PSS marriage logic in an API-first environment. It must ask: "Is this dynamic price being requested for a single leg or a journey?" and adjust the availability signal accordingly.</p>
+
+        <div class="expert-note">
+          <strong>Expert Tip:</strong> Many airlines try to hard-code these rules. Don't. Use a <strong>Business Rules Engine (BRE)</strong> inside your translation layer so your RM team can change logic on the fly without a code deployment.
+        </div>
+
+        <h2 id="the-performance-tax">4. The Performance Tax: Latency is the Conversion Killer</h2>
+        <p>Every millisecond you spend "translating" is a millisecond the customer is waiting. Metasearch engines (Google Flights, Kayak) will penalize or even drop your results if your API response time exceeds 2,000ms.</p>
+        
+        <p>A 10-minute read wouldn't be complete without discussing <strong>Caching Strategy</strong>. Since you can't query a legacy mainframe for every single search (it would melt), your translation layer must maintain a "Shadow State" of availability in a high-speed NoSQL database (like Redis or Couchbase). This allows you to serve "near-live" translated availability in under 50ms.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Architecture Component</th>
+              <th>Legacy Approach</th>
+              <th>Modern Translation Layer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Inventory Query</strong></td>
+              <td>EDIFACT / Teletype</td>
+              <td>JSON / gRPC with Local Cache</td>
+            </tr>
+            <tr>
+              <td><strong>Price Granularity</strong></td>
+              <td>26 Buckets (RBDs)</td>
+              <td>Continuous Pricing (Cent-by-Cent)</td>
+            </tr>
+            <tr>
+              <td><strong>Customer Context</strong></td>
+              <td>Anonymous</td>
+              <td>Identity-Aware (FFP, Corp ID)</td>
+            </tr>
+            <tr>
+              <td><strong>Update Frequency</strong></td>
+              <td>Batch / Scheduled</td>
+              <td>Event-Driven / Real-Time</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="the-peace-treaty">5. The "Peace Treaty": Revenue Management vs. Digital</h2>
+        <p>The most difficult part of this transition isn't the code—it's the <strong>Organizational Friction</strong>. Revenue Management (RM) teams are traditionally conservative. Their bonuses are tied to yield, and they trust their legacy controls. The Digital/Retailing team is aggressive—they want to test, learn, and bundle.</p>
+        
+        <p>The Translation Layer acts as a "Trust Layer." By providing RM with a dashboard that shows exactly how dynamic offers are respecting bid price hurdles, you gain the political capital to move faster. You are essentially telling RM: "We are giving you a digital remote control for the storefront."</p>
+
+        <h2 id="the-future">6. The Road to "ONE Order": The Final Decoupling</h2>
+        <p>Eventually, the goal is to stop "translating" altogether. In a full ONE Order world, the PSS as we know it disappears. The "Offer" becomes the "Order," and availability is managed directly by the retail engine.</p>
+        
+        <p>But we are 5-10 years away from that for most Tier-1 carriers. Until then, your ability to compete depends entirely on how well you can <strong>translate legacy constraints into retail opportunities</strong>. If your translation is clunky, your retailing will be clunky. If your translation is elegant, you can act like a startup while standing on the shoulders of a global mainframe network.</p>
+
+        <h2 id="summary">Conclusion: Your Next Steps</h2>
+        <p>If you are currently evaluating your retailing stack, don't just look at the shiny UI of the Offer Management System. Ask the hard questions about the plumbing:</p>
+        <ul>
+          <li>How does this system handle Married Segment logic from my specific PSS?</li>
+          <li>What is the sub-second latency overhead of the translation service?</li>
+          <li>How do we reconcile a "Continuous Price" in a "Bucket-Based" financial audit?</li>
+        </ul>
+        
+        <p>Solve the translation gap, and the rest of the retailing journey becomes a downhill sprint. Ignore it, and you'll be stuck in the "RBD Prison" forever.</p>
+
+        <hr>
+
+        <nav class="level" style="margin-top: 4rem;">
+          <div class="level-left">
+            <div>
+              <small>PREVIOUS ARTICLE</small><br>
+              <a href="#" style="font-weight: bold; color: var(--sky);">Direct Connect vs. Aggregators</a>
+            </div>
+          </div>
+          <div class="level-right has-text-right">
+            <div>
+              <small>NEXT ARTICLE</small><br>
+              <a href="#" style="font-weight: bold; color: var(--sky);">Order Management: Life After PNR</a>
+            </div>
+          </div>
+        </nav>
       </div>
-
-      <h2 id="service-layer">Service layer patterns</h2>
-      <p>Availability translation is not a single batch job. Implement it as a service layer with three capabilities:</p>
-      <ul>
-        <li><strong>Request adjudication:</strong> Evaluate the incoming shopping request, fetch relevant control states, and expose the eligible product sets.</li>
-        <li><strong>Rule rendering:</strong> Translate control states into offer-friendly artifacts (availability tiers, price guardrails, disallow lists) that the offer engine consumes synchronously.</li>
-        <li><strong>State publication:</strong> Push incremental changes (e.g., closing an O&amp;D, updating a corporate fence) to event streams so channels and caches stay aligned.</li>
-      </ul>
-      <p>Align interfaces with the formats your offer management uses today: JSON contracts with explicit enums instead of encoded EDIFACT segments.</p>
-
-      <h2 id="data-pipeline">Data we need to translate</h2>
-      <p>Inventory teams usually maintain dozens of data feeds. Prioritize the ones that change the sell/no-sell decision:</p>
-      <table class="metric-table">
-        <thead>
-          <tr>
-            <th>Control input</th>
-            <th>Source system</th>
-            <th>Translation output</th>
-            <th>Dynamic offer impact</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Bid price curves</td>
-            <td>Revenue management optimizer</td>
-            <td>Sell bands + minimum price guardrails</td>
-            <td>Prevents pricing engine from undercutting yield management</td>
-          </tr>
-          <tr>
-            <td>Married segment logic</td>
-            <td>Inventory host / availability processor</td>
-            <td>Leg pairing matrix + prohibitions</td>
-            <td>Stops standalone legs from leaking when a connection is controlled</td>
-          </tr>
-          <tr>
-            <td>Corporate deal fences</td>
-            <td>Contract management</td>
-            <td>Eligibility flags per traveler profile</td>
-            <td>Supports personalized bundles without exposing corporate content to public channels</td>
-          </tr>
-          <tr>
-            <td>Operational disruptions</td>
-            <td>Ops control center</td>
-            <td>Capacity overrides + forced closes</td>
-            <td>Ensures dynamic offers respect disruption handling priorities</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2 id="telemetry">Telemetry and guardrails</h2>
-      <p>Translation work is invisible unless we measure it. Instrument three feedback loops:</p>
-      <ul>
-        <li><strong>Parity monitors:</strong> Compare legacy availability responses with translated offerability for the same request to catch drift.</li>
-        <li><strong>Suppression analysis:</strong> Track why an offer was blocked (e.g., bid price threshold, married segment, personalization fence) and expose this in dashboards.</li>
-        <li><strong>Revenue impact:</strong> Tie translation changes to conversion, take-rate, and yield metrics. If a new rule causes a revenue drop, teams should see it within hours.</li>
-      </ul>
-      <p>Feed those signals back into both revenue management and offer design forums so translation stays aligned with strategy.</p>
-
-      <h2 id="rollout">Rollout playbook</h2>
-      <p>Avoid the temptation to “flip the switch.” We use a four-step rollout for airlines modernizing availability:</p>
-      <ol>
-        <li><strong>Shadow mode:</strong> Run translation in parallel, log differences, and validate with analysts before impacting customers.</li>
-        <li><strong>Channel pilots:</strong> Enable a controlled channel (e.g., employee sales or a friendly OTA) with guardrails on volume.</li>
-        <li><strong>Hybrid control:</strong> Allow dynamic offers to override legacy availability only when telemetry confidence is high.</li>
-        <li><strong>Full transition:</strong> Move ownership of availability rules into the offer platform, keeping the translation service as the canonical interface.</li>
-      </ol>
-      <p>Throughout the rollout, keep revenue management accountable for the control logic while empowering offer teams to use it creatively. Translation is successful when both groups can diagnose outcomes without reverse engineering EDIFACT strings.</p>
-
-      <p>Dynamic offers thrive on flexibility, but flexibility without discipline collapses quickly. Treat availability translation as a core capability-built with contracts, telemetry, and a phased rollout-and you keep the best of legacy control while unlocking modern retailing speed.</p>
-
-      <nav class="level">
-        <div class="level-left">
-          <a class="button is-link is-light" href="/blog/2024-07-08-direct-connect-vs-aggregators-latency-and-control.html">← Previous</a>
-        </div>
-        <div class="level-right">
-          <a class="button is-link" href="/blog/2024-07-30-order-management-life-after-pnr-tickets-and-emds.html">Next →</a>
-        </div>
-      </nav>
     </div>
   </section>
-  </main>
-  <footer class="site-footer"></footer>
-  <script src="/assets/site.js" defer></script>
-  <!-- Analytics configuration notes: Ensure GA4 Enhanced Measurement (including "Outbound clicks") remains enabled, validate tag deployment via https://tagassistant.google.com, monitor linkedin_redirect under GA4 → Reports → Engagement → Events, and mark it as a conversion in GA4 Admin → Events if desired. -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const linkedInLinks = document.querySelectorAll('a[href*="linkedin.com"]');
-      linkedInLinks.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-            return;
-          }
-          const href = link.href;
-          event.preventDefault();
-          if (typeof gtag === 'function') {
-            gtag('event', 'linkedin_redirect', {
-              event_category: 'Outbound',
-              event_label: href,
-              transport_type: 'beacon'
-            });
-          }
-          setTimeout(function () {
-            const target = link.getAttribute('target');
-            if (target && target !== '_self') {
-              window.open(href, target);
-            } else {
-              window.location.href = href;
-            }
-          }, 150);
-        });
-      });
-    });
-  </script>
+
+  <footer class="footer" style="background: var(--navy); color: white; padding: 4rem 1.5rem;">
+    <div class="content has-text-centered">
+      <p class="has-text-white"><strong>Modern Airline Retailing</strong> • Insights for the Next Generation of Travel</p>
+      <p>© 2026. All rights reserved.</p>
+    </div>
+  </footer>
+
 </body>
 </html>
