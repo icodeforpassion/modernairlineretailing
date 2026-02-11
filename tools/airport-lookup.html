@@ -24,6 +24,7 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <!-- Bulma (for base) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4dMlyFCAsZ3qxEtp2trLI6Rz8pHe9mF+AuA2u9uB+0=" crossorigin="">
   <!-- Google Fonts for cool headings -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -394,6 +395,12 @@
       border:1px solid rgba(255,255,255,.14);
       border-radius: calc(var(--radius) - 6px);
       background:#0d1b2a;
+      overflow:hidden;
+      position:relative;
+    }
+    #lookupMap {
+      inset:0;
+      position:absolute;
     }
     @media (max-width: 600px){
       .map-frame { height:320px; }
@@ -503,9 +510,9 @@
           <span>Map View</span>
           <span id="mapInfo" style="font-size:.6rem; letter-spacing:.5px; color:var(--clr-text-dim);"></span>
         </header>
-        <iframe id="mapFrame" class="map-frame" loading="lazy" title="Airport map"
-                src=""
-                aria-label="Selected airport map area"></iframe>
+        <div class="map-frame">
+          <div id="lookupMap" aria-hidden="true"></div>
+        </div>
         <p style="font-size:.7rem; color:var(--clr-text-dim); line-height:1.4;">
           Selecting a result will focus this map around the airport. Data source: OpenStreetMap.
         </p>
