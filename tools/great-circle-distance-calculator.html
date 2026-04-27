@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Great Circle Distance Calculator | Airports, Nautical Miles & Bearing</title>
+  <meta name="description" content="Calculate great circle distance between airports or coordinates in nautical miles, statute miles, and kilometers. Includes initial bearing, route distance, and aviation examples."/>
+  <link rel="canonical" href="https://www.modernairlineretailing.com/tools/great-circle-distance-calculator.html"/>
+  <link rel="stylesheet" href="/assets/site.css"/>
+  <style>body{background:#0d1b2a;color:#e8f0f7;font-family:system-ui;margin:0}.wrap{max-width:1050px;margin:0 auto;padding:6rem 1rem 3rem}.card{background:#132235;border:1px solid #2f4a63;border-radius:12px;padding:1rem;margin:1rem 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:800px){.grid{grid-template-columns:1fr}}input,select{width:100%;padding:.6rem;border-radius:8px;border:1px solid #2f4a63;background:#0d1b2a;color:#e8f0f7}.btn{padding:.7rem 1rem;border:0;border-radius:999px;background:#3298dc;color:#fff;font-weight:700}.muted{color:#9fb3c5}.links a{display:block;color:#7cc8ff;margin:.25rem 0}nav.breadcrumb{font-size:.9rem}nav.breadcrumb a{color:#7cc8ff}.faq h3{margin-bottom:.2rem}</style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.modernairlineretailing.com/"},{"@type":"ListItem","position":2,"name":"Tools","item":"https://www.modernairlineretailing.com/tools/index.html"},{"@type":"ListItem","position":3,"name":"Great Circle Distance Calculator","item":"https://www.modernairlineretailing.com/tools/great-circle-distance-calculator.html"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Great Circle Distance Calculator","url":"https://www.modernairlineretailing.com/tools/great-circle-distance-calculator.html","applicationCategory":"AviationApplication","operatingSystem":"Any","description":"Calculator for great circle distance and bearings between airports or coordinates."}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is great circle distance?","acceptedAnswer":{"@type":"Answer","text":"Great circle distance is the shortest path between two points on a sphere and is commonly used for aviation route planning."}},{"@type":"Question","name":"Why do airlines use great circle routes?","acceptedAnswer":{"@type":"Answer","text":"Airlines use great circle routes to estimate efficient routing, fuel burn, and schedule time across long-haul sectors."}},{"@type":"Question","name":"Is great circle distance the same as flight distance?","acceptedAnswer":{"@type":"Answer","text":"No. Actual flown distance can be longer due to winds, ATC constraints, and airway structure."}},{"@type":"Question","name":"What units are used in aviation?","acceptedAnswer":{"@type":"Answer","text":"Nautical miles are standard in aviation, while kilometers and statute miles are used for broader comparison."}},{"@type":"Question","name":"How accurate is this calculator?","acceptedAnswer":{"@type":"Answer","text":"This calculator uses spherical great-circle equations and is suitable for planning and educational analysis."}}]}
+  </script>
+</head>
+<body>
+<header class="site-header"></header>
+<main class="wrap">
+  <nav class="breadcrumb"><a href="/index.html">Home</a> / <a href="/tools/index.html">Tools</a> / Great Circle Distance Calculator</nav>
+  <h1>Great Circle Distance Calculator</h1>
+  <p>Great circle distance is the shortest distance between two points on the surface of a sphere. In aviation, it is commonly used to estimate flight distance between airports and is usually expressed in nautical miles.</p>
+  <p class="muted">This tool supports airport-to-airport and coordinate-to-coordinate inputs for network planning, flight distance estimation, and airline analysis.</p>
+
+  <section class="card">
+    <label for="mode">Input mode</label>
+    <select id="mode"><option value="airport">Airport to airport</option><option value="coord">Coordinates</option></select>
+    <div id="airportInputs" class="grid">
+      <div><label>Origin airport (IATA)</label><input id="originCode" placeholder="JFK"/></div>
+      <div><label>Destination airport (IATA)</label><input id="destCode" placeholder="LHR"/></div>
+    </div>
+    <div id="coordInputs" class="grid" style="display:none">
+      <div><label>Origin latitude</label><input id="olat" type="number" step="any"/></div>
+      <div><label>Origin longitude</label><input id="olon" type="number" step="any"/></div>
+      <div><label>Destination latitude</label><input id="dlat" type="number" step="any"/></div>
+      <div><label>Destination longitude</label><input id="dlon" type="number" step="any"/></div>
+    </div>
+    <p><button class="btn" id="calcBtn">Calculate</button></p>
+    <p id="status" class="muted">Load complete. Enter values and calculate.</p>
+  </section>
+
+  <section class="card">
+    <h2>Results</h2>
+    <div class="grid">
+      <div><strong>Nautical miles:</strong> <span id="nm">-</span></div>
+      <div><strong>Statute miles:</strong> <span id="mi">-</span></div>
+      <div><strong>Kilometers:</strong> <span id="km">-</span></div>
+      <div><strong>Initial bearing:</strong> <span id="ib">-</span></div>
+      <div><strong>Final bearing:</strong> <span id="fb">-</span></div>
+    </div>
+    <p id="routeText" class="muted">Route explanation appears here.</p>
+  </section>
+
+  <section class="card"><h2>Formula</h2><p>Using spherical law of cosines: <code>d = R * arccos(sin φ1 sin φ2 + cos φ1 cos φ2 cos Δλ)</code>. Bearings are computed with standard initial-course trigonometric equations.</p></section>
+
+  <section class="card faq"><h2>FAQ</h2>
+    <h3>What is great circle distance?</h3><p class="muted">The shortest path between two points on Earth's surface.</p>
+    <h3>Why do airlines use great circle routes?</h3><p class="muted">To estimate efficient routing and fuel/time planning.</p>
+    <h3>Is great circle distance the same as flight distance?</h3><p class="muted">Not exactly. Operational routing can add distance.</p>
+    <h3>What units are used in aviation?</h3><p class="muted">Nautical miles are most common, plus km and miles for comparison.</p>
+    <h3>How accurate is this calculator?</h3><p class="muted">Suitable for planning and educational use.</p>
+  </section>
+
+  <section class="card links"><h2>Popular Airline Tools</h2>
+    <a href="/tools/great-circle-distance-calculator.html">Great Circle Distance Calculator</a>
+    <a href="/tools/great-circle-bearing-calculator.html">Great Circle Bearing Calculator</a>
+    <a href="/tools/great-circle-route-calculator.html">Great Circle Route Calculator</a>
+    <a href="/tools/rasm-casm-calculator.html">RASM / CASM Calculator</a>
+    <a href="/tools/break-even-load-factor-calculator.html">Break Even Load Factor Calculator</a>
+    <a href="/tools/airline-yield-calculator.html">Airline Yield Calculator</a>
+  </section>
+
+  <section class="card links"><h2>Modern Airline Retailing Topics</h2>
+    <a href="/blog/2023-08-08-offer-and-order-explained.html">NDC</a>
+    <a href="/blog/2023-08-08-offer-and-order-explained.html">Offer &amp; Order</a>
+    <a href="/blog/2024-07-30-order-management-life-after-pnr-tickets-and-emds.html">One Order</a>
+    <a href="/blog/2024-07-24-availability-translation-dynamic-offers.html">Dynamic Offers</a>
+    <a href="/learn/atpco-fare-filing.html">ATPCO Fare Filing</a>
+    <a href="/blog/2024-05-03-continuous-pricing-beyond-filed-ladders.html">Airline Pricing</a>
+  </section>
+
+  <section class="card"><p><strong>Get airline retailing tools and explainers.</strong> Subscribe to updates or <a href="/about.html">contact for airline retailing, NDC, Offer &amp; Order, or pricing technology consulting</a>.</p></section>
+</main>
+<footer class="site-footer"></footer>
+<script src="/assets/site.js" defer></script>
+<script>
+let airportMap={};
+fetch('/tools/airports.json').then(r=>r.json()).then(data=>{data.forEach(a=>airportMap[a.code]=a);}).catch(()=>{});
+const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
+function bearing(lat1,lon1,lat2,lon2){const y=Math.sin(toRad(lon2-lon1))*Math.cos(toRad(lat2));const x=Math.cos(toRad(lat1))*Math.sin(toRad(lat2))-Math.sin(toRad(lat1))*Math.cos(toRad(lat2))*Math.cos(toRad(lon2-lon1));return (toDeg(Math.atan2(y,x))+360)%360;}
+function dist(lat1,lon1,lat2,lon2){const R=6371.0088;const d=Math.acos(Math.sin(toRad(lat1))*Math.sin(toRad(lat2))+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.cos(toRad(lon2-lon1)));return R*d;}
+document.getElementById('mode').addEventListener('change',e=>{const a=e.target.value==='airport';document.getElementById('airportInputs').style.display=a?'grid':'none';document.getElementById('coordInputs').style.display=a?'none':'grid';});
+document.getElementById('calcBtn').addEventListener('click',()=>{
+  let lat1,lon1,lat2,lon2,label1,label2;
+  if(document.getElementById('mode').value==='airport'){
+    const o=(document.getElementById('originCode').value||'').trim().toUpperCase(); const d=(document.getElementById('destCode').value||'').trim().toUpperCase();
+    if(!airportMap[o]||!airportMap[d]) return document.getElementById('status').textContent='Use valid IATA airport codes.';
+    ({lat:lat1,lon:lon1}=airportMap[o]);({lat:lat2,lon:lon2}=airportMap[d]);label1=o;label2=d;
+  } else {
+    lat1=parseFloat(document.getElementById('olat').value);lon1=parseFloat(document.getElementById('olon').value);lat2=parseFloat(document.getElementById('dlat').value);lon2=parseFloat(document.getElementById('dlon').value);label1='point A';label2='point B';
+    if([lat1,lon1,lat2,lon2].some(v=>!isFinite(v))) return document.getElementById('status').textContent='Enter numeric coordinates.';
+  }
+  const km=dist(lat1,lon1,lat2,lon2), nm=km*0.539957, mi=km*0.621371, ib=bearing(lat1,lon1,lat2,lon2), fb=(bearing(lat2,lon2,lat1,lon1)+180)%360;
+  nmEl.textContent=nm.toFixed(1); miEl.textContent=mi.toFixed(1); kmEl.textContent=km.toFixed(1); ibEl.textContent=ib.toFixed(1)+'°'; fbEl.textContent=fb.toFixed(1)+'°';
+  routeText.textContent=`The great circle route from ${label1} to ${label2} is the shortest spherical path. Actual flown track can be longer due to winds and ATC constraints.`;
+  status.textContent='Calculation complete.';
+});
+const nmEl=document.getElementById('nm'), miEl=document.getElementById('mi'), kmEl=document.getElementById('km'), ibEl=document.getElementById('ib'), fbEl=document.getElementById('fb');
+const routeText=document.getElementById('routeText'), status=document.getElementById('status');
+</script>
+</body>
+</html>

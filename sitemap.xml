@@ -330,4 +330,53 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/great-circle-distance-calculator.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/great-circle-bearing-calculator.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/great-circle-route-calculator.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/break-even-load-factor-calculator.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/tools/airline-yield-calculator.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/learn/great-circle-distance-formula.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/learn/atpco-fare-filing.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.modernairlineretailing.com/learn/atpco-category-12.html</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
