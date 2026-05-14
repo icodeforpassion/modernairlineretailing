@@ -981,6 +981,14 @@
             border-color: var(--rcm-accent-1);
             box-shadow: 0 0 0 2px rgba(79,177,245,.45);
           }
+          .rcm-field select option {
+            background: #1f3145;
+            color: #e8f0f7;
+          }
+          .theme-light .rcm-field select option {
+            background: #f5f9fd;
+            color: #1b2b3d;
+          }
           .rcm-inline {
             display: flex;
             gap: 12px;
@@ -1392,6 +1400,7 @@
               <button type="button" data-theme="dark" aria-pressed="true">Dark</button>
               <button type="button" data-theme="dual" aria-pressed="false">Dual</button>
             </div>
+            <button type="button" class="rcm-btn secondary rcm-theme-toggle" id="rcmThemeToggle" aria-label="Toggle light and dark mode">Switch to Light</button>
             <label class="rcm-toggle" aria-label="Toggle compact density">
               <input type="checkbox" id="rcmCompactToggle">
               <span class="indicator"></span>
@@ -1586,7 +1595,8 @@
               reset: document.getElementById('reset'),
               themeButtons: root.querySelectorAll('.rcm-theme-switch button'),
               compactToggle: document.getElementById('rcmCompactToggle'),
-              accentToggle: document.getElementById('rcmAccentToggle')
+              accentToggle: document.getElementById('rcmAccentToggle'),
+              themeToggle: document.getElementById('rcmThemeToggle')
             };
 
             const tooltips = {
@@ -1905,14 +1915,30 @@
               buildAll();
             });
 
-            els.themeButtons.forEach(btn=>{
-              btn.addEventListener('click', ()=>{
-                els.themeButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
-                btn.setAttribute('aria-pressed','true');
-                root.classList.remove('theme-light','theme-dark','theme-dual');
-                root.classList.add('theme-'+btn.dataset.theme);
+            function applyTheme(theme){
+              const resolved = ['light','dark','dual'].includes(theme) ? theme : 'dark';
+              els.themeButtons.forEach(b=>{
+                b.setAttribute('aria-pressed', b.dataset.theme === resolved ? 'true' : 'false');
               });
+              root.classList.remove('theme-light','theme-dark','theme-dual');
+              root.classList.add('theme-' + resolved);
+              if (els.themeToggle) {
+                const nextLabel = resolved === 'light' ? 'Switch to Dark' : 'Switch to Light';
+                els.themeToggle.textContent = nextLabel;
+                els.themeToggle.dataset.nextTheme = resolved === 'light' ? 'dark' : 'light';
+              }
+            }
+
+            els.themeButtons.forEach(btn=>{
+              btn.addEventListener('click', ()=>applyTheme(btn.dataset.theme));
             });
+
+            if (els.themeToggle) {
+              els.themeToggle.addEventListener('click', ()=>{
+                applyTheme(els.themeToggle.dataset.nextTheme || 'light');
+              });
+            }
+            applyTheme('dark');
 
             els.compactToggle.addEventListener('change', ()=>{
               root.classList.toggle('compact', els.compactToggle.checked);
